@@ -1,6 +1,5 @@
 /**
- *
- * @module list
+ * @module List
  */
 
 var Util = require("../util");

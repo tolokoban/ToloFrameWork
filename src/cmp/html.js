@@ -21,6 +21,13 @@ ParserContext.prototype.srcPath = function(localPath) {
     return this._source.srcPath(localPath);
 };
 
+/**
+ * @return Name of the HTML file, without any path.
+ */
+ParserContext.prototype.filename = function() {
+    return this._source.filename();
+};
+
 ParserContext.prototype.Tree = Tree;
 
 
@@ -78,16 +85,6 @@ function compileWidget(source, root) {
     root.name = "div";
     var widgetPath = findWidgetPath(widgetName);
     var parserPath = widgetPath + "/compile-" + widgetName + ".js";
-    if (!FS.existsSync(parserPath)) {
-        throw {fatal: "Missing \"parse.js\" file for widget \"" + widgetName + "\"!"};
-    }
-    var Parser = require(parserPath);
-    var compiler = Parser.compile;
-    if (typeof compiler !== 'function') {
-        throw {fatal: "Module \"parse.js\" of widget \"" + widgetName + "\" must export a function called \"compile\"!"};
-    }
-    var ctx = new ParserContext(source);
-    var result = ctx.result;
     var att;
     var id = Tree.att(root, "id");
     if (!id) {
@@ -96,21 +93,35 @@ function compileWidget(source, root) {
     }
     root.extra = {
         widgetName: widgetName,
-        controller: "wtag." + widgetName.substr(0, 1).toUpperCase() + widgetName.substr(1),
         init: {id: id},
         js: null,
         css: null
     };
-    try {
-        compiler.call(ctx, root);
+    root.extra.controller =
+        "wtag." + widgetName.substr(0, 1).toUpperCase() + widgetName.substr(1);
+
+    if (FS.existsSync(parserPath)) {
+        var Parser = require(parserPath);
+        var compiler = Parser.compile;
+        if (typeof compiler !== 'function') {
+            throw {fatal: "Module \"parse.js\" of widget \"" + widgetName
+                   + "\" must export a function called \"compile\"!"};
+        }
+        var ctx = new ParserContext(source);
+        try {
+            compiler.call(ctx, root);
+        }
+        catch (ex) {
+            root.children = root.children ? root.children.length : 0;
+            Kernel.fatal(
+                "Exception thrown from compilation of widget \"" + widgetName + "\":\n\n" + ex
+                    + "\n\nNODE: " + JSON.stringify(root)
+            );
+        }
+    } else {
+        root.name = "div";
     }
-    catch (ex) {
-        root.children = root.children ? root.children.length : 0;
-        Kernel.fatal(
-            "Exception thrown from compilation of widget \"" + widgetName + "\":\n\n" + ex
-                + "\n\nNODE: " + JSON.stringify(root)
-        );
-    }
+    Tree.addClass(root, "custom", "wtag-" + widgetName);
 }
 
 function compileWidgets(source, root) {
@@ -126,9 +137,6 @@ function compileWidgets(source, root) {
     return root;
 }
 
-/**
- *
- */
 function addExtraCode(root, extraCode, source) {
     Tree.walk(
         root,
@@ -136,25 +144,29 @@ function addExtraCode(root, extraCode, source) {
             var item = node.extra;
             if (!item) return;
             if (item.controller) {
-                source.addNeed("cls/" + item.controller + ".js");
-                extraCode.js += "$$('" + item.controller + "'";
-                if (typeof item.init === 'object') {
-                    var sep = ',{', key, val;
-                    for (key in item.init) {
-                        val = item.init[key];
-                        if (typeof val === 'string' && val.substr(0, 9) == 'function(') {
-                            // This is a function: we don't want to stringify it.
-                        } else {
-                            val = JSON.stringify(val);
+                var ctrlFilename = "cls/" + item.controller + ".js";
+                var ctrlFullPath = Kernel.srcPath(ctrlFilename);
+                if (FS.existsSync(ctrlFullPath)) {
+                    source.addNeed(ctrlFilename);
+                    extraCode.js += "$$('" + item.controller + "'";
+                    if (typeof item.init === 'object') {
+                        var sep = ',{', key, val;
+                        for (key in item.init) {
+                            val = item.init[key];
+                            if (typeof val === 'string' && val.substr(0, 9) == 'function(') {
+                                // This is a function: we don't want to stringify it.
+                            } else {
+                                val = JSON.stringify(val);
+                            }
+                            extraCode.js += sep;
+                            sep = ',';
+                            extraCode.js += key + ":" + val;
                         }
-                        extraCode.js += sep;
-                        sep = ',';
-                        extraCode.js += key + ":" + val;
-                    }
-                    extraCode.js += "}";
+                        extraCode.js += "}";
 
+                    }
+                    extraCode.js += ");\n";
                 }
-                extraCode.js += ");\n";
             }
             if (item.css) {
                 extraCode.css += item.css;
@@ -179,7 +191,7 @@ function expandDoubleCurlies(node) {
         node.children.forEach(
             function(itm) {
                 expandDoubleCurlies(itm);
-            } 
+            }
         );
     }
 }
@@ -206,8 +218,8 @@ exports.analyse = function(source) {
         current,
         function(node) {
             var i, item, scriptCode, app, id,
-                scripts, script, obj, scriptName,
-                key, val, sep;
+            scripts, script, obj, scriptName,
+            key, val, sep;
             if (node.type == Tree.TAG) {
                 if (node.name == 'head') {
                     headTag = node;

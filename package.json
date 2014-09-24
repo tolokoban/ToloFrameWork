@@ -32,6 +32,7 @@
     "htmlparser2": "~3.7.3",
     "readline-sync": "~0.4.8",
     "uglifycss": "0.0.9",
-    "uglify-js": "~2.4.15"
+    "uglify-js": "~2.4.15",
+    "connect": "~3.2.0"
   }
 }

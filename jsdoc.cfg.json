@@ -7,7 +7,7 @@
     "templates": {
         "cleverLinks": false,
         "monospaceLinks": true,
-        "theme": "slate",
+        "theme": "spacelab",
         "collapseSymbols": true,
         "outputSourceFiles": true,
         "linenums": true

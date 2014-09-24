@@ -260,7 +260,14 @@ exports.srcPath = function(p) {
     if (typeof p === 'undefined') {
         return srcPath;
     }
-    return Path.join(srcPath, p);
+    var fullPath = Path.join(srcPath, p);
+    if (!FS.existsSync(fullPath)) {
+        fullPath = Path.join(tfwPath, p);
+        if (!FS.existsSync(fullPath)) {
+            return null;
+        }
+    }
+    return fullPath;
 };
 exports.tmpPath = function(p) {
     if (typeof p === 'undefined') {
