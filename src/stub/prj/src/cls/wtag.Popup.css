@@ -1,0 +1,43 @@
+.wtag-popup {
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    bottom: 0;
+    z-index: 999999;
+    border: none;
+    border-top: 1px solid #000;
+    padding: 8px;
+    padding: 3vm;
+    padding: 3vmin;
+    min-height: 64px;
+    min-height: 20vm;
+    min-height: 20vmin;
+    text-align: center;
+    font-size: 80%;
+    font-weight: bold;
+    font-variant: small-caps;
+    color: #fff;
+    transition: all 0s;
+    -webkit-transition: all 0s;
+    transform: translateY(100%);
+    -webkit-transform: translateY(100%);
+}
+
+.wtag-popup.show {
+    transition: all .7s;
+    -webkit-transition: all .7s;
+    transform: translateY(0%);
+    -webkit-transform: translateY(0%);
+}
+
+.wtag-popup.msg {
+    background: #040;
+    background: rgba(0,50,0,.9);
+}
+
+.wtag-popup.err {
+    background: #600;
+    background: rgba(100,0,0,.9);
+}

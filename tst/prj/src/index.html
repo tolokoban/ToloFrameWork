@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- Commentaire de la mort -->
+<html manifest="index.html.manifest">
+	<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="description" content="Tolokoban Web Studio" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+		<title>Trail-Passion (light)</title>
+	</head>
+  <body app="Main">
+		<w:data name="const">
+			<map>
+				<item key="sens">
+					<list>
+						<item>La vue</item>
+						<item>L'ouïe</item>
+						<item>L'odorat</item>
+						<item>Le goût</item>
+						<item>Le toucher</item>
+						<item>Le désir</item>
+					</list>
+				</item>
+			</map>
+		</w:data>
+
+		<h1>Hello {{yourname}}</h1>
+		<w:input fire="@popup:hello" data="yourname"></w:input>
+		<w:button fire="@popup:hello">Start!</w:button>
+		<w:button class="red" fire="$yourname:">Clear</w:button>
+		<fieldset>
+			<legend>Users</legend>
+			<w:list tag="ul" list="users" item="user">
+				<li>{{user}} is a friend of {{yourname}}</li>
+			</w:list>
+		</fieldset>
+		<w:popup>
+			<msg name="hello">Hello dear {{yourname}}</msg>
+		</w:popup>
+	</body>
+</html>

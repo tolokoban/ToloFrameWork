@@ -1,0 +1,71 @@
+html, body {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 32px;
+    width: 100%;
+    display: table;
+}
+
+header > a {
+    position: relative;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    width: 33%;
+    border-radius: 10px;
+    border: 2px solid #000;
+    background: #bbb;
+    color: #00f;
+}
+
+header > a.on {
+    background: #34d;
+    color: yellow;
+}
+
+section {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+section:target {
+    z-index: 1;
+}
+
+article {
+    position: absolute;
+    left: 0;
+    top: 33px;
+    right: 0;
+    bottom: 0;
+    display: block;
+}
+
+iframe {
+    position: absolute;
+    display: block;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+

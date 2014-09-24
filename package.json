@@ -1,0 +1,37 @@
+{
+  "name": "ToloFrameWork",
+  "version": "0.0.1",
+  "description": "Framework for fast Firefox OS apps development with better collaboration between designer and hacker.",
+  "main": "src/tfw.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tolokoban/ToloFrameWork.git"
+  },
+  "keywords": [
+    "tolokoban",
+    "firefoxos",
+    "fxos",
+    "mobile",
+    "webapp",
+    "designer",
+    "framework"
+  ],
+  "author": "Tolokoban",
+  "license": "GNU GPL 3",
+  "bugs": {
+    "url": "https://github.com/tolokoban/ToloFrameWork/issues"
+  },
+  "dependencies": {
+    "colors": "~0.6.2",
+    "htmlparser2": "~3.7.3",
+    "readline-sync": "~0.4.8",
+    "uglifycss": "0.0.9",
+    "uglify-js": "~2.4.15"
+  }
+}
