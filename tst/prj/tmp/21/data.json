@@ -1,1 +1,0 @@
-{"needs":["/home/tolokoban/Code/github/ToloFrameWork/src/cls/WTag.js"],"includes":[],"timestamp":0,"tags":{"def":{"needs":["WTag"],"functions":{},"comment":"*\n * @created 17/09/2014\n *\n ","name":"wtag.Data","superclass":"WTag","init":""},"zip":"window[\"TFW::wtag.Data\"]={superclass:\"WTag\",init:function(){this.bindData(this._data)},functions:{}};"}}

@@ -1,3 +1,8 @@
+/**
+ *
+ * @module tfw
+ */
+
 require("colors");
 String.prototype.err = function() {
     var txt = '';
@@ -18,11 +23,30 @@ String.prototype.err = function() {
     return txt.redBG.white;
 };
 
+var Project = require("./project");
+var Path = require("path");
+
 
 console.log("---------------------");
-console.log(" ToloFrameWork 3.0.0 ");
-console.log("       beta  5       ");
+console.log(" ToloFrameWork 0.0.1 ");
 console.log("---------------------");
 console.log();
 
-require("./project").build();
+var i, 
+consoleMode = false, 
+prjPath = '.';
+for (i = 2 ; i < process.argv.length ; i++) {
+    var item = process.argv[i];
+    if (item == '-c') {
+        consoleMode = true;
+    } else {
+        prjPath = Path.resolve(".", item);
+    }
+}
+
+if (consoleMode) {
+    console.log("project folder: ", prjPath);
+    console.log();
+    var prj = Project.createProject(prjPath);
+    prj.compile();
+}

@@ -72,6 +72,7 @@ The `root` argument has this structure:
   * __init__: Dictionary of attributes for controller initialization.
               By default it contains the element's `id`.
   * __css__: CSS code to add. You can use LESS syntax.
+  * __databindings__: dictionary of scoped data bindings.
   * __dependencies__: array of files we depend on. Useful for includes.
 
 

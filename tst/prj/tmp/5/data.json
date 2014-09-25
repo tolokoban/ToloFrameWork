@@ -1,1 +1,0 @@
-{"needs":[],"includes":[],"timestamp":0,"tags":{"def":{"needs":[],"functions":{},"comment":"*\n * Tous les générateurs  de wtags héritent de cette  classe qui contient\n * des fonctions utiles communes.\n ","name":"wtag.Tag"},"zip":"window[\"TFW::wtag.Tag\"]={};"}}
