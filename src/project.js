@@ -286,7 +286,69 @@ Project.prototype.linkForDebug = function(filename) {
  * Linking in RELEASE mode. 
  */
 Project.prototype.linkForRelease = function(filename) {
-    
+    var srcHTML = new Source(this, filename);
+    var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS") || []);
+    var linkCSS = srcHTML.tag("linkCSS") || [];
+    var tree = Tree.clone(srcHTML.tag("tree"));
+    var head = Tree.getElementByName(tree, "head");
+    var jsDir = this.mkdir(this.wwwPath("RELEASE/js"));
+    var cssDir = this.mkdir(this.wwwPath("RELEASE/css"));
+    var manifestFiles = [];
+    var shortedName = filename.substr(0, filename.length - 5);
+    var fdJS = FS.openSync(Path.join(jsDir, "@" + shortedName + ".js"), "w");
+    FS.writeSync(fdJS, srcHTML.tag("zipJS"));
+    var fdCSS = FS.openSync(Path.join(cssDir, "@" + shortedName + ".css"), "w");
+    FS.writeSync(fdCSS, srcHTML.tag("zipCSS"));
+    linkJS.forEach(
+        function(item) {
+            var srcJS = srcHTML.create(item);
+            FS.writeSync(fdJS, srcJS.tag("zip"));
+        } ,
+        this
+    );
+    linkCSS.forEach(
+        function(item) {
+            var srcCSS = srcHTML.create(item);
+            FS.writeSync(fdCSS, srcCSS.tag("release"));
+        } ,
+        this
+    );
+    // Writing HTML file.
+    head.children.push(
+        Tree.tag(
+            "script",
+            {
+                src: "js/@" + shortedName + ".js"
+            }
+        )
+    );
+    head.children.push(
+        Tree.tag(
+            "link",
+            {
+                href: "css/@" + shortedName + ".css",
+                rel: "stylesheet",
+                type: "text/css"
+            }
+        )
+    );
+    FS.writeFileSync(
+        Path.join(this.wwwPath("RELEASE"), filename),
+        Tree.toString(tree)
+    );
+    // Writing manifest file.
+    FS.writeFileSync(
+        Path.join(this.wwwPath("RELEASE"), filename + ".manifest"),
+        "CACHE MANIFEST\n"
+            + "# " + Date.now() + "\n\n"
+            + "CACHE:\n"
+            + shortedName + ".html\n"
+            + "js/@" + shortedName + ".js\n"
+            + "css/@" + shortedName + ".css\n"
+            + "\nNETWORK:\n*\n"
+    );
+    FS.close(fdJS);
+    FS.close(fdCSS);
 };
 
 /**
