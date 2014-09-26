@@ -20,7 +20,7 @@ var Template = require("./template");
 module.exports.compile = function(prj, filename) {
     var source = new Source(prj, filename);
 
-    if (!source.isUptodate()) {
+    if (!isHtmlFileUptodate(source)) {
         console.log("Compiling " + filename.yellow);
         var root = Tree.parse(source.read());
         lookForStaticJavascriptAndStyle(root, source);
@@ -32,11 +32,31 @@ module.exports.compile = function(prj, filename) {
     }
     compileDependantScripts(root, source);
     compileDependantStyles(root, source);
+    source.tag("dependencies", Util.removeDoubles(source.tag("dependencies")));
+    source.tag("innerMapCSS", null);
     source.save();
 
     return source;
 };
 
+/**
+ * To be uptodate, an HTML page must be more recent that all its dependencies.
+ */
+function isHtmlFileUptodate(source) {
+    var dependencies = source.tag("dependencies") || [];
+    var i, dep, file, prj = source.prj(),
+    stat,
+    mtime = source.modificationTime();
+    for (i = 0 ; i < dependencies.length ; i++) {
+        dep = dependencies[i];
+        file = prj.srcOrLibPath(dep);
+        if (file) {
+            stat = FS.statSync(file);
+            if (stat.mtime > mtime) return false;
+        }
+    }
+    return source.isUptodate();
+}
 
 /**
  * Remove all `extra` properties in the tree and store it in tag __`tree`__.
@@ -158,6 +178,8 @@ function compileWidget(root, source, widgetName, compilerDir) {
     var prj = source.prj();
     var dependencies = source.tag("dependencies");
     var outerJS = source.tag("outerJS");
+    var innerCSS = source.tag("innerCSS");
+    var innerMapCSS = source.tag("innerMapCSS") || {};
     root.name = "div";
     Tree.addClass(root, "custom wtag-" + widgetName);
     root.extra = {};
@@ -170,6 +192,23 @@ function compileWidget(root, source, widgetName, compilerDir) {
         root.extra.controller = controller;
         outerJS.push("cls/" + controller + ".js");
     }
+    // Looking for extra CSS.
+    FS.readdirSync(compilerDir).forEach(
+        function(filename) {
+            if (Path.extname(filename) !== '.css') return;
+            if (filename.substr(0, widgetName.length + 1) !== widgetName + "-") return;
+            var file = Path.resolve(Path.join(compilerDir, filename));
+            if (file in innerMapCSS) return;
+            innerMapCSS[file] = 1;
+            var content = FS.readFileSync(file).toString();
+            console.log("inner CSS: " + filename.yellow);
+            innerCSS += Util.lessCSS(file, content, false);
+            dependencies.push("wdg/" + widgetName + "/" + filename);
+        } 
+    );
+    source.tag("innerCSS", innerCSS);
+    source.tag("innerMapCSS", innerMapCSS);
+    // Compilation.
     var compilerModule = Path.join(compilerDir, "compile-" + widgetName + ".js");
     if (FS.existsSync(compilerModule)) {
         // There is a transformer: we will call it.

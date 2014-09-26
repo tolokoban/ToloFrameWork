@@ -66,6 +66,18 @@ Source.prototype.isUptodate = function() {
 };
 
 /**
+ * @return Last modification time of the source.
+ */
+Source.prototype.modificationTime = function() {
+    if (!FS.existsSync(this._tmpFile)) {
+        var statSrc = FS.statSync(this._absPath);
+        return statSrc.mtime;
+    }
+    var statTmp = FS.statSync(this._tmpFile);
+    return statTmp.mtime;
+};
+
+/**
  * Store tags on disk and mark the source file as _uptodate_.
  */
 Source.prototype.save = function() {

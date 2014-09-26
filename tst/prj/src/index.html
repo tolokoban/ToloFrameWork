@@ -1,30 +1,22 @@
 <w:html app="Main">
-  <w:data name="const">
-    <map>
-      <item key="sens">
-        <list>
-          <item>La vue</item>
-          <item>L'ouïe</item>
-          <item>L'odorat</item>
-          <item>Le goût</item>
-          <item>Le toucher</item>
-          <item>Le désir</item>
-        </list>
-      </item>
-    </map>
-  </w:data>
-
-  <h1>Hello {{yourname}}</h1>
-  <w:input fire="@popup:hello" data="yourname"></w:input>
-  <w:button fire="@popup:hello">Start!</w:button>
-  <w:button class="red" fire="$yourname:">Clear</w:button>
-  <fieldset>
-    <legend>Users</legend>
-    <w:list tag="ul" list="users" item="user">
-      <li>{{user}} is a friend of {{yourname}}</li>
-    </w:list>
-  </fieldset>
-  <w:popup>
-    <msg name="hello">Hello dear {{yourname}}</msg>
-  </w:popup>
+	<w:flex class="wide">
+		<w:button>wide BLUE</w:button>
+		<w:button class="red">wide RED</w:button>
+		<w:button class="green">wide GREEN</w:button>
+	</w:flex>
+	<w:flex class="narrow">
+		<w:button>narrow BLUE</w:button>
+		<w:button class="red" style="width: 64px; height: 64px">narrow RED</w:button>
+		<w:button class="green">narrow GREEN</w:button>
+	</w:flex>
+	<w:flex class="column">
+		<w:button>narrow BLUE</w:button>
+		<w:button class="red" style="width: 64px; height: 64px">narrow RED</w:button>
+		<w:button class="green">narrow GREEN</w:button>
+	</w:flex>
+	<w:flex class="row">
+		<w:button>narrow BLUE</w:button>
+		<w:button class="red" style="width: 64px; height: 64px">narrow RED</w:button>
+		<w:button class="green">narrow GREEN</w:button>
+	</w:flex>
 </w:html>
