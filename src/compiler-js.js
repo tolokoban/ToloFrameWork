@@ -4,26 +4,42 @@
 
 var Util = require("./util");
 var UglifyJS = require("uglify-js");
+var Path = require("path");
 
 module.exports.compile = function(source) {
     if (source.isUptodate()) return false;
     console.log("Compiling " + source.name().yellow);
-    source.tag("zip", Util.zipJS(source.read()));
-
-    var visitor = Visitor(source);
+    var content = source.read();
+    var visitor = Visitor(content);
     var walker = new UglifyJS.TreeWalker(visitor.walk);
-    var tree = UglifyJS.parse(source.tag("zip"));
+    var tree;
+    try {
+        tree = UglifyJS.parse(content);
+    }
+    catch (ex) {
+        source.prj().fatal(
+            "Exception raised in parsing JS file \"" + source.name() + "\":\n" + ex,
+            -1,
+            "compiler-js"
+        );
+    }
     tree.walk(walker);
     var def = visitor.result();
     var needs = [];
     def.needs.forEach(
         function(item) {
-            needs.push(
-                source.absPath("cls/" + item + ".js")
-            );
+            needs.push("cls/" + item + ".js");
         }
     );
     source.tag("needs", needs);
+    source.tag("zip", Util.zipJS(content));
+    var cssName = source.name().substr(0, source.name().length - 2) + "css";
+    var cssPath = source.prj().srcOrLibPath(cssName);
+    if (cssPath) {
+        source.tag("css", cssName);
+    } else {
+        source.tag("css", null);
+    }
     source.save();
     return true;
 };
@@ -33,15 +49,31 @@ module.exports.compile = function(source) {
 
 
 
-var Visitor = function(source) {
+var Visitor = function(content) {
     /**
      * Throw a fatal exception with a portion of the buggy code.
      */
-    function fatal(node, msg) {
-        throw {
-            fatal: msg + "\n"
-                + source.errorAt(node.start.line, node.start.col)
-        };
+    function fatal(node, err) {
+        var msg= '', line = node.start.line, col = node.start.col;
+        msg += "----------------------------------------"
+            + "----------------------------------------\n";
+        msg += "  file: " + this.file() + "\n";
+        msg += "  line: " + line + "\n";
+        msg += "  col.: " + col + "\n";
+        msg += "----------------------------------------"
+            + "----------------------------------------\n";
+        var lines = content.split("\n"),
+        lineIndex, indent = '',
+        min = Math.max(0, line - 1 - 2),
+        max = line;
+        for (lineIndex = min ; lineIndex < max ; lineIndex++) {
+            msg += lines[lineIndex].trimRight() + "\n";
+        }
+        for (lineIndex = 0 ; lineIndex < col ; lineIndex++) {
+            indent += ' ';
+        }
+        msg += "\n" + indent + "^\n";
+        throw {fatal: err + "\n" + msg};
     }
 
     /**
@@ -81,9 +113,6 @@ var Visitor = function(source) {
             if (item == name) {
                 return true;
             }
-        }
-        if (!source.exists("cls/" + name + ".js")) {
-            return false;
         }
         cls.needs.push(name);
         return true;

@@ -8,6 +8,7 @@ var Source = require("./source");
 var Tree = require("./htmltree");
 var Util = require("./util");
 var CompilerJS = require("./compiler-js");
+var CompilerCSS = require("./compiler-css");
 
 /**
  * Compile an HTML file if it is not uptodate.
@@ -25,11 +26,11 @@ module.exports.compile = function(prj, filename) {
         expandWidgets(root, source);
         initControllers(root, source);
         zipInnerScriptsAndStyles(root, source);
-        compileDependantScripts(root, source);
         cleanupTreeAndStoreItInTag(root, source);
         source.save();
     } else {
-        console.log("Uptodate!");
+        compileDependantScripts(root, source);
+        compileDependantStyles(root, source);
     }
 
     return source;
@@ -274,31 +275,12 @@ function initControllers(root, source) {
  */
 function zipInnerScriptsAndStyles(root, source) {
     source.tag("zipJS", Util.zipJS(source.tag("innerJS")));
-    source.tag("outerJS", uniquify(source.tag("outerJS")));
-    source.tag("outerCSS", uniquify(source.tag("outerCSS")));
+    source.tag("outerJS", Util.removeDoubles(source.tag("outerJS")));
+    source.tag("outerCSS", Util.removeDoubles(source.tag("outerCSS")));
 }
 
 /**
- * @param {array} arr a string array.
- * @return a copy of this array, sorted and with no doublons.
- */
-function uniquify(arr) {
-    var result = [];
-    var last = "";
-    arr.sort();
-    arr.forEach(
-        function(itm) {
-            if (itm != last) {
-                result.push(itm);
-                last = itm;
-            }
-        } 
-    );
-    return result;
-}
-
-/**
- * Compile dependant JS scripts.
+ * Compile dependant JS scripts in cascade.
  */
 function compileDependantScripts(root, source) {
     var needed = {};
@@ -317,9 +299,66 @@ function compileDependantScripts(root, source) {
         try {
             CompilerJS.compile(srcJS);
             needed[file] = srcJS;
+            srcJS.tag("needs").forEach(
+                function(item) {
+                    jobs.push(item);
+                } 
+            );
         }
         catch (ex) {
             prj.fatal(ex, -1, file);
         }
     } 
+
+    // Save __`linkJS`__ tag.
+    var linkJS = [], key;
+    for (key in needed) {
+        linkJS.push(key);
+    }
+    source.tag("linkJS", Util.removeDoubles(linkJS));
+}
+
+/**
+ * Compile dependant CSS styles in cascade.
+ */
+function compileDependantStyles(root, source) {
+    var needed = {};
+    var jobs = [];
+    var prj = source.prj();
+    var file;
+    // Add CSS from JS classes.
+    source.tag("linkJS").forEach(
+        function(item) {
+            var srcJS = source.create(item);
+            var css = srcJS.tag("css");
+            if (css) {
+                jobs.push(css);
+            }
+        }
+    );
+    // Add 
+    source.tag("outerCSS").forEach(
+        function(file) {
+            jobs.push(file);
+        }
+    );
+    while (jobs.length > 0) {
+        file = jobs.pop();
+        if (file in needed) continue;
+        var srcCSS = source.create(file);
+        try {
+            CompilerCSS.compile(srcCSS);
+            needed[file] = srcCSS;
+        }
+        catch (ex) {
+            prj.fatal(ex, -1, file);
+        }
+    } 
+
+    // Save __`linkCSS`__ tag.
+    var linkCSS = [], key;
+    for (key in needed) {
+        linkCSS.push(key);
+    }
+    source.tag("linkCSS", Util.removeDoubles(linkCSS));
 }

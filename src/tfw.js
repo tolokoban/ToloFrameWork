@@ -2,6 +2,11 @@
  *
  * @module tfw
  */
+console.log("---------------------");
+console.log(" ToloFrameWork 0.0.2 ");
+console.log("---------------------");
+console.log();
+
 
 require("colors");
 String.prototype.err = function() {
@@ -27,11 +32,6 @@ var Project = require("./project");
 var Path = require("path");
 
 
-console.log("---------------------");
-console.log(" ToloFrameWork 0.0.1 ");
-console.log("---------------------");
-console.log();
-
 var i, 
 consoleMode = false, 
 prjPath = '.';
@@ -49,4 +49,5 @@ if (consoleMode) {
     console.log();
     var prj = Project.createProject(prjPath);
     prj.compile();
+    prj.link();
 }

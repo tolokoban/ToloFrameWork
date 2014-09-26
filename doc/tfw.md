@@ -103,7 +103,8 @@ This script is added to the tag __`innerJS`__, then we remove all the `extra` at
 * __`innerCSS`__: (string) style to externalize.
 * __`zipCSS`__: (string) `innerCSS` zipped for RELEASE.
 * __`outerJS`__: (array) javascript files relative to the HTML file path.
-* __`outerCSS`__: (array) stylesheet files relative to the HTML file path. 
+* __`outerCSS`__: (array) stylesheet files relative to the HTML file path.
+* __`linkJS`__: (array) complete list of javascript files. This is a subset of __`outerJS`__ because it owns scripts needed by other scripts.
 * __`dependencies`__: (array) files that will force recompilation of the HTML files if at least one of them is not uptodate.
 * __`tree`__: the final HTMLl tree after removing attributes `extra`.
 
@@ -118,7 +119,7 @@ If a CSS file is associated (for instance, we found `foo.Bar.css` in the same fo
 Finaly, we store the zipped version of this script in tag __`zip`__.
 
 * __`needsJS`__: (array) list of needed classes.
-* __`CSS`__: (string) name of the CSS file relative to HTML file.
+* __`css`__: (string) name of the CSS file relative to this HTML file. It must have the same name, but with extension `.css`.
 * __`zip`__: (string) zipped version of this script for RELEASE purpose.
 
 

@@ -180,12 +180,35 @@ exports.DOC = 6;
  */
 exports.TYPE = 7;
 
+/**
+ * @return a deep copy of `root`.
+ */
+exports.clone = function(root) {
+    return JSON.parse(JSON.stringify(root));
+};
 
 /**
  * Return the next incremental id.
  */
 exports.nextId = function() {
     return id++;
+};
+
+/**
+ * @param {object} root root of the tree we want to look in.
+ * @param {string} name name of the searched TAG. Must be in lowercase.
+ * @return the first TAG node with the name `name`.
+ */
+exports.getElementByName = function(root, name) {
+    if (root.name === name) return root;
+    if (Array.isArray(root.children)) {
+        var i, node;
+        for (i = 0 ; i < root.children.length ; i++) {
+            node = exports.getElementByName(root.children[i], name);
+            if (node !== null) return node;
+        }
+    }
+    return null;
 };
 
 /**

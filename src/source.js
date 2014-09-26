@@ -104,7 +104,11 @@ Source.prototype.tag = function(name, value) {
     if (typeof value === 'undefined') {
         return this._tags[name];
     }
-    this._tags[name] = value;
+    if (value === null) {
+        delete this._tags[name];
+    } else {
+        this._tags[name] = value;
+    }
 };
 
 

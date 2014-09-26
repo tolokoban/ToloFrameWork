@@ -7,6 +7,8 @@ var Path = require("path");
 var FS = require("fs");
 var CompilerHTML = require("./compiler-html");
 var Tree = require("./htmltree");
+var Util = require("./util");
+var Source = require("./source");
 
 /**
  * @class Project
@@ -46,6 +48,7 @@ Project.prototype.libPath = function(path) {
  * @return an absolute path.
  */
 Project.prototype.srcPath = function(path) {
+    if (typeof path === 'undefined') return this._srcDir;
     return Path.resolve(Path.join(this._srcDir, path));
 };
 
@@ -66,6 +69,7 @@ Project.prototype.srcOrLibPath = function(path) {
  * @return an absolute path.
  */
 Project.prototype.tmpPath = function(path) {
+    if (typeof path === 'undefined') return this._tmpDir;
     return Path.resolve(Path.join(this._tmpDir, path));
 };
 
@@ -74,6 +78,7 @@ Project.prototype.tmpPath = function(path) {
  * @return an absolute path.
  */
 Project.prototype.wwwPath = function(path) {
+    if (typeof path === 'undefined') return this._wwwDir;
     return Path.resolve(Path.join(this._wwwDir, path));
 };
 
@@ -97,7 +102,7 @@ Project.prototype.getAvailableWidgetCompilers = function() {
             } 
         );
         roots.forEach(
-            function(root) {
+            function(root, idx) {
                 if (typeof root !== 'string') return;
                 var files = FS.readdirSync(root);
                 files.forEach(
@@ -107,9 +112,13 @@ Project.prototype.getAvailableWidgetCompilers = function() {
                         if (stat.isFile()) return;
                         if (!map[filename]) {
                             map[filename] = file;
+                            var name = (filename.substr(0, 1).toUpperCase() 
+                                        + filename.substr(1).toLowerCase()).cyan;
+                            if (idx == 0) {
+                                name = name.bold;
+                            }
                             console.log(
-                                "   <w:" + (filename.substr(0, 1).toUpperCase() 
-                                    + filename.substr(1).toLowerCase()).cyan + ">"
+                                "   <w:" + name + ">"
                                 + "\t" + file
                             );
                         }
@@ -134,38 +143,170 @@ Project.prototype.fatal = function(msg, id, src) {
 };
 
 /**
- * compile every `*.html` file found in _srcDir_.
+ * Compile every `*.html` file found in _srcDir_.
  */
 Project.prototype.compile = function() {
-    var files = FS.readdirSync(this._srcDir);
-    files.forEach(
+    this.findHtmlFiles().forEach(
         function(filename) {
-            var file = Path.resolve(Path.join(this._srcDir, filename));
-            if (FS.existsSync(file)) {
-                var stat = FS.statSync(file);
-                if (stat.isFile() && Path.extname(file) == '.html') {
-                    try {
-                        CompilerHTML.compile(this, filename);
-                    }
-                    catch (ex) {
-                        if (ex.fatal) {
-                            console.error(
-                                (
-                                    "----------------------------------------\n"
-                                        + filename + "\nError #" + ex.id + " in " + ex.src + "\n"
-                                        + "----------------------------------------\n"
-                                        + ex.fatal + "\n"
-                                ).err()
-                            );
-                        } else {
-                            throw ex;
-                        }
-                    }
+            try {
+                CompilerHTML.compile(this, filename);
+            }
+            catch (ex) {
+                if (ex.fatal) {
+                    console.error(
+                        (
+                            "----------------------------------------\n"
+                                + filename + "\nError #" + ex.id + " in " + ex.src + "\n"
+                                + "----------------------------------------\n"
+                                + ex.fatal + "\n"
+                        ).err()
+                    );
+                } else {
+                    throw ex;
                 }
             }
         },
         this
     );
+};
+
+/**
+ * Link every `*.html` file found in _srcDir_.
+ */
+Project.prototype.link = function() {
+    console.log("Cleaning output: " + this.wwwPath());
+    Util.cleanDir(this.wwwPath());
+    this.mkdir(this.wwwPath("DEBUG"));
+    this.mkdir(this.wwwPath("RELEASE"));
+    this.findHtmlFiles().forEach(
+        function(filename) {
+            console.log("Linking " + filename.yellow.bold);
+            this.linkForDebug(filename);
+            this.linkForRelease(filename);
+        },
+        this
+    );
+};
+
+/**
+ * Linking in DEBUG mode. 
+ */
+Project.prototype.linkForDebug = function(filename) {
+    var srcHTML = new Source(this, filename);
+    var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS"));
+    var linkCSS = srcHTML.tag("linkCSS");
+    var tree = Tree.clone(srcHTML.tag("tree"));
+    var head = Tree.getElementByName(tree, "head");
+    var jsDir = this.mkdir(this.wwwPath("DEBUG/js"));
+    var cssDir = this.mkdir(this.wwwPath("DEBUG/css"));
+    var manifestFiles = [];
+    linkCSS.forEach(
+        function(item) {
+            var srcCSS = srcHTML.create(item);
+            var shortName = Path.basename(srcCSS.getAbsoluteFilePath());
+            var output = Path.join(cssDir, shortName);
+            FS.writeFileSync(output, srcCSS.tag("debug"));
+            head.children.push(
+                Tree.tag(
+                    "link",
+                    {
+                        href: "css/" + shortName,
+                        rel: "stylesheet",
+                        type: "text/css"
+                    }
+                )
+            );
+            manifestFiles.push("css/" + shortName);
+        } ,
+        this
+    );
+    linkJS.forEach(
+        function(item) {
+            var srcJS = srcHTML.create(item);
+            var shortName = Path.basename(srcJS.getAbsoluteFilePath());
+            var output = Path.join(jsDir, shortName);
+            FS.writeFileSync(output, srcJS.read());
+            head.children.push(
+                Tree.tag(
+                    "script",
+                    {src: "js/" + shortName}
+                )
+            );
+            manifestFiles.push("js/" + shortName);
+        } ,
+        this
+    );
+    // Adding innerJS and innerCSS.
+    var shortNameJS = "@" + filename.substr(0, filename.length - 5) + ".js";
+    head.children.push(
+        Tree.tag(
+            "script",
+            {src: "js/" + shortNameJS}
+        )
+    );
+    manifestFiles.push("js/" + shortNameJS);
+    FS.writeFileSync(
+        Path.join(jsDir, shortNameJS),
+        srcHTML.tag("innerJS")
+    );
+    var shortNameCSS = "@" + filename.substr(0, filename.length - 5) + ".css";
+    head.children.push(
+        Tree.tag(
+            "link",
+            {
+                href: "css/" + shortNameCSS,
+                rel: "stylesheet",
+                type: "text/css"
+            }
+        )
+    );
+    manifestFiles.push("css/" + shortNameCSS);
+    FS.writeFileSync(
+        Path.join(cssDir, shortNameCSS),
+        srcHTML.tag("innerCSS")
+    );
+    
+    // Writing HTML file.
+    FS.writeFileSync(
+        Path.join(this.wwwPath("DEBUG"), filename),
+        Tree.toString(tree)
+    );
+    // Writing manifest file.
+    FS.writeFileSync(
+        Path.join(this.wwwPath("DEBUG"), filename + ".manifest"),
+        "CACHE MANIFEST\n"
+            + "# " + Date.now() + "\n\n"
+            + "CACHE:\n"
+            + manifestFiles.join("\n")
+            + "\nNETWORK:\n*\n"
+    );
+};
+
+/**
+ * Linking in RELEASE mode. 
+ */
+Project.prototype.linkForRelease = function(filename) {
+    
+};
+
+/**
+ * @return array of HTML files found in _srcDir_.
+ */
+Project.prototype.findHtmlFiles = function() {
+    var files = [];
+    FS.readdirSync(this._srcDir).forEach(
+        function(filename) {
+            var file = Path.resolve(Path.join(this._srcDir, filename));
+            if (FS.existsSync(file)) {
+                var stat = FS.statSync(file);
+                if (stat.isFile() && Path.extname(file) == '.html') {
+                    files.push(filename);
+                }
+            }
+        },
+        this
+    );    
+    return files;
 };
 
 /**
