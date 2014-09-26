@@ -11,7 +11,7 @@ module.exports.compile = function(root) {
     var title = Tree.att(root, "title") || "ToloFrameWork";
     var body = Tree.tag("body", {}, root.children);
     if (app) {
-        body.params.app = app;
+        Tree.att(body, "app", app);
     }
     root.name = "html";
     root.children = [

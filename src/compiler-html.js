@@ -9,6 +9,7 @@ var Tree = require("./htmltree");
 var Util = require("./util");
 var CompilerJS = require("./compiler-js");
 var CompilerCSS = require("./compiler-css");
+var Template = require("./template");
 
 /**
  * Compile an HTML file if it is not uptodate.
@@ -23,15 +24,15 @@ module.exports.compile = function(prj, filename) {
         console.log("Compiling " + filename.yellow);
         var root = Tree.parse(source.read());
         lookForStaticJavascriptAndStyle(root, source);
+        expandDoubleCurlies(root, source);
         expandWidgets(root, source);
         initControllers(root, source);
         zipInnerScriptsAndStyles(root, source);
         cleanupTreeAndStoreItInTag(root, source);
-        source.save();
-    } else {
-        compileDependantScripts(root, source);
-        compileDependantStyles(root, source);
     }
+    compileDependantScripts(root, source);
+    compileDependantStyles(root, source);
+    source.save();
 
     return source;
 };
@@ -264,10 +265,48 @@ function initControllers(root, source) {
         }
     );
 
-    innerJS += "        // Remove logo's screen.\n"
-        + "        // document.body.removeChild(document.getElementById(...));\n"
-        + "    }\n);\n";
+    innerJS += "    }\n);\n";
     source.tag("innerJS", innerJS);
+}
+
+/**
+ * If the text contains a inner binding syntax, expand it.
+ * ```
+ * <p>Hello {{name}}!</p>
+ * ```
+ * will become
+ * ```
+ * <p>Hello <w:bind>name</w:bind>!</p>
+ * ```
+ * @param {object} node node of type `Tree.TEXT`.
+ */
+function expandDoubleCurliesInTextNode(node) {
+    var doubleCurliesReplacer = function(txt) {
+        return "<w:bind>" + txt.trim() + "</w:bind>";        
+    };
+    var result = Template.text(node.text, doubleCurliesReplacer);
+    if (result.count > 0) {
+        node.type = Tree.VOID;
+        node.children = [Tree.parse(result.out)];
+    }
+}
+
+/**
+ * Look for all TEXT nodes and eventually replace double curlies.
+ */
+function expandDoubleCurlies(root, source) {
+    Tree.walk(
+        root,
+        null,
+         // Top-Down walk for databindings.
+        function(node)  {
+            if (node.type !== Tree.TEXT) return;
+            if (typeof node.text !== 'string') return;
+            var text = node.text;
+            if (text.trim().length == 0) return;
+            expandDoubleCurliesInTextNode(node);
+        }
+    );
 }
 
 /**

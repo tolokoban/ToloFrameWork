@@ -193,8 +193,8 @@ Project.prototype.link = function() {
  */
 Project.prototype.linkForDebug = function(filename) {
     var srcHTML = new Source(this, filename);
-    var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS"));
-    var linkCSS = srcHTML.tag("linkCSS");
+    var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS") || []);
+    var linkCSS = srcHTML.tag("linkCSS") || [];
     var tree = Tree.clone(srcHTML.tag("tree"));
     var head = Tree.getElementByName(tree, "head");
     var jsDir = this.mkdir(this.wwwPath("DEBUG/js"));

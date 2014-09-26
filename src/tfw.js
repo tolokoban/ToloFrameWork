@@ -3,7 +3,7 @@
  * @module tfw
  */
 console.log("---------------------");
-console.log(" ToloFrameWork 0.0.2 ");
+console.log(" ToloFrameWork 0.0.3 ");
 console.log("---------------------");
 console.log();
 
