@@ -1,0 +1,13 @@
+div.wtag-img {
+    position: relative;
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    display: block;
+    background-size: contain;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    content: '';
+    padding: 0;
+    margin: 0;
+}

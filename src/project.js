@@ -99,7 +99,7 @@ Project.prototype.getAvailableWidgetCompilers = function() {
                     path = null;
                 }
                 arr[idx] = path;
-            } 
+            }
         );
         roots.forEach(
             function(root, idx) {
@@ -112,7 +112,7 @@ Project.prototype.getAvailableWidgetCompilers = function() {
                         if (stat.isFile()) return;
                         if (!map[filename]) {
                             map[filename] = file;
-                            var name = (filename.substr(0, 1).toUpperCase() 
+                            var name = (filename.substr(0, 1).toUpperCase()
                                         + filename.substr(1).toLowerCase()).cyan;
                             if (idx == 0) {
                                 name = name.bold;
@@ -189,7 +189,7 @@ Project.prototype.link = function() {
 };
 
 /**
- * Linking in DEBUG mode. 
+ * Linking in DEBUG mode.
  */
 Project.prototype.linkForDebug = function(filename) {
     var srcHTML = new Source(this, filename);
@@ -236,6 +236,21 @@ Project.prototype.linkForDebug = function(filename) {
         } ,
         this
     );
+    srcHTML.tag("resources").forEach(
+        function(itm, idx, arr) {
+            var src = itm;
+            var dst = src;
+            if (Array.isArray(src)) {
+                dst = src[1];
+                src = src[0];
+            }
+            manifestFiles.push(dst);
+            src = this.srcPath(src);
+            dst = Path.join(this.wwwPath("DEBUG"), dst);
+            this.copyFile(src, dst);
+        }, this
+    );
+
     // Adding innerJS and innerCSS.
     var shortNameJS = "@" + filename.substr(0, filename.length - 5) + ".js";
     head.children.push(
@@ -265,7 +280,7 @@ Project.prototype.linkForDebug = function(filename) {
         Path.join(cssDir, shortNameCSS),
         srcHTML.tag("innerCSS")
     );
-    
+
     // Writing HTML file.
     FS.writeFileSync(
         Path.join(this.wwwPath("DEBUG"), filename),
@@ -283,7 +298,7 @@ Project.prototype.linkForDebug = function(filename) {
 };
 
 /**
- * Linking in RELEASE mode. 
+ * Linking in RELEASE mode.
  */
 Project.prototype.linkForRelease = function(filename) {
     var srcHTML = new Source(this, filename);
@@ -367,7 +382,7 @@ Project.prototype.findHtmlFiles = function() {
             }
         },
         this
-    );    
+    );
     return files;
 };
 
@@ -398,6 +413,30 @@ Project.prototype.mkdir = function() {
         }
     }
     return path;
+};
+
+// Used for file copy.
+var buffer = new Buffer(64 * 1024);
+
+/**
+ * Copy a file from `src` to `dst`.
+ * @param src full path of the source file.
+ * @param dst full path of the destination file.
+ */
+Project.prototype.copyFile = function(src, dst) {
+    var bytesRead, pos, rfd, wfd;
+    this.mkdir(Path.dirname(dst));
+    rfd = FS.openSync(src, "r");
+    wfd = FS.openSync(dst, "w");
+    bytesRead = 1;
+    pos = 0;
+    while (bytesRead > 0) {
+        bytesRead = FS.readSync(rfd, buffer, 0, 64 * 1024, pos);
+        FS.writeSync(wfd, buffer, 0, bytesRead);
+        pos += bytesRead;
+    }
+    FS.closeSync(rfd);
+    return FS.closeSync(wfd);
 };
 
 

@@ -1,11 +1,11 @@
 .wtag-flex {
     display: flex;
     align-items: stretch;
-border: 4px dotted orange;
 }
 
-.wtag-flex.center {
-    align-items: center;
+.wtag-flex > * {
+    flex: 1 1 auto;
+    flex: 1 1 main-size;
 }
 
 .wtag-flex.row {
@@ -31,4 +31,17 @@ border: 4px dotted orange;
     .wtag-flex.narrow {
         flex-direction: row;
     }
+}
+
+.wtag-flex > *.grow {
+    flex-grow: 1;
+}
+
+.wtag-flex > *.grow-2 {
+    flex-grow: 2;
+}
+
+
+.wtag-flex > *.grow-3 {
+    flex-grow: 3;
 }

@@ -29,7 +29,6 @@ var debugMode = false;
 // Used for file copy.
 var buffer = new Buffer(64 * 1024);
 
-
 /**
  * Find all files matching the pattern.
  *
@@ -119,10 +118,10 @@ var writeFile = function(file, content) {
 
 /**
  * Put a content in a file.
- * 
+ *
  * If the file already exists, it will be overriden.
  * If the path of the file does not exists, it will be creater.
- * 
+ *
  * @param file Full path of the destination file.
  * @param content Content as string.
  */

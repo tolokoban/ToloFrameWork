@@ -18,7 +18,7 @@ The element is automatically changed in a `<div>`, if it has got no `id` an incr
 
 <h3>Controller</h3>
 
-If the parser find a class with name `cls/wtag.Foo.js`, it will be used as a controller. Such a class must extend the base class `WTag`.  
+If the parser find a class with name `cls/wtag.Foo.js`, it will be used as a controller. Such a class must extend the base class `WTag`.
 The widget `<w:foo>bar</w:foo>` will be transformed in:
 ```
 <div id="47" class="custom wtag-foo">bar</div>
@@ -74,5 +74,4 @@ The `root` argument has this structure:
   * __css__: CSS code to add. You can use LESS syntax.
   * __databindings__: dictionary of scoped data bindings.
   * __dependencies__: array of files we depend on. Useful for includes.
-
-
+  * __resources__: array of resource files (images, fonts, ...) we must deploy with this widget.

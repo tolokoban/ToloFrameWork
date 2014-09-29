@@ -11,6 +11,7 @@ var CompilerJS = require("./compiler-js");
 var CompilerCSS = require("./compiler-css");
 var Template = require("./template");
 
+
 /**
  * Compile an HTML file if it is not uptodate.
  * @param {Project} prj Project object.
@@ -23,12 +24,15 @@ module.exports.compile = function(prj, filename) {
     if (!isHtmlFileUptodate(source)) {
         console.log("Compiling " + filename.yellow);
         var root = Tree.parse(source.read());
+        source.tag("resources", []);
         lookForStaticJavascriptAndStyle(root, source);
         expandDoubleCurlies(root, source);
         expandWidgets(root, source);
         initControllers(root, source);
         zipInnerScriptsAndStyles(root, source);
         cleanupTreeAndStoreItInTag(root, source);
+        var resources = new Util.Resources(source.tag("resources"));
+        source.tag("resources", resources.data());
     }
     compileDependantScripts(root, source);
     compileDependantStyles(root, source);
@@ -177,12 +181,13 @@ function expandWidgets(root, source) {
 function compileWidget(root, source, widgetName, compilerDir) {
     var prj = source.prj();
     var dependencies = source.tag("dependencies");
+    var resources = source.tag("resources");
     var outerJS = source.tag("outerJS");
     var innerCSS = source.tag("innerCSS");
     var innerMapCSS = source.tag("innerMapCSS") || {};
     root.name = "div";
     Tree.addClass(root, "custom wtag-" + widgetName);
-    root.extra = {};
+    root.extra = {dependencies: [], resources: []};
     var id = Tree.att(root, "id") || Tree.nextId();
     Tree.att(root, "id", id);
     root.extra.init = {id: id};
@@ -204,7 +209,7 @@ function compileWidget(root, source, widgetName, compilerDir) {
             console.log("inner CSS: " + filename.yellow);
             innerCSS += Util.lessCSS(file, content, false);
             dependencies.push("wdg/" + widgetName + "/" + filename);
-        } 
+        }
     );
     source.tag("innerCSS", innerCSS);
     source.tag("innerMapCSS", innerMapCSS);
@@ -221,6 +226,16 @@ function compileWidget(root, source, widgetName, compilerDir) {
         try {
             compiler.compile.call(prj, root);
             dependencies.push("wdg/" + widgetName + "/compile-" + widgetName + ".js");
+            root.extra.resources.forEach(
+                function(itm) {
+                    resources.push(itm);
+                }
+            );
+            root.extra.dependencies.forEach(
+                function(itm) {
+                    dependencies.push(itm);
+                }
+            );
         }
         catch (ex) {
             prj.fatal(
@@ -321,7 +336,7 @@ function initControllers(root, source) {
  */
 function expandDoubleCurliesInTextNode(node) {
     var doubleCurliesReplacer = function(txt) {
-        return "<w:bind>" + txt.trim() + "</w:bind>";        
+        return "<w:bind>" + txt.trim() + "</w:bind>";
     };
     var result = Template.text(node.text, doubleCurliesReplacer);
     if (result.count > 0) {
@@ -380,13 +395,13 @@ function compileDependantScripts(root, source) {
             srcJS.tag("needs").forEach(
                 function(item) {
                     jobs.push(item);
-                } 
+                }
             );
         }
         catch (ex) {
             prj.fatal(ex, -1, file);
         }
-    } 
+    }
 
     // Save __`linkJS`__ tag.
     var linkJS = [], key;
@@ -414,7 +429,7 @@ function compileDependantStyles(root, source) {
             }
         }
     );
-    // Add 
+    // Add
     source.tag("outerCSS").forEach(
         function(file) {
             jobs.push(file);
@@ -431,7 +446,7 @@ function compileDependantStyles(root, source) {
         catch (ex) {
             prj.fatal(ex, -1, file);
         }
-    } 
+    }
 
     // Save __`linkCSS`__ tag.
     var linkCSS = [], key;
