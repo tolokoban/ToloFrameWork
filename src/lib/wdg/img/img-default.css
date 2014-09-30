@@ -11,3 +11,11 @@ div.wtag-img {
     padding: 0;
     margin: 0;
 }
+
+div.wtag-img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}

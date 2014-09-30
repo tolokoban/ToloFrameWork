@@ -2,6 +2,7 @@
  * @module util
  */
 
+var FS = require("fs");
 var Tree = require("../../htmltree");
 
 /**
@@ -152,4 +153,73 @@ exports.moveAttrib = function(root, att, converter) {
     root.extra.init[att] = v;
     delete root.attribs[att];
     return v;
+};
+
+
+/**
+ * Get size and type from a PNG, JPG, GIF or BMP file.
+ * @return an object with three attributes:
+ * * __type__: "PNG", "JPG" or "GIF".
+ * * __width__: width in pixels.
+ * * __height__: height in pixels.
+ * @example
+ * Util.getImageInfo("logo.png") == {type: "PNG", width: 320, height: 240}
+ */
+exports.getImageInfo = function(file) {
+    var info = {type: null, width: 0, height: 0};
+    if (FS.existsSync(file)) {
+        var BUFF_SIZE = 32;
+        var buffer = new Buffer(BUFF_SIZE);
+        var fd = FS.openSync(file, "r");
+        var header = FS.readSync(fd, buffer, 0, BUFF_SIZE, 0);
+        FS.close(fd);
+        if (buffer[1] == 80 && buffer[2] == 78 && buffer[3] == 71 
+            && buffer[4] == 13 && buffer[5] == 10 
+            && buffer[6] == 26 && buffer[7] == 10) 
+        {
+            // This is a PNG file: http://www.w3.org/TR/PNG/
+            info.type = 'PNG';
+            if (buffer[12] == 0x49 && buffer[13] == 0x48 && buffer[14] == 0x44 && buffer[15] == 0x52) {
+                info.width = (buffer[16] * 256 * 256 * 256) + (buffer[17] * 256 * 256) 
+                    + (buffer[18] * 256) + buffer[19];
+                info.height = (buffer[20] * 256 * 256 * 256) + (buffer[21] * 256 * 256) 
+                    + (buffer[22] * 256) + buffer[23];
+            }
+        }
+        if (buffer[0] == 0x47 && buffer[1] == 0x49 && buffer[2] == 0x46) {
+            // This is a GIF file: http://www.w3.org/Graphics/GIF/spec-gif89a.txt
+            info.type = "GIF";
+            info.width = (buffer[7] * 256) + buffer[6];
+            info.height = (buffer[9] * 256) + buffer[8];
+            return info;
+        }
+        if (buffer[0] == 0xFF && buffer[1] == 0xD8 && buffer[2] == 0xFF && buffer[3] == 0xE0) {
+            // This is a JPG file:
+            info.type = "JPG";
+            var size = buffer[4] * 256 + buffer[5];
+            var idx = 6 + size;
+            var jpegType;
+            while (1) {
+                buffer = new Buffer(BUFF_SIZE);
+                fd = FS.openSync(file, "r");
+                buffer = FS.readSync(fd, buffer, idx, BUFF_SIZE, idx);
+                FS.close(fd);
+                if (buffer.length == 0) {
+                    throw {fatal: "Unable to find JPEG dimension: " + file};
+                }
+                if (buffer[0] != 0xFF) {
+                    throw {fatal: "Invalid JPEG format: " + file};
+                }
+                jpegType = buffer[1];
+                if (jpegType == 0xC2 || jpegType == 0xC0) {
+                    info.height = buffer[5] * 256 + buffer[6];
+                    info.width = buffer[7] * 256 + buffer[8];
+                    return info;
+                }
+                size = buffer[2] * 256 + buffer[3];
+                idx += 4 + size;                
+            }
+        }
+    }
+    return info;
 };

@@ -452,3 +452,4 @@ exports.createProject = function(prjDir) {
 exports.ERR_WIDGET_TRANSFORMER = 1;
 exports.ERR_WIDGET_NOT_FOUND = 2;
 exports.ERR_WIDGET_TOO_DEEP = 3;
+exports.ERR_FILE_NOT_FOUND = 4;
