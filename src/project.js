@@ -9,6 +9,7 @@ var CompilerHTML = require("./compiler-html");
 var Tree = require("./htmltree");
 var Util = require("./util");
 var Source = require("./source");
+var Template = require("./template");
 
 /**
  * @class Project
@@ -29,6 +30,11 @@ var Project = function(prjDir) {
         );
     }
 };
+
+/**
+ * @return module `Template`.
+ */
+Project.prototype.Template = Template;
 
 /**
  * @return Tree module.
@@ -83,16 +89,20 @@ Project.prototype.wwwPath = function(path) {
 };
 
 /**
- * @return  Dictionary of  available widget  compilers. The  key is  the
- * widget  name,  the  value  is  the  absolute  path  of  the  compiler
- * directory.
+ * @return Dictionary  of available widget  compilers. The key  is the
+ * widget name, the value is an object:
+ * * __path__: absolute path of the compiler's' directory.
+ * * __name__: widget's name.
+ * * __compiler__: compiler's module owning functions such as `compile`, `precompile`, ...
+ * * __precompilation__: is this widget in mode _precompilation_? In this case, it must be called in the Top-Down walking.
  */
 Project.prototype.getAvailableWidgetCompilers = function() {
     if (!this._availableWidgetsCompilers) {
         var map = {};
-        var roots = [this._srcDir, this._libDir];
+        var dirs = [this._srcDir, this._libDir];
         console.log("Available widgets:");
-        roots.forEach(
+        dirs.forEach(
+            // Resolve paths for "wdg/" directories.
             function(itm, idx, arr) {
                 var path = Path.resolve(Path.join(itm, "wdg"));
                 if (!FS.existsSync(path)) {
@@ -101,24 +111,36 @@ Project.prototype.getAvailableWidgetCompilers = function() {
                 arr[idx] = path;
             }
         );
-        roots.forEach(
-            function(root, idx) {
-                if (typeof root !== 'string') return;
-                var files = FS.readdirSync(root);
+        dirs.forEach(
+            function(dir, idx) {
+                if (typeof dir !== 'string') return;
+                var files = FS.readdirSync(dir);
                 files.forEach(
                     function(filename) {
-                        var file = Path.join(root, filename);
+                        var file = Path.join(dir, filename);
                         var stat = FS.statSync(file);
                         if (stat.isFile()) return;
                         if (!map[filename]) {
-                            map[filename] = file;
+                            map[filename] = {path: file, name: filename};
+                            var modulePath = Path.join(file, "compile-" + filename + ".js");
+                            if (FS.existsSync(modulePath)) {
+                                var compiler = require(modulePath);
+                                if (typeof compiler.precompile === 'function') {
+                                    map[filename].precompile = true;
+                                    map[filename].compiler = compiler;
+                                }
+                                else if (typeof compiler.compile === 'function') {
+                                    map[filename].compiler = compiler;
+                                }
+                            }
                             var name = (filename.substr(0, 1).toUpperCase()
                                         + filename.substr(1).toLowerCase()).cyan;
                             if (idx == 0) {
                                 name = name.bold;
                             }
                             console.log(
-                                "   <w:" + name + ">"
+                                "   " + (map[filename].precompile ? "<w:".yellow.bold : "<w:")
+                                + name + (map[filename].precompile ? ">".yellow.bold : ">")
                                 + "\t" + file
                             );
                         }
@@ -135,11 +157,13 @@ Project.prototype.getAvailableWidgetCompilers = function() {
  * Throw a fatal exception.
  */
 Project.prototype.fatal = function(msg, id, src) {
-    throw {
-        fatal: msg,
-        id: id || -1,
-        src: src || "(unknown)"
-    };
+    if (!id) id = -1;
+    if (!src) src = "(unknown)";
+    var ex = new Error(msg);
+    ex.fatal = msg.bold;
+    ex.id = id;
+    ex.src = src;
+    throw ex;
 };
 
 /**
@@ -153,17 +177,9 @@ Project.prototype.compile = function() {
             }
             catch (ex) {
                 if (ex.fatal) {
-                    console.error(
-                        (
-                            "----------------------------------------\n"
-                                + filename + "\nError #" + ex.id + " in " + ex.src + "\n"
-                                + "----------------------------------------\n"
-                                + ex.fatal + "\n"
-                        ).err()
-                    );
-                } else {
-                    throw ex;
+                    ex.fatal = "Error in " + filename + "...\n" + ex.fatal;
                 }
+                throw ex;
             }
         },
         this
@@ -197,6 +213,11 @@ Project.prototype.linkForDebug = function(filename) {
     var linkCSS = srcHTML.tag("linkCSS") || [];
     var tree = Tree.clone(srcHTML.tag("tree"));
     var head = Tree.getElementByName(tree, "head");
+    if (!head) {
+        this.fatal(
+            "Invalid HTML file: missing <head></head>!"
+        );
+    }
     var jsDir = this.mkdir(this.wwwPath("DEBUG/js"));
     var cssDir = this.mkdir(this.wwwPath("DEBUG/css"));
     var manifestFiles = [];

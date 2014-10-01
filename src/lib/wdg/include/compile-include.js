@@ -4,13 +4,13 @@
 
 
 var FS = require("fs");
-var Tree = require("../../htmltree");
 
 /**
  * @summary
  * Include a piece of HTML at current position.
  */
 module.exports.compile = function(root) {
+    var Tree = this.Tree;
     var filename = Tree.att(root, "src").trim();
     var file = this.srcPath(filename);
     if (!FS.existsSync(file)) {

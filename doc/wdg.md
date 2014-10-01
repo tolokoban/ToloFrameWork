@@ -56,7 +56,15 @@ exports.compile = function(root) {
   root.name = 'button';
 }
 ```
-The parser will call this module to transform the element.
+or this one:
+```
+exports.precompile = function(root) {
+  root.name = 'button';
+}
+```
+
+The parser will call this module to transform the element. When parsing the tree _Top-Down_, it will call `precompile()`, and when parsing it _Bottom-Up_, it will call `compile()`.  
+Most of the time it is a better choice to implement `compile` because in this case, you are sure that all your children have already been transformed.
 
 The `root` argument has this structure:
 * __type__: By default `Tree.TAG`.

@@ -157,18 +157,39 @@ function expandWidgets(root, source) {
     var availableWidgets = prj.getAvailableWidgetCompilers();
     Tree.walk(
         root,
+        null,
+        // Top-down.
         function (node, parent) {
             if (node.type === Tree.TAG) {
                 if (node.name.substr(0, 2) == 'w:') {
                     var widgetName = node.name.substr(2).toLowerCase();
-                    var compilerDir = availableWidgets[widgetName];
-                    if (typeof compilerDir !== 'string') {
+                    var widget = availableWidgets[widgetName];
+                    if (!widget) {
                         prj.fatal(
                             "Unknown widget: \"" + widgetName + "\"!",
                             prj.ERR_WIDGET_NOT_FOUND
                         );
                     }
-                    compileWidget(node, source, widgetName, compilerDir);
+                    precompileWidget(node, source, widget);
+                }
+            }
+        }
+    );
+    Tree.walk(
+        root,
+        // Bottom-up.
+        function (node, parent) {
+            if (node.type === Tree.TAG) {
+                if (node.name.substr(0, 2) == 'w:') {
+                    var widgetName = node.name.substr(2).toLowerCase();
+                    var widget = availableWidgets[widgetName];
+                    if (!widget) {
+                        prj.fatal(
+                            "Unknown widget: \"" + widgetName + "\"!",
+                            prj.ERR_WIDGET_NOT_FOUND
+                        );
+                    }
+                    compileWidget(node, source, widget);
                 }
             }
         }
@@ -178,7 +199,18 @@ function expandWidgets(root, source) {
 /**
  * Compile the widget.
  */
-function compileWidget(root, source, widgetName, compilerDir) {
+function precompileWidget(root, source, widget) {
+    if (!widget.precompilation) return;
+    root.extra = {dependencies: [], resources: []};
+    root.name = "div";
+    widget.compiler.precompile.call(this, root);
+}
+
+/**
+ * Compile the widget.
+ */
+function compileWidget(root, source, widget) {
+    if (widget.precompilation) return;
     var prj = source.prj();
     var dependencies = source.tag("dependencies");
     var resources = source.tag("resources");
@@ -186,46 +218,40 @@ function compileWidget(root, source, widgetName, compilerDir) {
     var innerCSS = source.tag("innerCSS");
     var innerMapCSS = source.tag("innerMapCSS") || {};
     root.name = "div";
-    Tree.addClass(root, "custom wtag-" + widgetName);
+    Tree.addClass(root, "custom wtag-" + widget.name);
     root.extra = {dependencies: [], resources: []};
     var id = Tree.att(root, "id") || Tree.nextId();
     Tree.att(root, "id", id);
     root.extra.init = {id: id};
-    var controller = "wtag." + widgetName.substr(0, 1).toUpperCase()
-        + widgetName.substr(1).toLowerCase();
+    var controller = "wtag." + widget.name.substr(0, 1).toUpperCase()
+        + widget.name.substr(1).toLowerCase();
     if (prj.srcOrLibPath("cls/" + controller + ".js")) {
         root.extra.controller = controller;
         outerJS.push("cls/" + controller + ".js");
     }
     // Looking for extra CSS.
-    FS.readdirSync(compilerDir).forEach(
+    FS.readdirSync(widget.path).forEach(
         function(filename) {
             if (Path.extname(filename) !== '.css') return;
-            if (filename.substr(0, widgetName.length + 1) !== widgetName + "-") return;
-            var file = Path.resolve(Path.join(compilerDir, filename));
+            if (filename.substr(0, widget.name.length + 1) !== widget.name + "-") return;
+            var file = Path.resolve(Path.join(widget.path, filename));
             if (file in innerMapCSS) return;
             innerMapCSS[file] = 1;
             var content = FS.readFileSync(file).toString();
             console.log("inner CSS: " + filename.yellow);
             innerCSS += Util.lessCSS(file, content, false);
-            dependencies.push("wdg/" + widgetName + "/" + filename);
+            dependencies.push("wdg/" + widget.name + "/" + filename);
         }
     );
     source.tag("innerCSS", innerCSS);
     source.tag("innerMapCSS", innerMapCSS);
     // Compilation.
-    var compilerModule = Path.join(compilerDir, "compile-" + widgetName + ".js");
-    if (FS.existsSync(compilerModule)) {
+    var compiler = widget.compiler;
+    if (compiler) {
         // There is a transformer: we will call it.
-        var compiler = require(compilerModule);
-        if (typeof compiler.compile !== 'function') {
-            prj.fatal(
-                "Missing mandatory function \"compile\" in\n\"" + compilerModule + "\""
-            );
-        }
         try {
             compiler.compile.call(prj, root);
-            dependencies.push("wdg/" + widgetName + "/compile-" + widgetName + ".js");
+            dependencies.push("wdg/" + widget.name + "/compile-" + widget.name + ".js");
             root.extra.resources.forEach(
                 function(itm) {
                     resources.push(itm);
@@ -238,23 +264,27 @@ function compileWidget(root, source, widgetName, compilerDir) {
             );
         }
         catch (ex) {
-            prj.fatal(
-                ex,
-                prj.ERR_WIDGET_TRANSFORMER,
-                compilerModule
-            );
+            if (ex.fatal) {
+                throw ex;
+            } else {
+                prj.fatal(
+                    ex,
+                    prj.ERR_WIDGET_TRANSFORMER,
+                    widget.path
+                );
+            }
         }
     }
 
     var deepness = 64;
     while (needsWidgetCompilation(root)) {
-        compileWidget(root, source, widgetName, compilerDir);
+        compileWidget(root, source, widget);
         deepness--;
         if (deepness < 1) {
             prj.fatal(
-                "Too much recursions for widget \"" + widgetName + "\"!",
+                "Too much recursions for widget \"" + widget.name + "\"!",
                 prj.ERR_WIDGET_TOO_DEEP,
-                widgetName
+                widget.path
             );
         }
     }

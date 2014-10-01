@@ -47,7 +47,15 @@ for (i = 2 ; i < process.argv.length ; i++) {
 if (consoleMode) {
     console.log("project folder: ", prjPath);
     console.log();
-    var prj = Project.createProject(prjPath);
-    prj.compile();
-    prj.link();
+    try {
+        var prj = Project.createProject(prjPath);
+        prj.compile();
+        prj.link();
+    } catch (x) {
+        if (x.fatal) {
+            console.error("\n" + ("\nError #" + x.id + " from " + x.src + "\n").err());
+            console.error((x.fatal + "\n").err() + "\n");
+        }
+        throw x;
+    }
 }

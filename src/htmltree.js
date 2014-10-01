@@ -277,10 +277,7 @@ exports.walk = function(node, functionBotomUp, functionTopDown, parent) {
     if (node.children) {
         for (i = 0 ; i < node.children.length ; i++) {
             child = node.children[i];
-            replacement = exports.walk(child, functionBotomUp, functionTopDown, node);
-            if (typeof replacement === 'object') {
-                node.children[i] = replacement;
-            }
+            exports.walk(child, functionBotomUp, functionTopDown, node);
         }
     }
     if (typeof functionBotomUp === 'function') {
