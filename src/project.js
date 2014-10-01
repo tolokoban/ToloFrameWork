@@ -126,7 +126,7 @@ Project.prototype.getAvailableWidgetCompilers = function() {
                             if (FS.existsSync(modulePath)) {
                                 var compiler = require(modulePath);
                                 if (typeof compiler.precompile === 'function') {
-                                    map[filename].precompile = true;
+                                    map[filename].precompilation = true;
                                     map[filename].compiler = compiler;
                                 }
                                 else if (typeof compiler.compile === 'function') {
@@ -139,8 +139,8 @@ Project.prototype.getAvailableWidgetCompilers = function() {
                                 name = name.bold;
                             }
                             console.log(
-                                "   " + (map[filename].precompile ? "<w:".yellow.bold : "<w:")
-                                + name + (map[filename].precompile ? ">".yellow.bold : ">")
+                                "   " + (map[filename].precompilation ? "<w:".yellow.bold : "<w:")
+                                + name + (map[filename].precompilation ? ">".yellow.bold : ">")
                                 + "\t" + file
                             );
                         }
@@ -227,6 +227,7 @@ Project.prototype.linkForDebug = function(filename) {
             var shortName = Path.basename(srcCSS.getAbsoluteFilePath());
             var output = Path.join(cssDir, shortName);
             FS.writeFileSync(output, srcCSS.tag("debug"));
+            if (!head.children) head.children = [];
             head.children.push(
                 Tree.tag(
                     "link",
@@ -247,6 +248,7 @@ Project.prototype.linkForDebug = function(filename) {
             var shortName = Path.basename(srcJS.getAbsoluteFilePath());
             var output = Path.join(jsDir, shortName);
             FS.writeFileSync(output, srcJS.read());
+            if (!head.children) head.children = [];
             head.children.push(
                 Tree.tag(
                     "script",
@@ -324,7 +326,9 @@ Project.prototype.linkForDebug = function(filename) {
 Project.prototype.linkForRelease = function(filename) {
     var srcHTML = new Source(this, filename);
     var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS") || []);
+    if (!Array.isArray(linkJS)) linkJS = [];
     var linkCSS = srcHTML.tag("linkCSS") || [];
+    if (!Array.isArray(linkCSS)) linkCSS = [];
     var tree = Tree.clone(srcHTML.tag("tree"));
     var head = Tree.getElementByName(tree, "head");
     var jsDir = this.mkdir(this.wwwPath("RELEASE/js"));
@@ -350,6 +354,7 @@ Project.prototype.linkForRelease = function(filename) {
         this
     );
     // Writing HTML file.
+    if (!head.children) head.children = [];
     head.children.push(
         Tree.tag(
             "script",

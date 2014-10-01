@@ -26,7 +26,6 @@ module.exports.compile = function(prj, filename) {
         var root = Tree.parse(source.read());
         source.tag("resources", []);
         lookForStaticJavascriptAndStyle(root, source);
-        expandDoubleCurlies(root, source);
         expandWidgets(root, source);
         initControllers(root, source);
         zipInnerScriptsAndStyles(root, source);
@@ -175,6 +174,9 @@ function expandWidgets(root, source) {
             }
         }
     );
+
+    expandDoubleCurlies(root, source);
+
     Tree.walk(
         root,
         // Bottom-up.
@@ -203,7 +205,7 @@ function precompileWidget(root, source, widget) {
     if (!widget.precompilation) return;
     root.extra = {dependencies: [], resources: []};
     root.name = "div";
-    widget.compiler.precompile.call(this, root);
+    widget.compiler.precompile.call(source.prj(), root);
 }
 
 /**
@@ -211,6 +213,8 @@ function precompileWidget(root, source, widget) {
  */
 function compileWidget(root, source, widget) {
     if (widget.precompilation) return;
+    if (typeof root.name !== 'string') return;
+    if (root.name.substr(0, 2) != "w:") return;
     var prj = source.prj();
     var dependencies = source.tag("dependencies");
     var resources = source.tag("resources");
@@ -268,7 +272,7 @@ function compileWidget(root, source, widget) {
                 throw ex;
             } else {
                 prj.fatal(
-                    ex,
+                    "" + ex,
                     prj.ERR_WIDGET_TRANSFORMER,
                     widget.path
                 );
