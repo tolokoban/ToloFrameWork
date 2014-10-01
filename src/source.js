@@ -47,6 +47,9 @@ Source.prototype.create = function(file) {
  * @return Text content of the source.
  */
 Source.prototype.read = function() {
+    if (typeof this._absPath !== 'string') {
+        this._prj.fatal("File not found: \"" + this._name + "\"!");
+    }
     return FS.readFileSync(this._absPath).toString();
 };
 

@@ -9,9 +9,9 @@ var FS = require("fs");
  * @summary
  * Include a piece of HTML at current position.
  */
-module.exports.compile = function(root) {
+module.exports.precompile = function(root) {
     var Tree = this.Tree;
-    var filename = Tree.att(root, "src").trim();
+    var filename = Tree.text(root).trim();
     var file = this.srcPath(filename);
     if (!FS.existsSync(file)) {
         throw "Include file not found: \"" + file + "\"!";
@@ -20,9 +20,10 @@ module.exports.compile = function(root) {
     if (!stat.isFile) {
         throw "";
     }
+    root.extra.dependencies.push(filename);
     var content = FS.readFileSync(file).toString().trim();
     delete root.type;
     delete root.name;
-    delete root.params;
+    delete root.attribs;
     root.children = [Tree.parse(content)];
 };

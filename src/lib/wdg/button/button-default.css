@@ -20,10 +20,10 @@ a.wtag-button {
     -ms-transition: all .2s;
     justify-content: center;
     background-color: #06C;
-    background-image: linear-gradient(center top , #08B, #002);
-    background-image: -moz-linear-gradient(center top , #08B, #002);
-    background-image: -webkit-linear-gradient(center top , #08B, #002);
-    background-image: -ms-linear-gradient(center top , #08B, #002);
+    background-image: linear-gradient(center bottom , #08B, #002);
+    background-image: -moz-linear-gradient(center bottom , #08B, #002);
+    background-image: -webkit-linear-gradient(center bottom , #08B, #002);
+    background-image: -ms-linear-gradient(center bottom , #08B, #002);
 }
 
 a.wtag-button::after {
@@ -53,27 +53,28 @@ a.wtag-button:active {
 }
 
 a.wtag-button.light {
+    border: 1px solid #000;
     background-color: #edc;
-    background-image: linear-gradient(center top , #dcb, #a98);
-    background-image: -moz-linear-gradient(center top , #DBC, #A98);
-    background-image: -webkit-linear-gradient(center top , #DBC, #A98);
-    background-image: -ms-linear-gradient(center top , #DBC, #A98);
+    background-image: linear-gradient(center bottom, #dcb, #654);
+    background-image: -moz-linear-gradient(center bottom, #DBC, #654);
+    background-image: -webkit-linear-gradient(center bottom, #DBC, #654);
+    background-image: -ms-linear-gradient(center bottom, #DBC, #654);
 }
 
 a.wtag-button.red {
     background-color: #C60;
-    background-image: linear-gradient(center top , #B00, #200);
-    background-image: -moz-linear-gradient(center top , #B00, #200);
-    background-image: -webkit-linear-gradient(center top , #B00, #200);
-    background-image: -ms-linear-gradient(center top , #B00, #200);
+    background-image: linear-gradient(center bottom , #B00, #200);
+    background-image: -moz-linear-gradient(center bottom , #B00, #200);
+    background-image: -webkit-linear-gradient(center bottom , #B00, #200);
+    background-image: -ms-linear-gradient(center bottom , #B00, #200);
     box-shadow: .5em .5em 2px rgba(50,0,0,.4), 0 0 .2em rgba(255,255,255,.7) inset;
 }
 
 a.wtag-button.green {
     background-color: #0C6;
-    background-image: linear-gradient(center top , #0B0, #020);
-    background-image: -moz-linear-gradient(center top , #0B0, #020);
-    background-image: -webkit-linear-gradient(center top , #0B0, #020);
-    background-image: -ms-linear-gradient(center top , #0B0, #020);
+    background-image: linear-gradient(center bottom , #0B0, #020);
+    background-image: -moz-linear-gradient(center bottom , #0B0, #020);
+    background-image: -webkit-linear-gradient(center bottom , #0B0, #020);
+    background-image: -ms-linear-gradient(center bottom , #0B0, #020);
     box-shadow: .5em .5em 2px rgba(0,50,0,.4), 0 0 .2em rgba(255,255,255,.7) inset;
 }

@@ -183,6 +183,7 @@ function expandWidgets(root, source) {
         function (node, parent) {
             if (node.type === Tree.TAG) {
                 if (node.name.substr(0, 2) == 'w:') {
+                    Tree.normalizeChildren(node);
                     var widgetName = node.name.substr(2).toLowerCase();
                     var widget = availableWidgets[widgetName];
                     if (!widget) {
@@ -205,6 +206,9 @@ function precompileWidget(root, source, widget) {
     if (!widget.precompilation) return;
     root.extra = {dependencies: [], resources: []};
     root.name = "div";
+    if (!Tree.att(root, "id")) {
+        Tree.att(root, "id", Tree.nextId());
+    }
     widget.compiler.precompile.call(source.prj(), root);
 }
 
@@ -247,8 +251,6 @@ function compileWidget(root, source, widget) {
             dependencies.push("wdg/" + widget.name + "/" + filename);
         }
     );
-    source.tag("innerCSS", innerCSS);
-    source.tag("innerMapCSS", innerMapCSS);
     // Compilation.
     var compiler = widget.compiler;
     if (compiler) {
@@ -266,6 +268,9 @@ function compileWidget(root, source, widget) {
                     dependencies.push(itm);
                 }
             );
+            if (typeof root.extra.innerCSS === 'string') {
+                innerCSS += root.extra.innerCSS;
+            }
         }
         catch (ex) {
             if (ex.fatal) {
@@ -279,6 +284,8 @@ function compileWidget(root, source, widget) {
             }
         }
     }
+    source.tag("innerCSS", innerCSS);
+    source.tag("innerMapCSS", innerMapCSS);
 
     var deepness = 64;
     while (needsWidgetCompilation(root)) {
@@ -433,7 +440,13 @@ function compileDependantScripts(root, source) {
             );
         }
         catch (ex) {
-            prj.fatal(ex, -1, file);
+            if (ex.fatal) {
+                throw ex;
+            } else {
+                throw ex;
+
+                prj.fatal(ex, -1, file);
+            }
         }
     }
 

@@ -6,7 +6,7 @@ var Util = require("./util");
 var UglifyJS = require("uglify-js");
 var Path = require("path");
 
-module.exports.compile = function(source) {
+exports.compile = function(source) {
     if (source.isUptodate()) return false;
     console.log("Compiling " + source.name().yellow);
     var content = source.read();
@@ -14,7 +14,7 @@ module.exports.compile = function(source) {
     var walker = new UglifyJS.TreeWalker(visitor.walk);
     var tree;
     try {
-        tree = UglifyJS.parse(content);
+        tree = UglifyJS.parse(content, {filename: source.getAbsoluteFilePath()});
     }
     catch (ex) {
         source.prj().fatal(
@@ -57,7 +57,7 @@ var Visitor = function(content) {
         var msg= '', line = node.start.line, col = node.start.col;
         msg += "----------------------------------------"
             + "----------------------------------------\n";
-        msg += "  file: " + this.file() + "\n";
+        msg += "  file: " + node.start.file + "\n";
         msg += "  line: " + line + "\n";
         msg += "  col.: " + col + "\n";
         msg += "----------------------------------------"
@@ -72,8 +72,8 @@ var Visitor = function(content) {
         for (lineIndex = 0 ; lineIndex < col ; lineIndex++) {
             indent += ' ';
         }
-        msg += "\n" + indent + "^\n";
-        throw {fatal: err + "\n" + msg};
+        msg += "\n" + indent + "^".bold + "\n";
+        throw {fatal: err.bold + "\n" + msg};
     }
 
     /**
@@ -152,7 +152,6 @@ var Visitor = function(content) {
         "Toplevel/SimpleStatement/Assign/Sub/SymbolRef/": function(node) {
             if (node.name == 'window') {
                 return {
-                    //"Toplevel/SimpleStatement/Assign/Sub/String/": function(node) {
                     "../String/": function(node) {
                         var className = node.value;
                         if (className.substr(0, 5) != 'TFW::') {
@@ -224,8 +223,14 @@ var Visitor = function(content) {
                                 case 'lang':
                                 case 'attributes':
                                 case 'signals':
-                                case 'classInit':
                                     env = null;
+                                    break;
+                                case 'classInit':
+                                    return {
+                                        "./Function/": function(node) {
+                                            env = env$$1;
+                                        }
+                                    };
                                     break;
                                 default:
                                     fatal(node, "Unknown class property: \"" + node.key + "\"!");

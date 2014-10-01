@@ -191,7 +191,7 @@ exports.clone = function(root) {
  * Return the next incremental id.
  */
 exports.nextId = function() {
-    return id++;
+    return "W" + (id++);
 };
 
 /**
@@ -384,15 +384,43 @@ exports.createJavascript = function(code) {
  * Apply a function on every child of a node.
  */
 exports.forEachChild = function(node, func) {
-    var children = node.children,
-    i;
+    var children = node.children, i, child;
     if (!children) return false;
     for (i = 0 ; i < children.length ; i++) {
-        if (true === func(children[i], i)) {
+        child = children[i];
+        if (child.type == exports.VOID) {
+            exports.forEachChild(child, func);
+        }
+        else if (true === func(child, i)) {
             break;
         }
     }
     return i;
+};
+/**
+ * If a node's children is of type VOID, we must remove it and add its
+ * children to node's children.
+ */
+exports.normalizeChildren = function(node) {
+    var children = [];
+    if (node.children) {
+        node.children.forEach(
+            function(itm) {
+                if (itm.type == exports.VOID) {
+                    if (itm.children) {
+                        itm.children.forEach(
+                            function(child) {
+                                children.push(child);
+                            } 
+                        );
+                    }
+                } else {
+                    children.push(itm);
+                }
+            } 
+        );
+    }
+    node.children = children;
 };
 /**
  * Return a div element.

@@ -210,11 +210,11 @@ window["TFW::dom.Util"] = {
         };
 
         $show = function(e) {
-            $removeClass(e, "wtag-hidden", "wtag-hidden2", "wtag-hidden3");
+            $removeClass(e, "dom-util-hidden", "-A", "-B");
         };
 
         $hide = function(e) {
-            $addClass(e, "wtag-hidden", "wtag-hidden2", "wtag-hidden3");
+            $addClass(e, "dom-util-hidden", "-A", "-B");
         };
 
         $clear = function(e) {

@@ -1,9 +1,6 @@
 div.wtag-img {
-    position: relative;
+    position: relative;    
     display: inline-block;
-    width: 2rem;
-    height: 2rem;
-    display: block;
     background-size: contain;
     background-position: 50% 50%;
     background-repeat: no-repeat;
@@ -12,7 +9,8 @@ div.wtag-img {
     margin: 0;
 }
 
-div.wtag-img {
+div.wtag-img.expand {
+    display: block;
     position: absolute;
     left: 0;
     top: 0;

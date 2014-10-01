@@ -19,9 +19,9 @@ exports.compile = function(root) {
         this.fatal("Unable to find image: " + src, this.ERR_FILE_NOT_FOUND, "<w:Img src='...'>");
     }
     var info = Util.getImageInfo(file);
+    root.extra.innerCSS = "#" + root.attribs.id + ":not(.expand){width:"
+        + info.width + "px;height:" + info.height + "px}";
     delete root.attribs.src;
-
-    //style = "width:" + info.width + "px;height:" + info.height + "px;" + style;
 
     N.att(root, "style", "background-image:url('" + src + "');" + style);
     root.extra.resources.push(src);
