@@ -262,6 +262,26 @@ exports.toString = function(node) {
     return txt;
 };
 /**
+ * Put on console a representation of the tree.
+ */
+exports.debug = function(node, indent) {
+    if (typeof indent === 'undefined') indent = '';
+    console.log(
+        indent + "<" + node.type + "> "
+        + (node.text ? '"' + node.text.trim() + '" ' : '')
+        + (node.attribs ? JSON.stringify(node.attribs) : '')
+    );
+    if (node.children) {
+        node.children.forEach(
+            function(child) {
+                exports.debug(child, indent + '  ');
+            } 
+        );
+
+    }
+    console.log(indent + "</" + node.type + "> ");
+};
+/**
  * Walk through the HTML tree and, eventually, replace branches.  
  * The functions used as arguments take only one argument: the current node.
  * @param node {object} root node
@@ -272,7 +292,7 @@ exports.toString = function(node) {
 exports.walk = function(node, functionBotomUp, functionTopDown, parent) {
     var i, child, replacement;
     if (typeof functionTopDown === 'function') {
-        functionTopDown(node);
+        functionTopDown(node, parent);
     }
     if (node.children) {
         for (i = 0 ; i < node.children.length ; i++) {
@@ -281,7 +301,7 @@ exports.walk = function(node, functionBotomUp, functionTopDown, parent) {
         }
     }
     if (typeof functionBotomUp === 'function') {
-        return functionBotomUp(node);
+        return functionBotomUp(node, parent);
     }
 };
 /**
@@ -400,27 +420,62 @@ exports.forEachChild = function(node, func) {
 /**
  * If a node's children is of type VOID, we must remove it and add its
  * children to node's children.
+ * 
+ * Then following tree:
+ * ```
+ * {
+ *   children: [
+ *     {
+ *       children: [
+ *         {type: Tree.TAG, name: "hr"},
+ *         {type: Tree.TEXT, text: "Hello"},
+ *       ]
+ *     },
+ *     {type: Tree.TEXT, text: "World"},
+ *   ],
+ *   type: Tree.TAG,
+ *   name: "div"
+ * }
+ * ```
+ * will be tranformed in:
+ * ```
+ * {
+ *   children: [
+ *     {type: Tree.TAG, name: "hr"},
+ *     {type: Tree.TEXT, text: "Hello"},
+ *     {type: Tree.TEXT, text: "World"},
+ *   ],
+ *   type: Tree.TAG,
+ *   name: "div"
+ * }
+ * ```
  */
-exports.normalizeChildren = function(node) {
+exports.normalizeChildren = function(node, recurse) {
+    if (typeof recurse === 'undefined') recurse = false;
     var children = [];
     if (node.children) {
         node.children.forEach(
             function(itm) {
-                if (itm.type == exports.VOID) {
-                    if (itm.children) {
-                        itm.children.forEach(
-                            function(child) {
-                                children.push(child);
-                            } 
-                        );
-                    }
+                if (itm.children && itm.type != exports.TAG) {
+                    itm.children.forEach(
+                        function(child) {
+                            children.push(child);
+                        } 
+                    );
                 } else {
                     children.push(itm);
                 }
             } 
         );
+        node.children = children;
+        if (recurse) {
+            node.children.forEach(
+                function(child) {
+                    exports.normalizeChildren(child, true);
+                } 
+            );
+        }
     }
-    node.children = children;
 };
 /**
  * Return a div element.

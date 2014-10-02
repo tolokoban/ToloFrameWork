@@ -175,15 +175,15 @@ function expandWidgets(root, source) {
         }
     );
 
+    Tree.normalizeChildren(root, true);
     expandDoubleCurlies(root, source);
-
+Tree.debug(root);
     Tree.walk(
         root,
         // Bottom-up.
         function (node, parent) {
             if (node.type === Tree.TAG) {
                 if (node.name.substr(0, 2) == 'w:') {
-                    Tree.normalizeChildren(node);
                     var widgetName = node.name.substr(2).toLowerCase();
                     var widget = availableWidgets[widgetName];
                     if (!widget) {
