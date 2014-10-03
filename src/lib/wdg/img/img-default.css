@@ -17,3 +17,27 @@ div.wtag-img.expand {
     width: 100%;
     height: 100%;
 }
+
+div.wtag-img.cover {
+    background-size: cover;
+}
+
+div.wtag-img.top {
+    background-position: 50% top;
+}
+
+div.wtag-img.bottom {
+    background-position: 50% bottom;
+}
+
+div.wtag-img.left {
+    background-position: left 50%;
+}
+
+div.wtag-img.right {
+    background-position: right 50%;
+}
+
+div.wtag-img > * {
+    position: absolute;
+}

@@ -266,20 +266,30 @@ exports.toString = function(node) {
  */
 exports.debug = function(node, indent) {
     if (typeof indent === 'undefined') indent = '';
-    console.log(
-        indent + "<" + node.type + "> "
-        + (node.text ? '"' + node.text.trim() + '" ' : '')
-        + (node.attribs ? JSON.stringify(node.attribs) : '')
-    );
-    if (node.children) {
-        node.children.forEach(
-            function(child) {
-                exports.debug(child, indent + '  ');
-            } 
-        );
-
+    if (!node) {
+        return console.log(indent + "UNDEFINED!");
     }
-    console.log(indent + "</" + node.type + "> ");
+    if (node.type == exports.TEXT) {
+        console.log(indent + "\"" + node.text.trim() + "\"");
+    } else {
+        if (node.children && node.children.length > 0) {
+            console.log(
+                indent + "<" + (node.name ? node.name : node.type) + "> "
+                    + (node.attribs ? JSON.stringify(node.attribs) : '')
+            );
+            node.children.forEach(
+                function(child) {
+                    exports.debug(child, indent + '  ');
+                } 
+            );            
+            console.log(indent + "</" + (node.name ? node.name : node.type) + "> ");
+        } else {
+            console.log(
+                indent + "<" + (node.name ? node.name : node.type) + " "
+                    + (node.attribs ? JSON.stringify(node.attribs) : '') + " />"
+            );
+        }
+    }
 };
 /**
  * Walk through the HTML tree and, eventually, replace branches.  
@@ -428,6 +438,9 @@ exports.forEachChild = function(node, func) {
  *     {
  *       children: [
  *         {type: Tree.TAG, name: "hr"},
+ *         {
+ *           children: [{type: Tree.TAG, name: "img"}]
+ *         }
  *         {type: Tree.TEXT, text: "Hello"},
  *       ]
  *     },
@@ -442,6 +455,7 @@ exports.forEachChild = function(node, func) {
  * {
  *   children: [
  *     {type: Tree.TAG, name: "hr"},
+ *     {type: Tree.TAG, name: "img"},
  *     {type: Tree.TEXT, text: "Hello"},
  *     {type: Tree.TEXT, text: "World"},
  *   ],
@@ -452,21 +466,9 @@ exports.forEachChild = function(node, func) {
  */
 exports.normalizeChildren = function(node, recurse) {
     if (typeof recurse === 'undefined') recurse = false;
-    var children = [];
     if (node.children) {
-        node.children.forEach(
-            function(itm) {
-                if (itm.children && itm.type != exports.TAG) {
-                    itm.children.forEach(
-                        function(child) {
-                            children.push(child);
-                        } 
-                    );
-                } else {
-                    children.push(itm);
-                }
-            } 
-        );
+        var children = [];
+        extractNonVoidChildren(node, children);
         node.children = children;
         if (recurse) {
             node.children.forEach(
@@ -477,6 +479,21 @@ exports.normalizeChildren = function(node, recurse) {
         }
     }
 };
+
+function extractNonVoidChildren(node, target) {
+    if (node.children && node.children.length > 0) {
+        node.children.forEach(
+            function(child) {
+                if (!child.type || child.type == exports.VOID) {
+                    extractNonVoidChildren(child, target);
+                } else {
+                    target.push(child);
+                }
+            } 
+        );
+    }
+}
+
 /**
  * Return a div element.
  */

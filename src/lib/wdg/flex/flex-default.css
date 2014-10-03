@@ -3,6 +3,15 @@
     align-items: stretch;
 }
 
+.wtag-flex.center {
+    align-items: center;
+}
+
+.wtag-flex.wrap {
+    flex-wrap: wrap;
+}
+
+
 .wtag-flex.expand {
     position: absolute;
     left: 0;
@@ -16,9 +25,16 @@
     flex: 1 1 main-size;
 }
 
-.wtag-flex.row {
+.wtag-flex > *.fixed {
+    flex: 0;
+}
+
+.wtag-flex.row,
+.wtag-flex.horizontal {
     flex-direction: row;
 }
+
+.wtag-flex.vertical,
 .wtag-flex.column {
     flex-direction: column;
 }

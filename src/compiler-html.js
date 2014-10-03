@@ -177,7 +177,7 @@ function expandWidgets(root, source) {
 
     Tree.normalizeChildren(root, true);
     expandDoubleCurlies(root, source);
-Tree.debug(root);
+
     Tree.walk(
         root,
         // Bottom-up.
@@ -288,8 +288,14 @@ function compileWidget(root, source, widget) {
     source.tag("innerMapCSS", innerMapCSS);
 
     var deepness = 64;
-    while (needsWidgetCompilation(root)) {
-        compileWidget(root, source, widget);
+    var nextNodeToCompile;
+    var currentWidgetName;
+    var currentWidget;
+    var availableWidgets = prj.getAvailableWidgetCompilers();
+    while (null != (nextNodeToCompile = needsWidgetCompilation(root))) {
+        currentWidgetName = nextNodeToCompile.name.substr(2).toLowerCase();
+        currentWidget = availableWidgets[currentWidgetName];
+        compileWidget(nextNodeToCompile, source, currentWidget);
         deepness--;
         if (deepness < 1) {
             prj.fatal(
@@ -302,19 +308,20 @@ function compileWidget(root, source, widget) {
 }
 
 /**
- * @return `true` if there is an element with the namespace `w:`.
+ * @return the first node with the namespace `w:`, or null.
  */
 function needsWidgetCompilation(root) {
     if (root.type == Tree.TAG && root.name && root.name.substr(0, 2) == 'w:') {
-        return true;
+        return root;
     }
-    if (!root.children) return false;
-    var i, node;
+    if (!root.children) return null;
+    var i, node, result;
     for (i = 0 ; i < root.children.length ; i++) {
         node = root.children[i];
-        if (needsWidgetCompilation(node)) return true;
+        result = needsWidgetCompilation(node);
+        if (result) return result;
     }
-    return false;
+    return null;
 }
 
 /**

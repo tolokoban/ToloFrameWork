@@ -168,7 +168,7 @@ exports.moveAttrib = function(root, att, converter) {
 exports.getImageInfo = function(file) {
     var info = {type: null, width: 0, height: 0};
     if (FS.existsSync(file)) {
-        var BUFF_SIZE = 32;
+        var BUFF_SIZE = 24;
         var buffer = new Buffer(BUFF_SIZE);
         var fd = FS.openSync(file, "r");
         var header = FS.readSync(fd, buffer, 0, BUFF_SIZE, 0);
@@ -197,14 +197,14 @@ exports.getImageInfo = function(file) {
             // This is a JPG file:
             info.type = "JPG";
             var size = buffer[4] * 256 + buffer[5];
-            var idx = 6 + size;
+            var idx = 4 + size;
             var jpegType;
             while (1) {
-                buffer = new Buffer(BUFF_SIZE);
+                //buffer = new Buffer(BUFF_SIZE);
                 fd = FS.openSync(file, "r");
-                buffer = FS.readSync(fd, buffer, idx, BUFF_SIZE, idx);
+                header = FS.readSync(fd, buffer, 0, BUFF_SIZE, idx);
                 FS.close(fd);
-                if (buffer.length == 0) {
+                if (header == 0) {
                     throw {fatal: "Unable to find JPEG dimension: " + file};
                 }
                 if (buffer[0] != 0xFF) {
@@ -217,9 +217,31 @@ exports.getImageInfo = function(file) {
                     return info;
                 }
                 size = buffer[2] * 256 + buffer[3];
-                idx += 4 + size;                
+                idx += 2 + size;                
             }
         }
     }
     return info;
 };
+
+
+/**
+ * @return array with numerical part and textual unit.
+ * @example
+ * unit(".5rem") == [.5, "rem"]
+ */
+exports.unit = function(value) {
+    value = ("" + value).trim();
+    var idx, c, u;
+    for (idx = 0 ; idx < value.length ; idx++) {
+        c = value.charAt(idx);
+        if ((c >= '0' && c <= '9') || c == '.' || c == '-') {
+            continue;
+        }
+        u = value.substr(idx).trim();
+        if (u.length == 0) u = "px";
+        return [parseFloat(value.substr(0, idx)), u];
+    }
+    return [parseFloat(value), "px"];
+};
+
