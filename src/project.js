@@ -316,8 +316,10 @@ Project.prototype.linkForDebug = function(filename) {
             + "# " + Date.now() + "\n\n"
             + "CACHE:\n"
             + manifestFiles.join("\n")
-            + "\nNETWORK:\n*\n"
+            + "\n\nNETWORK:\n*\n"
     );
+    // Looking for webapp manifest for Firefox OS.
+    copyManifestWebapp.call(this, "DEBUG");
 };
 
 /**
@@ -331,6 +333,11 @@ Project.prototype.linkForRelease = function(filename) {
     if (!Array.isArray(linkCSS)) linkCSS = [];
     var tree = Tree.clone(srcHTML.tag("tree"));
     var head = Tree.getElementByName(tree, "head");
+    if (!head) {
+        this.fatal(
+            "Invalid HTML file: missing <head></head>!"
+        );
+    }
     var jsDir = this.mkdir(this.wwwPath("RELEASE/js"));
     var cssDir = this.mkdir(this.wwwPath("RELEASE/css"));
     var manifestFiles = [];
@@ -352,6 +359,21 @@ Project.prototype.linkForRelease = function(filename) {
             FS.writeSync(fdCSS, srcCSS.tag("release"));
         } ,
         this
+    );
+    // Resources.
+    srcHTML.tag("resources").forEach(
+        function(itm, idx, arr) {
+            var src = itm;
+            var dst = src;
+            if (Array.isArray(src)) {
+                dst = src[1];
+                src = src[0];
+            }
+            manifestFiles.push(dst);
+            src = this.srcPath(src);
+            dst = Path.join(this.wwwPath("DEBUG"), dst);
+            this.copyFile(src, dst);
+        }, this
     );
     // Writing HTML file.
     if (!head.children) head.children = [];
@@ -390,7 +412,35 @@ Project.prototype.linkForRelease = function(filename) {
     );
     FS.close(fdJS);
     FS.close(fdCSS);
+    // Looking for webapp manifest for Firefox OS.
+    copyManifestWebapp.call(this, "RELEASE");
 };
+
+/**
+ * @param mode : "DEBUG" or "RELEASE".
+ */
+function copyManifestWebapp(mode) {
+    // Looking for webapp manifest for Firefox OS.
+    var webappFile = this.srcOrLibPath("manifest.webapp");
+    if (webappFile) {
+        this.copyFile(webappFile, Path.join(this.wwwPath(mode), "manifest.webapp"));
+        var content = FS.readFileSync(webappFile);
+        var json = null;
+        try {
+            json = JSON.parse(content);            
+        } catch (x) {
+            this.fatal("'manifest.webapp' must be a valid JSON file!\n" + x);
+        }
+        var icons = json.icons || {};
+        var key, val;
+        for (key in icons) {
+            val = this.srcOrLibPath(icons[key]);
+            if (val) {
+                this.copyFile(val, Path.join(this.wwwPath(mode), icons[key]));
+            }
+        }
+    }
+}
 
 /**
  * @return array of HTML files found in _srcDir_.
