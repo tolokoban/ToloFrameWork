@@ -13,7 +13,7 @@ function makeDefaultReplacer(map) {
     return function(name) {
         var result = map[name.toLowerCase()];
         if (result === undefined || result === null) {
-            return "";
+            return "{{" + name + "}}";
         }
         return result;
     };

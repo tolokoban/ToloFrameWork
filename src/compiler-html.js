@@ -205,19 +205,6 @@ function expandWidgets(root, source) {
 function precompileWidget(root, source, widget) {
     genericCompileWidget(root, source, widget, "precompile");
     return;
-
-    if (!widget.precompilation) return;
-    root.extra = {dependencies: [], resources: []};
-    root.name = "div";
-    if (!Tree.att(root, "id")) {
-        Tree.att(root, "id", Tree.nextId());
-    }
-    var dependencies = source.tag("dependencies");
-    var resources = source.tag("resources");
-    var outerJS = source.tag("outerJS");
-    var innerCSS = source.tag("innerCSS");
-    widget.compiler.precompile.call(source.prj(), root);
-
 }
 
 /**
@@ -309,7 +296,7 @@ function genericCompileWidget(root, source, widget, functionName) {
         var currentWidget;
         var availableWidgets = prj.getAvailableWidgetCompilers();
         while (null != (nextNodeToCompile = needsWidgetCompilation(root))) {
-            expandWidgets(root, source);
+            expandWidgets(nextNodeToCompile, source);
             deepness--;
             if (deepness < 1) {
                 prj.fatal(
