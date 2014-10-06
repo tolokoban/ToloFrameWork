@@ -20,6 +20,7 @@ var Project = function(prjDir) {
     this._srcDir = this.mkdir(prjDir, "src");
     this._tmpDir = this.mkdir(prjDir, "tmp");
     this._wwwDir = this.mkdir(prjDir, "www");
+    this.Util = require("./lib/wdg/util.js");
     var configFile = Path.join(this._prjDir, "project.tfw.json");
     if (!FS.existsSync(configFile)) {
         FS.writeFileSync(
@@ -216,6 +217,8 @@ Project.prototype.linkForDebug = function(filename) {
     if (!head) {
         this.fatal(
             "Invalid HTML file: missing <head></head>!"
+            + "\n\n"
+            + Tree.toString(tree)
         );
     }
     var jsDir = this.mkdir(this.wwwPath("DEBUG/js"));

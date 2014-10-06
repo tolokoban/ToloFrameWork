@@ -25,6 +25,7 @@ module.exports.compile = function(prj, filename) {
         console.log("Compiling " + filename.yellow);
         var root = Tree.parse(source.read());
         source.tag("resources", []);
+        source.tag("dependencies", []);
         lookForStaticJavascriptAndStyle(root, source);
         expandWidgets(root, source);
         initControllers(root, source);
@@ -152,7 +153,6 @@ function lookForStaticJavascriptAndStyle(root, source) {
  */
 function expandWidgets(root, source) {
     var prj = source.prj();
-    source.tag("dependencies", []);
     var availableWidgets = prj.getAvailableWidgetCompilers();
     Tree.walk(
         root,
@@ -203,20 +203,31 @@ function expandWidgets(root, source) {
  * Compile the widget.
  */
 function precompileWidget(root, source, widget) {
+    genericCompileWidget(root, source, widget, "precompile");
+    return;
+
     if (!widget.precompilation) return;
     root.extra = {dependencies: [], resources: []};
     root.name = "div";
     if (!Tree.att(root, "id")) {
         Tree.att(root, "id", Tree.nextId());
     }
+    var dependencies = source.tag("dependencies");
+    var resources = source.tag("resources");
+    var outerJS = source.tag("outerJS");
+    var innerCSS = source.tag("innerCSS");
     widget.compiler.precompile.call(source.prj(), root);
+
 }
 
 /**
  * Compile the widget.
  */
 function compileWidget(root, source, widget) {
-    if (widget.precompilation) return;
+    genericCompileWidget(root, source, widget, "compile");
+}
+
+function genericCompileWidget(root, source, widget, functionName) {
     if (typeof root.name !== 'string') return;
     if (root.name.substr(0, 2) != "w:") return;
     var prj = source.prj();
@@ -225,7 +236,10 @@ function compileWidget(root, source, widget) {
     var outerJS = source.tag("outerJS");
     var innerCSS = source.tag("innerCSS");
     var innerMapCSS = source.tag("innerMapCSS") || {};
-    root.name = "div";
+    if (functionName === 'compile') {
+        // We change the tag name only on Bottom-Up traversal.
+        root.name = "div";
+    }
     Tree.addClass(root, "custom wtag-" + widget.name);
     root.extra = {dependencies: [], resources: []};
     var id = Tree.att(root, "id") || Tree.nextId();
@@ -253,10 +267,10 @@ function compileWidget(root, source, widget) {
     );
     // Compilation.
     var compiler = widget.compiler;
-    if (compiler) {
+    if (compiler && typeof compiler[functionName] === 'function') {
         // There is a transformer: we will call it.
         try {
-            compiler.compile.call(prj, root);
+            compiler[functionName].call(prj, root);
             dependencies.push("wdg/" + widget.name + "/compile-" + widget.name + ".js");
             root.extra.resources.forEach(
                 function(itm) {
@@ -287,22 +301,23 @@ function compileWidget(root, source, widget) {
     source.tag("innerCSS", innerCSS);
     source.tag("innerMapCSS", innerMapCSS);
 
-    var deepness = 64;
-    var nextNodeToCompile;
-    var currentWidgetName;
-    var currentWidget;
-    var availableWidgets = prj.getAvailableWidgetCompilers();
-    while (null != (nextNodeToCompile = needsWidgetCompilation(root))) {
-        currentWidgetName = nextNodeToCompile.name.substr(2).toLowerCase();
-        currentWidget = availableWidgets[currentWidgetName];
-        compileWidget(nextNodeToCompile, source, currentWidget);
-        deepness--;
-        if (deepness < 1) {
-            prj.fatal(
-                "Too much recursions for widget \"" + widget.name + "\"!",
-                prj.ERR_WIDGET_TOO_DEEP,
-                widget.path
-            );
+    if (functionName == 'compile') {
+        // For Bottom-Up traversal, we have to check if another pass is needed or not.
+        var deepness = 64;
+        var nextNodeToCompile;
+        var currentWidgetName;
+        var currentWidget;
+        var availableWidgets = prj.getAvailableWidgetCompilers();
+        while (null != (nextNodeToCompile = needsWidgetCompilation(root))) {
+            expandWidgets(root, source);
+            deepness--;
+            if (deepness < 1) {
+                prj.fatal(
+                    "Too much recursions for widget \"" + widget.name + "\"!",
+                    prj.ERR_WIDGET_TOO_DEEP,
+                    widget.path
+                );
+            }
         }
     }
 }
@@ -400,7 +415,7 @@ function expandDoubleCurlies(root, source) {
     Tree.walk(
         root,
         null,
-         // Top-Down walk for databindings.
+        // Top-Down walk for databindings.
         function(node)  {
             if (node.type !== Tree.TEXT) return;
             if (typeof node.text !== 'string') return;
