@@ -24,3 +24,36 @@ module.exports.compile = function(source) {
     source.save();
 };
 
+/**
+ * Macro processing for CSS.
+ * 
+ * This code:
+ * ```
+ * <mac:keyframes name="my_anim">
+ * @keyframes {{name}} {{{@}}}
+ * @-webkit-keyframes {{name}} {{{@}}}
+ * </mac:frames>
+ * 
+ * <keyframes name="horizontal-slide">
+ *   from { margin-left: 100%; }
+ *   to { margin-left: 0%; }
+ * </mac:frames>
+ * ```
+ * 
+ * will give this result:
+ * ```
+ * @keyframes horizontal-slide {
+ *   from { margin-left: 100%; }
+ *   to { margin-left: 0%; }
+ * }
+ * @-webkit-keyframes horizontal-slide {
+ *   from { margin-left: 100%; }
+ *   to { margin-left: 0%; }
+ * }
+ * ```
+ */
+module.exports.macroCSS = function(content, macros) {
+    if (typeof macros === 'undefined') macros = {};
+
+
+}

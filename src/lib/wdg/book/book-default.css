@@ -1,1 +1,22 @@
-/* SASS or LESS? */
+@keyframes wtag-book-slide-to-right {
+    from {transform: translateX(0)}
+    to {transform: translateX(100%)}
+}
+
+@keyframes wtag-book-slide-to-left {
+    from {transform: translateX(0)}
+    to {transform: translateX(-100%)}
+}
+
+@keyframes wtag-book-slide-from-right {
+    from {transform: translateX(100%)}
+    to {transform: translateX(0)}
+}
+
+@keyframes wtag-book-slide-from-left {
+    from {transform: translateX(-100%)}
+    to {transform: translateX(0)}
+}
+
+
+
