@@ -21,7 +21,7 @@ var Runtime = function() {};
 /**
  * 
  */
-Runtime.prototype.assert = function(expected, result) {
+Runtime.prototype.assert = function(input, expected, result) {
     var expectedRaw = JSON.stringify(expected);
     var resultRaw = JSON.stringify(result);
     if (expectedRaw !== resultRaw) {
@@ -29,7 +29,8 @@ Runtime.prototype.assert = function(expected, result) {
             type: "assert",
             expected: expected,
             result: result,
-            msg: "    Expected: " + expectedRaw.yellow + "\n"
+            msg: "    Input:    " + input.yellow.bold + "\n"
+            + "    Expected: " + expectedRaw.yellow + "\n"
             + "    Result:   " + resultRaw.yellow
         };
 }

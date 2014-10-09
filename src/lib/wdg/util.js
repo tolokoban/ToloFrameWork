@@ -15,46 +15,46 @@ function splitter(text) {
     for (i = 0 ; i < text.length ; i++) {
         c = text.charAt(i);
         switch (mode) {
-        case 1:
-            switch (c) {
-            case "\\":
-                mode = -mode; break;
-            case "'":
-                mode = 2; break;
-            case '"':
-                mode = 3; break;
-            case ",":
-                arr.push(buff.trim());
-                buff = '';
-                mode = 1;
+            case 1:
+                switch (c) {
+                    case "\\":
+                        mode = -mode; break;
+                    case "'":
+                        mode = 2; break;
+                    case '"':
+                        mode = 3; break;
+                    case ",":
+                        arr.push(buff.trim());
+                        buff = '';
+                        mode = 1;
+                        break;
+                    default:
+                        buff += c;
+                }
+                break;
+            case 2:
+                switch (c) {
+                    case "'":
+                        mode = 1; break;
+                    case "\\":
+                        mode = -mode; break;
+                    default:
+                        buff += c;
+                }
+                break;
+            case 3:
+                switch (c) {
+                    case '"':
+                        mode = 1; break;
+                    case "\\":
+                        mode = -mode; break;
+                    default:
+                        buff += c;
+                }
                 break;
             default:
                 buff += c;
-            }
-            break;
-        case 2:
-            switch (c) {
-            case "'":
-                mode = 1; break;
-            case "\\":
-                mode = -mode; break;
-            default:
-                buff += c;
-            }
-            break;
-        case 3:
-            switch (c) {
-            case '"':
-                mode = 1; break;
-            case "\\":
-                mode = -mode; break;
-            default:
-                buff += c;
-            }
-            break;
-        default:
-            buff += c;
-            mode = -mode;
+                mode = -mode;
         }
     }
     buff = buff.trim();
@@ -262,9 +262,15 @@ exports.unit = function(value) {
  */
 exports.parseBindingExpression = function(code) {
     var tokens = exports.tokenize(code);
+    var tree;
     try {
-        new SemanticChecker(tokens);
+        var checker = new SemanticChecker(tokens);
+        tree = checker.tree();
     } catch (x) {
+        if (!Array.isArray(x)) {
+            // For real coding exceptions in `util.js`.
+            throw x;
+        }
         var err = x[1].bold + "\n\n" + code + "\n";
         var i, tkn = tokens[x[0]];
         if (tkn) {
@@ -279,7 +285,6 @@ exports.parseBindingExpression = function(code) {
         };
     }
 
-    var tree = buildTree(tokens);
     optimizeTree(tree);
     var result = {code: "", vars: []};
     compileTree(tree, result);
@@ -288,103 +293,135 @@ exports.parseBindingExpression = function(code) {
 
 function compileTree(tree, result) {
     switch (tree.T) {
-    case 'OP':
-        result.code += operationFunction[tree.V] + "(";
-        compileTree(tree.L, result);
-        result.code += ",";
-        compileTree(tree.R, result);
-        result.code += ")";
-        break;
-    case "ID":
-        if (result.vars.indexOf(tree.V) < 0) {
-            result.vars.push(tree.V);
-        }
-        result.code += "data('" + tree.V + "')";
-        break;
-    default:
-        result.code += tree.V;
+        case 'OP':
+            result.code += operationFunction[tree.V] + "(";
+            compileTree(tree.L, result);
+            result.code += ",";
+            compileTree(tree.R, result);
+            result.code += ")";
+            break;
+        case '-':
+            result.code += "NEG(";
+            compileTree(tree.R, result);
+            result.code += ")";
+            break;
+        case '!':
+            result.code += "NOT(";
+            compileTree(tree.R, result);
+            result.code += ")";
+            break;
+        case "ID":
+            if (result.vars.indexOf(tree.V) < 0) {
+                result.vars.push(tree.V);
+            }
+            result.code += "data('" + tree.V + "')";
+            break;
+        case "()":
+            compileTree(tree.V, result);
+            break;
+        default:
+            result.code += tree.V;
     }
 }
 
 
 
 function optimizeTree(tree) {
-    
+
 }
 
-function buildTree(tokens) {
-    var tree = null, node, stack = [], cur;
-    tokens.forEach(
-        function(tkn) {
-            if (!tkn) return;
-            node = tokenToNode(tkn);
-            if (!tree) {
-                tree = node;
-            } else {
-                switch (tree.T) {
-                case "OP":
-                    if (node.T != 'OP') {
-                        var cur = tree;
-                        while (cur.R) {
-                            cur = cur.R;
-                        }
-                        cur.R = node;
-                    } 
-                    else if (node.P > tree.P) {
-                        //    (+)                  (+)                
-                        //   /   \   +  (*) ->    /   \                
-                        //  3     7              3    (*)          
-                        //                           /         
-                        //                          7          
-                        cur = tree;
-                        while (cur.R && cur.R.T == 'OP' && node.P > cur.R.P) {
-                            cur = cur.R;
-                        }
-                        node.L = cur.R;
-                        cur.R = node;
-                    }
-                    else {
-                        node.L = tree;
-                        tree = node;
-                    }
-                    break;
-                default:
-                    node.L = tree;
-                    tree = node;
-                }
-            }
-        }
-    );
-    return tree;
-}
-
-function tokenToNode(tkn) {
-    var node = {T: tkn[0], V: tkn[1]}, ope;
-    switch (tkn[0]) {
-    case "NUMBER":
-        node.V = parseFloat(tkn[1]);
-        break;
-    case "OP":
-        ope = tkn[1].substr(0, 2);
-        node.V = ope;
-        node.P = tokenPriorities[ope];
-        if (!node.P) node.P = -1;
-        break;
-    case "(":
-        node.V = null;
-        break;
-    }
-    return node;
-}
-
+/**
+ * Exp := ExpBody, ExpTail*
+ * ExpBody := Block | NUMBER | STRING | ID | Neg | Not
+ * Block := "(", Exp, ")"
+ * Neg := SUB, Exp
+ * Not := NOT, Exp
+ * ExpTail := OPE, Exp
+ */
 function SemanticChecker(tokens) {
     this._tokens = tokens;
     this._index = -1;
-    this.checkExp();
+    this._tree = null;
+    this._stack = [];
+    if (!this.checkExp()) {
+        throw [0, "This is not a understandable expression!"];
+    }
     if (this.tkn() !== null) {
         throw [this._index, "Unexpected end of expression! Maybe you forgot a \"(\" somewhere."];
     }
 }
+
+/**
+ * @return A new tree's node from a given token.
+ */
+SemanticChecker.prototype.tokenToNode = function(tkn) {
+    var node = {T: tkn[0], V: tkn[1]}, ope;
+    switch (tkn[0]) {
+        case "NUMBER":
+            node.V = parseFloat(tkn[1]);
+            break;
+        case "OP":
+            ope = tkn[1].substr(0, 2);
+            node.V = ope;
+            node.P = tokenPriorities[ope];
+            if (!node.P) node.P = -1;
+            break;
+        case "(":
+            node.V = null;
+            break;
+    }
+    return node;    
+};
+
+/**
+ * Convert given token into a node and add this node to the current tree.
+ */
+SemanticChecker.prototype.addTokenToTree = function(tkn) {
+    if (!tkn) return;
+    var node = this.tokenToNode(tkn);
+    this.addNodeToTree(node);
+};
+
+SemanticChecker.prototype.addNodeToTree = function(node) {
+    if (!this._tree) {
+        this._tree = node;
+        return;
+    }
+
+    var tree = this._tree;
+
+    if (node.T != 'OP') {
+        // Add a leaf or a unitary operation.
+        while (tree.R) {
+            tree = tree.R;
+        }
+        tree.R = node;
+    } else {
+        // Add an opération with a priority.
+        //   (+)                (+)
+        //   / \   +  (*) ->    / \
+        //  3   7              3  (*)
+        //                        /
+        //                       7
+        if (node.P > tree.P) {
+            while (tree.R && tree.R.T == 'OP' && node.P > tree.R.P) {
+                tree = tree.R;
+            }
+            node.L = tree.R;
+            tree.R = node;        
+        } else {
+            node.L = tree;
+            this._tree = node;
+        }
+    }
+};
+
+/**
+ * @return Syntaxical tree.
+ */
+SemanticChecker.prototype.tree = function() {
+    return this._tree;
+};
 
 /**
  * @return Current token or `null`.
@@ -419,29 +456,59 @@ SemanticChecker.prototype.back = function() {
 };
 
 /**
- * `Exp := (NUMBER | STRING | ID), ExpTail*`
+ * Exp := ExpBody, ExpTail*
  */
 SemanticChecker.prototype.checkExp = function() {
+    if (!this.checkExpBody()) return false;
+    while (this.checkExpTail()) {}
+    return true;
+}
+
+/**
+ * ExpBody := Block | NUMBER | STRING | ID | Neg | Not
+ */
+SemanticChecker.prototype.checkExpBody = function() {
     var tkn = this.next();
     switch (tkn[0]) {
-    case "NUMBER":
-    case "STRING":
-    case "ID":
-        while (this.checkExpTail()) {}
-        return true;
-    case "(":
-        this.checkExp();
-        tkn = this.next();
-        if (!tkn || tkn[0] != ')') {
-            throw [this._index, "Expected \")\" is missing!"];
-        }
-        return true;
+        case "NUMBER":
+        case "STRING":
+        case "ID":
+            this.addTokenToTree(tkn);
+            return true;
+        case "OP":
+            if (tkn[1] != '-' && tkn[1] != '!') {
+                throw [this._index, "Missing left operand!"];
+            }
+            tkn[0] = tkn[1];
+            this.addTokenToTree(tkn);
+            if (!this.checkExp()) {
+                throw [this._index, "Missing unary operand!"];
+            }
+            return true;
+        case "(":
+            this._stack.push(this._tree);
+            this._tree =  null;
+            this.checkExp();
+            tkn = this.next();
+            if (!tkn || tkn[0] != ')') {
+                throw [this._index, "Missing \")\"!"];
+            }
+            this._tree = {T: "()", V: this._tree};
+            var current = this._stack.pop();
+            if (current) {
+                while (current.R) {
+                    current = current.R;
+                }
+                current.R = this._tree;
+                this._tree = current;
+            }
+            return true;
     }
-    throw [this._index, "This is not a valid expression!"];
+    throw [this._index, "Invalid expression!"];
 };
 
 /**
- *
+ * ExpTail := OPE, Exp
  */
 SemanticChecker.prototype.checkExpTail = function() {
     var tkn = this.next();
@@ -450,6 +517,7 @@ SemanticChecker.prototype.checkExpTail = function() {
         this.back();
         return false;
     }
+    this.addTokenToTree(tkn);
     this.checkExp();
     return true;
 }
@@ -502,9 +570,9 @@ var tokenTypes = {
     ID: /^[_a-zA-Z][\w$\d]*/,
     "(": /^\(/,
     ")": /^\)/,
-    NUMBER: /^-?\s*(\d+(\.\d+)?|\.\d+)/,
+    NUMBER: /^(\d+(\.\d+)?|\.\d+)/,
     STRING: /^('(\\'|[^'])*'|"(\\"|[^"])*")/,
-    OP: /^([\+\-\*/%]|<=|>=|[<>]|!=+|=+|&+|\|+)/,
+    OP: /^([\+\-\*/%]|<=|>=|[<>]|!=+|=+|&+|\|+|!)/,
     IF: /^\?/,
     ELSE: /^:/
 };
@@ -526,7 +594,8 @@ var operationFunction = {
     "&": "AND",
     "&&": "AND",
     "|": "OR",
-    "||": "OR"
+    "||": "OR",
+    "!": "NOT"
 };
 
 var tokenPriorities = {};
