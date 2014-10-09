@@ -24,9 +24,15 @@ var Util = require("../util");
  * @param enabled 
  */
 module.exports.compile = function(root) {
-    Util.fireable(this, root);
+    Util.fireable(this, root);    
     root.name = "a";
     root.children = [
         this.Tree.div({"class": "custom container"}, root.children)
     ];
+    var enabled = this.Tree.att(root, "enabled");
+    if (enabled !== undefined) {
+        var result = Util.parseBindingExpression(enabled);
+        root.extra.init.enabledG = "function(){with(this){return " + result.code + "}}";
+        root.extra.init.enabledV = result.vars;
+    }
 };

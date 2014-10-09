@@ -257,8 +257,9 @@ exports.unit = function(value) {
  * foo + bar
  * foo == 'bar'
  * (width > 100) && (width < 100)
- *
- * @toto Everything!
+ * @result {object} object with two attributes:
+ * * `code`: code of the getter.
+ * * `vars`: array of needed binded data.
  */
 exports.parseBindingExpression = function(code) {
     var tokens = exports.tokenize(code);
@@ -306,9 +307,8 @@ function compileTree(tree, result) {
             result.code += ")";
             break;
         case '!':
-            result.code += "NOT(";
+            result.code += "!";
             compileTree(tree.R, result);
-            result.code += ")";
             break;
         case "ID":
             if (result.vars.indexOf(tree.V) < 0) {

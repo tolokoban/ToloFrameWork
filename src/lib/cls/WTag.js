@@ -36,7 +36,7 @@ window["TFW::WTag"] = {
         this._slots = {};
     },
 
-    
+
     functions: {
         /**
          * Fire a "signal" up to the parents widgets.
@@ -61,7 +61,7 @@ window["TFW::WTag"] = {
                         slot[1].call(slot[0], arg, signal, emitter);
                     } else {
                         console.error(
-                            "[WTag.fire] Nothing is binded on global signal \"" 
+                            "[WTag.fire] Nothing is binded on global signal \""
                                 + signal + "\"!"
                         );
                     }
@@ -70,7 +70,7 @@ window["TFW::WTag"] = {
             if (signal.charAt(0) == '$') {
                 // Assign a value to a data.
                 this.data(signal.substr(1).trim(), arg);
-            } 
+            }
             else {
                 while (widget) {
                     slot = widget._slots[signal];
@@ -265,6 +265,10 @@ window["TFW::WTag"] = {
          * name of  the data and the  value is a two-items  array. First
          * item is the current value for this data, and second item is a
          * list of all listeners.
+         * Each listener is an object with these attributes:
+         * * `obj`: the real listener object.
+         * * `slot`: the method of `obj` to call with a value as unique argument, when datat has changed.
+         * * `getter`: the method of `obj` to call in order to get the value to pass to `slot`.
          * @memberof WTag
          */
         findDataBinding: function(name) {
@@ -314,12 +318,16 @@ window["TFW::WTag"] = {
                 data = this.findDataBinding(name);
             }
             data[1].forEach(
-                function(target) {
-                    if (target !== this) {
-                        target.onDataChanged(name, data[0]);
+                function(listener) {
+                    var obj = listener.obj;
+                    var slot = listener.slot;
+                    var getter = listener.getter;
+                    if (listener !== this) {
+                        var value = getter.call(obj);
+                        slot.call(obj, value);
                     }
                 }
-            );            
+            );
         },
 
         /**
@@ -339,40 +347,75 @@ window["TFW::WTag"] = {
 
         /**
          * Bind to data updates.
-         * When the data changed, 
+         * When the data changed, the  `slot` is call with `this` object
+         * and the data's value as unique argument.
+         * @param {array} vars array of names of data to watch.
+         * @param {function} getter function getting the binded value.
+         * @param {function} slot function to call when data changed.
+         * @return {object} the listener you can give to `unbindData`.
          * @memberof WTag
          */
-        bindData: function(name) {
-            var data = this.findDataBinding(name);
-            data[1].push(this);
+        bindData: function(vars, slot, getter) {
+            if (!Array.isArray(vars)) {
+                vars = [vars];
+            }
+            if (vars.length == 0) return null;
+            if (typeof getter === 'undefined') {
+                getter = function() {
+                    return this.param(vars[0]);
+                };
+            }
+            var listener = {
+                obj: this,
+                slot: slot,
+                getter: getter
+            };
+            vars.forEach(
+                function(name) {
+                    var data = this.findDataBinding(name);
+                    data[1].push(listener);
+                }, this
+            );
+            return listener;
         },
 
         /**
          * Detach this object from data binding.
-         * 
-         * @param {string} name Name of the data to unbind.
+         *
+         * @param {array} vars array of names of data to watch.
+         * @param {object} listner the listener to remove.
          * @memberof WTag
          */
-        unbindData: function(name) {
-            var data = this.findDataBinding(name),
-            i, target;
-            for (i = 0 ; i < data[1].length ; i++) {
-                target = data[1][i];
-                if (this === target) {
-                    data[1].splice(i, 1);
-                    return true;
-                }
+        unbindData: function(vars, listener) {
+            if (!Array.isArray(vars)) {
+                vars = [vars];
             }
-            return false;
+            if (vars.length == 0) return null;
+            var found = false;
+            vars.forEach(
+                function(name) {
+                    var data = this.findDataBinding(name);
+                    var i, target;
+                    for (i = 0 ; i < data[1].length ; i++) {
+                        target = data[1][i];
+                        if (listener === target) {
+                            data[1].splice(i, 1);
+                            found = true;
+                            return;
+                        }
+                    }
+                }, this
+            );
+            return found;
         },
 
         /**
-         * Internal method called when a data's value changes.
-         * @param {string} name Name of the data.
+         * Internal method called when a data's value changes and no slot has been provided.
          * @param value Value of the data.
+         * @param {string} name Name of the data.
          * @memberof WTag
          */
-        onDataChanged: function(name, value) {
+        onDataChanged: function(value, name) {
             console.log("[WTag.onDataChanged] " + name + " := " + value);
         },
 
@@ -382,7 +425,7 @@ window["TFW::WTag"] = {
          * @memberof WTag
          */
         destroy: function() {
-            
+
         }
     }
 };
