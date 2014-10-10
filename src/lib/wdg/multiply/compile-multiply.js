@@ -26,7 +26,7 @@ exports.precompile = function(root) {
     for (key in root.attribs) {
         if (key == 'id') continue;
         val = "" + root.attribs[key];
-        vars[key] = val.split(/[ \t]*,[ \t]*/);
+        vars[key] = val.split(/[ \t]*;[ \t]*/);
         count = Math.max(count, vars[key].length);
     }
     var content = "";

@@ -5,15 +5,15 @@
 window["TFW::wtag.Bind"] = {
     superclass: "WTag",
     init: function() {
-        this.bindData(this._data);
-        this.onDataChanged(this._data, this.data(this._data));
+        this.bindData(this._data, "val");
+        this.val(this.data(this._data));
     },	
     
     functions: {
 	/**
          * Update content when data has changed.
          */
-        onDataChanged: function(name, value) {
+        val: function(value) {
             this._element.textContent = value;
         }
     }

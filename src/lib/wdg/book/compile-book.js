@@ -40,7 +40,6 @@ exports.compile = function(root) {
     if (typeof data === 'string') {
         delete root.attribs.data;
         root.extra.init.data = data;
-console.log("DATA: " + data);
     }
 };
 

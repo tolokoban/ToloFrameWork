@@ -65,7 +65,7 @@ window["TFW::wtag.Book"] = {
         );
         var data = this._data;
         if (typeof data === 'string')  {
-            this.bindData(data);
+            this.bindData(data, "go");
         }
     },
 
@@ -80,17 +80,11 @@ window["TFW::wtag.Book"] = {
             );
         },
 
-	/**
-         * Update content when data has changed.
-         */
-        onDataChanged: function(name, value) {
-            this.go(value);
-        },
-        
         go: function(name) {
             var src = this._currentPage,
             dst = this._pages[name],
             anim;
+            if (src === dst) return false;
             if (!dst) {
                 // This  page does  not exist  in this  book: let  the
                 // event be propagated up to its parents.

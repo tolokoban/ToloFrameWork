@@ -100,6 +100,30 @@ exports.fireable = function(obj, root) {
 };
 
 /**
+ * Compile  a  binding  expression  whose code  is  owned  by  attribute
+ * `attributeName`.   As soon  as  this expression  changed, the  method
+ * `attributeName` of the controller is called with the current value of
+ * this expression.
+ * @param {object} prj Project's object.
+ * @param {object}  root Tree  node with an  attribute woning  a binding
+ * expression.
+ * @param {string} attributeName Name of  the attribute of the widget to
+ * link with the same attribute in the controller.
+ */
+exports.bindable = function(prj, root, attributeName, typeFilter) {
+    var att = prj.Tree.att(root, attributeName);
+    if (att !== undefined) {
+        var result = exports.parseBindingExpression(att);
+        var code = result.code;
+        if (typeof typeFilter === 'string') {
+            code = typeFilter + "(" + code + ")";
+        }
+        root.extra.init["G$" + attributeName] = "function(){with(this){return " + result.code + "}}";
+        root.extra.init["V$" + attributeName] = result.vars;
+    }
+};
+
+/**
  * Turn an element into a template one. A template is an element you can clone at runtime.
  * @return javascript code of the anonymous creation function.
  * This function has two argument :
@@ -295,11 +319,12 @@ exports.parseBindingExpression = function(code) {
 function compileTree(tree, result) {
     switch (tree.T) {
         case 'OP':
-            result.code += operationFunction[tree.V] + "(";
+            var of = operationFunction[tree.V];
+            result.code += of[0];
             compileTree(tree.L, result);
-            result.code += ",";
+            result.code += of[1];
             compileTree(tree.R, result);
-            result.code += ")";
+            result.code += of[2];
             break;
         case '-':
             result.code += "NEG(";
@@ -578,24 +603,23 @@ var tokenTypes = {
 };
 
 var operationFunction = {
-    "+": "ADD",
-    "-": "SUB",
-    "*": "MUL",
-    "/": "DIV",
-    "%": "MOD",
-    "^": "POW",
-    "=": "EQ",
-    "==": "EQ",
-    "!=": "NEQ",
-    ">": "GT",
-    ">=": "GEQ",
-    "<": "LT",
-    "<=": "LTE",
-    "&": "AND",
-    "&&": "AND",
-    "|": "OR",
-    "||": "OR",
-    "!": "NOT"
+    "+": ["ADD(", ",", ")"],
+    "-": ["SUB(", ",", ")"],
+    "*": ["MUL(", ",", ")"],
+    "/": ["DIV(", ",", ")"],
+    "%": ["MOD(", ",", ")"],
+    "^": ["POW(", ",", ")"],
+    "=": ["(", "==", ")"],
+    "==": ["(", "==", ")"],
+    "!=": ["(", "!=", ")"],
+    ">": ["(", ">", ")"],
+    ">=": ["(", ">=", ")"],
+    "<": ["(", "<", ")"],
+    "<=": ["(", "<=", ")"],
+    "&": ["(", "&&", ")"],
+    "&&": ["(", "&&", ")"],
+    "|": ["(", "||", ")"],
+    "||": ["(", "||", ")"]
 };
 
 var tokenPriorities = {};

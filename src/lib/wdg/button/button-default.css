@@ -78,3 +78,26 @@ a.wtag-button.green {
     background-image: -ms-linear-gradient(center bottom , #0B0, #020);
     box-shadow: .5em .5em 2px rgba(0,50,0,.4), 0 0 .2em rgba(255,255,255,.7) inset;
 }
+
+a.wtag-button.disabled.-disabled {
+    border: 2px dotted black;
+    background: #777;
+    color: #ddd;
+    box-shadow: none;
+    font-style: italic;
+    border-radius: 0;
+}
+
+a.wtag-button.disabled.-disabled:after {
+    content: "";
+    background: none;
+}
+
+a.wtag-button.disabled.-disabled:active {
+    transform: none;
+    -moz-transform: none;
+    -webkit-transform: none;
+    -ms-transform: none;
+    box-shadow: none;
+}
+

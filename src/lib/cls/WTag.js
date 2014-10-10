@@ -5,6 +5,29 @@
  * @class WTag
  * @namespace WTag
  */
+function N(a) {
+    var t = typeof a;
+    if (t === 'number') return a;
+    if (t === 'undefined') return 0;
+    if (t === 'null') return 0;
+    try {
+        var v = parseFloat(a);
+        if (isNaN(v)) return 0;
+        return v;
+    }
+    catch (e) {
+        return 0;
+    }
+}
+
+function S(a) {
+    return "" + a;
+}
+
+
+
+
+
 window["TFW::WTag"] = {
     classInit: function(vars) {
         $$("dom.Util");
@@ -34,6 +57,22 @@ window["TFW::WTag"] = {
         element.$widget = this;
         this._element = element;
         this._slots = {};
+
+        // Look for binding expressions.
+        // See in widgets the function Util.bindable(...).
+        var key, attName;
+        for (key in this) {
+            if (key.substr(0, 3) == '_G$') {
+                // There is a getter for data binding.
+                attName = key.substr(3);
+                this["_V$" + attName].forEach(
+                    function(dataName) {
+                        this.bindData(dataName, attName, this[key]);
+                    }, this
+                );
+                this[attName].call(this, this[key].call(this));
+            }
+        }
     },
 
 
@@ -350,8 +389,9 @@ window["TFW::WTag"] = {
          * When the data changed, the  `slot` is call with `this` object
          * and the data's value as unique argument.
          * @param {array} vars array of names of data to watch.
-         * @param {function} getter function getting the binded value.
          * @param {function} slot function to call when data changed.
+         * @param {string} slot name of the method to call when data changed.
+         * @param {function} getter function getting the binded value.
          * @return {object} the listener you can give to `unbindData`.
          * @memberof WTag
          */
@@ -360,9 +400,12 @@ window["TFW::WTag"] = {
                 vars = [vars];
             }
             if (vars.length == 0) return null;
+            if (typeof slot === 'string') {
+                slot = this[slot];
+            }
             if (typeof getter === 'undefined') {
                 getter = function() {
-                    return this.param(vars[0]);
+                    return this.data(vars[0]);
                 };
             }
             var listener = {
@@ -410,22 +453,26 @@ window["TFW::WTag"] = {
         },
 
         /**
-         * Internal method called when a data's value changes and no slot has been provided.
-         * @param value Value of the data.
-         * @param {string} name Name of the data.
-         * @memberof WTag
-         */
-        onDataChanged: function(value, name) {
-            console.log("[WTag.onDataChanged] " + name + " := " + value);
-        },
-
-        /**
          * @description
          * Remove all bindings.
          * @memberof WTag
          */
         destroy: function() {
 
+        },
+
+        ADD: function(a,b) {return N(a)+N(b);},
+        SUB: function(a,b) {return N(a)-N(b);},
+        MUL: function(a,b) {return N(a)*N(b);},
+        POW: function(a,b) {return Math.pow(N(a),N(b));},
+        DIV: function(a,b) {b=N(b); return b==0?0:N(a)/b;},
+        MOD: function(a,b) {b=N(b); return b==0?0:N(a)%b;},
+        B: function(a) {
+            if (typeof a === 'string') {
+                if (a.trim().length == 0) return 0;
+                return 1;
+            }
+            return a ? 1 : 0;
         }
     }
 };
