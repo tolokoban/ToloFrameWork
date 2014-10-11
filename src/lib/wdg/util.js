@@ -6,12 +6,24 @@ var FS = require("fs");
 var Tree = require("../../htmltree");
 
 /**
- * Split a text on commas.
+ * Split a text on semicolons (or `separatorChar`).
+ * Semicolons with a preceding anti-slash or included in a string are not separators.
+ * @example
+ * splitter("a ; b;c  ;d") == ["a", "b", "c", "d"]
+ * splitter("a \; b ; c") == ["a ; b", "c"]
+ * splitter("'a;b';c) == ["'a;b'", "c"]
  */
-function splitter(text) {
+exports.splitter = function(text, separatorChar) {
+    if (typeof separatorChar === 'undefined') separatorChar = ';';
+
     var arr = [],
-    i, c, mode = 1,
-    buff = '';
+    i, c, 
+    // 1: Out of any string
+    // 2: In single quoted string.
+    // 3: In double quotes string.
+    // -1, -2, -3: After backslash.
+    mode = 1,
+    last = 0;
     for (i = 0 ; i < text.length ; i++) {
         c = text.charAt(i);
         switch (mode) {
@@ -23,13 +35,11 @@ function splitter(text) {
                         mode = 2; break;
                     case '"':
                         mode = 3; break;
-                    case ",":
-                        arr.push(buff.trim());
-                        buff = '';
+                    case separatorChar:
+                        arr.push(text.substr(last, i - last).trim());
+                        last = i + 1;
                         mode = 1;
                         break;
-                    default:
-                        buff += c;
                 }
                 break;
             case 2:
@@ -38,8 +48,6 @@ function splitter(text) {
                         mode = 1; break;
                     case "\\":
                         mode = -mode; break;
-                    default:
-                        buff += c;
                 }
                 break;
             case 3:
@@ -48,27 +56,30 @@ function splitter(text) {
                         mode = 1; break;
                     case "\\":
                         mode = -mode; break;
-                    default:
-                        buff += c;
                 }
                 break;
             default:
-                buff += c;
                 mode = -mode;
         }
     }
-    buff = buff.trim();
+    var buff = text.substr(last).trim();
     if (buff.length > 0) {
         arr.push(buff.trim());
     }
     return arr;
 }
 
+/**
+ * @example
+ * <w:foo fire="$score:{score + 1} ; $success:{score > 10} ; page:next"></w:foo>
+ * <w:foo fire="{score + 1} ; {score > 10} ; next"
+ *        fire-arg="{score + 1} ; {score > 10} ; next"></w:foo>
+ */
 exports.fireable = function(obj, root) {
     var attFire = Tree.att(root, "fire");
     var attFireArg = Tree.att(root, "fire-arg");
     if (attFire) {
-        var fire = splitter(attFire);
+        var fire = exports.splitter(attFire);
         var fireArg;
         if (attFireArg) {
             fireArg = splitter(attFireArg);
@@ -108,10 +119,21 @@ exports.fireable = function(obj, root) {
  * @param {object}  root Tree  node with an  attribute woning  a binding
  * expression.
  * @param {string} attributeName Name of  the attribute of the widget to
- * link with the same attribute in the controller.
+ * link with the same attribute in the controller.  
+ * If  this  `attributeName` is  `null`  or  `undefined`, the  textual
+ * content  of `root`  is  read and  the attribute  `val`  is used  in
+ * controller. This is used by widget <w:Bind>, for example.
+ * @param {string} typeFilter  [optional] Name of a  function with one
+ * argument used to wrap the resulting expression.
  */
 exports.bindable = function(prj, root, attributeName, typeFilter) {
-    var att = prj.Tree.att(root, attributeName);
+    var att;
+    if (!attributeName) {
+        att = prj.Tree.text(root).trim();
+        attributeName = "val";
+    } else {
+        att = prj.Tree.att(root, attributeName);
+    }
     if (att !== undefined) {
         var result = exports.parseBindingExpression(att);
         var code = result.code;

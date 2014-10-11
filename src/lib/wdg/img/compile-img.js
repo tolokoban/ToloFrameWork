@@ -41,13 +41,14 @@ exports.compile = function(root) {
     if (!height) {
         height = [info.height, "px"];
     }
-    root.extra.innerCSS = "#" + root.attribs.id + ":not(.expand){width:" 
+    root.extra.innerCSS = "#" + root.attribs.id + ".wtag-img:not(.expand){width:" 
         + width[0] + width[1]
         + ";height:" 
-        + height[0] + height[1] + "}";
+        + height[0] + height[1] + "}\n"
+        + "#" + root.attribs.id + ".wtag-img{"
+        + "background-image:url('../" + src + "');}\n";
     delete root.attribs.src;
 
-    N.att(root, "style", "background-image:url('" + src + "');" + style);
     root.extra.resources.push(src);
 
     var directionsW = ["left", "right", "width"];

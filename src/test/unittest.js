@@ -33,7 +33,20 @@ Runtime.prototype.assert = function(input, expected, result) {
             + "    Expected: " + expectedRaw.yellow + "\n"
             + "    Result:   " + resultRaw.yellow
         };
-}
+    }
+};
+
+/**
+ * 
+ */
+Runtime.prototype.assertOneArg = function(func, cases) {
+    cases.forEach(
+        function(item) {
+            var input = item[0];
+            var expected = item[1];
+            this.assert(input, expected, func(input));
+        }, this
+    );
 };
 
 /**

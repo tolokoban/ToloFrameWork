@@ -80,7 +80,7 @@ exports.parse_simple_expression = function() {
         [
             ["(((((3)))))", {code: "3", vars: []}],
             ["(a-5)*y", {"code":"MUL(SUB(data('a'),5),data('y'))","vars":["a","y"]}],
-            ["!enabled", {"code":"NOT(data('enabled'))","vars":["enabled"]}],
+            ["!enabled", {"code":"!data('enabled')","vars":["enabled"]}],
             ["3+8*7", {"code":"ADD(3,MUL(8,7))","vars":[]}],
             ["3*8-7", {"code":"SUB(MUL(3,8),7)","vars":[]}],
             ["-7", {"code":"NEG(7)","vars":[]}]
