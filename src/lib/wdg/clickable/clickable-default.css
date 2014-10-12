@@ -1,3 +1,4 @@
-.-wtag-clickable {
+.wtag-clickable:not(.disabled) {
     cursor: pointer;
 }
+

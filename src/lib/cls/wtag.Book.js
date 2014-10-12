@@ -10,6 +10,7 @@ window["TFW::wtag.Book"] = {
         data: null
     },
     init: function() {
+/*
         this._anims = {
             fromRight: this.anim(
                 {
@@ -36,12 +37,14 @@ window["TFW::wtag.Book"] = {
                 }
             )
         };
-
+*/
         this._currentPage = null;
-        var page, id;
+        var page, id, elem;
         for (page in this._pages) {
             id = this._pages[page];
-            this._pages[page] = document.getElementById(id);
+            elem = document.getElementById(id);
+            this._pages[page] = elem;
+            
         }
 
         var children = this._element.childNodes,

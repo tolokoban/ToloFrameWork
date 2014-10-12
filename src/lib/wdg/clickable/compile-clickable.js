@@ -11,7 +11,8 @@ var Util = require("../util");
  * @example
  *
  * @param fire Name of the signal to trigger when user clicks on the button.
- * To add an argument, put  it in the "fire-arg" attribute or  add it  tho  this  one separated  by  a colon  (ex: `fire="edit:27"`).
+ * To add an argument, put it in the "fire-arg" attribute or add it to
+ * this one separated by a colon (ex: `fire="edit:27"`).
  * @param fire-arg Argument to fire with the signal.
  * @param enabled 
  */
@@ -25,7 +26,6 @@ module.exports.compile = function(root) {
     delete root.name;
     delete root.attribs;
     delete root.extra.init.id;
-*/
     var ids = [], Tree = this.Tree;
     this.Tree.forEachChild(
         root,
@@ -35,4 +35,5 @@ module.exports.compile = function(root) {
         }
     );
     root.extra.init.ids = ids;
+*/
 };

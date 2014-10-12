@@ -1,15 +1,14 @@
 /**
- * @created 15/05/2014
- * @extends wtag.Fireable
- * @class wtag.Button
+ * @namespace wtag.Clickable
+ * @created 11/10/2014
+ *
+ * @class wtag.Clickable
  */
-window["TFW::wtag.Button"] = {
+window["TFW::wtag.Clickable"] = {
     superclass: "wtag.IFireable",
-
     attributes: {
         enabled: true
     },
-
     init: function() {
         var that = this;
         $events(
@@ -22,20 +21,8 @@ window["TFW::wtag.Button"] = {
                 }
             }
         );
-/*
-        if (this._enabledG) {
-            this._enabled = this._enabledG.call(this);
-            this._enabledV.forEach(
-                function(name) {
-                    this.bindData(name, "enabled", this._enabledG);
-                }, this
-            );
-
-        }
-        this.enabled(this._enabled);
-*/
-    },
-
+    },	
+    
     functions: {
         /**
          * @description
