@@ -280,8 +280,8 @@ exports.debug = function(node, indent) {
             node.children.forEach(
                 function(child) {
                     exports.debug(child, indent + '  ');
-                } 
-            );            
+                }
+            );
             console.log(indent + "</" + (node.name ? node.name : node.type) + "> ");
         } else {
             console.log(
@@ -292,7 +292,7 @@ exports.debug = function(node, indent) {
     }
 };
 /**
- * Walk through the HTML tree and, eventually, replace branches.  
+ * Walk through the HTML tree and, eventually, replace branches.
  * The functions used as arguments take only one argument: the current node.
  * @param node {object} root node
  * @param functionBottomUp {function} function to call when traversing the tree bottom-up.
@@ -332,20 +332,29 @@ exports.att = function(node, name, value) {
 /**
  * Return the text content of a node.
  */
-exports.text = function(node) {
-    if (node.type == exports.TEXT) {
-        return node.text;
-    }
-    if (node.children) {
-        var txt = "";
-        node.children.forEach(
-            function(child) {
-                txt += exports.text(child);
-            }
-        );
-        return txt;
+exports.text = function(node, text) {
+    if (typeof text === 'undefined') {
+        if (node.type == exports.TEXT) {
+            return node.text;
+        }
+        if (node.children) {
+            var txt = "";
+            node.children.forEach(
+                function(child) {
+                    txt += exports.text(child);
+                }
+            );
+            return txt;
+        } else {
+            return "";
+        }
     } else {
-        return "";
+        node.children = [
+            {
+                type: exports.TEXT,
+                text: text
+            }
+        ];
     }
 };
 /**
@@ -430,7 +439,7 @@ exports.forEachChild = function(node, func) {
 /**
  * If a node's children is of type VOID, we must remove it and add its
  * children to node's children.
- * 
+ *
  * Then following tree:
  * ```
  * {
@@ -474,7 +483,7 @@ exports.normalizeChildren = function(node, recurse) {
             node.children.forEach(
                 function(child) {
                     exports.normalizeChildren(child, true);
-                } 
+                }
             );
         }
     }
@@ -489,7 +498,7 @@ function extractNonVoidChildren(node, target) {
                 } else {
                     target.push(child);
                 }
-            } 
+            }
         );
     }
 }

@@ -2,7 +2,7 @@
   "name": "ToloFrameWork",
   "version": "0.0.1",
   "description": "Framework for fast Firefox OS apps development with better collaboration between designer and hacker.",
-  "main": "src/tfw.js",
+  "main": "./gui/DEBUG/index.html",
   "directories": {
     "doc": "doc"
   },

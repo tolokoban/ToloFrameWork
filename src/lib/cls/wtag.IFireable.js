@@ -17,11 +17,15 @@ window["TFW::wtag.IFireable"] = {
          * 
          * @memberof wtag.IFireable
          */
-        fireAll: function() {
+        fireAll: function(attName) {
+            if (typeof attName === 'undefined') attName = 'fire';
+            var fire = this["_" + attName];
+            if (!fire) return;
+            var fireArg = this["_" + attName + "Arg"];
             var i, sig, arg;
-            for (i = 0 ; i < this._fire.length ; i++) {
-                sig = this._fire[i];
-                arg = this._fireArg[i];
+            for (i = 0 ; i < fire.length ; i++) {
+                sig = fire[i];
+                arg = fireArg[i];
                 this.fire(sig, arg);
             }
         }

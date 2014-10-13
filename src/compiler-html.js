@@ -203,15 +203,42 @@ function expandWidgets(root, source) {
  * Compile the widget.
  */
 function precompileWidget(root, source, widget) {
-    genericCompileWidget(root, source, widget, "precompile");
-    return;
+    try {
+        genericCompileWidget(root, source, widget, "precompile");
+    }
+    catch (ex) {
+        console.log(
+            (
+                "Fatal error during widget's precompilation:\n" 
+                    + Path.join(
+                        widget.path,
+                        "/compile-" + widget.name + ".js"
+                    )
+            ).err()
+        );
+        throw ex;
+    }
 }
 
 /**
  * Compile the widget.
  */
 function compileWidget(root, source, widget) {
-    genericCompileWidget(root, source, widget, "compile");
+    try {
+        genericCompileWidget(root, source, widget, "compile");
+    }
+    catch (ex) {
+        console.log(
+            (
+                "Fatal error during widget's compilation:\n" 
+                    + Path.join(
+                        widget.path,
+                        "/compile-" + widget.name + ".js"
+                    )
+            ).err()
+        );
+        throw ex;
+    }
 }
 
 function genericCompileWidget(root, source, widget, functionName) {
