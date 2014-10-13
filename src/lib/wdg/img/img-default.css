@@ -5,8 +5,6 @@ div.wtag-img {
     background-position: 50% 50%;
     background-repeat: no-repeat;
     content: '';
-    padding: 0;
-    margin: 0;
 }
 
 div.wtag-img.expand {
@@ -40,4 +38,9 @@ div.wtag-img.right {
 
 div.wtag-img > * {
     position: absolute;
+}
+
+div.question-text-and-image {
+    min-width: 50%;
+    min-height: 50%;
 }

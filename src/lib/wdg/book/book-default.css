@@ -1,16 +1,3 @@
-div.wtag-book > * {
-  position: absolute;
-  display: block;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
-}
-
 div.wtag-book {
   position: relative;
   padding: 0;
@@ -20,27 +7,20 @@ div.wtag-book {
   height: 100%;
 }
 
-
-
-@keyframes wtag-book-slide-to-right {
-    from {transform: translateX(0)}
-    to {transform: translateX(100%)}
+div.wtag-book > * {
+    visibility: visible;
+  position: absolute;
+  display: block;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 
-@keyframes wtag-book-slide-to-left {
-    from {transform: translateX(0)}
-    to {transform: translateX(-100%)}
+div.wtag-book > *.hidden {
+    visibility: hidden;
 }
-
-@keyframes wtag-book-slide-from-right {
-    from {transform: translateX(100%)}
-    to {transform: translateX(0)}
-}
-
-@keyframes wtag-book-slide-from-left {
-    from {transform: translateX(-100%)}
-    to {transform: translateX(0)}
-}
-
-
 

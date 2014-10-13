@@ -1,10 +1,12 @@
 .wtag-flex {
     display: flex;
     align-items: stretch;
+    align-content: stretch;
 }
 
 .wtag-flex.center {
     align-items: center;
+    align-content: center;
 }
 
 .wtag-flex.wrap {

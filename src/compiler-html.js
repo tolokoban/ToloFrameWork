@@ -176,7 +176,6 @@ function expandWidgets(root, source) {
     );
 
     Tree.normalizeChildren(root, true);
-    expandDoubleCurlies(root, source);
 
     Tree.walk(
         root,
@@ -398,28 +397,6 @@ function initControllers(root, source) {
 
     innerJS += "    }\n);\n";
     source.tag("innerJS", innerJS);
-}
-
-/**
- * If the text contains a inner binding syntax, expand it.
- * ```
- * <p>Hello {{name}}!</p>
- * ```
- * will become
- * ```
- * <p>Hello <w:bind>name</w:bind>!</p>
- * ```
- * @param {object} node node of type `Tree.TEXT`.
- */
-function expandDoubleCurliesInTextNode(node) {
-    var doubleCurliesReplacer = function(txt) {
-        return "<w:bind>" + txt.trim() + "</w:bind>";
-    };
-    var result = Template.text(node.text, doubleCurliesReplacer);
-    if (result.count > 0) {
-        node.type = Tree.VOID;
-        node.children = [Tree.parse(result.out)];
-    }
 }
 
 /**

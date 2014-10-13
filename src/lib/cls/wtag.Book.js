@@ -6,60 +6,99 @@ window["TFW::wtag.Book"] = {
     superclass: "WTag",
     attributes: {
         animDuration: .4,
+        anim: "slide",
         pages: {},
         data: null
     },
-    init: function() {
-/*
-        this._anims = {
-            fromRight: this.anim(
-                {
-                    from: {transform: "translateX(100%)"},
-                    to: {transform: "translateX(0%)"}
-                }
-            ),
-            toRight: this.anim(
-                {
-                    from: {transform: "translateX(0%)"},
-                    to: {transform: "translateX(100%)"}
-                }
-            ),
-            fromLeft: this.anim(
-                {
-                    from: {transform: "translateX(-100%)"},
-                    to: {transform: "translateX(0%)"}
-                }
-            ),
-            toLeft: this.anim(
-                {
-                    from: {transform: "translateX(0%)"},
-                    to: {transform: "translateX(-100%)"}
-                }
-            )
+    classInit: function(vars) {
+        var defAnim = function(keyframes) {
+            return $$(
+                "tfw.CssAnim",
+                {keyframes: keyframes}
+            );
         };
-*/
+        vars.anims = {
+            slide: {
+                fromRight: defAnim(
+                    {
+                        from: {transform: "translateX(100%)"},
+                        to: {transform: "translateX(0%)"}
+                    }
+                ),
+                toRight: defAnim(
+                    {
+                        from: {transform: "translateX(0%)"},
+                        to: {transform: "translateX(100%)"}
+                    }
+                ),
+                fromLeft: defAnim(
+                    {
+                        from: {transform: "translateX(-100%)"},
+                        to: {transform: "translateX(0%)"}
+                    }
+                ),
+                toLeft: defAnim(
+                    {
+                        from: {transform: "translateX(0%)"},
+                        to: {transform: "translateX(-100%)"}
+                    }
+                )
+            }
+        };
+    },
+
+    init: function() {
         this._currentPage = null;
         var page, id, elem;
         for (page in this._pages) {
             id = this._pages[page];
             elem = document.getElementById(id);
             this._pages[page] = elem;
-            
-        }
 
+        }
+        this._anims = this.$statics.anims[this._anim];
+        if (!this._anims) {
+            this._anims = this.$statics.anims["slide"];
+        }
+        var that = this;
+        var attachEvents = function(elem) {
+            elem.addEventListener(
+                "animationstart",
+                function() {
+                    $removeClass(elem, "hidden");
+                    that._animationRunning = true;
+                },
+                false
+            );
+            elem.addEventListener(
+                "animationend",
+                function() {
+                    if (elem._index != that._currentPage._index) {
+                        $addClass(elem, "hidden");
+                    }
+                    that._animationRunning = false;
+                    if (that._nextAnim) {
+                        that.go(that._nextAnim);
+                        delete that._nextAnim;
+                    }
+                },
+                false
+            );
+        };
         var children = this._element.childNodes,
         i, item, name;
         for (i = 0 ; i < children.length ; i++) {
             item = children[i];
             item._index = i;
-            $hide(item);
             if (i == 0) {
                 this._currentPage = item;
+            } else {
+                $addClass(item, "hidden");
             }
+            attachEvents(item);
         }
         $show(this._currentPage);
 
-        var that = this;
         this.registerSignal(
             "page",
             function(arg, signal, emitter) {
@@ -73,17 +112,11 @@ window["TFW::wtag.Book"] = {
     },
 
     functions: {
-        /**
-         * Return an instance of "tfw.CssAnim".
-         */
-        anim: function(keyframes) {
-            return $$(
-                "tfw.CssAnim",
-                {keyframes: keyframes}
-            );
-        },
-
         go: function(name) {
+            if (this._animationRunning) {
+                this._nextAnim = name;
+                return;
+            }
             var src = this._currentPage,
             dst = this._pages[name],
             anim;
@@ -93,14 +126,14 @@ window["TFW::wtag.Book"] = {
                 // event be propagated up to its parents.
                 return false;
             }
-/*
-            if (src.$widget) {
-                src.$widget.slot("hide");
-            }
-            if (dst.$widget) {
-                dst.$widget.slot("show");
-            }
-*/
+            /*
+             if (src.$widget) {
+             src.$widget.slot("hide");
+             }
+             if (dst.$widget) {
+             dst.$widget.slot("show");
+             }
+             */
             anim = src._index < dst._index ? this._anims.toLeft : this._anims.toRight;
             anim.apply(src, {duration: this._animDuration});
             anim = src._index < dst._index ? this._anims.fromRight : this._anims.fromLeft;
