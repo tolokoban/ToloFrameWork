@@ -15,11 +15,11 @@ exports.compile = function(root) {
     var filename = Tree.text(root).trim();
     var file = this.srcOrLibPath(filename);
     if (!FS.existsSync(file)) {
-        this.prj.fatal("Include file not found: \"" + file + "\"!", -1, "<w:include>");
+        this.fatal("Include file not found: \"" + filename + "\"!", -1, "<w:include>");
     }
     var stat = FS.statSync(file);
     if (!stat.isFile) {
-        this.prj.fatal("This is not a file: \"" + file + "\"!", -1, "<w:include>");
+        this.fatal("This is not a file: \"" + file + "\"!", -1, "<w:include>");
     }
     root.extra.dependencies.push(filename);
     var content = FS.readFileSync(file).toString().trim();
