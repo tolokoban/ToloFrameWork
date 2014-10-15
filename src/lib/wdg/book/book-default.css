@@ -1,5 +1,5 @@
 div.wtag-book {
-  position: relative;
+  position: static;
   padding: 0;
   display: block;
   overflow: hidden;
@@ -8,9 +8,7 @@ div.wtag-book {
 }
 
 div.wtag-book > * {
-    visibility: visible;
   position: absolute;
-  display: block;
   left: 0;
   top: 0;
   right: 0;
@@ -20,7 +18,11 @@ div.wtag-book > * {
   margin: 0;
 }
 
+div.wtag-book > *:not(.hidden) {
+  display: block;
+}
+
 div.wtag-book > *.hidden {
-    visibility: hidden;
+  display: none;
 }
 
