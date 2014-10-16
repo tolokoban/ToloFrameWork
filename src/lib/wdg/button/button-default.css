@@ -1,4 +1,4 @@
-a.wtag-button {
+button.wtag-button {
     position: relative;
     display: inline-table;
     display: inline-flex;
@@ -26,7 +26,7 @@ a.wtag-button {
     background-image: -ms-linear-gradient(center bottom , #08B, #002);
 }
 
-a.wtag-button::after {
+button.wtag-button::after {
     content: '';
     position: absolute;
     left: 0;
@@ -36,7 +36,7 @@ a.wtag-button::after {
     background: rgba(255,255,255,.4);
 }
 
-a.wtag-button > div.container {
+button.wtag-button > div.container {
     display: table-cell;
     text-align: center;
     vertical-align: middle;
@@ -44,7 +44,7 @@ a.wtag-button > div.container {
 }
 
 
-a.wtag-button:active {
+button.wtag-button:active {
     transform: translateX(.5em) translateY(.5em);
     -moz-transform: translateX(.5em) translateY(.5em);
     -webkit-transform: translateX(.5em) translateY(.5em);
@@ -52,7 +52,7 @@ a.wtag-button:active {
     box-shadow: 0 0 0 rgba(0,0,0,.4);
 }
 
-a.wtag-button.light {
+button.wtag-button.light {
     border: 1px solid #000;
     background-color: #edc;
     background-image: linear-gradient(center bottom, #dcb, #654);
@@ -61,7 +61,7 @@ a.wtag-button.light {
     background-image: -ms-linear-gradient(center bottom, #DBC, #654);
 }
 
-a.wtag-button.red {
+button.wtag-button.red {
     background-color: #C60;
     background-image: linear-gradient(center bottom , #B00, #200);
     background-image: -moz-linear-gradient(center bottom , #B00, #200);
@@ -70,7 +70,7 @@ a.wtag-button.red {
     box-shadow: .5em .5em 2px rgba(50,0,0,.4), 0 0 .2em rgba(255,255,255,.7) inset;
 }
 
-a.wtag-button.green {
+button.wtag-button.green {
     background-color: #0C6;
     background-image: linear-gradient(center bottom , #0B0, #020);
     background-image: -moz-linear-gradient(center bottom , #0B0, #020);
@@ -79,7 +79,7 @@ a.wtag-button.green {
     box-shadow: .5em .5em 2px rgba(0,50,0,.4), 0 0 .2em rgba(255,255,255,.7) inset;
 }
 
-a.wtag-button.disabled.-disabled {
+button.wtag-button.disabled.-disabled {
     border: 2px dotted black;
     background: #777;
     color: #ddd;
@@ -88,12 +88,12 @@ a.wtag-button.disabled.-disabled {
     border-radius: 0;
 }
 
-a.wtag-button.disabled.-disabled:after {
+button.wtag-button.disabled.-disabled:after {
     content: "";
     background: none;
 }
 
-a.wtag-button.disabled.-disabled:active {
+button.wtag-button.disabled.-disabled:active {
     transform: none;
     -moz-transform: none;
     -webkit-transform: none;

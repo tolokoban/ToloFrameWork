@@ -23,6 +23,7 @@ exports.compile = function(root) {
         function(child) {
             if (child.type != N.TAG) return;
             var page = N.att(child, "book-page");
+            delete child.attribs["book-page"];
             if (!page) {
                 prj.fatal("Every child of <w:book> must have a 'book-page' attribute!");
             }
@@ -32,7 +33,6 @@ exports.compile = function(root) {
                 N.att(child, "id", id);
             }
             pages[page] = id;
-            delete child.attribs["book-page"];
         }
     );
     root.extra.init.pages = pages;

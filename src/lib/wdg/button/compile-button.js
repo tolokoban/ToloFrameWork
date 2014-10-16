@@ -26,7 +26,7 @@ var Util = require("../util");
 module.exports.compile = function(root) {
     Util.fireable(this, root);
     Util.bindable(this, root, "enabled", "B");
-    root.name = "a";
+    root.name = "button";
     root.children = [
         this.Tree.div({"class": "custom container"}, root.children)
     ];

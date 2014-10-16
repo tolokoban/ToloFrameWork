@@ -310,7 +310,7 @@ Project.prototype.linkForDebug = function(filename) {
     // Writing HTML file.
     FS.writeFileSync(
         Path.join(this.wwwPath("DEBUG"), filename),
-        /*"<!DOCTYPE html>" + */Tree.toString(tree)
+        "<!DOCTYPE html>" + Tree.toString(tree)
     );
     // Writing manifest file.
     FS.writeFileSync(
@@ -400,7 +400,7 @@ Project.prototype.linkForRelease = function(filename) {
     );
     FS.writeFileSync(
         Path.join(this.wwwPath("RELEASE"), filename),
-        /*"<!DOCTYPE html>" + */Tree.toString(tree)
+        "<!DOCTYPE html>" + Tree.toString(tree)
     );
     // Writing manifest file.
     FS.writeFileSync(

@@ -38,6 +38,8 @@ module.exports.compile = function(root) {
         Tree.text(titleTag, title);
         head.push(titleTag);
     }
+    delete root.attribs.app;
+    delete root.attribs.title;
     root.name = "html";
     root.children = [
         Tree.tag("head", null, head),

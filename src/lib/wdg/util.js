@@ -135,6 +135,7 @@ exports.bindable = function(prj, root, attributeName, typeFilter) {
         att = prj.Tree.att(root, attributeName);
     }
     if (att !== undefined) {
+        delete root.attribs[attributeName];
         var result = exports.parseBindingExpression(att);
         var code = result.code;
         if (typeof typeFilter === 'string') {

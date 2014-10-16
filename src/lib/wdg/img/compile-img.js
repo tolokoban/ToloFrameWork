@@ -25,9 +25,11 @@ exports.compile = function(root) {
     var ratio = info.width > 0 && info.height > 0 ? info.width / info.height : 1;
     if (width) {
         width = Util.unit(width);
+        delete root.attribs.width;
     }
     if (height) {
         height = Util.unit(height);
+        delete root.attribs.height;
     }
     if (width && !height) {
         height = [width[0] / ratio, width[1]];

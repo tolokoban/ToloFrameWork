@@ -16,8 +16,11 @@ var Util = require("../util.js");
 module.exports.compile = function(root) {
     Util.bindable(this, root);
     var type = this.Tree.att(root, "type");
-    if (type && type.trim().toLowerCase() == 'html') {
-        root.extra.init.type = "html";
+    if (type) {
+        delete root.attribs.type;
+        if (type.trim().toLowerCase() == 'html') {
+            root.extra.init.type = "html";
+        }
     }
     root.name = "span";
-}
+};
