@@ -2,9 +2,8 @@
  * @module Html
  */
 
-/**
- *
- */
+var FS = require("fs");
+
 module.exports.compile = function(root) {
     var Tree = this.Tree;
     var app = Tree.att(root, "app");

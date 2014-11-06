@@ -10,6 +10,7 @@ var Util = require("./util");
 var CompilerJS = require("./compiler-js");
 var CompilerCSS = require("./compiler-css");
 var Template = require("./template");
+var DependsFinder = require("./depends-finder");
 
 
 /**
@@ -260,9 +261,9 @@ function genericCompileWidget(root, source, widget, functionName) {
     root.extra.init = {id: id};
     var controller = "wtag." + widget.name.substr(0, 1).toUpperCase()
         + widget.name.substr(1).toLowerCase();
-    if (prj.srcOrLibPath("cls/" + controller + ".js")) {
+    if (prj.srcOrLibPath("mod/" + controller + ".js")) {
         root.extra.controller = controller;
-        outerJS.push("cls/" + controller + ".js");
+        outerJS.push("mod/" + controller + ".js");
     }
     // Looking for extra CSS.
     FS.readdirSync(widget.path).forEach(
@@ -362,17 +363,25 @@ function initControllers(root, source) {
         + "    function() {\n"
         + "        document.body.parentNode.$data = {};\n"
         + "        // Attach controllers.\n";
+    var outerJS = source.tag("outerJS") || [];
     var extraCSS = "";
+    var app = null;
     Tree.walk(
         root,
         function(node) {
+            if (node.name == "body" && node.attribs) {
+                app = node.attribs.app;
+                outerJS.push("mod/" + app + ".js");
+                delete node.attribs.app;
+            }
             var item = node.extra;
             if (!item) return;
             if (item.controller) {
-                var ctrlFilename = "cls/" + item.controller + ".js";
-                innerJS += "        $$('" + item.controller + "'";
+                var ctrlFilename = "mod/" + item.controller + ".js";
+                innerJS += "        require('" + item.controller + "')(";
                 if (typeof item.init === 'object') {
-                    var sep = ', {', key, val;
+                    innerJS += "{";
+                    var sep = '', key, val;
                     for (key in item.init) {
                         val = item.init[key];
                         if (typeof val === 'string' && val.substr(0, 9) == 'function(') {
@@ -385,7 +394,6 @@ function initControllers(root, source) {
                         innerJS += key + ": " + val;
                     }
                     innerJS += "}";
-
                 }
                 innerJS += ");\n";
             }
@@ -394,9 +402,12 @@ function initControllers(root, source) {
             }
         }
     );
-
+    if (app) {
+        innerJS += "        require('" + app + "')\n";
+    }
     innerJS += "    }\n);\n";
     source.tag("innerJS", innerJS);
+    source.tag("outerJS", outerJS);
 }
 
 /**

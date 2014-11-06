@@ -210,7 +210,8 @@ Project.prototype.link = function() {
  */
 Project.prototype.linkForDebug = function(filename) {
     var srcHTML = new Source(this, filename);
-    var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS") || []);
+    //var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS") || []);
+    var linkJS = ["require.js"].concat(srcHTML.tag("linkJS") || []);
     var linkCSS = srcHTML.tag("linkCSS") || [];
     var tree = Tree.clone(srcHTML.tag("tree"));
     var head = Tree.getElementByName(tree, "head");
@@ -250,7 +251,17 @@ Project.prototype.linkForDebug = function(filename) {
             var srcJS = srcHTML.create(item);
             var shortName = Path.basename(srcJS.getAbsoluteFilePath());
             var output = Path.join(jsDir, shortName);
-            FS.writeFileSync(output, srcJS.read());
+            var code = srcJS.read();
+            if (item.substr(0, 4) == 'mod/') {
+                // This is a module. We need to wrap it in module's declaration snippet.
+                code =
+                    "window['TFW::" 
+                    + shortName.substr(0, shortName.length - 3).toLowerCase()
+                    + "'] = function(module, exports){\n"
+                    + code 
+                    + "\n};\n";
+            }
+            FS.writeFileSync(output, code);
             if (!head.children) head.children = [];
             head.children.push(
                 Tree.tag(

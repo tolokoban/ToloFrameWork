@@ -5,11 +5,19 @@
 var Util = require("./util");
 var UglifyJS = require("uglify-js");
 var Path = require("path");
+var DependsFinder = require("./depends-finder");
 
 exports.compile = function(source) {
     if (source.isUptodate()) return false;
     console.log("Compiling " + source.name().yellow);
-    var content = source.read();
+    var code = source.read();
+    var ast = UglifyJS.parse(code);
+    ast.figure_out_scope();
+    var compressor = UglifyJS.Compressor();
+    ast = ast.transform(compressor);
+    var zip = ast.print_to_string();
+    source.tag("zip", zip);
+/*
     var visitor = Visitor(content);
     var walker = new UglifyJS.TreeWalker(visitor.walk);
     var tree;
@@ -25,14 +33,20 @@ exports.compile = function(source) {
     }
     tree.walk(walker);
     var def = visitor.result();
+*/
     var needs = [];
-    def.needs.forEach(
+    var dependsFinder = new DependsFinder(zip);
+    dependsFinder.depends.forEach(
         function(item) {
-            needs.push("cls/" + item + ".js");
+            var file = "mod/" + item + ".js";
+            if (!source.prj().srcOrLibPath(file)) {
+                throw {fatal: "Required module not found: \"" + item.bold + "\"!"};
+            }
+            needs.push(file);
         }
     );
     source.tag("needs", needs);
-    source.tag("zip", Util.zipJS(content));
+    source.tag("zip", zip);
     var cssName = source.name().substr(0, source.name().length - 2) + "css";
     var cssPath = source.prj().srcOrLibPath(cssName);
     if (cssPath) {
@@ -43,10 +57,6 @@ exports.compile = function(source) {
     source.save();
     return true;
 };
-
-
-
-
 
 
 var Visitor = function(content) {
