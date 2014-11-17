@@ -11,34 +11,13 @@ exports.compile = function(source) {
     if (source.isUptodate()) return false;
     console.log("Compiling " + source.name().yellow);
     var code = source.read();
-    var ast = UglifyJS.parse(code);
-    ast.figure_out_scope();
-    var compressor = UglifyJS.Compressor();
-    ast = ast.transform(compressor);
-    var zip = ast.print_to_string();
+    var zip = Util.zipJS(code);
     source.tag("zip", zip);
-/*
-    var visitor = Visitor(content);
-    var walker = new UglifyJS.TreeWalker(visitor.walk);
-    var tree;
-    try {
-        tree = UglifyJS.parse(content, {filename: source.getAbsoluteFilePath()});
-    }
-    catch (ex) {
-        source.prj().fatal(
-            "Exception raised in parsing JS file \"" + source.name() + "\":\n" + ex,
-            -1,
-            "compiler-js"
-        );
-    }
-    tree.walk(walker);
-    var def = visitor.result();
-*/
     var needs = [];
     var dependsFinder = new DependsFinder(zip);
     dependsFinder.depends.forEach(
         function(item) {
-            var file = "mod/" + item + ".js";
+            var file = item + ".js";
             if (!source.prj().srcOrLibPath(file)) {
                 throw {fatal: "Required module not found: \"" + item.bold + "\"!"};
             }

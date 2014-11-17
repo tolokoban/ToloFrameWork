@@ -3,7 +3,7 @@ var require = function() {
     
     return function(id, body) {
         var mod;
-        body = window["TFW::" + id];
+        body = window["#" + id];
         if (typeof body === 'undefined') {
             var err = new Error("Required module not found: " + id);   
             console.error(err.stack);
@@ -13,7 +13,7 @@ var require = function() {
         if (typeof mod === 'undefined') {
             mod = {exports: {}};
             var exports = mod.exports;
-            body(mod, exports);
+            body(exports, mod);
             modules[id] = mod.exports;
             mod = mod.exports;
             console.log("Module initialized: " + id);

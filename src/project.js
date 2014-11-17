@@ -211,7 +211,7 @@ Project.prototype.link = function() {
 Project.prototype.linkForDebug = function(filename) {
     var srcHTML = new Source(this, filename);
     //var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS") || []);
-    var linkJS = ["require.js"].concat(srcHTML.tag("linkJS") || []);
+    var linkJS = [].concat(srcHTML.tag("linkJS") || []);
     var linkCSS = srcHTML.tag("linkCSS") || [];
     var tree = Tree.clone(srcHTML.tag("tree"));
     var head = Tree.getElementByName(tree, "head");
@@ -255,9 +255,9 @@ Project.prototype.linkForDebug = function(filename) {
             if (item.substr(0, 4) == 'mod/') {
                 // This is a module. We need to wrap it in module's declaration snippet.
                 code =
-                    "window['TFW::" 
+                    "window['#" 
                     + shortName.substr(0, shortName.length - 3).toLowerCase()
-                    + "'] = function(module, exports){\n"
+                    + "'] = function(exports, module){\n"
                     + code 
                     + "\n};\n";
             }
@@ -341,7 +341,8 @@ Project.prototype.linkForDebug = function(filename) {
  */
 Project.prototype.linkForRelease = function(filename) {
     var srcHTML = new Source(this, filename);
-    var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS") || []);
+    //var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS") || []);
+    var linkJS = [].concat(srcHTML.tag("linkJS") || []);
     if (!Array.isArray(linkJS)) linkJS = [];
     var linkCSS = srcHTML.tag("linkCSS") || [];
     if (!Array.isArray(linkCSS)) linkCSS = [];
@@ -363,14 +364,28 @@ Project.prototype.linkForRelease = function(filename) {
     linkJS.forEach(
         function(item) {
             var srcJS = srcHTML.create(item);
-            FS.writeSync(fdJS, srcJS.tag("zip"));
+            var content = srcJS.tag("zip");
+            if (item.substr(0, 4) == 'mod/') {                
+                // This is a module. We need to wrap it in module's declaration snippet.
+                var shortName = item.substr(4);
+                shortName = shortName.substr(0, shortName.length - 3).toLowerCase();
+                content =
+                    "\nwindow['#" + shortName
+                    + "']=function(exports,module){" + content + "};";
+            }
+            FS.writeSync(fdJS, content);
         } ,
         this
+    );
+    FS.writeSync(
+        fdCSS,
+        Util.lessCSS("css/@" + shortedName + ".css", srcHTML.tag("innerCSS"), true)
     );
     linkCSS.forEach(
         function(item) {
             var srcCSS = srcHTML.create(item);
-            FS.writeSync(fdCSS, srcCSS.tag("release"));
+            var content = srcCSS.tag("release");
+            FS.writeSync(fdCSS, content);
         } ,
         this
     );
@@ -385,7 +400,7 @@ Project.prototype.linkForRelease = function(filename) {
             }
             manifestFiles.push(dst);
             src = this.srcPath(src);
-            dst = Path.join(this.wwwPath("DEBUG"), dst);
+            dst = Path.join(this.wwwPath("RELEASE"), dst);
             this.copyFile(src, dst);
         }, this
     );

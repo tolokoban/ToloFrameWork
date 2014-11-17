@@ -10,7 +10,6 @@ var Util = require("./util");
 var CompilerJS = require("./compiler-js");
 var CompilerCSS = require("./compiler-css");
 var Template = require("./template");
-var DependsFinder = require("./depends-finder");
 
 
 /**
@@ -264,6 +263,7 @@ function genericCompileWidget(root, source, widget, functionName) {
     if (prj.srcOrLibPath("mod/" + controller + ".js")) {
         root.extra.controller = controller;
         outerJS.push("mod/" + controller + ".js");
+        outerJS.push("require.js");
     }
     // Looking for extra CSS.
     FS.readdirSync(widget.path).forEach(
@@ -369,9 +369,10 @@ function initControllers(root, source) {
     Tree.walk(
         root,
         function(node) {
-            if (node.name == "body" && node.attribs) {
+            if (node.name == "body" && node.attribs && node.attribs.app) {
                 app = node.attribs.app;
                 outerJS.push("mod/" + app + ".js");
+                outerJS.push("require.js");
                 delete node.attribs.app;
             }
             var item = node.extra;

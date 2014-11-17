@@ -33,7 +33,25 @@ DependsFinder.prototype.parse = function() {
                     this.index += 8;
                     c = this.code.charAt(this.index);
                     if (c == '"' || c == "'") {
-                        this.addDep(this.parseString());
+                        this.addDep("mod/" + this.parseString());
+                    }
+                }
+            }
+        }
+        else if (c == '$') {
+            good = true;
+            if (this.index > 0) {
+                good = false;
+                c = this.code.charAt(this.index - 1);
+                if (c != '.' && c != '$' && c != '_' && (c < 'a' || c > 'z') 
+                    && (c < 'A' || c > 'Z') && (c < '0' || c > '9')) {
+                    good = true;
+                }
+                if (good && this.code.substr(this.index, 3) == '$$(') {
+                    this.index += 8;
+                    c = this.code.charAt(this.index);
+                    if (c == '"' || c == "'") {
+                        this.addDep("cls/" + this.parseString());
                     }
                 }
             }
