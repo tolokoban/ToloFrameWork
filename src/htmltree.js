@@ -300,15 +300,23 @@ exports.debug = function(node, indent) {
  * @param parent {object} parent node or *undefined*.
  */
 exports.walk = function(node, functionBotomUp, functionTopDown, parent) {
-    var i, child, replacement;
+    if (!node) return;
+    var i, child, replacement, children;
     if (typeof functionTopDown === 'function') {
         functionTopDown(node, parent);
     }
     if (node.children) {
-        for (i = 0 ; i < node.children.length ; i++) {
-            child = node.children[i];
-            exports.walk(child, functionBotomUp, functionTopDown, node);
-        }
+        children = [];
+        node.children.forEach(
+            function(item) {
+                children.push(item);
+            } 
+        );
+        children.forEach(
+            function(child) {
+                exports.walk(child, functionBotomUp, functionTopDown, node);
+            } 
+        );
     }
     if (typeof functionBotomUp === 'function') {
         return functionBotomUp(node, parent);

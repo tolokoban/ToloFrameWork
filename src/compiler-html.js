@@ -118,7 +118,9 @@ function lookForStaticJavascriptAndStyle(root, source) {
                 case "script":
                     src = Tree.att(node, "src");
                     if (typeof src === 'string' && src.length > 0) {
-                        outerJS.push(src);
+                        if (src.substr(0, 5) != "http:" && src.substr(0, 6) != "https:") {
+                            outerJS.push(src);
+                        }
                     } else {
                         innerJS += Tree.text(root);
                     }

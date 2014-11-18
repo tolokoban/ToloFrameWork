@@ -25,16 +25,17 @@ DependsFinder.prototype.parse = function() {
             if (this.index > 0) {
                 good = false;
                 c = this.code.charAt(this.index - 1);
-                if (c != '.' && c != '$' && c != '_' && (c < 'a' || c > 'z') 
+                if (c != '.' && c != '$' && c != '_' && (c < 'a' || c > 'z')
                     && (c < 'A' || c > 'Z') && (c < '0' || c > '9')) {
                     good = true;
                 }
-                if (good && this.code.substr(this.index, 8) == 'require(') {
-                    this.index += 8;
-                    c = this.code.charAt(this.index);
-                    if (c == '"' || c == "'") {
-                        this.addDep("mod/" + this.parseString());
-                    }
+            }
+            if (good && this.code.substr(this.index, 8) == 'require(') {
+                this.index += 8;
+                c = this.code.charAt(this.index);
+                if (c == '"' || c == "'") {
+                    this.addDep("require.js");
+                    this.addDep("mod/" + this.parseString() + ".js");
                 }
             }
         }
@@ -43,16 +44,17 @@ DependsFinder.prototype.parse = function() {
             if (this.index > 0) {
                 good = false;
                 c = this.code.charAt(this.index - 1);
-                if (c != '.' && c != '$' && c != '_' && (c < 'a' || c > 'z') 
+                if (c != '.' && c != '$' && c != '_' && (c < 'a' || c > 'z')
                     && (c < 'A' || c > 'Z') && (c < '0' || c > '9')) {
                     good = true;
                 }
-                if (good && this.code.substr(this.index, 3) == '$$(') {
-                    this.index += 8;
-                    c = this.code.charAt(this.index);
-                    if (c == '"' || c == "'") {
-                        this.addDep("cls/" + this.parseString());
-                    }
+            }
+            if (good && this.code.substr(this.index, 3) == '$$(') {
+                this.index += 3;
+                c = this.code.charAt(this.index);
+                if (c == '"' || c == "'") {
+                    this.addDep("tfw3.js");
+                    this.addDep("cls/" + this.parseString() + ".js");
                 }
             }
         }

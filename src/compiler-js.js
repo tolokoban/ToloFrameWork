@@ -17,7 +17,7 @@ exports.compile = function(source) {
     var dependsFinder = new DependsFinder(zip);
     dependsFinder.depends.forEach(
         function(item) {
-            var file = item + ".js";
+            var file = item;
             if (!source.prj().srcOrLibPath(file)) {
                 throw {fatal: "Required module not found: \"" + item.bold + "\"!"};
             }
