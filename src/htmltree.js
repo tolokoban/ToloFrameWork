@@ -212,6 +212,23 @@ exports.getElementByName = function(root, name) {
 };
 
 /**
+ * Remove `child` from the children's list of `parent`.
+ */
+exports.removeChild = function(parent, child) {
+    if (Array.isArray(parent.children)) {
+        var i, node;
+        for (i = 0 ; i < parent.children.length ; i++) {
+            node = parent.children[i];
+            if (node === child) {
+                parent.children.splice(i, 1);
+                break;
+            }
+        }
+    }
+};
+
+
+/**
  * Convert a node in HTML code.
  */
 exports.toString = function(node) {

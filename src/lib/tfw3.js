@@ -2,7 +2,7 @@
  * ToloFrameWork v3.0.1
  *-------------------------------------------------------------------------------
  *  ### To define a class (let's call it MyClass), use this syntax:
- * 
+ *
  *  window["TFW::MyClass"] = {
  *  singleton: false,
  *  superclass: "...",
@@ -21,16 +21,16 @@
  *  ...
  *  }
  *  }
- * 
- * 
+ *
+ *
  *  ### To create an instance of MyClass:
- * 
+ *
  *  var obj = $$("MyClass");
  *  var obj = $$("MyClass", {caption: "Hello world!"});
- * 
- * 
+ *
+ *
  *  ### Here are special functions that every class shares:
- * 
+ *
  *  $id         [string]  : unique id referencing this object.
  *  $classname  [string]  : name of the current class.
  *  $parent     [object]  : prototype of the parent class if exist.
@@ -40,11 +40,11 @@
  */
 window.$$ = function() {
     var TFW3,
-        _id = 0,
-        _singletons = {},
-        _statics = {},
-        _classes = {},
-        _lang = null;
+    _id = 0,
+    _singletons = {},
+    _statics = {},
+    _classes = {},
+    _lang = null;
 
     var lang = function(lang) {
         if (lang === undefined) {
@@ -75,7 +75,7 @@ window.$$ = function() {
     var TFW3Object = function() {};
     TFW3Object.prototype.$ = function(k) {
         var dic = this.$lang[lang()],
-            txt, newTxt, i, c, lastIdx, pos;
+        txt, newTxt, i, c, lastIdx, pos;
         if (!dic) {
             dic = this.$lang[this.$defLang];
         }
@@ -262,7 +262,7 @@ window.$$ = function() {
         var cls = _classes[className];
         if (!cls) {
             var k, name,
-                def = window["TFW::" + className];
+            def = window["TFW::" + className];
             if (!def) {
                 throw new Error(
                     "[TFW3] This class has not been defined: \"" + className + "\"!\n"
@@ -342,18 +342,18 @@ window.$$ = function() {
 
     TFW3 = function(className, attribs) {
         var single,
-            cls,
-            obj,
-            k,
-            path,
-            names,
-            signals,
-            cur,
-            i,
-            f,
-            sn,
-            n,
-            s;
+        cls,
+        obj,
+        k,
+        path,
+        names,
+        signals,
+        cur,
+        i,
+        f,
+        sn,
+        n,
+        s;
         // In case of singleton, just return the last created instance.
         single = _singletons[className];
         if (single && typeof single === "object") {
@@ -531,15 +531,15 @@ window.$$ = function() {
         var quoteString = function(string)
         {
             var _escapeable = /["\\\x00-\x1f\x7f-\x9f]/g,
-                _meta = {
-                    '\b': '\\b',
-                    '\t': '\\t',
-                    '\n': '\\n',
-                    '\f': '\\f',
-                    '\r': '\\r',
-                    '"' : '\\"',
-                    '\\': '\\\\'
-                };
+            _meta = {
+                '\b': '\\b',
+                '\t': '\\t',
+                '\n': '\\n',
+                '\f': '\\f',
+                '\r': '\\r',
+                '"' : '\\"',
+                '\\': '\\\\'
+            };
             if (string.match(_escapeable))
             {
                 return '"' + string.replace(
@@ -560,10 +560,10 @@ window.$$ = function() {
              * Convertit un objet en chaîne de caractères au format JSON.
              */
             var type = typeof(o),
-                month, day, year, hours, minutes, seconds, milli,
-                ret, i,
-                pairs, k, name,
-                val;
+            month, day, year, hours, minutes, seconds, milli,
+            ret, i,
+            pairs, k, name,
+            val;
 
             if (o === null || type == "undefined") return "null";
             if (type == "number" || type == "boolean")  return o + "";
@@ -668,8 +668,8 @@ window.$$ = function() {
          */
         TFW3.localLoad = function(key) {
             var theCookie = "" + document.cookie,
-                ind = theCookie.indexOf(key),
-                ind1;
+            ind = theCookie.indexOf(key),
+            ind1;
             if (ind == -1 || key == "") return null;
             ind1 = theCookie.indexOf(';', ind);
             if (ind1 == -1) ind1 = theCookie.length;
@@ -677,8 +677,8 @@ window.$$ = function() {
         };
         TFW3.localSave = function(key, val) {
             var nDays = 365,
-                today = new Date(),
-                expire = new Date();
+            today = new Date(),
+            expire = new Date();
             expire.setTime(today.getTime() + 3600000*24*nDays);
             document.cookie = key + "=" + encodeURIComponent(JSON.stringify(val))
                 + ";expires=" + expire.toGMTString();
@@ -695,12 +695,56 @@ window.$$ = function() {
         };
     }
     var consoleMethods = ["log", "info", "warn", "error"],
-        i;
+    i;
     for (i = 0 ; i < consoleMethods.length ; i++) {
         if (window.console[consoleMethods[i]] === undefined) {
             window.console[consoleMethods[i]] = function(){};
         }
     }
+
+    ///////////////////////
+    // JSON Web Services //
+    ///////////////////////
+    TFW3.service = function(p_service, p_input, p_obj, p_slot) {
+        var callback = null,
+        obj, slot, f, arg;
+        if (!p_obj) {
+            throw new Error("[$$.service] Missing argument #3: object!");
+        }
+        if (!p_slot) {
+            callback = p_obj;
+        }
+        obj = p_obj;
+        slot = p_slot;
+        f = slot ? $$.slot(obj, slot): null;
+        arg = {
+            s: p_service,
+            i: $$.toJSON(p_input)
+        };
+        $$.ajax(
+            {
+                url: $$.params.root + "/server.php",
+                data: arg,
+                type: "POST",
+                cache: false,
+                dataType: "json",
+                success: function(data) {
+                    // Si tout va bien, on appelle la callback.
+                    try {
+                        if (callback) {
+                            callback(data);
+                        } else {
+                            f.call(obj, data);
+                        }
+                    } catch (e) {
+                        throw new Error("[$$.service] Unexpected error in callback function "
+                                        + obj.$classname + "." + slot + "()\n" + e);
+                    }
+                }
+            }
+        );
+    };
+
 
     return TFW3;
 }();

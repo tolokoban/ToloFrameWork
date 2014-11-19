@@ -97,11 +97,6 @@ function cleanupTreeAndStoreItInTag(root, source) {
  * ```
  */
 function lookForStaticJavascriptAndStyle(root, source) {
-    function clear(node) {
-        node.type = Tree.VOID;
-        delete node.attribs;
-        delete node.children;
-    }
     var innerJS = "";
     var innerCSS = "";
     var outerJS = [];
@@ -111,7 +106,7 @@ function lookForStaticJavascriptAndStyle(root, source) {
     Tree.walk(
         root,
         null,
-        function(node) {
+        function(node, parent) {
             if (node.type !== Tree.TAG) return;
             var src;
             switch (node.name) {
@@ -120,15 +115,18 @@ function lookForStaticJavascriptAndStyle(root, source) {
                     if (typeof src === 'string' && src.length > 0) {
                         if (src.substr(0, 5) != "http:" && src.substr(0, 6) != "https:") {
                             outerJS.push(src);
+                            Tree.removeChild(parent, node);
+                        } else {
+                            console.log("Remote Javascript dependence: " + src.magenta);
                         }
                     } else {
                         innerJS += Tree.text(root);
+                        Tree.removeChild(parent, node);
                     }
-                    clear(root);
                     break;
                 case "style":
                     innerCSS += Tree.text(root);
-                    clear(root);
+                Tree.removeChild(parent, node);
                     break;
                 case "link":
                     if (Tree.att("rel").toLowerCase() == "stylesheet") {
