@@ -36,7 +36,7 @@
  *  $parent     [object]  : prototype of the parent class if exist.
  *  $superclass [string]  : name of the superclass.
  *  $singleton  [boolean] : is this object a boolean?
- *  $statics    [object]  : map of the static variables shared by all instances of this class.
+ *  $static    [object]  : map of the static variables shared by all instances of this class.
  */
 window.$$ = function() {
     var TFW3,
@@ -303,7 +303,7 @@ window.$$ = function() {
             // Espace réservé aux membres statiques de la classe.
             var staticVars = {className: className};
             _statics[className] = staticVars;
-            cls.prototype.$statics = staticVars;
+            cls.prototype.$static = staticVars;
             // Valeurs par défaut des attributs.
             if (def.attributes) {
                 for (k in def.attributes) {
@@ -500,136 +500,6 @@ window.$$ = function() {
         };
     }
 
-    if (typeof window.JSON === 'undefined') window.JSON = {};
-    if (typeof window.JSON.parse === 'undefined') {
-        window.JSON.parse = function(json) {
-            try {
-                if ( typeof json !== "string" || !json ) {
-                    return null;
-                }
-                json = json.trim();
-                return (new Function("return " + json))();
-            } catch (x) {
-                throw new Error("Invalid JSON!\n" + x + "\n" + json);
-            }
-        };
-    }
-    if (typeof window.JSON.stringify === 'undefined') {
-        /**
-         * Cette fonction provient du site http://code.google.com/p/jquery-json/
-         * ---------------------------------------------------------------------
-         * Returns a string-repr of a string, escaping quotes intelligently.
-         * Mostly a support function for toJSON.
-         *
-         * Examples:
-         * ### $$.quoteString("apple")
-         * "apple"
-         *
-         * ### $$.quoteString('"Where are we going?", she asked.')
-         * "\"Where are we going?\", she asked."
-         */
-        var quoteString = function(string)
-        {
-            var _escapeable = /["\\\x00-\x1f\x7f-\x9f]/g,
-            _meta = {
-                '\b': '\\b',
-                '\t': '\\t',
-                '\n': '\\n',
-                '\f': '\\f',
-                '\r': '\\r',
-                '"' : '\\"',
-                '\\': '\\\\'
-            };
-            if (string.match(_escapeable))
-            {
-                return '"' + string.replace(
-                    _escapeable, function (a)
-                    {
-                        var c = _meta[a];
-                        if (typeof c === 'string') return c;
-                        c = a.charCodeAt();
-                        return '\\u00' + Math.floor(c / 16).toString(16) + (c % 16).toString(16);
-                    }) + '"';
-            }
-            return '"' + string + '"';
-        };
-        window.JSON.stringify = function(o) {
-            /**
-             * Cette fonction provient du site http://code.google.com/p/jquery-json/
-             * ---------------------------------------------------------------------
-             * Convertit un objet en chaîne de caractères au format JSON.
-             */
-            var type = typeof(o),
-            month, day, year, hours, minutes, seconds, milli,
-            ret, i,
-            pairs, k, name,
-            val;
-
-            if (o === null || type == "undefined") return "null";
-            if (type == "number" || type == "boolean")  return o + "";
-            if (type == "string") return quoteString(o);
-
-            if (type == 'object') {
-                if (typeof o.toJSON == "function") return JSON.stringify( o.toJSON() );
-
-                if (o.constructor === Date) {
-                    month = o.getUTCMonth() + 1;
-                    if (month < 10) month = '0' + month;
-
-                    day = o.getUTCDate();
-                    if (day < 10) day = '0' + day;
-
-                    year = o.getUTCFullYear();
-
-                    hours = o.getUTCHours();
-                    if (hours < 10) hours = '0' + hours;
-
-                    minutes = o.getUTCMinutes();
-                    if (minutes < 10) minutes = '0' + minutes;
-
-                    seconds = o.getUTCSeconds();
-                    if (seconds < 10) seconds = '0' + seconds;
-
-                    milli = o.getUTCMilliseconds();
-                    if (milli < 100) milli = '0' + milli;
-                    if (milli < 10) milli = '0' + milli;
-
-                    return '"' + year + '-' + month + '-' + day + 'T' +
-                        hours + ':' + minutes + ':' + seconds +
-                        '.' + milli + 'Z"';
-                }
-
-                if (o.constructor === Array) {
-                    ret = [];
-                    for (i = 0; i < o.length; i++) ret.push( JSON.stringify(o[i]) || "null" );
-
-                    return "[" + ret.join(",") + "]";
-                }
-
-                pairs = [];
-                for (k in o) {
-                    type = typeof k;
-                    if (type == "number") {
-                        name = '"' + k + '"';
-                    }
-                    else if (type == "string") {
-                        name = quoteString(k);
-                    }
-                    else {
-                        continue;  //skip non-string or number keys
-                    }
-                    if (typeof o[k] == "function") {
-                        continue;  //skip pairs where the value is a function.
-                    }
-                    val = JSON.stringify(o[k]);
-                    pairs.push(name + ":" + val);
-                }
-                return "{" + pairs.join(", ") + "}";
-            }
-            return "null";
-        };
-    }
-
     // Local storage
     if (window["localStorage"]) {
         /**
@@ -745,6 +615,118 @@ window.$$ = function() {
         );
     };
 
+    /**
+     * Appel d'une méthode au bout d'un certain nombre de millisecondes.
+     * Le premier argument peut être omis. Dans ce cas, il vaudra 1 milliseconde.
+     *
+     * @param delay Nombre de millisecondes avant exécution de la méthode.
+     * @param obj Objet sur lequel on veut appeler une méthode.
+     * @param slot Chaîne contenant le nom de la méthode à appeler.
+     * @param data [Optionel] Argument à passer à la méthode.
+     * @return Identifiant servant à annuler l'appel avec la fonction window.clearTimeout(id).
+     */
+    TFW3.invokeLater = function(delay, obj, slot, data) {
+        if (typeof delay !== 'number') {
+            data = slot;
+            slot = obj;
+            obj = delay;
+            delay = 1;
+        }
+        var t = typeof obj;
+        if (t !== 'function' && t !== 'object') {
+            console.info("[tfw3] obj=...", obj);
+            throw Error("Invalid argument 'obj' in $$.invokeLater(delay, obj, ...):\n"
+                        + "It should be a function or an object, but it is a '" + t + "'!");
+        }
+        var later = require("tfw.timer").later(delay);
+        later.then(
+            function() {
+                if (typeof obj === 'function') {
+                    return obj(slot);
+                }
+                var f = obj[slot];
+                return f.call(obj, data);
+            }
+        );
+    };
+
+    /**
+     * Retourne un dictionnaire contenant les arguments passés dans l'URL.
+     * Ceci fonctionne pour des arguments du style "a=toto&b=titi".
+     * Si le "=" est omis, la valeur est renvoyée dans le champ "" (chaîne vide) du dictionnaire.
+     */
+    TFW3.urlArgs = function() {
+        var f = {},
+        t = location.search,
+        i, x;
+        if (t.length < 2) return f;
+        t = t.substring(1).split('&');
+        for (i=0; i<t.length; i++){
+            x = t[i].split('=');
+            if (x.length == 1) {
+                f[""] = decodeURIComponent(x[0]);
+            }
+            else {
+                f[x[0]] = decodeURIComponent(x[1]);
+            }
+        }
+        return f;
+    };
+
+    /**
+     * Retourne un slot sur un objet donné.
+     * Par exemple, si l'objet toto a une méthode toString(),
+     * on peut l'appeler comme ceci :
+     *   $$.slot(toto, "toString").call(toto)
+     *
+     * @param obj Objet sur lequel on veut appeler une méthode.
+     * @param functionName Chaîne contenant le nom de la méthode à appeler.
+     */
+    TFW3.slot = function(obj, functionName) {
+        var cls, f;
+        if (!obj.$classname) {
+            $$.trace("============================================================");
+            $$.trace("ERROR: [$$.slot] Not a Toloramework object!");
+            $$.trace("obj=...",5);$$.trace(obj,5);
+            $$.trace("functionName=...",5);$$.trace(functionName,5);
+            $$.trace("------------------------------------------------------------");
+            throw new Error("[$$.slot(" + functionName + ")] Not a Toloframework object!");
+        }
+        cls = $$._.classes[obj.$classname];
+        if (!cls) {
+            throw new Error("[$$.slot(" + functionName + ")] Class not defined: " + obj.$classname);
+        }
+        f = cls.prototype[functionName];
+        if (!f) {
+            throw new Error("[$$.slot()] Slot not found: " + obj.$classname + "." + functionName);
+        }
+        return f;
+    };
+
+    /**
+     * Retourner la valeur numérique entière de x.
+     * Si min et/ou max sont définis, ce sont des contraintes à appliquer à x.
+     */
+    TFW3.intVal = function(x, min, max) {
+        x = parseInt(x);
+        if (isNaN(x)) return 0;
+        if (min !== undefined && x < min) x = min;
+        if (max !== undefined && x > max) x = max;
+        return x;
+    };
+
+
+    /**
+     * Retourner la valeur numérique flottante de x.
+     * Si min et/ou max sont définis, ce sont des contraintes à appliquer à x.
+     */
+    TFW3.floatVal = function(x, min, max) {
+        x = parseFloat(x);
+        if (isNaN(x)) return 0;
+        if (min !== undefined && x < min) x = min;
+        if (max !== undefined && x > max) x = max;
+        return x;
+    };
 
     return TFW3;
 }();

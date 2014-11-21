@@ -139,8 +139,8 @@ function lookForStaticJavascriptAndStyle(root, source) {
             }
         }
     );
-    source.tag("innerJS", "");
-    source.tag("innerCSS", "");
+    source.tag("innerJS", innerJS);
+    source.tag("innerCSS", innerCSS);
 }
 
 /**

@@ -529,6 +529,34 @@ function extractNonVoidChildren(node, target) {
 }
 
 /**
+ * @return The first children tag with name `tagname`, or `null` if not found.
+ */
+exports.findChild = function(root, tagname) {
+    if (!Array.isArray(root.children)) return null;
+    for (var i = 0 ; i < root.children.length ; i++) {
+        var item = root.children[i];
+        if (item.type == exports.TAG && item.name == tagname) return item;
+    }
+    return null;
+};
+
+/**
+ * If a tag called `tagname` exist among `root`'s children, return it.
+ * Otherwise, create a new tag, append it to `root` and return it.
+ */
+exports.findOrAppendChild = function(root, tagname, attribs, children) {
+    var child = exports.findChild(root, tagname);
+    if (child) return child;
+    child = exports.tag(tagname, attribs, children);
+    if (!Array.isArray(root.children)) {
+        root.children = [child];
+    } else {
+        root.children.push(child);
+    }
+    return child;
+};
+
+/**
  * Return a div element.
  */
 exports.div = function(attribs, children) {

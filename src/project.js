@@ -206,13 +206,96 @@ Project.prototype.link = function() {
 };
 
 /**
+ * @return void
+ */
+Project.prototype.sortCSS = function(linkJS, linkCSS) {
+    var input = [];
+    linkCSS.forEach(
+        function(nameCSS, indexCSS) {
+            var nameJS = nameCSS.substr(0, nameCSS.length - 3) + "js";
+            var pos = linkJS.indexOf(nameJS);
+            if (pos < 0) pos = 1000000 + indexCSS;
+            input.push([nameCSS, pos]);
+        } 
+    );
+    input.sort(
+        function(a, b) {
+            var x = a[0];
+            var y = b[0];
+            if (x < y) return -1;
+            if (x > y) return 1;
+            x = a[1];
+            y = b[1];
+            if (x < y) return -1;
+            if (x > y) return 1;
+            return 0;
+        }
+    );
+    return input.map(function(x){return x[0];});
+};
+
+Project.prototype.sortJS = function(srcHTML, linkJS) {
+    var input = [];
+    linkJS.forEach(
+        function(nameJS) {
+            var srcJS = srcHTML.create(nameJS);
+            var item = {key: nameJS, dep: []};
+            srcJS.tag("needs").forEach(
+                function(name) {
+                    if (name != nameJS && linkJS.indexOf(name) > -1) {
+                        item.dep.push(name);
+                    }
+                } 
+            );
+            input.push(item);
+        } 
+    );
+    return this.topologicalSort(input);
+};
+
+Project.prototype.topologicalSort = function(input) {
+    var output = [];
+    while (output.length < input.length) {
+        // Looking for the less depending item.
+        var candidate = null;
+        input.forEach(
+            function(item) {
+                if (!item.key) return;
+                if (!candidate) {
+                    candidate = item;
+                } else {
+                    if (item.dep.length < candidate.dep.length) {
+                        candidate = item;
+                    }
+                }
+            } 
+        );
+        // This candidate is the next item of the output list.
+        var key = candidate.key;
+        output.push(key);
+        delete candidate.key;
+        // Remove this item in all the dependency lists.
+        input.forEach(
+            function(item) {
+                if (!item.key) return;
+                item.dep = item.dep.filter(
+                    function(x) {
+                        return x != key;
+                    }
+                );
+            }
+        );       
+    }
+    return output;
+};
+
+/**
  * Linking in DEBUG mode.
  */
 Project.prototype.linkForDebug = function(filename) {
     var srcHTML = new Source(this, filename);
-    //var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS") || []);
-    var linkJS = [].concat(srcHTML.tag("linkJS") || []);
-    var linkCSS = srcHTML.tag("linkCSS") || [];
+    var linkJS = this.sortJS(srcHTML, srcHTML.tag("linkJS") || []);
+    var linkCSS = this.sortCSS(linkJS, srcHTML.tag("linkCSS") || []);
     var tree = Tree.clone(srcHTML.tag("tree"));
     var head = Tree.getElementByName(tree, "head");
     if (!head) {
@@ -242,7 +325,18 @@ Project.prototype.linkForDebug = function(filename) {
                     }
                 )
             );
+            head.children.push({type: Tree.TEXT, text: "\n"});
             manifestFiles.push("css/" + shortName);
+            var resources = srcCSS.listResources();
+            resources.forEach(
+                function(resource) {
+                    var shortName = "css/"  + resource[0];
+                    var longName = resource[1];
+                    manifestFiles.push(shortName);
+                    this.copyFile(longName, Path.join(this.wwwPath("DEBUG"), shortName));
+                },
+                this
+            );
         } ,
         this
     );
@@ -269,6 +363,7 @@ Project.prototype.linkForDebug = function(filename) {
                     {src: "js/" + shortName}
                 )
             );
+            head.children.push({type: Tree.TEXT, text: "\n"});
             manifestFiles.push("js/" + shortName);
         } ,
         this
@@ -319,6 +414,10 @@ Project.prototype.linkForDebug = function(filename) {
     );
 
     // Writing HTML file.
+    var html = Tree.findChild(tree, "html");
+    if (html) {
+        Tree.att(html, "manifest", filename + ".manifest");
+    }
     FS.writeFileSync(
         Path.join(this.wwwPath("DEBUG"), filename),
         "<!DOCTYPE html>" + Tree.toString(tree)
@@ -327,13 +426,29 @@ Project.prototype.linkForDebug = function(filename) {
     FS.writeFileSync(
         Path.join(this.wwwPath("DEBUG"), filename + ".manifest"),
         "CACHE MANIFEST\n"
-            + "# " + Date.now() + "\n\n"
+            + "# " + (new Date()) + " - " + Date.now() + "\n\n"
             + "CACHE:\n"
             + manifestFiles.join("\n")
             + "\n\nNETWORK:\n*\n"
     );
+    // Writing ".htaccess" file.
+    this.writeHtaccess("DEBUG");
     // Looking for webapp manifest for Firefox OS.
     copyManifestWebapp.call(this, "DEBUG");
+};
+
+/**
+ * @param mode can be "RELEASE" or "DEBUG".
+ * @return void
+ */
+Project.prototype.writeHtaccess = function(mode) {
+    FS.writeFileSync(
+        Path.join(this.wwwPath(mode), ".htaccess"),
+        "AddType application/x-web-app-manifest+json .webapp\n"
+            + "AddType text/cache-manifest .manifest\n"
+            + "ExpiresByType text/cache-manifest \"access plus 10 seconds\"\n"
+            + "Header set Cache-Control \"max-age=10, must-revalidate\"\n"
+    );    
 };
 
 /**
@@ -341,11 +456,8 @@ Project.prototype.linkForDebug = function(filename) {
  */
 Project.prototype.linkForRelease = function(filename) {
     var srcHTML = new Source(this, filename);
-    //var linkJS = ["tfw3.js"].concat(srcHTML.tag("linkJS") || []);
-    var linkJS = [].concat(srcHTML.tag("linkJS") || []);
-    if (!Array.isArray(linkJS)) linkJS = [];
-    var linkCSS = srcHTML.tag("linkCSS") || [];
-    if (!Array.isArray(linkCSS)) linkCSS = [];
+    var linkJS = this.sortJS(srcHTML, srcHTML.tag("linkJS") || []);
+    var linkCSS = this.sortCSS(linkJS, srcHTML.tag("linkCSS") || []);
     var tree = Tree.clone(srcHTML.tag("tree"));
     var head = Tree.getElementByName(tree, "head");
     if (!head) {
@@ -386,6 +498,16 @@ Project.prototype.linkForRelease = function(filename) {
             var srcCSS = srcHTML.create(item);
             var content = srcCSS.tag("release");
             FS.writeSync(fdCSS, content);
+            var resources = srcCSS.listResources();
+            resources.forEach(
+                function(resource) {
+                    var shortName = "css/"  + resource[0];
+                    var longName = resource[1];
+                    manifestFiles.push(shortName);
+                    this.copyFile(longName, Path.join(this.wwwPath("DEBUG"), shortName));
+                },
+                this
+            );
         } ,
         this
     );
@@ -424,6 +546,10 @@ Project.prototype.linkForRelease = function(filename) {
             }
         )
     );
+    var html = Tree.findChild(tree, "html");
+    if (html) {
+        Tree.att(html, "manifest", filename + ".manifest");
+    }
     FS.writeFileSync(
         Path.join(this.wwwPath("RELEASE"), filename),
         "<!DOCTYPE html>" + Tree.toString(tree)
@@ -441,6 +567,8 @@ Project.prototype.linkForRelease = function(filename) {
     );
     FS.close(fdJS);
     FS.close(fdCSS);
+    // Writing ".htaccess" file.
+    this.writeHtaccess("RELEASE");
     // Looking for webapp manifest for Firefox OS.
     copyManifestWebapp.call(this, "RELEASE");
 };

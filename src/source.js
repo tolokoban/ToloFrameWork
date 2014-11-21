@@ -126,6 +126,42 @@ Source.prototype.tag = function(name, value) {
     }
 };
 
+/**
+ * Resources are  stored in a  directory with the source's  name without
+ * extendion.  For  instance, if  the source is  "tunnel.css", resources
+ * are stored in directory "tunnel/" in the same folder.
+ * @return Array of resources relative to the source's folder.
+ */
+Source.prototype.listResources = function() {
+    var dir = this.getAbsoluteFilePath();
+    var pos = dir.lastIndexOf('.');
+    if (pos > -1) {
+        // Removing extension.
+        dir = dir.substr(0, pos);
+    }
+    var root = Path.dirname(dir);
+    var listFiles = function(path) {
+        return FS.readdirSync(path).map(
+            function(x) { return Path.join(path, x); }
+        );
+    };
+    if (false == FS.existsSync(dir)) {
+        return [];
+    }
+    var output = [];
+    var fringe = listFiles(dir);
+    while (fringe.length > 0) {
+        var file = fringe.pop();
+        if (false == FS.existsSync(file)) continue;
+        var stat = FS.statSync(file);
+        if (stat.isDirectory()) {
+            fringe.concat(listFiles(file));
+        } else {
+            output.push([file.substr(root.length + 1), file]);
+        }
+    }
+    return output;
+};
 
 
 /**
