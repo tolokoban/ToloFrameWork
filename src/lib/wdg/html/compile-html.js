@@ -27,6 +27,9 @@ module.exports.compile = function(root) {
     // Add standard metas to <head>.
     var metas = [
         Tree.tag(
+            "meta", {"http-equiv": "Pragma", content: "no-cache"}
+        ),
+        Tree.tag(
             "meta", {"http-equiv": "Content-Type", content: "text/html; charset=UTF-8"}
         ),
         Tree.tag(

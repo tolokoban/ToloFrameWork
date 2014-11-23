@@ -293,6 +293,7 @@ Project.prototype.topologicalSort = function(input) {
  * Linking in DEBUG mode.
  */
 Project.prototype.linkForDebug = function(filename) {
+    var seed = "?" + Date.now();
     var srcHTML = new Source(this, filename);
     var linkJS = this.sortJS(srcHTML, srcHTML.tag("linkJS") || []);
     var linkCSS = this.sortCSS(linkJS, srcHTML.tag("linkCSS") || []);
@@ -319,7 +320,7 @@ Project.prototype.linkForDebug = function(filename) {
                 Tree.tag(
                     "link",
                     {
-                        href: "css/" + shortName,
+                        href: "css/" + shortName + seed,
                         rel: "stylesheet",
                         type: "text/css"
                     }
@@ -360,7 +361,7 @@ Project.prototype.linkForDebug = function(filename) {
             head.children.push(
                 Tree.tag(
                     "script",
-                    {src: "js/" + shortName}
+                    {src: "js/" + shortName + seed}
                 )
             );
             head.children.push({type: Tree.TEXT, text: "\n"});
@@ -388,7 +389,7 @@ Project.prototype.linkForDebug = function(filename) {
     head.children.push(
         Tree.tag(
             "script",
-            {src: "js/" + shortNameJS}
+            {src: "js/" + shortNameJS + seed}
         )
     );
     manifestFiles.push("js/" + shortNameJS);
@@ -401,7 +402,7 @@ Project.prototype.linkForDebug = function(filename) {
         Tree.tag(
             "link",
             {
-                href: "css/" + shortNameCSS,
+                href: "css/" + shortNameCSS + seed,
                 rel: "stylesheet",
                 type: "text/css"
             }
@@ -416,11 +417,12 @@ Project.prototype.linkForDebug = function(filename) {
     // Writing HTML file.
     var html = Tree.findChild(tree, "html");
     if (html) {
-        Tree.att(html, "manifest", filename + ".manifest");
+        Tree.att(html, "manifest", filename + ".manifest" + seed);
     }
     FS.writeFileSync(
         Path.join(this.wwwPath("DEBUG"), filename),
-        "<!DOCTYPE html>" + Tree.toString(tree)
+        "<!-- " + (new Date()).toString() + " -->"
+        + "<!DOCTYPE html>" + Tree.toString(tree)
     );
     // Writing manifest file.
     FS.writeFileSync(
@@ -446,8 +448,10 @@ Project.prototype.writeHtaccess = function(mode) {
         Path.join(this.wwwPath(mode), ".htaccess"),
         "AddType application/x-web-app-manifest+json .webapp\n"
             + "AddType text/cache-manifest .manifest\n"
-            + "ExpiresByType text/cache-manifest \"access plus 10 seconds\"\n"
-            + "Header set Cache-Control \"max-age=10, must-revalidate\"\n"
+            + "ExpiresByType text/cache-manifest \"access plus 0 seconds\"\n"
+            + "Header set Expires \"Thu, 19 Nov 1981 08:52:00 GM\"\n"
+            + "Header set Cache-Control \"no-store, no-cache, must-revalidate, post-check=0, pre-check=0\"\n"
+            + "Header set Pragma \"no-cache\"\n"
     );    
 };
 
@@ -455,6 +459,7 @@ Project.prototype.writeHtaccess = function(mode) {
  * Linking in RELEASE mode.
  */
 Project.prototype.linkForRelease = function(filename) {
+    var seed = "?" + Date.now();
     var srcHTML = new Source(this, filename);
     var linkJS = this.sortJS(srcHTML, srcHTML.tag("linkJS") || []);
     var linkCSS = this.sortCSS(linkJS, srcHTML.tag("linkCSS") || []);
@@ -532,7 +537,7 @@ Project.prototype.linkForRelease = function(filename) {
         Tree.tag(
             "script",
             {
-                src: "js/@" + shortedName + ".js"
+                src: "js/@" + shortedName + ".js" + seed
             }
         )
     );
@@ -540,7 +545,7 @@ Project.prototype.linkForRelease = function(filename) {
         Tree.tag(
             "link",
             {
-                href: "css/@" + shortedName + ".css",
+                href: "css/@" + shortedName + ".css" + seed,
                 rel: "stylesheet",
                 type: "text/css"
             }
@@ -548,11 +553,12 @@ Project.prototype.linkForRelease = function(filename) {
     );
     var html = Tree.findChild(tree, "html");
     if (html) {
-        Tree.att(html, "manifest", filename + ".manifest");
+        Tree.att(html, "manifest", filename + ".manifest?" + Date.now());
     }
     FS.writeFileSync(
         Path.join(this.wwwPath("RELEASE"), filename),
-        "<!DOCTYPE html>" + Tree.toString(tree)
+        "<!-- " + (new Date()).toString() + " -->"
+        + "<!DOCTYPE html>" + Tree.toString(tree)
     );
     // Writing manifest file.
     FS.writeFileSync(
