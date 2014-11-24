@@ -26,10 +26,53 @@ var Project = function(prjDir) {
         FS.writeFileSync(
             configFile,
             "{\n"
-            + "    'name': '" + Path.basename(this._prjDir) + "',\n"
-            + "    'version': '0.0.1'\n}"
+                + "    'name': '" + Path.basename(this._prjDir) + "',\n"
+                + "    'version': '0.0.0'\n}"
         );
     }
+    var cfg;
+    try {
+        cfg = JSON.parse(FS.readFileSync(configFile));
+    }
+    catch (ex) {
+        this.fatal("Invalid JSON configuration file: " + configFile + "\n" + ex);
+    }
+    if (typeof cfg.name !== 'string') {
+        cfg.name = "ToloFrameWork application";
+    }
+    if (typeof cfg.version !== 'string') {
+        cfg.version = "0.0.0";
+    }
+    var version = cfg.version.split(".");
+    if (version.length < 3) {
+        while (version.length < 3) version.push("0");
+    } else {
+        version[version.length - 1] = parseInt(version[version.length - 1]) + 1;
+    }
+    cfg.version = version.join(".");
+    FS.writeFileSync(configFile, JSON.stringify(cfg));
+
+    console.info((cfg.name + " v" + cfg.version).bold);
+    console.info();
+
+    var now = new Date();
+    var mod = this.srcPath("mod");
+    if (false == FS.existsSync(mod)) {
+        FS.mkdir(mod);
+    }
+    var file = Path.join(mod, "_.js");
+    FS.writeFileSync(
+        file,
+        "module.exports={"
+        + "name:" + JSON.stringify(cfg.name)
+        + ",version:" + JSON.stringify(cfg.version)
+        + ",major:" + version[0]
+        + ",minor:" + version[1]
+        + ",revision:" + version[2]
+        + ",date:new Date(" + now.getFullYear() + "," + now.getMonth() + "," + now.getDate()
+        + "," + now.getHours() + "," + now.getMinutes() + "," + now.getSeconds() + ")"
+        + "}"
+    );
 };
 
 /**
@@ -141,8 +184,8 @@ Project.prototype.getAvailableWidgetCompilers = function() {
                             }
                             console.log(
                                 "   " + (map[filename].precompilation ? "<w:".yellow.bold : "<w:")
-                                + name + (map[filename].precompilation ? ">".yellow.bold : ">")
-                                + "\t" + file
+                                    + name + (map[filename].precompilation ? ">".yellow.bold : ">")
+                                    + "\t" + file
                             );
                         }
                     }
@@ -216,7 +259,7 @@ Project.prototype.sortCSS = function(linkJS, linkCSS) {
             var pos = linkJS.indexOf(nameJS);
             if (pos < 0) pos = 1000000 + indexCSS;
             input.push([nameCSS, pos]);
-        } 
+        }
     );
     input.sort(
         function(a, b) {
@@ -245,10 +288,10 @@ Project.prototype.sortJS = function(srcHTML, linkJS) {
                     if (name != nameJS && linkJS.indexOf(name) > -1) {
                         item.dep.push(name);
                     }
-                } 
+                }
             );
             input.push(item);
-        } 
+        }
     );
     return this.topologicalSort(input);
 };
@@ -268,7 +311,7 @@ Project.prototype.topologicalSort = function(input) {
                         candidate = item;
                     }
                 }
-            } 
+            }
         );
         // This candidate is the next item of the output list.
         var key = candidate.key;
@@ -284,7 +327,7 @@ Project.prototype.topologicalSort = function(input) {
                     }
                 );
             }
-        );       
+        );
     }
     return output;
 };
@@ -302,8 +345,8 @@ Project.prototype.linkForDebug = function(filename) {
     if (!head) {
         this.fatal(
             "Invalid HTML file: missing <head></head>!"
-            + "\n\n"
-            + Tree.toString(tree)
+                + "\n\n"
+                + Tree.toString(tree)
         );
     }
     var jsDir = this.mkdir(this.wwwPath("DEBUG/js"));
@@ -350,10 +393,10 @@ Project.prototype.linkForDebug = function(filename) {
             if (item.substr(0, 4) == 'mod/') {
                 // This is a module. We need to wrap it in module's declaration snippet.
                 code =
-                    "window['#" 
+                    "window['#"
                     + shortName.substr(0, shortName.length - 3).toLowerCase()
                     + "'] = function(exports, module){\n"
-                    + code 
+                    + code
                     + "\n};\n";
             }
             FS.writeFileSync(output, code);
@@ -414,24 +457,27 @@ Project.prototype.linkForDebug = function(filename) {
         srcHTML.tag("innerCSS")
     );
 
-    // Writing HTML file.
+    // Looking for manifest file.
     var html = Tree.findChild(tree, "html");
     if (html) {
-        Tree.att(html, "manifest", filename + ".manifest" + seed);
+        var manifestFilename = Tree.att("manifest");
+        if (manifestFilename) {
+            // Writing manifest file only if needed.
+            FS.writeFileSync(
+                Path.join(this.wwwPath("DEBUG"), filename + ".manifest"),
+                "CACHE MANIFEST\n"
+                    + "# " + (new Date()) + " - " + Date.now() + "\n\n"
+                    + "CACHE:\n"
+                    + manifestFiles.join("\n")
+                    + "\n\nNETWORK:\n*\n"
+            );
+        }
     }
+    // Writing HTML file.
     FS.writeFileSync(
         Path.join(this.wwwPath("DEBUG"), filename),
         "<!-- " + (new Date()).toString() + " -->"
-        + "<!DOCTYPE html>" + Tree.toString(tree)
-    );
-    // Writing manifest file.
-    FS.writeFileSync(
-        Path.join(this.wwwPath("DEBUG"), filename + ".manifest"),
-        "CACHE MANIFEST\n"
-            + "# " + (new Date()) + " - " + Date.now() + "\n\n"
-            + "CACHE:\n"
-            + manifestFiles.join("\n")
-            + "\n\nNETWORK:\n*\n"
+            + "<!DOCTYPE html>" + Tree.toString(tree)
     );
     // Writing ".htaccess" file.
     this.writeHtaccess("DEBUG");
@@ -452,7 +498,7 @@ Project.prototype.writeHtaccess = function(mode) {
             + "Header set Expires \"Thu, 19 Nov 1981 08:52:00 GM\"\n"
             + "Header set Cache-Control \"no-store, no-cache, must-revalidate, post-check=0, pre-check=0\"\n"
             + "Header set Pragma \"no-cache\"\n"
-    );    
+    );
 };
 
 /**
@@ -482,7 +528,7 @@ Project.prototype.linkForRelease = function(filename) {
         function(item) {
             var srcJS = srcHTML.create(item);
             var content = srcJS.tag("zip");
-            if (item.substr(0, 4) == 'mod/') {                
+            if (item.substr(0, 4) == 'mod/') {
                 // This is a module. We need to wrap it in module's declaration snippet.
                 var shortName = item.substr(4);
                 shortName = shortName.substr(0, shortName.length - 3).toLowerCase();
@@ -551,25 +597,29 @@ Project.prototype.linkForRelease = function(filename) {
             }
         )
     );
+    // Looking for manifest file.
     var html = Tree.findChild(tree, "html");
     if (html) {
-        Tree.att(html, "manifest", filename + ".manifest?" + Date.now());
+        var manifestFilename = Tree.att("manifest");
+        if (manifestFilename) {
+            // Writing manifest file only if needed.
+            FS.writeFileSync(
+                Path.join(this.wwwPath("RELEASE"), filename + ".manifest"),
+                "CACHE MANIFEST\n"
+                    + "# " + Date.now() + "\n\n"
+                    + "CACHE:\n"
+                    + shortedName + ".html\n"
+                    + "js/@" + shortedName + ".js\n"
+                    + "css/@" + shortedName + ".css\n"
+                    + "\nNETWORK:\n*\n"
+            );
+        }
     }
+    // Writing HTML file.
     FS.writeFileSync(
         Path.join(this.wwwPath("RELEASE"), filename),
         "<!-- " + (new Date()).toString() + " -->"
-        + "<!DOCTYPE html>" + Tree.toString(tree)
-    );
-    // Writing manifest file.
-    FS.writeFileSync(
-        Path.join(this.wwwPath("RELEASE"), filename + ".manifest"),
-        "CACHE MANIFEST\n"
-            + "# " + Date.now() + "\n\n"
-            + "CACHE:\n"
-            + shortedName + ".html\n"
-            + "js/@" + shortedName + ".js\n"
-            + "css/@" + shortedName + ".css\n"
-            + "\nNETWORK:\n*\n"
+            + "<!DOCTYPE html>" + Tree.toString(tree)
     );
     FS.close(fdJS);
     FS.close(fdCSS);
@@ -590,7 +640,7 @@ function copyManifestWebapp(mode) {
         var content = FS.readFileSync(webappFile);
         var json = null;
         try {
-            json = JSON.parse(content);            
+            json = JSON.parse(content);
         } catch (x) {
             this.fatal("'manifest.webapp' must be a valid JSON file!\n" + x);
         }
