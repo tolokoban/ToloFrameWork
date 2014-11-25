@@ -1,3 +1,5 @@
+require("tfw.promise");
+
 exports.later = function(delay) {
     if (typeof delay === 'undefined') delay = 1;
     return new Promise(

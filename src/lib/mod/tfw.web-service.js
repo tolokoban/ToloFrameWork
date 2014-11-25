@@ -1,3 +1,5 @@
+require("tfw.promise");
+
 exports.get = function(name, args, url) {
     return new Promise(
         function(resolve, reject) {

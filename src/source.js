@@ -155,7 +155,7 @@ Source.prototype.listResources = function() {
         if (false == FS.existsSync(file)) continue;
         var stat = FS.statSync(file);
         if (stat.isDirectory()) {
-            fringe.concat(listFiles(file));
+            fringe = listFiles(file).concat(fringe);
         } else {
             output.push([file.substr(root.length + 1), file]);
         }

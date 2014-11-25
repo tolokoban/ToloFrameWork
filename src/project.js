@@ -63,7 +63,7 @@ var Project = function(prjDir) {
     var file = Path.join(mod, "_.js");
     FS.writeFileSync(
         file,
-        "module.exports={"
+        "exports.config={"
         + "name:" + JSON.stringify(cfg.name)
         + ",version:" + JSON.stringify(cfg.version)
         + ",major:" + version[0]
