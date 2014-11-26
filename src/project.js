@@ -60,18 +60,18 @@ var Project = function(prjDir) {
     if (false == FS.existsSync(mod)) {
         FS.mkdir(mod);
     }
-    var file = Path.join(mod, "_.js");
+    var file = Path.join(mod, "$.js");
     FS.writeFileSync(
         file,
-        "exports.config={"
-        + "name:" + JSON.stringify(cfg.name)
-        + ",version:" + JSON.stringify(cfg.version)
-        + ",major:" + version[0]
-        + ",minor:" + version[1]
-        + ",revision:" + version[2]
-        + ",date:new Date(" + now.getFullYear() + "," + now.getMonth() + "," + now.getDate()
+        "exports.config={\n"
+        + "    name:" + JSON.stringify(cfg.name)
+        + "\n    ,version:" + JSON.stringify(cfg.version)
+        + "\n    ,major:" + version[0]
+        + "\n    ,minor:" + version[1]
+        + "\n    ,revision:" + version[2]
+        + "\n    ,date:new Date(" + now.getFullYear() + "," + now.getMonth() + "," + now.getDate()
         + "," + now.getHours() + "," + now.getMinutes() + "," + now.getSeconds() + ")"
-        + "}"
+        + "\n}"
     );
 };
 
@@ -522,8 +522,6 @@ Project.prototype.linkForRelease = function(filename) {
     var shortedName = filename.substr(0, filename.length - 5);
     var fdJS = FS.openSync(Path.join(jsDir, "@" + shortedName + ".js"), "w");
     FS.writeSync(fdJS, srcHTML.tag("zipJS"));
-    var fdCSS = FS.openSync(Path.join(cssDir, "@" + shortedName + ".css"), "w");
-    FS.writeSync(fdCSS, srcHTML.tag("zipCSS"));
     linkJS.forEach(
         function(item) {
             var srcJS = srcHTML.create(item);
@@ -540,15 +538,27 @@ Project.prototype.linkForRelease = function(filename) {
         } ,
         this
     );
-    FS.writeSync(
-        fdCSS,
-        Util.lessCSS("css/@" + shortedName + ".css", srcHTML.tag("innerCSS"), true)
-    );
+    var fdCSS = FS.openSync(Path.join(cssDir, "@" + shortedName + ".css"), "w");
+    var zipCSS = srcHTML.tag("zipCSS");
+    if (zipCSS) {
+        FS.writeSync(fdCSS, zipCSS);
+    }
+    var innerCSS = srcHTML.tag("innerCSS");
+    if (innerCSS) {
+        FS.writeSync(
+            fdCSS,
+            Util.lessCSS("css/@" + shortedName + ".css", innerCSS, true)
+        );        
+    }
     linkCSS.forEach(
         function(item) {
             var srcCSS = srcHTML.create(item);
             var content = srcCSS.tag("release");
-            FS.writeSync(fdCSS, content);
+            if (content) {
+                FS.writeSync(fdCSS, content);
+            } else {
+                console.log("No valid or empty CSS for " + item.red.bold + "!");
+            }
             var resources = srcCSS.listResources();
             resources.forEach(
                 function(resource) {
