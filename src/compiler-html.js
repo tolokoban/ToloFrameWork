@@ -113,6 +113,7 @@ function lookForStaticJavascriptAndStyle(root, source) {
                 case "script":
                     src = Tree.att(node, "src");
                     if (typeof src === 'string' && src.length > 0) {
+                        // outer script.
                         if (src.substr(0, 5) != "http:" && src.substr(0, 6) != "https:") {
                             outerJS.push(src);
                             Tree.removeChild(parent, node);
@@ -120,7 +121,8 @@ function lookForStaticJavascriptAndStyle(root, source) {
                             console.log("Remote Javascript dependence: " + src.magenta);
                         }
                     } else {
-                        innerJS += Tree.text(root);
+                        // Inner script.
+                        innerJS += Tree.text(node).trim() + "\n";
                         Tree.removeChild(parent, node);
                     }
                     break;
@@ -129,7 +131,7 @@ function lookForStaticJavascriptAndStyle(root, source) {
                 Tree.removeChild(parent, node);
                     break;
                 case "link":
-                    if (Tree.att("rel").toLowerCase() == "stylesheet") {
+                    if (Tree.att("rel") && Tree.att("rel").toLowerCase() == "stylesheet") {
                         src = Tree.att("href").trim();
                         if (typeof src === 'string' && src.length > 0) {
                             outerCSS.push(src);

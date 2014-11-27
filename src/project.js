@@ -202,8 +202,9 @@ Project.prototype.getAvailableWidgetCompilers = function() {
  */
 Project.prototype.fatal = function(msg, id, src) {
     if (!id) id = -1;
-    if (!src) src = "(unknown)";
-    var ex = new Error(msg);
+    if (!src) src = "(unknown)";    
+    msg = "" + msg;
+    var ex = Error(msg);
     ex.fatal = msg.bold;
     ex.id = id;
     ex.src = src;
