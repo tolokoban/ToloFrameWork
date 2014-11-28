@@ -34,21 +34,22 @@ exports.get = function(name, args, url) {
     );
 };
 
-
-window.$$.service = function (name, args, caller, onSuccess, onError) {
-    var p = exports.get(name, args);
-    p.then(
-        function(value) {
-            if (onSuccess) {
-                return caller[onSuccess].call(caller, value);
+if (window.$$) {
+    window.$$.service = function (name, args, caller, onSuccess, onError) {
+        var p = exports.get(name, args);
+        p.then(
+            function(value) {
+                if (onSuccess) {
+                    return caller[onSuccess].call(caller, value);
+                }
+                return value;
+            },
+            function(reason) {
+                if (onError) {
+                    return caller[onError].call(caller, reason);
+                }
+                return reason;
             }
-            return value;
-        },
-        function(reason) {
-            if (onError) {
-                return caller[onError].call(caller, reason);
-            }
-            return reason;
-        }
-    );
-};
+        );
+    };
+}
