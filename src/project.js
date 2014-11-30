@@ -566,7 +566,7 @@ Project.prototype.linkForRelease = function(filename) {
                     var shortName = "css/"  + resource[0];
                     var longName = resource[1];
                     manifestFiles.push(shortName);
-                    this.copyFile(longName, Path.join(this.wwwPath("DEBUG"), shortName));
+                    this.copyFile(longName, Path.join(this.wwwPath("RELEASE"), shortName));
                 },
                 this
             );
