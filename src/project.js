@@ -26,8 +26,8 @@ var Project = function(prjDir) {
         FS.writeFileSync(
             configFile,
             "{\n"
-                + "    'name': '" + Path.basename(this._prjDir) + "',\n"
-                + "    'version': '0.0.0'\n}"
+                + '    "name": "' + Path.basename(this._prjDir) + '",\n'
+                + '    "version": "0.0.0"\n}'
         );
     }
     var cfg;
