@@ -39,12 +39,12 @@ module.exports.compile = function(root) {
             "meta", {"http-equiv": "X-UA-Compatible", content: "IE=Edge"}
         ),
         Tree.tag(
-            "meta", {"http-equiv": "apple-mobile-web-app-capable", content: "yes"}
+            "meta", {"name": "apple-mobile-web-app-capable", content: "yes"}
         ),
         Tree.tag(
             "meta", {
-                "http-equiv": "viewport",
-                content: "width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0"
+                "name": "viewport",
+                content: "width=device-width,height=device-height,user-scalable=no,initial-scale=1.0,maximum-scale=1.0"
             }
         )
     ];
