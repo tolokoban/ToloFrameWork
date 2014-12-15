@@ -64,14 +64,14 @@ var Project = function(prjDir) {
     FS.writeFileSync(
         file,
         "exports.config={\n"
-        + "    name:" + JSON.stringify(cfg.name)
-        + "\n    ,version:" + JSON.stringify(cfg.version)
-        + "\n    ,major:" + version[0]
-        + "\n    ,minor:" + version[1]
-        + "\n    ,revision:" + version[2]
-        + "\n    ,date:new Date(" + now.getFullYear() + "," + now.getMonth() + "," + now.getDate()
-        + "," + now.getHours() + "," + now.getMinutes() + "," + now.getSeconds() + ")"
-        + "\n}"
+            + "    name:" + JSON.stringify(cfg.name)
+            + "\n    ,version:" + JSON.stringify(cfg.version)
+            + "\n    ,major:" + version[0]
+            + "\n    ,minor:" + version[1]
+            + "\n    ,revision:" + version[2]
+            + "\n    ,date:new Date(" + now.getFullYear() + "," + now.getMonth() + "," + now.getDate()
+            + "," + now.getHours() + "," + now.getMinutes() + "," + now.getSeconds() + ")"
+            + "\n}"
     );
 };
 
@@ -202,7 +202,7 @@ Project.prototype.getAvailableWidgetCompilers = function() {
  */
 Project.prototype.fatal = function(msg, id, src) {
     if (!id) id = -1;
-    if (!src) src = "(unknown)";    
+    if (!src) src = "(unknown)";
     msg = "" + msg;
     var ex = Error(msg);
     ex.fatal = msg.bold;
@@ -441,23 +441,31 @@ Project.prototype.linkForDebug = function(filename) {
         Path.join(jsDir, shortNameJS),
         srcHTML.tag("innerJS")
     );
-    var shortNameCSS = "@" + filename.substr(0, filename.length - 5) + ".css";
-    head.children.push(
-        Tree.tag(
-            "link",
-            {
-                href: "css/" + shortNameCSS + seed,
-                rel: "stylesheet",
-                type: "text/css"
-            }
-        )
-    );
-    manifestFiles.push("css/" + shortNameCSS);
-    FS.writeFileSync(
-        Path.join(cssDir, shortNameCSS),
-        srcHTML.tag("innerCSS")
-    );
 
+    if (true) {
+        // For now, we decided to put the CSS relative to the inner HTML into the <head>'s tag.
+        head.children.push(
+            Tree.tag("style", {}, srcHTML.tag("innerCSS"));
+        );
+    } else {
+        // If we want to externalise the inner CSS in the future, we can use this piece of code.
+        var shortNameCSS = "@" + filename.substr(0, filename.length - 5) + ".css";
+        head.children.push(
+            Tree.tag(
+                "link",
+                {
+                    href: "css/" + shortNameCSS + seed,
+                    rel: "stylesheet",
+                    type: "text/css"
+                }
+            )
+        );
+        manifestFiles.push("css/" + shortNameCSS);
+        FS.writeFileSync(
+            Path.join(cssDir, shortNameCSS),
+            srcHTML.tag("innerCSS")
+        );
+    }
     // Looking for manifest file.
     var html = Tree.findChild(tree, "html");
     if (html) {
@@ -549,7 +557,7 @@ Project.prototype.linkForRelease = function(filename) {
         FS.writeSync(
             fdCSS,
             Util.lessCSS("css/@" + shortedName + ".css", innerCSS, true)
-        );        
+        );
     }
     linkCSS.forEach(
         function(item) {
