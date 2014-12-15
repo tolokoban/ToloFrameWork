@@ -445,7 +445,7 @@ Project.prototype.linkForDebug = function(filename) {
     if (true) {
         // For now, we decided to put the CSS relative to the inner HTML into the <head>'s tag.
         head.children.push(
-            Tree.tag("style", {}, srcHTML.tag("innerCSS"));
+            Tree.tag("style", {}, srcHTML.tag("innerCSS"))
         );
     } else {
         // If we want to externalise the inner CSS in the future, we can use this piece of code.
@@ -717,7 +717,12 @@ Project.prototype.mkdir = function() {
                 break;
             }
         } else {
-            FS.mkdirSync(curPath);
+            try {
+                FS.mkdirSync(curPath);
+            }
+            catch (ex) {
+                throw {fatal: "Unable to create directory \"" + curPath + "\"!\n" + ex};
+            }
         }
     }
     return path;
