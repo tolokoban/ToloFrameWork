@@ -66,11 +66,11 @@ var Project = function(prjDir) {
         file,
         "exports.config={\n"
             + "    name:" + JSON.stringify(cfg.name)
-            + "\n    ,version:" + JSON.stringify(cfg.version)
-            + "\n    ,major:" + version[0]
-            + "\n    ,minor:" + version[1]
-            + "\n    ,revision:" + version[2]
-            + "\n    ,date:new Date(" + now.getFullYear() + "," + now.getMonth() + "," 
+            + ",\n    version:" + JSON.stringify(cfg.version)
+            + ",\n    major:" + version[0]
+            + ",\n    minor:" + version[1]
+            + ",\n    revision:" + version[2]
+            + ",\n    date:new Date(" + now.getFullYear() + "," + now.getMonth() + "," 
             + now.getDate()
             + "," + now.getHours() + "," + now.getMinutes() + "," + now.getSeconds() + ")"
             + "\n};\n"
@@ -445,23 +445,31 @@ Project.prototype.linkForDebug = function(filename) {
         Path.join(jsDir, shortNameJS),
         srcHTML.tag("innerJS")
     );
-    var shortNameCSS = "@" + filename.substr(0, filename.length - 5) + ".css";
-    head.children.push(
-        Tree.tag(
-            "link",
-            {
-                href: "css/" + shortNameCSS + seed,
-                rel: "stylesheet",
-                type: "text/css"
-            }
-        )
-    );
-    manifestFiles.push("css/" + shortNameCSS);
-    FS.writeFileSync(
-        Path.join(cssDir, shortNameCSS),
-        srcHTML.tag("innerCSS")
-    );
 
+    if (true) {
+        // For now, we decided to put the CSS relative to the inner HTML into the <head>'s tag.
+        head.children.push(
+            Tree.tag("style", {}, srcHTML.tag("innerCSS"))
+        );
+    } else {
+        // If we want to externalise the inner CSS in the future, we can use this piece of code.
+        var shortNameCSS = "@" + filename.substr(0, filename.length - 5) + ".css";
+        head.children.push(
+            Tree.tag(
+                "link",
+                {
+                    href: "css/" + shortNameCSS + seed,
+                    rel: "stylesheet",
+                    type: "text/css"
+                }
+            )
+        );
+        manifestFiles.push("css/" + shortNameCSS);
+        FS.writeFileSync(
+            Path.join(cssDir, shortNameCSS),
+            srcHTML.tag("innerCSS")
+        );
+    }
     // Looking for manifest file.
     var html = Tree.findChild(tree, "html");
     if (html) {
@@ -713,7 +721,12 @@ Project.prototype.mkdir = function() {
                 break;
             }
         } else {
-            FS.mkdirSync(curPath);
+            try {
+                FS.mkdirSync(curPath);
+            }
+            catch (ex) {
+                throw {fatal: "Unable to create directory \"" + curPath + "\"!\n" + ex};
+            }
         }
     }
     return path;
