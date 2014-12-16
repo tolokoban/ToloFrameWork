@@ -1,3 +1,6 @@
+var Path = require("path");
+var FS = require("fs");
+
 /**
  * A template is a text with directives.
  * A directive is enclosed in double-curlies.
@@ -129,4 +132,15 @@ exports.text = function(text, replacer) {
     ctx.out = out;
     delete ctx.cursor;
     return ctx;
+};
+
+exports.file = function(filename, replacer) {
+    var path = Path.resolve(Path.join(Path.dirname(process.argv[1]), "tpl"));
+    var file = Path.join(path, filename);
+    if (FS.existsSync(file)) {
+        var text = FS.readFileSync(file).toString();
+        return exports.text(text, replacer);
+    } else {
+        throw {fatal: "Mising template file: " + file};
+    }
 };

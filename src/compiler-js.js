@@ -33,6 +33,13 @@ exports.compile = function(source) {
     } else {
         source.tag("css", null);
     }
+    var iniName = source.name().substr(0, source.name().length - 2) + "ini";
+    var iniPath = source.prj().srcOrLibPath(iniName);
+    if (iniPath) {
+        source.tag("intl", require("./compiler-ini.js").parse(iniPath));
+    } else {
+        source.tag("intl", "");
+    }
     source.save();
     return true;
 };

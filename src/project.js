@@ -17,6 +17,7 @@ var Template = require("./template");
 var Project = function(prjDir) {
     this._prjDir = Path.resolve(prjDir);
     this._libDir = Path.resolve(Path.join(Path.dirname(process.argv[1]), "lib"));
+    this._tplDir = Path.resolve(Path.join(Path.dirname(process.argv[1]), "tpl"));
     this._srcDir = this.mkdir(prjDir, "src");
     this._tmpDir = this.mkdir(prjDir, "tmp");
     this._wwwDir = this.mkdir(prjDir, "www");
@@ -64,14 +65,16 @@ var Project = function(prjDir) {
     FS.writeFileSync(
         file,
         "exports.config={\n"
-        + "    name:" + JSON.stringify(cfg.name)
-        + "\n    ,version:" + JSON.stringify(cfg.version)
-        + "\n    ,major:" + version[0]
-        + "\n    ,minor:" + version[1]
-        + "\n    ,revision:" + version[2]
-        + "\n    ,date:new Date(" + now.getFullYear() + "," + now.getMonth() + "," + now.getDate()
-        + "," + now.getHours() + "," + now.getMinutes() + "," + now.getSeconds() + ")"
-        + "\n}"
+            + "    name:" + JSON.stringify(cfg.name)
+            + "\n    ,version:" + JSON.stringify(cfg.version)
+            + "\n    ,major:" + version[0]
+            + "\n    ,minor:" + version[1]
+            + "\n    ,revision:" + version[2]
+            + "\n    ,date:new Date(" + now.getFullYear() + "," + now.getMonth() + "," 
+            + now.getDate()
+            + "," + now.getHours() + "," + now.getMinutes() + "," + now.getSeconds() + ")"
+            + "\n};\n"
+            + FS.readFileSync(Path.join(this._tplDir, "$.js"))
     );
 };
 
@@ -202,7 +205,7 @@ Project.prototype.getAvailableWidgetCompilers = function() {
  */
 Project.prototype.fatal = function(msg, id, src) {
     if (!id) id = -1;
-    if (!src) src = "(unknown)";    
+    if (!src) src = "(unknown)";
     msg = "" + msg;
     var ex = Error(msg);
     ex.fatal = msg.bold;
@@ -397,6 +400,7 @@ Project.prototype.linkForDebug = function(filename) {
                     "window['#"
                     + shortName.substr(0, shortName.length - 3).toLowerCase()
                     + "'] = function(exports, module){\n"
+                    + (srcJS.tag("intl") || "")
                     + code
                     + "\n};\n";
             }
@@ -549,7 +553,7 @@ Project.prototype.linkForRelease = function(filename) {
         FS.writeSync(
             fdCSS,
             Util.lessCSS("css/@" + shortedName + ".css", innerCSS, true)
-        );        
+        );
     }
     linkCSS.forEach(
         function(item) {
