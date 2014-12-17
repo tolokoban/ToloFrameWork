@@ -7,7 +7,7 @@ exports.lang = function(lang) {
     currentLang = lang;
     localStorage.putItem("Language", lang);
 };
-exports.L = function(words, params) {
+exports.intl = function(words, params) {
     var dic = words[exports.lang()],
     k = params[0],
     txt, newTxt, i, c, lastIdx, pos;
@@ -22,7 +22,7 @@ exports.L = function(words, params) {
                      + "]: \"" + k + "\"!");
         return k;
     }
-    if (Array.isArray(params)) {
+    if (params.length > 1) {
         newTxt = "";
         lastIdx = 0;
         for (i = 0 ; i < txt.length ; i++) {
@@ -30,7 +30,7 @@ exports.L = function(words, params) {
             if (c === '$') {
                 newTxt += txt.substring(lastIdx, i);
                 i++;
-                pos = txt.charCodeAt(i) - 49;
+                pos = txt.charCodeAt(i) - 48;
                 if (pos < 0 || pos >= params.length) {
                     newTxt += "$" + txt.charAt(i);
                 } else {
