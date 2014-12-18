@@ -1,11 +1,21 @@
 var currentLang = null;
 exports.lang = function(lang) {
     if (lang === undefined) {
-        return localStorage.getItem("tfw.Language") || currentLang
-            || navigator.language || navigator.browserLanguage || "fr";
+        lang = localStorage.getItem("Language");
+        if (!lang) {
+            lang = navigator.language;
+            if (!lang) {
+                lang = navigator.browserLanguage;
+                if (!lang) {
+                    lang = "fr";
+                }
+            }
+        }
+        lang = lang.substr(0, 2).toLowerCase();
     }
     currentLang = lang;
-    localStorage.putItem("Language", lang);
+    localStorage.setItem("Language", lang);
+    return lang;
 };
 exports.intl = function(words, params) {
     var dic = words[exports.lang()],
