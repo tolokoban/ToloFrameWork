@@ -545,7 +545,10 @@ Project.prototype.linkForRelease = function(filename) {
                 shortName = shortName.substr(0, shortName.length - 3).toLowerCase();
                 content =
                     "\nwindow['#" + shortName
-                    + "']=function(exports,module){" + content + "};";
+                    + "']=function(exports,module){" 
+                    + (srcJS.tag("intl") || "").trim()
+                    + content 
+                    + "};";
             }
             FS.writeSync(fdJS, content);
         } ,
