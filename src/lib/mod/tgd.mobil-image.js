@@ -12,6 +12,13 @@ var MobilImage = function(opts, attribs) {
         }
         opts.draw = this.drawImage2;
     }
+/*
+    img = runtime.getImage(this._options.img);
+    if (typeof attribs.offsetX === 'undefined') attribs.offsetX = img.width / 2;
+    if (typeof attribs.offsetY === 'undefined') attribs.offsetY = img.height / 2;
+    this.offsetX = attribs.offsetX;
+    this.offsetY = attribs.offsetY;
+*/
     Mobil.call(this, opts, attribs);
 };
 
@@ -21,7 +28,10 @@ MobilImage.prototype.constructor = MobilImage;
 MobilImage.prototype.drawImage = function(runtime) {
     var ctx = runtime.context;
     var img = runtime.getImage(this._options.img);
-    ctx.drawImage(img, Math.floor(-img.width / 2), Math.floor(-img.height / 2));
+    if (typeof this.offsetX === 'undefined') this.offsetX = img.width / 2;
+    if (typeof this.offsetY === 'undefined') this.offsetY = img.height / 2;
+
+    ctx.drawImage(img, Math.floor(-this.offsetX), Math.floor(-this.offsetY));
 };
 
 /**
