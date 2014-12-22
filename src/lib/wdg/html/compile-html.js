@@ -25,6 +25,8 @@ module.exports.compile = function(root) {
     var title = Tree.att(root, "title") || "Toloframework";
     delete root.attribs.title;
     // Add standard metas to <head>.
+    var deviceW = Tree.att(root, "width") || "device-width";
+    var deviceH = Tree.att(root, "height") || "device-height";
     var metas = [
         Tree.tag(
             "meta", {"http-equiv": "Pragma", content: "no-cache"}
@@ -44,7 +46,9 @@ module.exports.compile = function(root) {
         Tree.tag(
             "meta", {
                 "name": "viewport",
-                content: "width=device-width,height=device-height,user-scalable=no,initial-scale=1.0,maximum-scale=1.0"
+                content: "width="
+                    + deviceW + ",height="
+                    + deviceH + ",user-scalable=no,initial-scale=1.0,maximum-scale=1.0"
             }
         )
     ];

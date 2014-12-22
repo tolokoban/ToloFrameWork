@@ -368,6 +368,8 @@ function initControllers(root, source) {
     var outerJS = source.tag("outerJS") || [];
     var extraCSS = "";
     var app = null;
+    // Add core JS for application config and internationalisation.
+    outerJS.push("mod/$.js");
     Tree.walk(
         root,
         function(node) {
