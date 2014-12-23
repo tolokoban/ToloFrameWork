@@ -744,14 +744,59 @@ var buffer = new Buffer(64 * 1024);
  * @param dst full path of the destination file.
  */
 Project.prototype.copyFile = function(src, dst) {
+    if (!FS.existsSync(src)) {
+        this.fatal("Unable to copy missing file: " + src, -1, src);
+    }
+    var stat = FS.statSync(src);
+    if (stat.isDirectory()) {
+        // We need to copy a whole directory.
+        if (FS.existsSync(dst)) {
+            // Check if the destination is a directory.
+            stat = FS.statSync(dst);
+            if (!stat.isDirectory()) {
+                this.fatal("Destination is not a directory: \"" + dst 
+                           + "\"!\nSource is \"" + src + "\".", -1, "project.copyFile");
+            }
+        } else {
+            // Make destination directory.
+            this.mkdir(dst);
+        }
+        var files = FS.readdirSync(src);
+        files.forEach(
+            function(filename) {
+                this.copyFile(
+                    Path.join(src, filename),
+                    Path.join(dst, filename)
+                );
+            },
+            this
+        );
+        return;
+    }
+
     var bytesRead, pos, rfd, wfd;
     this.mkdir(Path.dirname(dst));
-    rfd = FS.openSync(src, "r");
-    wfd = FS.openSync(dst, "w");
+    try {
+        rfd = FS.openSync(src, "r");
+    }
+    catch(ex) {
+        this.fatal("Unable to open file \"" + src + "\" for reading!\n" + ex, -1, "project.copyFile");
+    }
+    try {
+        wfd = FS.openSync(dst, "w");
+    }
+    catch(ex) {
+        this.fatal("Unable to open file \"" + dst + "\" for writing!\n" + ex, -1, "project.copyFile");
+    }
     bytesRead = 1;
     pos = 0;
     while (bytesRead > 0) {
-        bytesRead = FS.readSync(rfd, buffer, 0, 64 * 1024, pos);
+        try {
+            bytesRead = FS.readSync(rfd, buffer, 0, 64 * 1024, pos);
+        }
+        catch (ex) {
+            this.fatal("Unable to read file \"" + src + "\"!\n" + ex, -1, "project.copyFile");
+        }
         FS.writeSync(wfd, buffer, 0, bytesRead);
         pos += bytesRead;
     }
