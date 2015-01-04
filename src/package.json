@@ -1,7 +1,7 @@
 {
     "name": "toloframework",
-    "version": "0.9.3",
-    "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using the CommonJS paradigm.",
+    "version": "0.9.4",
+    "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
     "directories": {
         "doc": "doc"
     },
@@ -20,7 +20,8 @@
         "mobile",
         "webapp",
         "designer",
-        "framework"
+        "framework",
+        "require"
     ],
     "author": "Tolokoban",
     "license": "GNU GPL 3",

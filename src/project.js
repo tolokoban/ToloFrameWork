@@ -10,6 +10,7 @@ var Tree = require("./htmltree");
 var Util = require("./util");
 var Source = require("./source");
 var Template = require("./template");
+var Input = require('readline-sync');
 
 /**
  * @class Project
@@ -24,12 +25,19 @@ var Project = function(prjDir) {
     this.Util = require("./lib/wdg/util.js");
     var configFile = Path.join(this._prjDir, "project.tfw.json");
     if (!FS.existsSync(configFile)) {
+        var projectName = Path.basename(this._prjDir);
+        var answer = Input.question("Project's name [" + projectName + "]: ");
+        if (answer.trim().length > 0) {
+            projectName = answer;
+        }
         FS.writeFileSync(
             configFile,
             "{\n"
-                + '    "name": "' + Path.basename(this._prjDir) + '",\n'
+                + '    "name": "' + projectName + '",\n'
                 + '    "version": "0.0.0"\n}'
         );
+        this.mkdir(prjDir, "src");
+        //Template.
     }
     var cfg;
     try {
