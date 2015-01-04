@@ -1,4 +1,4 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
 // -*- js -*-
 
 "use strict";
@@ -11,7 +11,7 @@ var Path = require("path");
 var FS = require("fs");
 
 // Read the version in the package file.
-var packageFile = Path.join(Path.dirname(process.argv[1]), "package.json");
+var packageFile = Path.join(__dirname, "package.json");
 var cfg = JSON.parse(FS.readFileSync(packageFile));
 var txt = " ToloFrameWork " + cfg.version + " ";
 var sep = "";

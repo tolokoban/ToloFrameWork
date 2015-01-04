@@ -135,7 +135,7 @@ exports.text = function(text, replacer) {
 };
 
 exports.file = function(filename, replacer) {
-    var path = Path.resolve(Path.join(Path.dirname(process.argv[1]), "tpl"));
+    var path = Path.resolve(Path.join(__dirname, "tpl"));
     var file = Path.join(path, filename);
     if (FS.existsSync(file)) {
         var text = FS.readFileSync(file).toString();

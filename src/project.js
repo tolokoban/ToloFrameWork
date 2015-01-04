@@ -17,8 +17,8 @@ var Input = require('readline-sync');
  */
 var Project = function(prjDir) {
     this._prjDir = Path.resolve(prjDir);
-    this._libDir = Path.resolve(Path.join(Path.dirname(process.argv[1]), "lib"));
-    this._tplDir = Path.resolve(Path.join(Path.dirname(process.argv[1]), "tpl"));
+    this._libDir = Path.resolve(Path.join(__dirname, "lib"));
+    this._tplDir = Path.resolve(Path.join(__dirname, "tpl"));
     this._srcDir = this.mkdir(prjDir, "src");
     this._tmpDir = this.mkdir(prjDir, "tmp");
     this._wwwDir = this.mkdir(prjDir, "www");
