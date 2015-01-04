@@ -2,9 +2,22 @@
  *
  * @module tfw
  */
-console.log("---------------------");
-console.log(" ToloFrameWork 0.9.3 ");
-console.log("---------------------");
+var Path = require("path");
+var FS = require("fs");
+
+// Read the version in the package file.
+var packageFile = Path.join(Path.dirname(process.argv[1]), "package.json");
+var cfg = JSON.parse(FS.readFileSync(packageFile));
+var txt = " ToloFrameWork " + cfg.version + " ";
+var sep = "";
+for (var i = 0 ; i < txt.length ; i++) {
+    sep += "-";
+}
+sep = "+" + sep + "+";
+txt = "|" + txt + "|";
+console.log(sep);
+console.log(txt);
+console.log(sep);
 console.log();
 
 
@@ -29,7 +42,6 @@ String.prototype.err = function() {
 };
 
 var Project = require("./project");
-var Path = require("path");
 
 
 var i, 
@@ -43,6 +55,8 @@ for (i = 2 ; i < process.argv.length ; i++) {
         prjPath = Path.resolve(".", item);
     }
 }
+
+consoleMode = true;
 
 if (consoleMode) {
     console.log("project folder: ", prjPath);
