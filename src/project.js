@@ -37,7 +37,7 @@ var Project = function(prjDir) {
                 + '    "version": "0.0.0"\n}'
         );
         this.mkdir(prjDir, "src");
-        //Template.
+        this.copyFile(this.tplPath("src"), this.prjPath("src"));
     }
     var cfg;
     try {
@@ -105,12 +105,29 @@ Project.prototype.libPath = function(path) {
 };
 
 /**
+ * @param {string} path path relative to `tpl/` in ToloFrameWork folder.
+ * @return an absolute path.
+ */
+Project.prototype.tplPath = function(path) {
+    return Path.resolve(Path.join(this._tplDir, path));
+};
+
+/**
  * @param {string} path path relative to `src/`.
  * @return an absolute path.
  */
 Project.prototype.srcPath = function(path) {
     if (typeof path === 'undefined') return this._srcDir;
     return Path.resolve(Path.join(this._srcDir, path));
+};
+
+/**
+ * @param {string} path path relative to `prj/`.
+ * @return an absolute path.
+ */
+Project.prototype.prjPath = function(path) {
+    if (typeof path === 'undefined') return this._prjDir;
+    return Path.resolve(Path.join(this._prjDir, path));
 };
 
 /**
@@ -752,14 +769,59 @@ var buffer = new Buffer(64 * 1024);
  * @param dst full path of the destination file.
  */
 Project.prototype.copyFile = function(src, dst) {
+    if (!FS.existsSync(src)) {
+        this.fatal("Unable to copy missing file: " + src, -1, src);
+    }
+    var stat = FS.statSync(src);
+    if (stat.isDirectory()) {
+        // We need to copy a whole directory.
+        if (FS.existsSync(dst)) {
+            // Check if the destination is a directory.
+            stat = FS.statSync(dst);
+            if (!stat.isDirectory()) {
+                this.fatal("Destination is not a directory: \"" + dst 
+                           + "\"!\nSource is \"" + src + "\".", -1, "project.copyFile");
+            }
+        } else {
+            // Make destination directory.
+            this.mkdir(dst);
+        }
+        var files = FS.readdirSync(src);
+        files.forEach(
+            function(filename) {
+                this.copyFile(
+                    Path.join(src, filename),
+                    Path.join(dst, filename)
+                );
+            },
+            this
+        );
+        return;
+    }
+
     var bytesRead, pos, rfd, wfd;
     this.mkdir(Path.dirname(dst));
-    rfd = FS.openSync(src, "r");
-    wfd = FS.openSync(dst, "w");
+    try {
+        rfd = FS.openSync(src, "r");
+    }
+    catch(ex) {
+        this.fatal("Unable to open file \"" + src + "\" for reading!\n" + ex, -1, "project.copyFile");
+    }
+    try {
+        wfd = FS.openSync(dst, "w");
+    }
+    catch(ex) {
+        this.fatal("Unable to open file \"" + dst + "\" for writing!\n" + ex, -1, "project.copyFile");
+    }
     bytesRead = 1;
     pos = 0;
     while (bytesRead > 0) {
-        bytesRead = FS.readSync(rfd, buffer, 0, 64 * 1024, pos);
+        try {
+            bytesRead = FS.readSync(rfd, buffer, 0, 64 * 1024, pos);
+        }
+        catch (ex) {
+            this.fatal("Unable to read file \"" + src + "\"!\n" + ex, -1, "project.copyFile");
+        }
         FS.writeSync(wfd, buffer, 0, bytesRead);
         pos += bytesRead;
     }
