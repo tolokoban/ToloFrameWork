@@ -1,11 +1,11 @@
 var currentLang = null;
 exports.lang = function(lang) {
     if (lang === undefined) {
-        lang = localStorage.getItem("Language");
+        lang = window.localStorage.getItem("Language");
         if (!lang) {
-            lang = navigator.language;
+            lang = window.navigator.language;
             if (!lang) {
-                lang = navigator.browserLanguage;
+                lang = window.navigator.browserLanguage;
                 if (!lang) {
                     lang = "fr";
                 }
@@ -14,7 +14,7 @@ exports.lang = function(lang) {
         lang = lang.substr(0, 2).toLowerCase();
     }
     currentLang = lang;
-    localStorage.setItem("Language", lang);
+    window.localStorage.setItem("Language", lang);
     return lang;
 };
 exports.intl = function(words, params) {

@@ -11,6 +11,7 @@ var Util = require("./util");
 var Source = require("./source");
 var Template = require("./template");
 var Input = require('readline-sync');
+var JSON = require("./tolojson");
 
 /**
  * @class Project
@@ -703,7 +704,7 @@ Project.prototype.linkForRelease = function(filename) {
     FS.close(fdCSS);
     // Writing ".htaccess" file.
     this.writeHtaccess("RELEASE");
-    // Looking for webapp manifest for Firefox OS.
+    // Looking for manifest (Firefox OS or node-webkit).
     copyManifestWebapp.call(this, "RELEASE");
 };
 
@@ -730,7 +731,10 @@ function copyManifestWebapp(mode) {
             this.fatal("'" + filename  + "' must be a valid JSON file!\n" + x);
         }
         json.version = this._config.version;
-        FS.writeFileSync(Path.join(this.wwwPath(mode), filename), JSON.stringify(json));
+        if (typeof json.window === 'object') {
+            json.window.toolbar = (mode == "DEBUG");
+        }
+        FS.writeFileSync(Path.join(this.wwwPath(mode), filename), JSON.stringify(json, '  '));
         var icons = json.icons || {};
         var key, val;
         for (key in icons) {

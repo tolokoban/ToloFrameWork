@@ -1,5 +1,5 @@
 function $(id) {
-    return document.getElementById(id);
+    return window.document.getElementById(id);
 }
 
 function setLanguage(lang) {
