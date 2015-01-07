@@ -78,12 +78,15 @@ var Project = function(prjDir) {
             + ",\n    major:" + version[0]
             + ",\n    minor:" + version[1]
             + ",\n    revision:" + version[2]
-            + ",\n    date:new Date(" + now.getFullYear() + "," + now.getMonth() + "," 
+            + ",\n    date:new Date(" + now.getFullYear() + "," + now.getMonth() + ","
             + now.getDate()
             + "," + now.getHours() + "," + now.getMinutes() + "," + now.getSeconds() + ")"
             + "\n};\n"
             + FS.readFileSync(Path.join(this._tplDir, "$.js"))
     );
+    this._config = cfg;
+    this._type = cfg["type"].trim().toLowerCase();
+    if (this._type != 'nodewebkit') this._type = 'firefoxos';
 };
 
 /**
@@ -363,13 +366,21 @@ Project.prototype.topologicalSort = function(input) {
 
 /**
  * Linking in DEBUG mode.
+ * Starting with an HTML file, we will find all dependent JS and CSS.
  */
 Project.prototype.linkForDebug = function(filename) {
+    // Add this to a Javascript link to force webserver to deliver a non cached file.
     var seed = "?" + Date.now();
+    // The HTML source file.
     var srcHTML = new Source(this, filename);
+    // Array of all needed JS topologically sorted.
     var linkJS = this.sortJS(srcHTML, srcHTML.tag("linkJS") || []);
+    // Array of all needed CSS topologically sorted.
     var linkCSS = this.sortCSS(linkJS, srcHTML.tag("linkCSS") || []);
+    // HTML tree structure.
     var tree = Tree.clone(srcHTML.tag("tree"));
+    var manifestFiles = [];
+
     var head = Tree.getElementByName(tree, "head");
     if (!head) {
         this.fatal(
@@ -378,9 +389,8 @@ Project.prototype.linkForDebug = function(filename) {
                 + Tree.toString(tree)
         );
     }
-    var jsDir = this.mkdir(this.wwwPath("DEBUG/js"));
+
     var cssDir = this.mkdir(this.wwwPath("DEBUG/css"));
-    var manifestFiles = [];
     linkCSS.forEach(
         function(item) {
             var srcCSS = srcHTML.create(item);
@@ -413,6 +423,11 @@ Project.prototype.linkForDebug = function(filename) {
         } ,
         this
     );
+
+    // For type "nodewebkit", all JS must lie in "node_modules" and they
+    // don't need to be declared in the HTML file.
+    var jsDirShortName = (this._type == 'nodewebkit' ? "node_modules" : "js");
+    var jsDir = this.mkdir(this.wwwPath("DEBUG/" + jsDirShortName));
     linkJS.forEach(
         function(item) {
             var srcJS = srcHTML.create(item);
@@ -420,25 +435,34 @@ Project.prototype.linkForDebug = function(filename) {
             var output = Path.join(jsDir, shortName);
             var code = srcJS.read();
             if (item.substr(0, 4) == 'mod/') {
-                // This is a module. We need to wrap it in module's declaration snippet.
-                code =
-                    "window['#"
-                    + shortName.substr(0, shortName.length - 3).toLowerCase()
-                    + "'] = function(exports, module){\n"
-                    + (srcJS.tag("intl") || "")
-                    + code
-                    + "\n};\n";
+                if (this._type == 'nodewebkit') {
+                    // Let's add internationalisation snippet.
+                    code = (srcJS.tag("intl") || "") + code;
+                } else {
+                    // This is a module. We need to wrap it in module's declaration snippet.
+                    code =
+                        "window['#"
+                        + shortName.substr(0, shortName.length - 3).toLowerCase()
+                        + "'] = function(exports, module){\n"
+                        + (srcJS.tag("intl") || "")
+                        + code
+                        + "\n};\n";
+                }
             }
             FS.writeFileSync(output, code);
-            if (!head.children) head.children = [];
-            head.children.push(
-                Tree.tag(
-                    "script",
-                    {src: "js/" + shortName + seed}
-                )
-            );
-            head.children.push({type: Tree.TEXT, text: "\n"});
-            manifestFiles.push("js/" + shortName);
+            if (this._type != 'nodewebkit') {
+                // Declaration and  manifest only needed for  project of
+                // type that is not "nodewebkit".
+                if (!head.children) head.children = [];
+                head.children.push(
+                    Tree.tag(
+                        "script",
+                        {src: jsDirShortName + "/" + shortName + seed}
+                    )
+                );
+                head.children.push({type: Tree.TEXT, text: "\n"});
+                manifestFiles.push(jsDirShortName + "/" + shortName);
+            }
         } ,
         this
     );
@@ -462,10 +486,10 @@ Project.prototype.linkForDebug = function(filename) {
     head.children.push(
         Tree.tag(
             "script",
-            {src: "js/" + shortNameJS + seed}
+            {src: jsDirShortName + "/" + shortNameJS + seed}
         )
     );
-    manifestFiles.push("js/" + shortNameJS);
+    manifestFiles.push(jsDirShortName + "/" + shortNameJS);
     FS.writeFileSync(
         Path.join(jsDir, shortNameJS),
         srcHTML.tag("innerJS")
@@ -495,20 +519,23 @@ Project.prototype.linkForDebug = function(filename) {
             srcHTML.tag("innerCSS")
         );
     }
-    // Looking for manifest file.
-    var html = Tree.findChild(tree, "html");
-    if (html) {
-        var manifestFilename = Tree.att("manifest");
-        if (manifestFilename) {
-            // Writing manifest file only if needed.
-            FS.writeFileSync(
-                Path.join(this.wwwPath("DEBUG"), filename + ".manifest"),
-                "CACHE MANIFEST\n"
-                    + "# " + (new Date()) + " - " + Date.now() + "\n\n"
-                    + "CACHE:\n"
-                    + manifestFiles.join("\n")
-                    + "\n\nNETWORK:\n*\n"
-            );
+
+    if (this._type != 'nodewebkit') {
+        // Looking for manifest file.
+        var html = Tree.findChild(tree, "html");
+        if (html) {
+            var manifestFilename = Tree.att("manifest");
+            if (manifestFilename) {
+                // Writing manifest file only if needed.
+                FS.writeFileSync(
+                    Path.join(this.wwwPath("DEBUG"), filename + ".manifest"),
+                    "CACHE MANIFEST\n"
+                        + "# " + (new Date()) + " - " + Date.now() + "\n\n"
+                        + "CACHE:\n"
+                        + manifestFiles.join("\n")
+                        + "\n\nNETWORK:\n*\n"
+                );
+            }
         }
     }
     // Writing HTML file.
@@ -519,7 +546,7 @@ Project.prototype.linkForDebug = function(filename) {
     );
     // Writing ".htaccess" file.
     this.writeHtaccess("DEBUG");
-    // Looking for webapp manifest for Firefox OS.
+    // Looking for webapp manifest for Firefox OS (also used for nodewebkit).
     copyManifestWebapp.call(this, "DEBUG");
 };
 
@@ -570,9 +597,9 @@ Project.prototype.linkForRelease = function(filename) {
                 shortName = shortName.substr(0, shortName.length - 3).toLowerCase();
                 content =
                     "\nwindow['#" + shortName
-                    + "']=function(exports,module){" 
+                    + "']=function(exports,module){"
                     + (srcJS.tag("intl") || "").trim()
-                    + content 
+                    + content
                     + "};";
             }
             FS.writeSync(fdJS, content);
@@ -684,17 +711,26 @@ Project.prototype.linkForRelease = function(filename) {
  * @param mode : "DEBUG" or "RELEASE".
  */
 function copyManifestWebapp(mode) {
+    var filename = "manifest.webapp";
+    var out;
+    if (this._type == 'nodewebkit') filename = "package.json";
+
     // Looking for webapp manifest for Firefox OS.
-    var webappFile = this.srcOrLibPath("manifest.webapp");
+    if (false == FS.existsSync(this.srcPath(filename))) {
+        out = Template.file(filename, this._config).out;
+        FS.writeFileSync(this.srcPath(filename), out);
+    }
+    var webappFile = this.srcPath(filename);
     if (webappFile) {
-        this.copyFile(webappFile, Path.join(this.wwwPath(mode), "manifest.webapp"));
         var content = FS.readFileSync(webappFile);
         var json = null;
         try {
             json = JSON.parse(content);
         } catch (x) {
-            this.fatal("'manifest.webapp' must be a valid JSON file!\n" + x);
+            this.fatal("'" + filename  + "' must be a valid JSON file!\n" + x);
         }
+        json.version = this._config.version;
+        FS.writeFileSync(Path.join(this.wwwPath(mode), filename), JSON.stringify(json));
         var icons = json.icons || {};
         var key, val;
         for (key in icons) {
@@ -779,7 +815,7 @@ Project.prototype.copyFile = function(src, dst) {
             // Check if the destination is a directory.
             stat = FS.statSync(dst);
             if (!stat.isDirectory()) {
-                this.fatal("Destination is not a directory: \"" + dst 
+                this.fatal("Destination is not a directory: \"" + dst
                            + "\"!\nSource is \"" + src + "\".", -1, "project.copyFile");
             }
         } else {
