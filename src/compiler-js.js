@@ -16,12 +16,27 @@ exports.compile = function(source) {
     var needs = [];
     var dependsFinder = new DependsFinder(zip);
     dependsFinder.depends.forEach(
-        function(item) {
-            var file = item;
-            if (!source.prj().srcOrLibPath(file)) {
-                throw {fatal: "Required module not found: \"" + item.bold + "\"!"};
+        function(file) {
+            var prj = source.prj(),
+            exist = prj.srcOrLibPath(file);
+            if (prj.isReservedModules(file)) {
+                // This is a reserved module (maybe defined in nodejs).
+                if (exist) {
+                    throw {
+                        fatal: "This module (used in \""
+                            + source.name() + "\") is reserved by nodejs: \""
+                            + file.bold + "\"!"
+                    };
+                }
+            } else {
+                if (!exist) {
+                    throw {
+                        fatal: "Required module not found in \"" + source.name() + "\": \""
+                            + file.bold + "\" !"
+                    };
+                }
+                needs.push(file);
             }
-            needs.push(file);
         }
     );
     source.tag("needs", needs);
@@ -280,4 +295,3 @@ var Visitor = function(content) {
         }
     };
 };
-
