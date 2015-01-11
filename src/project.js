@@ -60,10 +60,7 @@ var Project = function(prjDir) {
         version[version.length - 1] = parseInt(version[version.length - 1]) + 1;
     }
     cfg.version = version.join(".");
-    FS.writeFileSync(configFile, JSON.stringify(cfg));
-
-    console.info((cfg.name + " v" + cfg.version).bold);
-    console.info();
+    FS.writeFileSync(configFile, JSON.stringify(cfg, '    '));
 
     var now = new Date();
     var mod = this.srcPath("mod");
@@ -86,8 +83,42 @@ var Project = function(prjDir) {
             + FS.readFileSync(Path.join(this._tplDir, "$.js"))
     );
     this._config = cfg;
-    this._type = cfg["type"].trim().toLowerCase();
-    if (this._type != 'nodewebkit') this._type = 'firefoxos';
+    this._type = {
+        "firefoxos": "firefoxos",
+        "firefox os": "firefoxos",
+        "firefox-os": "firefoxos",
+        "fxos": "firefoxos",
+        "nodewebkit": "nodewebkit",
+        "node webkit": "nodewebkit",
+        "node-webkit": "nodewebkit",
+        "nw": "nodewebkit"
+    }[(cfg["type"] || "firefoxos").trim().toLowerCase()];
+    if (typeof this._type === 'undefined') this._type = "firefoxos";
+
+    if (this._type != 'nodewebkit') {
+        this._type = 'firefoxos';
+        this._config.reservedModules = [];
+        console.info((cfg.name + " v" + cfg.version).bold + " (Firefox OS)");
+    } else {
+        this._config.reservedModules = ["fs", "path", "process"];
+        console.info((cfg.name + " v" + cfg.version).bold + " (Node-Webkit)");
+    }
+    console.info();
+};
+
+/**
+ * @return void
+ */
+Project.prototype.isReservedModules = function(filename) {
+    var reservedModules = this._config.reservedModules;
+    if (!Array.isArray(reservedModules)) return false;
+    filename = filename.split("/").pop();
+    if (filename.substr(filename.length - 3) == '.js') {
+        // Remove extension.
+        filename = filename.substr(0, filename.length - 3);
+    }
+    if (reservedModules.indexOf(filename) > -1) return true;
+    return false;
 };
 
 /**
@@ -596,12 +627,18 @@ Project.prototype.linkForRelease = function(filename) {
                 // This is a module. We need to wrap it in module's declaration snippet.
                 var shortName = item.substr(4);
                 shortName = shortName.substr(0, shortName.length - 3).toLowerCase();
-                content =
-                    "\nwindow['#" + shortName
-                    + "']=function(exports,module){"
-                    + (srcJS.tag("intl") || "").trim()
-                    + content
-                    + "};";
+                if (this._type == 'nodewebkit') {
+                    // Let's add internationalisation snippet.
+                    content = (srcJS.tag("intl") || "") + content;
+                } else {
+                    // This is a module. We need to wrap it in module's declaration snippet.
+                    content =
+                        "\nwindow['#" + shortName
+                        + "']=function(exports,module){"
+                        + (srcJS.tag("intl") || "").trim()
+                        + content
+                        + "};";
+                }
             }
             FS.writeSync(fdJS, content);
         } ,
@@ -723,7 +760,7 @@ function copyManifestWebapp(mode) {
     }
     var webappFile = this.srcPath(filename);
     if (webappFile) {
-        var content = FS.readFileSync(webappFile);
+        var content = FS.readFileSync(webappFile).toString();
         var json = null;
         try {
             json = JSON.parse(content);
@@ -734,7 +771,7 @@ function copyManifestWebapp(mode) {
         if (typeof json.window === 'object') {
             json.window.toolbar = (mode == "DEBUG");
         }
-        FS.writeFileSync(Path.join(this.wwwPath(mode), filename), JSON.stringify(json, '  '));
+        FS.writeFileSync(Path.join(this.wwwPath(mode), filename), JSON.stringify(json, '    '));
         var icons = json.icons || {};
         var key, val;
         for (key in icons) {

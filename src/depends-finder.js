@@ -14,7 +14,7 @@ DependsFinder.prototype.addDep = function(dep) {
 };
 
 DependsFinder.prototype.parse = function() {
-    var good = false;
+    var good = false, name;
     while (this.index < this.code.length) {
         var c = this.code.charAt(this.index);
         if (c == '"' || c == "'") {
@@ -35,8 +35,9 @@ DependsFinder.prototype.parse = function() {
                     this.index += 8;
                     c = this.code.charAt(this.index);
                     if (c == '"' || c == "'") {
+                        name = this.parseString();
                         this.addDep("require.js");
-                        this.addDep("mod/" + this.parseString() + ".js");
+                        this.addDep("mod/" + name + ".js");
                     }
                 }
             }

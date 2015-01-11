@@ -5,7 +5,7 @@ var require = function() {
         var mod;
         body = window["#" + id];
         if (typeof body === 'undefined') {
-            var err = new Error("Required module not found: " + id);   
+            var err = new Error("Required module is missing: " + id);   
             console.error(err.stack);
             throw err;
         }
