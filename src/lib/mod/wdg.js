@@ -430,4 +430,8 @@ Widget.create = function(args) {
     return new Widget(args);
 };
 
+Widget.find = function(query) {
+    return new Widget({element: window.document.querySelector(query)});
+};
+
 module.exports = Widget;
