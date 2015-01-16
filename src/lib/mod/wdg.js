@@ -396,6 +396,7 @@ Widget.prototype = {
      */
     Tap: function(slot, args) {
         if (typeof slot === 'undefined') return this._Tap;
+        var that = this;
         if (!this._Tap) {
             this.addEvent(
                 "click",
@@ -403,7 +404,7 @@ Widget.prototype = {
                     if (typeof slot === 'function') {
                         evt.preventDefault();
                         evt.stopPropagation();
-                        slot.call(this, args);                        
+                        slot.call(that, args);                        
                     }
                 }
             );
