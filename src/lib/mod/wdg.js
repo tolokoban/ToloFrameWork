@@ -435,4 +435,13 @@ Widget.find = function(query) {
     return new Widget({element: window.document.querySelector(query)});
 };
 
+Widget.div = function(tag) {
+    if (typeof tag === 'undefined') tag = 'div';
+    return new Widget({tag: tag});
+};
+
+Widget.id = function(id) {
+    return new Widget({element: window.document.getElementById(id)});
+};
+
 module.exports = Widget;
