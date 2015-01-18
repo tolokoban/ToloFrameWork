@@ -9,6 +9,7 @@ var Widget = require("wdg");
 var Button = function(arg) {
     var that = this;
     Widget.call(this, {tag: "a"});
+    if (typeof arg === 'undefined') arg = {caption: "OK"};
     if (typeof arg === 'string') {
         arg = {caption: arg};
     }

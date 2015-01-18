@@ -100,7 +100,11 @@ var Project = function(prjDir) {
         this._config.reservedModules = [];
         console.info((cfg.name + " v" + cfg.version).bold + " (Firefox OS)");
     } else {
-        this._config.reservedModules = ["fs", "path", "process"];
+        this._config.reservedModules = [
+            "fs", "path", "process", "child_process", "cluster", "http", "os",
+            "crypto", "dns", "domain", "events", "https", "net", "readline",
+            "stream", "string_decoder", "tls", "dgram", "util", "vm", "zlib"
+        ];
         console.info((cfg.name + " v" + cfg.version).bold + " (Node-Webkit)");
     }
     console.info();
