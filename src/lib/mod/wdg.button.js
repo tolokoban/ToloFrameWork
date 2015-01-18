@@ -17,22 +17,6 @@ var Button = function(arg) {
     this._caption = this.div().addClass("caption");
     this._icon = this.div().addClass("icon");    
     this.addClass("wdg-button").append(this._caption, this._icon);
-    this.addEvent(
-        "tap", 
-        function() {
-            var obj = that._Tap;
-            var f = obj[0];
-            var a = obj[1];
-            if (typeof f === 'function') {
-                try {
-                    f.call(this, a);
-                }
-                catch (ex) {
-                    throw Error("[wdg.button] Error while Tap: " + ex);
-                }
-            }
-        }
-    );
     this.caption(arg.caption).icon(arg.icon);
 };
 
