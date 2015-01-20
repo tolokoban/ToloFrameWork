@@ -8,7 +8,7 @@ var Util = require("../util");
 /**
  * 
  * @example
- * <w:Multiply src="red, green, blue">
+ * <w:Multiply src="red; green; blue">
  *   <w.button class="{{src}}">This is {{src}}!</w:button>
  * </w:Multiply>
  */
