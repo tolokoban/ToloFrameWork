@@ -2,7 +2,6 @@
  * @module Include
  */
 
-
 var FS = require("fs");
 
 /**
@@ -27,6 +26,11 @@ module.exports.precompile = function(root) {
     }
     root.extra.dependencies.push(filename);
     var content = FS.readFileSync(file).toString().trim();
+    if (filename.substr(filename.length - 3) == '.md') {
+        // If the extension is "*.md", compile it.
+        var Markdown = require("../../../tfw-md.js");
+        content = Markdown.toHTML(content);
+    }
     delete root.type;
     delete root.name;
     root.type = Tree.VOID;

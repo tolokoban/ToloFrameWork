@@ -16,18 +16,26 @@
 var id = 1;
 var Htmlparser = require("htmlparser2");
 
+// <?xml version="1.0"?>
+//   ^
 var QUESTION = function(c) {
 
 };
 
+// <!DOCTYPE html>
+//   ^
 var EXCLAMATION = function(c) {
 
 };
 
+// <[CDATA[blablabla]]>
+//   ^
 var CDATA = function(c) {
 
 };
 
+// <...
+//  ^
 var OPEN = function(c) {
     if (c === '?') {
         return this._status = QUESTION;
@@ -41,11 +49,8 @@ var OPEN = function(c) {
 };
 
 var TEXT = function(c) {
-
-};
-
-var ALL = function(c) {
     if (c === '<') {
+
         return this._status = OPEN;
     }
     this._status = TEXT;
@@ -57,7 +62,7 @@ var HtmlParser = function(content) {
     this._content = content;
     this._size = content.length;
     this._index = 0;
-    this._status = ALL;
+    this._status = TEXT;
     this._root = {children: []};
     while (this.next()) {}
 };
@@ -666,8 +671,12 @@ exports.parse = function(content) {
                     }
                 );
             },
-            oncdatastart: function() {},
-            oncdataend: function() {}
+            oncdatastart: function() {
+                console.log(">>> CDATA".yellow.bold);
+            },
+            oncdataend: function(content) {
+                console.log("<<< CDATA".yellow.bold);
+            }
         }
     );
     parser.write(content);
