@@ -3,6 +3,8 @@
  */
 
 var FS = require("fs");
+var Path = require("path");
+var Highlight = require("../../../highlight");
 
 /**
  * Include a piece of HTML at current position.
@@ -30,6 +32,7 @@ module.exports.precompile = function(root) {
         // If the extension is "*.md", compile it.
         var Markdown = require("../../../tfw-md.js");
         content = Markdown.toHTML(content);
+        root.extra.css = FS.readFileSync(Highlight.cssFile).toString();
     }
     delete root.type;
     delete root.name;

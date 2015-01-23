@@ -299,7 +299,14 @@ function genericCompileWidget(root, source, widget, functionName) {
                 }
             );
             if (typeof root.extra.innerCSS === 'string') {
-                innerCSS += root.extra.innerCSS;
+                if (innerCSS.indexOf(root.extra.innerCSS) < 0) {
+                    innerCSS += root.extra.innerCSS;
+                }
+            }
+            if (typeof root.extra.css === 'string') {
+                if (innerCSS.indexOf(root.extra.css) < 0) {
+                    innerCSS += root.extra.css;
+                }
             }
         }
         catch (ex) {

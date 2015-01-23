@@ -16,7 +16,7 @@ That means that you can override any widget in your project.
 
 The element is automatically changed in a `<div>`, if it has got no `id` an incremental one is given to it and two classes are added to it: `custom` and `wtag-foo`. So if there is no other transformation, we will get `<w:foo>bar</w:foo>` transformed in `<div id="47" class="custom wtag-foo">bar</div>`.
 
-<h3>Controller</h3>
+### Controller
 
 If the parser find a class with name `cls/wtag.Foo.js`, it will be used as a controller. Such a class must extend the base class `WTag`.
 The widget `<w:foo>bar</w:foo>` will be transformed in:
@@ -28,7 +28,7 @@ with this initialisation code:
 $$("wtag.Foo", {id: 47});
 ```
 
-<h3>Style customization</h3>
+### Style customization
 
 You can customize the CSS style of any widget by adding files with name `foo-*.css` in the `wdg/foo/` directory. This is made easy by a proper use of the class `custom`.
 
@@ -47,8 +47,7 @@ If you want to be sure that your customized CSS will override the red background
 ```
 
 
-
-<h3>Advanced transformation</h3>
+### Advanced transformation
 
 If there is a file `compile-foo.js` in that directory, it must be a module exporting a function like this one:
 ```
