@@ -1,5 +1,6 @@
 var Marked = require("marked");
 var Highlight = require("./highlight");
+var S = require("string");
 
 var LANGUAGES = ['js', 'css', 'html', 'xml'];
 
@@ -16,12 +17,14 @@ Marked.setOptions(
 );
 
 module.exports.toHTML = function(content) {
+    var str = S(content);
     LANGUAGES.forEach(
         function(item) {
-            content = content.replace('[' + item + ']', '```' + item + ' ');
-            content = content.replace('[/' + item + ']', '```');
+            var str = S(content);
+            str = str.replaceAll('[' + item + ']', '```' + item + ' ');
+            str = str.replaceAll('[/' + item + ']', '```');
         }
     );
 
-    return Marked(content);
+    return Marked(str.toString());
 };
