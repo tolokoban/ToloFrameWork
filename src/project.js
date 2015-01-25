@@ -791,14 +791,19 @@ function copyManifestWebapp(mode) {
  * @return array of HTML files found in _srcDir_.
  */
 Project.prototype.findHtmlFiles = function() {
+    var filter = this._config["html-filter"] || "\\.html$";
+    if (typeof filter !== 'string') filter = "\\.html$";
+    filter = new RegExp(filter, "i");
     var files = [];
     FS.readdirSync(this._srcDir).forEach(
         function(filename) {
             var file = Path.resolve(Path.join(this._srcDir, filename));
             if (FS.existsSync(file)) {
                 var stat = FS.statSync(file);
-                if (stat.isFile() && Path.extname(file) == '.html') {
-                    files.push(filename);
+                if (stat.isFile()) { // && Path.extname(file) == '.html') {
+                    if (filter.test(filename)) {                        
+                        files.push(filename);                        
+                    }
                 }
             }
         },

@@ -218,6 +218,7 @@ Widget.prototype = {
         var i, arg;
         for (i = 0 ; i < arguments.length ; i++) {
             arg = arguments[i];
+            if (typeof arg === 'undefined') continue;
             if (typeof arg === 'string') {
                 arg = document.createTextNode(arg);
             }
@@ -397,7 +398,6 @@ Widget.prototype = {
      * @memberof wdg
      */
     Tap: function(slot, args) {
-console.log("TAP", this.element());
         if (typeof slot === 'undefined') return this._Tap;
         var that = this;
         if (!this._Tap) {
@@ -408,7 +408,6 @@ console.log("TAP", this.element());
             this.addEvent(
                 "mousedown",
                 function(evt) {
-console.log("DOWN", this.element());
                     evt.preventDefault();
                     evt.stopPropagation();
                 }
@@ -417,7 +416,6 @@ console.log("DOWN", this.element());
                 "touchend",
                 function(evt) {
                     if (typeof slot === 'function') {
-console.log("<<<>>>");
                         slot.call(that, args);                        
                     }
                 }
@@ -438,6 +436,25 @@ console.log("<<<>>>");
     }
 };
 
+/**
+ * @return void
+ */
+Widget.prototype.div = function() {
+    var div = new Widget();
+    for (var i = 0 ; i < arguments.length ; i++) {
+        div.addClass(arguments[i]);
+    }
+    return div;
+};
+
+Widget.prototype.tag = function(tag) {
+    if (typeof tag === 'undefined') tag = 'div';
+    var div = new Widget({tag: tag});
+    for (var i = 1 ; i < arguments.length ; i++) {
+        div.addClass(arguments[i]);
+    }
+    return div;
+};
 
 /**
  *

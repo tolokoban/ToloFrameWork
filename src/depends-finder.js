@@ -33,12 +33,7 @@ DependsFinder.prototype.parse = function() {
                 }
                 if (good) {
                     this.index += 8;
-                    c = this.code.charAt(this.index);
-                    if (c == '"' || c == "'") {
-                        name = this.parseString();
-                        this.addDep("require.js");
-                        this.addDep("mod/" + name + ".js");
-                    }
+                    this.parseRequire();
                 }
             }
         }
@@ -72,6 +67,35 @@ DependsFinder.prototype.parse = function() {
         }
         this.index++;
     }
+};
+
+/**
+ * @return void
+ */
+DependsFinder.prototype.parseRequire = function() {
+    var result = [];
+    var c;
+    var name;
+    var par = 1;
+    while (this.index < this.code.length) {
+        c = this.code.charAt(this.index);
+        if (c == '"' || c == "'") {
+            name = this.parseString();
+            result.push(name);
+            this.addDep("require.js");
+            this.addDep("mod/" + name + ".js");
+        }
+        else if (c == '(') {
+            par++;
+        }
+        else if (c == ')') {
+            par--;
+            this.index++;
+            if (par == 0) break;
+        }
+        this.index++;
+    }
+    return result;
 };
 
 DependsFinder.prototype.parseString = function() {
