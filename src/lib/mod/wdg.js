@@ -82,7 +82,7 @@ Widget.prototype = {
                 false
             );
             e.addEventListener(
-                "mousedown", 
+                "mouseup", 
                 function(evt) {
                     evt.preventDefault();
                     evt.stopPropagation();
