@@ -476,6 +476,35 @@ Widget.find = function(query) {
     return new Widget({element: window.document.querySelector(query)});
 };
 
+
+/**
+ * Create a SVG élément with attributes.
+ */
+Widget.svg = function(tag, attribs) {
+    var namespace = "http://www.w3.org/2000/svg";
+    if (typeof tag === 'object') {
+        attribs = tag;
+        tag = "svg";
+    }
+    if (typeof tag !== 'string') tag = 'svg';
+    var e = document.createElementNS(namespace, tag);
+    var w = new Widget({element: e});
+    if (typeof attribs === 'undefined') attribs = {};
+    if (tag == 'svg') {
+        if (typeof attribs.version === 'undefined') attribs.version = "1.1";
+        if (typeof attribs.viewBox === 'undefined' 
+            && typeof attribs.width === 'number'
+            && typeof attribs.height === 'number') 
+        {
+            attribs.viewBox = "0 0 " + attribs.width + " " + attribs.height;
+        }
+    }
+    if (typeof attribs === 'object') {
+        w.attr(attribs);
+    }
+    return w;
+};
+
 /**
  * Create a DIV and apply all arguments as classes to it.
  */
