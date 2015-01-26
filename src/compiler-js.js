@@ -7,6 +7,10 @@ var UglifyJS = require("uglify-js");
 var Path = require("path");
 var DependsFinder = require("./depends-finder");
 
+function warning(msg) {
+    console.log(msg.yellowBG);
+}
+
 exports.compile = function(source) {
     if (source.isUptodate()) return false;
     console.log("Compiling " + source.name().yellow);
@@ -22,20 +26,17 @@ exports.compile = function(source) {
             if (prj.isReservedModules(file)) {
                 // This is a reserved module (maybe defined in nodejs).
                 if (exist) {
-                    throw {
-                        fatal: "This module (used in \""
+                    warning("This module (used in \""
                             + source.name() + "\") is reserved by nodejs: \""
-                            + file.bold + "\"!"
-                    };
+                            + file.bold + "\"!");
                 }
             } else {
                 if (!exist) {
-                    throw {
-                        fatal: "Required module not found in \"" + source.name() + "\": \""
-                            + file.bold + "\" !"
-                    };
+                    warning("Required module not found in \"" + source.name() + "\": \""
+                            + file.bold + "\" !");
+                } else {
+                    needs.push(file);                    
                 }
-                needs.push(file);
             }
         }
     );

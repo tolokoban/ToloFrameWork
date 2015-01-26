@@ -3,19 +3,19 @@
  */
 
 
-function Widget(attribs) {
+function Widget(options) {
     try {
-        if (typeof attribs === 'undefined') attribs = {};
-        if (typeof attribs.tag === 'undefined') attribs.tag = "div";
-        if (attribs.element) {
-            this.element(attribs.element);
+        if (typeof options === 'undefined') options = {};
+        if (typeof options.tag === 'undefined') options.tag = "div";
+        if (options.element) {
+            this.element(options.element);
         } else {
-            this.element(document.createElement(attribs.tag));
+            this.element(document.createElement(options.tag));
         }
     }
     catch (ex) {
         console.error("[widget] ", ex);
-        console.error("[Widget] ", attribs);
+        console.error("[Widget] ", options);
         throw Error(ex);
     }
 }
@@ -58,42 +58,44 @@ Widget.prototype = {
      * @param name
      * @memberof wdg
      */
-    addEvent: function(name, slot) {
-        if (name == 'tap') name = 'click';
+    addEvent: function(name, slot, sender) {
         if (typeof slot === 'string') {
             var that = this, key = slot;
+            if (typeof sender === 'undefined') sender = this;
             slot = function(x) {
-                var f = that[key];
+                var f = sender[key];
                 if (typeof f === 'function') {
-                    f.call(that, x);
+                    f.call(sender, x);
+                } else {
+                    throw Error("\"" + slot + "\" is not a function of: " + sender);
                 }
             };
         }
-        this._element.addEventListener(name, slot, false);
+        var e = this.element();
+        if (name == 'tap') {
+            e.addEventListener(
+                "mousedown", 
+                function(evt) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                },
+                false
+            );
+            e.addEventListener(
+                "mousedown", 
+                function(evt) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    slot(evt);
+                },
+                false
+            );
+            e.addEventListener("touchend", slot, false);
+
+        } else {
+            e.addEventListener(name, slot, false);
+        }
         return this;
-    },
-
-    /**
-     * @description
-     *
-     * @param name
-     * @memberof wdg
-     */
-    tag: function(name, attribs) {
-        if (typeof name !== 'string') name = 'div';
-        var e = new Widget({tag: name});
-        e.attr(attribs);
-        return e;
-    },
-
-    /**
-     * @description
-     *
-     * @param attribs
-     * @memberof wdg
-     */
-    div: function(attribs) {
-        return this.tag("div", attribs);
     },
 
     /**
@@ -216,6 +218,7 @@ Widget.prototype = {
         var i, arg;
         for (i = 0 ; i < arguments.length ; i++) {
             arg = arguments[i];
+            if (typeof arg === 'undefined') continue;
             if (typeof arg === 'string') {
                 arg = document.createTextNode(arg);
             }
@@ -399,7 +402,26 @@ Widget.prototype = {
         var that = this;
         if (!this._Tap) {
             this.addEvent(
-                "click",
+                "touchstart",
+                function(evt) {}
+            );
+            this.addEvent(
+                "mousedown",
+                function(evt) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                }
+            );
+            this.addEvent(
+                "touchend",
+                function(evt) {
+                    if (typeof slot === 'function') {
+                        slot.call(that, args);                        
+                    }
+                }
+            );
+            this.addEvent(
+                "mouseup",
                 function(evt) {
                     if (typeof slot === 'function') {
                         evt.preventDefault();
@@ -414,6 +436,25 @@ Widget.prototype = {
     }
 };
 
+/**
+ * @return void
+ */
+Widget.prototype.div = function() {
+    var div = new Widget();
+    for (var i = 0 ; i < arguments.length ; i++) {
+        div.addClass(arguments[i]);
+    }
+    return div;
+};
+
+Widget.prototype.tag = function(tag) {
+    if (typeof tag === 'undefined') tag = 'div';
+    var div = new Widget({tag: tag});
+    for (var i = 1 ; i < arguments.length ; i++) {
+        div.addClass(arguments[i]);
+    }
+    return div;
+};
 
 /**
  *
@@ -435,9 +476,24 @@ Widget.find = function(query) {
     return new Widget({element: window.document.querySelector(query)});
 };
 
-Widget.div = function(tag) {
+/**
+ * Create a DIV and apply all arguments as classes to it.
+ */
+Widget.div = function() {
+    var div = new Widget({tag: "div"});
+    for (var i = 0 ; i < arguments.length ; i++) {
+        div.addClass(arguments[i]);
+    }
+    return div;
+};
+
+Widget.tag = function(tag) {
     if (typeof tag === 'undefined') tag = 'div';
-    return new Widget({tag: tag});
+    var div = new Widget({tag: tag});
+    for (var i = 1 ; i < arguments.length ; i++) {
+        div.addClass(arguments[i]);
+    }
+    return div;
 };
 
 Widget.id = function(id) {
