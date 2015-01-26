@@ -1,3 +1,0 @@
-String.prototype.transpose = function(dic) {
-
-};
