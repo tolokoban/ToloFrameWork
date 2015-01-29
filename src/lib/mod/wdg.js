@@ -316,7 +316,6 @@ Widget.prototype = {
      * @memberof wdg
      */
     clear: function() {
-console.log("Clear: " + this.element().outerHTML);
         return this.html("");
     },
 
