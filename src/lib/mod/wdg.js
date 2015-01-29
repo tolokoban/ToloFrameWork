@@ -11,6 +11,7 @@ function Widget(options) {
             this.element(options.element);
         } else {
             this.element(document.createElement(options.tag));
+            this.addClass("wdg", "custom");
         }
     }
     catch (ex) {
@@ -32,7 +33,6 @@ Widget.prototype = {
         }
         this._element = v;
         v.$(this);
-        this.addClass("wdg", "custom");
         return this;
     },
 
@@ -231,6 +231,9 @@ Widget.prototype = {
             } else {
                 var e = typeof arg.element === 'function' ? arg.element() : arg;
                 this._element.appendChild(e);
+                if (typeof arg.onAppend === 'function') {
+                    arg.onAppend.call(arg);
+                }
             }
         }
         return this;
@@ -248,6 +251,7 @@ Widget.prototype = {
             parent.append(this);
         } else if (typeof parent.appendChild === 'function') {
             parent.appendChild(this._element);
+            this.onAppend();
         }
         return this;
     },
@@ -312,6 +316,7 @@ Widget.prototype = {
      * @memberof wdg
      */
     clear: function() {
+console.log("Clear: " + this.element().outerHTML);
         return this.html("");
     },
 
@@ -362,6 +367,7 @@ Widget.prototype = {
      * @memberof wdg
      */
     html: function(html) {
+        if (typeof html === 'undefined') return this._element.innerHTML;
         if (this._element) this._element.innerHTML = html;
         return this;
     },
@@ -385,7 +391,7 @@ Widget.prototype = {
      * Returns the bounds of the underlying element.
      * @memberof wdg
      */
-    bounds: function() {
+    rect: function() {
         var e = this._element;
         if (!e) return null;
         return e.getBoundingClientRect();
@@ -457,6 +463,20 @@ Widget.prototype.tag = function(tag) {
 };
 
 /**
+ * @return void
+ */
+Widget.prototype.isInDOM = function() {
+    return Widget.isInDOM(this.element());
+};
+
+/**
+ * Fonction à surcharger  si on veut réagir lors de  l'insertion dans le
+ * DOM.
+ */
+Widget.prototype.onAppend = function() {};
+
+
+/**
  *
  */
 window.Element.prototype.$ = function(widget) {
@@ -504,6 +524,19 @@ Widget.svg = function(tag, attribs) {
     }
     return w;
 };
+
+/**
+ * Tester si le widget ou élément est actuellement attaché au DOM.
+ */
+Widget.isInDOM = function(e) {
+    if (!e) return false;
+    if (typeof e.element === 'function') {
+        e = e.element();
+    }
+    if (e === document) return true;
+    return Widget.isInDOM(e.parentNode);
+};
+
 
 /**
  * Create a DIV and apply all arguments as classes to it.
