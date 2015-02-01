@@ -4,15 +4,16 @@ var Widget = require("wdg");
 var Md5 = require("md5");
 
 /**
- * @param email Adresse mail ou MD5.
- * @param unknown Que faut-il afficher s'il n'y a pas de Gravatar
- * - `404` : Ne rien retourner. C'est la valeur par défaut.
- * - `mm` : Mystery Man, constant.
- * - `blank` : Blanc, constant.
- * - `identicon` : Dépend de l'e-mail.
- * - `monsterid` : Dépend de l'e-mail.
- * - `wavatar` : Dépend de l'e-mail.
- * - `retro` : Dépend de l'e-mail.
+ * @param {string} email Adresse mail ou MD5.
+ * @param {string} unknown Que faut-il afficher s'il n'y a pas de Gravatar.
+ * 
+ * * `404` : Ne rien retourner. C'est la valeur par défaut.
+ * * `mm` : Mystery Man, constant.
+ * * `blank` : Blanc, constant.
+ * * `identicon` : Dépend de l'e-mail.
+ * * `monsterid` : Dépend de l'e-mail.
+ * * `wavatar` : Dépend de l'e-mail.
+ * * `retro` : Dépend de l'e-mail.
  * 
  * @example
  * var Gravatar = require("wdg.gravatar");

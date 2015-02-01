@@ -43,6 +43,7 @@
     "readline-sync": "~0.4.8",
     "string": "^3.0.0",
     "uglify-js": "~2.4.15",
-    "uglifycss": "0.0.9"
+    "uglifycss": "0.0.9",
+    "dox": "~0.6.1"
   }
 }

@@ -231,9 +231,11 @@ Widget.prototype = {
             } else {
                 var e = typeof arg.element === 'function' ? arg.element() : arg;
                 this._element.appendChild(e);
+/*
                 if (typeof arg.onAppend === 'function') {
                     arg.onAppend.call(arg);
                 }
+*/
             }
         }
         return this;

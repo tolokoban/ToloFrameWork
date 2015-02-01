@@ -1,10 +1,12 @@
 /**
  * @module compiler-js
  */
-
-var Util = require("./util");
-var UglifyJS = require("uglify-js");
+var FS = require("fs");
+var Dox = require("dox");
 var Path = require("path");
+var Util = require("./util");
+var JSON = require("./tolojson");
+var UglifyJS = require("uglify-js");
 var DependsFinder = require("./depends-finder");
 
 function warning(msg) {
@@ -14,9 +16,20 @@ function warning(msg) {
 exports.compile = function(source) {
     if (source.isUptodate()) return false;
     console.log("Compiling " + source.name().yellow);
+    var prj = source.prj();
     var code = source.read();
     var zip = Util.zipJS(code);
     source.tag("zip", zip);
+    if (source.name().substr(0, 4) == 'mod/') {
+        var docPath = prj.srcPath("../doc");
+        prj.mkdir(docPath);
+        var docFile = Path.join(docPath, source.name().substr(4));
+        try {
+            FS.writeFileSync(docFile, JSON.stringify(Dox.parseComments(code), "  "));
+        } catch (x) {
+            warning("Unable to generate DOC for " + source.name() + "\n" + x);
+        }
+    }
     var needs = [];
     var dependsFinder = new DependsFinder(zip);
     dependsFinder.depends.forEach(
