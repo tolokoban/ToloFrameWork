@@ -404,9 +404,11 @@ Widget.prototype = {
      * @param
      * @memberof wdg
      */
-    Tap: function(slot, args) {
+    Tap: function(slot, sender) {
         if (typeof slot === 'undefined') return this._Tap;
         var that = this;
+        if (typeof sender === 'undefined') sender = that;
+        if (typeof slot === 'string') slot = sender.prototype[slot];
         if (!this._Tap) {
             this.addEvent(
                 "touchstart",
@@ -422,23 +424,21 @@ Widget.prototype = {
             this.addEvent(
                 "touchend",
                 function(evt) {
-                    if (typeof slot === 'function') {
-                        slot.call(that, args);                        
-                    }
+                    var tap = that._Tap;
+                    tap[0].call(tap[1], evt);
                 }
             );
             this.addEvent(
                 "mouseup",
                 function(evt) {
-                    if (typeof slot === 'function') {
-                        evt.preventDefault();
-                        evt.stopPropagation();
-                        slot.call(that, args);                        
-                    }
+                    var tap = that._Tap;
+                    tap[0].call(tap[1], evt);
+                    evt.preventDefault();
+                    evt.stopPropagation();
                 }
             );
         }
-        this._Tap = [slot, args];
+        this._Tap = [slot, sender];
         return this;
     }
 };
