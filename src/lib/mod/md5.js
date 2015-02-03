@@ -159,4 +159,17 @@ var digest_s = function (s) {
     return rstr;
 };
 
+var rx = /^[0-9a-f]{32}$/;
+
 module.exports = digest_s;
+
+/**
+ * @param {string} x the string you want to know if it is a MD5 one.
+ * @return {boolean} Validity of `x` as a correct md5.
+ */
+module.exports.isValid = function(x) {
+    if (typeof x === 'string') {
+        return rx.test(x);
+    }
+    return false;
+};
