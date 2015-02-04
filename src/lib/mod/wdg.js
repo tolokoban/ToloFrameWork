@@ -315,10 +315,18 @@ Widget.prototype = {
 
     /**
      * Remove all children of this widget.
+     * Any argument passed will be appended to this widget.
      * @memberof wdg
      */
     clear: function() {
-        return this.html("");
+        this.html("");
+        var i, arg;
+        for (i = 0 ; i < arguments.length ; i++) {
+            arg = arguments[i];
+            this.append(arg);
+        }
+
+        return this;
     },
 
     /**
