@@ -6,6 +6,7 @@ var Dox = require("dox");
 var Path = require("path");
 var Util = require("./util");
 var JSON = require("./tolojson");
+var JsDoc = require("./jsdoc");
 var UglifyJS = require("uglify-js");
 var DependsFinder = require("./depends-finder");
 
@@ -25,7 +26,8 @@ exports.compile = function(source) {
         prj.mkdir(docPath);
         var docFile = Path.join(docPath, source.name().substr(4));
         try {
-            FS.writeFileSync(docFile, JSON.stringify(Dox.parseComments(code), "  "));
+            FS.writeFileSync(docFile, JSON.stringify(JsDoc(code), "  "));
+            //FS.writeFileSync(docFile, JSON.stringify(Dox.parseComments(code), "  "));
         } catch (x) {
             warning("Unable to generate DOC for " + source.name() + "\n" + x);
         }
