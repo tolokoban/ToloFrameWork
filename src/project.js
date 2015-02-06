@@ -282,6 +282,8 @@ Project.prototype.fatal = function(msg, id, src) {
  * Compile every `*.html` file found in _srcDir_.
  */
 Project.prototype.compile = function() {
+    // List of modules for doc.
+    this._modulesList = [];
     this.findHtmlFiles().forEach(
         function(filename) {
             try {
@@ -296,6 +298,52 @@ Project.prototype.compile = function() {
         },
         this
     );
+};
+
+/**
+ * Writing documentation.
+ * @return void
+ */
+Project.prototype.makeDoc = function() {
+    console.log("Writing documentation...".cyan);
+    var that = this;
+    var modules = "window.M={";
+    this._modulesList.sort();
+    this._modulesList.forEach(
+        function(moduleName, index) {
+            var src = new Source(that, "mod/" + moduleName);
+            if (index > 0) modules += ",\n";
+            modules += "'" + moduleName + "':" + JSON.stringify(src.tag("doc"));
+        }
+    );
+    modules += "}";
+    var cfg = this._config;
+    var docPath = this.prjPath("doc");
+    Template.files(
+        "doc", 
+        docPath,
+        {
+            project: cfg.name
+        }
+    );
+    this.mkdir(docPath);
+    FS.writeFileSync(
+        Path.join(docPath, "modules.js"),
+        modules
+    );
+};
+
+/**
+ * @return {this}
+ */
+Project.prototype.addModuleToList = function(moduleName) {
+    if (moduleName.substr(0, 4) != 'mod/') return this;
+    moduleName = moduleName.substr(4);
+    if (moduleName.charAt(0) == '$') return this;
+    if (this._modulesList.indexOf(moduleName) < 0) {
+        this._modulesList.push(moduleName);
+    }
+    return this;
 };
 
 /**
@@ -606,6 +654,7 @@ Project.prototype.writeHtaccess = function(mode) {
  * Linking in RELEASE mode.
  */
 Project.prototype.linkForRelease = function(filename) {
+    var that = this;
     var seed = "?" + Date.now();
     var srcHTML = new Source(this, filename);
     var linkJS = this.sortJS(srcHTML, srcHTML.tag("linkJS") || []);
@@ -629,6 +678,7 @@ Project.prototype.linkForRelease = function(filename) {
             var content = srcJS.tag("zip");
             if (item.substr(0, 4) == 'mod/') {
                 // This is a module. We need to wrap it in module's declaration snippet.
+                that.addModuleToList(item);
                 var shortName = item.substr(4);
                 shortName = shortName.substr(0, shortName.length - 3).toLowerCase();
                 if (this._type == 'nodewebkit') {

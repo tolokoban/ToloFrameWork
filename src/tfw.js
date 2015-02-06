@@ -59,6 +59,7 @@ try {
     }
     prj.compile();
     prj.link();
+    prj.makeDoc();
 } catch (x) {
     if (x.fatal) {
         console.error("\n" + ("\nError #" + x.id + " from " + x.src + "\n").err());

@@ -39,7 +39,6 @@ module.exports.compile = function(prj, filename) {
     source.tag("dependencies", Util.removeDoubles(source.tag("dependencies")));
     source.tag("innerMapCSS", null);
     source.save();
-
     return source;
 };
 

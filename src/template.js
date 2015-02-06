@@ -23,29 +23,29 @@ function makeDefaultReplacer(map) {
 }
 
 /**
- * 
+ *
  * @example
  * var Tpl = require("./template");
- * 
+ *
  * var text = "Hi {{Joe}} ! Who's {{Natacha}} ?";
  * console.log(text);
  * var replacer = function(name) {
  *     console.log("name: \"" + name + "\"");
  *     return "<data>" + name + "</data>";
  * };
- * 
+ *
  * var ctx = Tpl.text(text, replacer);
  * console.log(ctx.out);
- * 
+ *
  * ctx = Tpl.text(
- *     text, 
+ *     text,
  *     {
  *         joe: "buddy",
  *         natacha: "that girl"
  *     }
  * );
  * console.log(ctx.out);
- * 
+ *
  *
  * @param text Template text with `${NAME}` directives.
  * @param replacer
@@ -106,7 +106,7 @@ exports.text = function(text, replacer) {
         }
         else if (mode == 2) {
             if (c == '}') {
-                mode = 3;                
+                mode = 3;
             }
         }
         else if (mode == 3) {
@@ -143,4 +143,24 @@ exports.file = function(filename, replacer) {
     } else {
         throw {fatal: "Mising template file: " + file};
     }
+};
+
+exports.files = function(srcDir, dstDir, replacer) {
+    var tplDir = Path.resolve(Path.join(__dirname, "tpl"));
+    var statSrc = FS.statSync(Path.join(tplDir, srcDir));
+    if (!statSrc.isDirectory()) return false;
+    var statDst = FS.statSync(dstDir);
+    if (!statDst.isDirectory()) return false;
+    var files = FS.readdirSync(Path.join(tplDir, srcDir));
+    files.forEach(
+        function(filename) {
+            var srcFile = Path.join(srcDir, filename);
+            var content = exports.file(srcFile, replacer).out;
+            FS.writeFileSync(
+                Path.join(dstDir, filename),
+                content
+            );
+        }
+    );
+    return true;
 };

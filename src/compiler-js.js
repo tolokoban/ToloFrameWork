@@ -26,8 +26,9 @@ exports.compile = function(source) {
         prj.mkdir(docPath);
         var docFile = Path.join(docPath, source.name().substr(4));
         try {
-            FS.writeFileSync(docFile, JSON.stringify(JsDoc(code), "  "));
-            //FS.writeFileSync(docFile, JSON.stringify(Dox.parseComments(code), "  "));
+            var doc = JsDoc(code);
+            //console.log(JSON.stringify(doc, "  "));
+            source.tag("doc", JsDoc(code));
         } catch (x) {
             warning("Unable to generate DOC for " + source.name() + "\n" + x);
         }
