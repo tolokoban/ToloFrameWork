@@ -23,7 +23,7 @@ var Md5 = require("md5");
 var Gravatar = function(email, size, unknown) {
     var that = this;
     Widget.call(this);
-    if (typeof unknown === 'undefined') unknown = '404';
+    if (typeof unknown === 'undefined') unknown = 'retro';
     var md5 = email;
     if (email.indexOf("@") > 0) {
         md5 = Md5(email);
@@ -32,6 +32,7 @@ var Gravatar = function(email, size, unknown) {
     if (typeof size !== 'number') size = 32;
     this._loaded = false;
     this._defined = false;
+    this._url = null;
     this.css({width: size + "px", height: size + "px"});
     var img = new Image();
     img.onload = function() {
@@ -47,10 +48,18 @@ var Gravatar = function(email, size, unknown) {
     img.src = "https://secure.gravatar.com/avatar/"
         + md5
         + "?s=" + size + "&r=pg&d=" + unknown;
+    this._url = img.src;
 };
 
 Gravatar.prototype = Object.create(Widget.prototype);
 Gravatar.prototype.constructor = Gravatar;
+
+/**
+ * @return void
+ */
+Gravatar.prototype.url = function() {
+    return this._url;
+};
 
 /**
  * @return void
