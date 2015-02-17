@@ -218,9 +218,22 @@ Widget.prototype = {
         var i, arg;
         for (i = 0 ; i < arguments.length ; i++) {
             arg = arguments[i];
-            if (typeof arg === 'undefined') continue;
+            if (!arg || (typeof arg !== 'object' && typeof arg !== 'string')) {
+                console.error("[Widget.append] Argument #" + i + " is invalid!", arguments);
+                continue;
+            };
             if (typeof arg === 'string') {
                 arg = document.createTextNode(arg);
+                if (!arg) {
+                    console.error(
+                        "[Widget.append] Unable to create a text node with this text: ", arg
+                    );
+                    console.error("[wdg] arguments=...", arguments);
+                    throw Error( 
+                        "[Widget.append] Unable to create a text node with this text: " 
+                            + JSON.stringify(arg)
+                    );
+                }
             }
             if (Array.isArray(arg)) {
                 arg.forEach(
@@ -552,6 +565,17 @@ Widget.isInDOM = function(e) {
  */
 Widget.div = function() {
     var div = new Widget({tag: "div"});
+    for (var i = 0 ; i < arguments.length ; i++) {
+        div.addClass(arguments[i]);
+    }
+    return div;
+};
+
+/**
+ * Create a SPAN and apply all arguments as classes to it.
+ */
+Widget.span = function() {
+    var div = new Widget({tag: "span"});
     for (var i = 0 ; i < arguments.length ; i++) {
         div.addClass(arguments[i]);
     }

@@ -1,6 +1,19 @@
 var nav, body;
 
-function tag(name, attribs) {
+function unfold(text, start, end) {
+    text = text.trim();
+    start = start.trim();
+    end = end.trim();
+    if (text.substr(0, start.length) == start) {
+        text = text.substr(start.length);
+        if (text.substr(text.length - end.length) == end) {
+            text = text.substr(0, text.length - end.length);
+        }
+    }
+    return text;
+}
+
+function TAG(name, attribs) {
     if (typeof name === 'undefined') name = 'div';
 
     var e = document.createElement(name);
@@ -11,11 +24,32 @@ function tag(name, attribs) {
             e.setAttribute(key, val);
         }
     }
+    var i, arg;
+    for (i = 2 ; i < arguments.length ; i++) {
+        arg = arguments[i];
+        e.appendChild(arg);
+    }
+    e.append = function() {
+        var i2, arg2;
+        for (i2 = 0 ; i2 < arguments.length ; i2++) {
+            arg2 = arguments[i2];
+            e.appendChild(arg2);
+        }
+        return e;
+    };
+    e.text = function(v) {
+        e.textContent = v;
+        return e;
+    };
+    e.html = function(v) {
+        e.innerHTML = v;
+        return e;
+    };
     return e;
 }
 
 function expand(caption, content) {
-    var e = tag("div", {"class": "expand"});
+    var e = TAG("div", {"class": "expand"});
     e.appendChild(caption);
     e.appendChild(content);
     caption.addEventListener(
@@ -28,38 +62,50 @@ function expand(caption, content) {
     return e;
 }
 
-function h1(content) {
-    var e = document.createElement("h1");
+function SPAN(attribs) {
+    return TAG("span", attribs);
+}
+
+function B(attribs) {
+    return TAG("b", attribs);
+}
+
+function P(attribs) {
+    return TAG("p", attribs);
+}
+
+function H1(content) {
+    var e = TAG("H1");
     e.textContent = content;
     return e;
 }
 
-function h2(content) {
-    var e = document.createElement("h2");
+function H2(content) {
+    var e = TAG("H2");
     e.textContent = content;
     return e;
 }
 
-function h3(content) {
-    var e = document.createElement("h3");
+function H3(content) {
+    var e = TAG("H3");
     e.textContent = content;
     return e;
 }
 
-function h4(content) {
-    var e = document.createElement("h4");
+function H4(content) {
+    var e = TAG("H4");
     e.textContent = content;
     return e;
 }
 
-function h5(content) {
-    var e = document.createElement("h5");
+function H5(content) {
+    var e = TAG("H5");
     e.textContent = content;
     return e;
 }
 
 function docRoot(x) {
-    var e = tag();
+    var e = TAG();
     if (x.value) {
         switch (x.value.TYPE) {
             case "Function":
@@ -88,10 +134,10 @@ function getArgs(x) {
 }
 
 function docFunction(x) {
-    var e = tag();
+    var e = TAG();
     console.info("[docFunction] x=...", x);
     var title = x.value.TYPE + " " + getArgs(x.value);
-    e.appendChild(h4(title));
+    e.appendChild(H4(title));
     e.appendChild(docComments(x.comments));
     e.appendChild(docComments(x.value.comments));
     var f = x.value;
@@ -102,12 +148,12 @@ function docFunction(x) {
                 var name, item;
                 for (name in items) {
                     item = items[name];
-                    var div = tag();
+                    var div = TAG();
                     div.className = caption;
-                    var typ = tag("span");
+                    var typ = TAG("span");
                     typ.textContent = caption;
                     div.appendChild(typ);
-                    var tail = tag("span");
+                    var tail = TAG("span");
                     tail.textContent = "  " + name + " " + getArgs(item);
                     div.appendChild(typ);
                     div.appendChild(tail);
@@ -121,29 +167,29 @@ function docFunction(x) {
 }
 
 function docComments(comments) {
-    var e = tag("span");
+    var e = TAG("span");
     if (typeof comments !== 'object') return e;
     e.innerHTML = comments.$summary || "";
     if (Array.isArray(comments.$param)) {
-        e.appendChild(h5("Arguments"));
-        var ul = tag("ul", {"class": "param"});
+        e.appendChild(H5("Arguments"));
+        var ul = TAG("ul", {"class": "param"});
         e.appendChild(ul);
         comments.$param.forEach(
             function(param) {
-                var li = tag("li");
-                var caption = tag("span");
+                var li = TAG("li");
+                var caption = SPAN();
                 ul.appendChild(li);
-                var paramName = tag("span", {"class": "name"});
+                var paramName = SPAN({"class": "name"});
                 paramName.textContent = param.name;
                 caption.appendChild(paramName);
-                var paramType = tag("span", {"class": "type"});
+                var paramType = SPAN({"class": "type"});
                 paramType.textContent = param.type;
                 caption.appendChild(paramType);
-                var content = tag("span");
+                var content = SPAN();
                 content.innerHTML = param.content;
                 var n = content.textContent.length;
                 if (n > 64) {
-                    var summary = tag("span");
+                    var summary = SPAN();
                     summary.textContent = content.textContent.substr(0, 64);
                     summary.className = "short inline";
                     caption.appendChild(summary);
@@ -155,7 +201,33 @@ function docComments(comments) {
                 }
             }
         );
-
+    }
+    if (Array.isArray(comments.$return)) {
+        comments.$return.forEach(
+            function(item) {
+                // Retirer les <p>...</p> qui obligent à paser à la ligne.
+                item = unfold(item, "<p>", "</p>");
+                e.appendChild(
+                    P().append(
+                        B().text("Return: "),
+                        SPAN().html(item)
+                    )
+                );
+            }
+        );
+    }
+    if (Array.isArray(comments.$example)) {
+        comments.$example.forEach(
+            function(example, index) {
+                example = unfold(example, '<pre><code class="lang-js">', '</code></pre>');
+                e.appendChild(
+                    TAG("fieldset").append(
+                        TAG("legend").text("Example " + (index + 1)),
+                        TAG().html(example)
+                    )
+                );
+            }
+        );
     }
     return e;
 }
@@ -163,17 +235,16 @@ function docComments(comments) {
 function showModule(name) {
     var key, val;
     body.innerHTML = "";
-    var title = tag("h1");
-    title.textContent = name;
+    var title = H1(name);
     body.appendChild(title);
     var x = M[name].exports;
     console.info(name, x);
-    body.appendChild(h2("module.exports"));
+    body.appendChild(H2("module.exports"));
     if (x.TYPE == 'Object') {
         for (key in x.attributes) {
             val = x.attributes[key];
             console.info("[script] val=...", val);
-            body.appendChild(h3(key));
+            body.appendChild(H3(key));
             body.appendChild(docRoot(val));
         }
     } else {
@@ -186,7 +257,7 @@ function init() {
     body = document.getElementById("body");
     var name, e;
     for (name in M) {
-        e = tag(
+        e = TAG(
             "a",
             {
                 href: "#",

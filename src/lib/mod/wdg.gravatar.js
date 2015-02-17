@@ -4,6 +4,28 @@ var Widget = require("wdg");
 var Md5 = require("md5");
 
 /**
+ * @param {string} md5 Email's MD5.
+ * @param {number} size Side size in pixel of the image. Default = `32`.
+ * @param {string} unknown Que faut-il afficher s'il n'y a pas de Gravatar. Default = `retro`.
+ * 
+ * * `404` : Ne rien retourner. C'est la valeur par défaut.
+ * * `mm` : Mystery Man, constant.
+ * * `blank` : Blanc, constant.
+ * * `identicon` : Dépend de l'e-mail.
+ * * `monsterid` : Dépend de l'e-mail.
+ * * `wavatar` : Dépend de l'e-mail.
+ * * `retro` : Dépend de l'e-mail.
+ * 
+ */
+var getURL = function(md5, size, unknown) {
+    if (typeof size === 'undefined') size = 32;
+    if (typeof unknown === 'undefined') unknown = "retro";
+
+    return "https://secure.gravatar.com/avatar/"
+        + md5 + "?s=" + size + "&r=pg&d=" + unknown;
+};
+
+/**
  * @param {string} email Adresse mail ou MD5.
  * @param {string} unknown Que faut-il afficher s'il n'y a pas de Gravatar.
  * 
@@ -45,21 +67,12 @@ var Gravatar = function(email, size, unknown) {
         that._loaded = true;
         that._defined = false;
     };
-    img.src = "https://secure.gravatar.com/avatar/"
-        + md5
-        + "?s=" + size + "&r=pg&d=" + unknown;
+    img.src = getURL(md5, size, unknown);
     this._url = img.src;
 };
 
 Gravatar.prototype = Object.create(Widget.prototype);
 Gravatar.prototype.constructor = Gravatar;
-
-/**
- * @return void
- */
-Gravatar.prototype.url = function() {
-    return this._url;
-};
 
 /**
  * @return void
@@ -75,7 +88,10 @@ Gravatar.prototype.isDefined = function() {
     return this._defined;
 };
 
-Gravatar.create = function(email, size) {
-    return new Gravatar(email, size);
+Gravatar.create = function(email, size, unknown) {
+    return new Gravatar(email, size, unknown);
 };
+
+Gravatar.url = getURL;
+
 module.exports = Gravatar;
