@@ -16,8 +16,8 @@ var require = function() {
             body(exports, mod);
             modules[id] = mod.exports;
             mod = mod.exports;
-            console.log("Module initialized: " + id);
+            //console.log("Module initialized: " + id);
         }
         return mod;
-    }
+    };
 }();

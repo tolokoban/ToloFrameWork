@@ -1,6 +1,29 @@
 var FS = require("fs");
 var Template = require("./template");
 
+function splitIfNeeded(txt) {
+    // Transformer tous les "\n" en sauts de lignes.
+    var parts = txt.split("\\");
+    if (parts.length > 0) {
+        parts.forEach(
+            function(itm, idx) {
+                if (idx > 0) {
+                    var c = itm.substr(0, 1);
+                    if (c == 'n') {
+                        txt += "\n";
+                    } else {
+                        txt += "\\" + c;
+                    }
+                    txt += itm.substr(1);
+                } else {
+                    txt = itm;
+                }
+            }
+        );
+    }
+    return txt;    
+}
+
 exports.parse = function(file) {
     var content = FS.readFileSync(file).toString();
     var dic = {};
@@ -26,7 +49,7 @@ exports.parse = function(file) {
                 pos = line.indexOf(':');
                 key = line.substr(0, pos).trim();
                 text = line.substr(pos + 1).trim();
-                currentLang[key] = text;
+                currentLang[key] = splitIfNeeded(text);
             }
         }
     );

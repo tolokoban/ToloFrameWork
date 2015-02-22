@@ -29,7 +29,7 @@ exports.intl = function(words, params) {
     if (!txt) {
         console.error("Missing internationalization ["
                       + exports.lang()
-                     + "]: \"" + k + "\"!");
+                      + "]: \"" + k + "\"!");
         return k;
     }
     if (params.length > 1) {
@@ -57,5 +57,5 @@ exports.intl = function(words, params) {
         newTxt += txt.substr(lastIdx);
         txt = newTxt;
     }
-    return txt;    
+    return txt;
 };
