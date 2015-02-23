@@ -19,5 +19,5 @@ var require = function() {
             //console.log("Module initialized: " + id);
         }
         return mod;
-    }
+    };
 }();
