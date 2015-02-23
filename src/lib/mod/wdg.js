@@ -281,6 +281,16 @@ Widget.prototype = {
         return this;
     },
 
+    hasClass: function() {
+        var e = this._element.classList;
+        var i, arg;
+        for (i = 0 ; i < arguments.length ; i++) {
+            arg = arguments[i];
+            if (!e.contains(arg)) return false;
+        }
+        return true;
+    },
+
     /**
      * @description
      * Add CSS classe(s) to this widget.
