@@ -1,3 +1,8 @@
+/**
+ * On ne documente que les exports.
+ * 
+ */
+
 var TreeWalker = require("./tree-walker");
 var UglifyJS = require("uglify-js");
 var Markdown = require("./tfw-md");

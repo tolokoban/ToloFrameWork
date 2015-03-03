@@ -54,7 +54,7 @@ TreeWalker.prototype.test = function(node, path) {
     for (i = 0 ; i < items.length ; i++) {
         item = items[i].trim();
         if (item == ("" + parseInt(item))) {
-            if (!Array.isArray(node)) return false;
+            if (!Array.isArray(node)) return null;
             node = node[parseInt(item)];
         }
         else {
@@ -69,17 +69,17 @@ TreeWalker.prototype.test = function(node, path) {
                 } else {
                     val = val.substr(1);
                 }
-                if (node[key] != val) return false;
+                if (node[key] != val) return null;
                 item = item.substr(m[0].length);
             }
             key = item.trim();
             if (key.length > 0) {
                 node = node[key];
-                if (typeof node === 'undefined') return false;
+                if (typeof node === 'undefined') return null;
             }
         }
     }
-    return true;
+    return node;
 };
 
 TreeWalker.create = function(opts) {
