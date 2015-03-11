@@ -366,8 +366,11 @@ function needsWidgetCompilation(root) {
  */
 function initControllers(root, source) {
     var innerJS = source.tag("innerJS")
-        + "\nwindow.addEventListener(\n"
-        + "    'DOMContentLoaded',\n"
+        + "function addListener(e,l){"
+        + "if(window.addEventListener){\n"
+        + "window.addEventListener(e,l,false)}else{\n"
+        + "window.attachEvent('on' + e, l)}}"
+        + "\naddListener('DOMContentLoaded',\n"
         + "    function() {\n"
         + "        document.body.parentNode.$data = {};\n"
         + "        // Attach controllers.\n";
