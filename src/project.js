@@ -654,6 +654,7 @@ Project.prototype.writeHtaccess = function(mode) {
  * Linking in RELEASE mode.
  */
 Project.prototype.linkForRelease = function(filename) {
+    var size = 0;
     var that = this;
     var seed = "?" + Date.now();
     var srcHTML = new Source(this, filename);
