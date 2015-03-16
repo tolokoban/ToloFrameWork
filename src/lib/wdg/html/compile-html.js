@@ -29,16 +29,18 @@ module.exports.compile = function(root) {
     var deviceH = Tree.att(root, "height") || "device-height";
     var metas = [
         Tree.tag(
+            "meta", {"http-equiv": "X-UA-Compatible", content: "IE=Edge"}
+        ),
+/*
+        Tree.tag(
             "meta", {"http-equiv": "Pragma", content: "no-cache"}
         ),
+*/
         Tree.tag(
             "meta", {"http-equiv": "Content-Type", content: "text/html; charset=UTF-8"}
         ),
         Tree.tag(
             "meta", {"http-equiv": "description", content: title}
-        ),
-        Tree.tag(
-            "meta", {"http-equiv": "X-UA-Compatible", content: "IE=Edge"}
         ),
         Tree.tag(
             "meta", {"name": "apple-mobile-web-app-capable", content: "yes"}
@@ -53,7 +55,7 @@ module.exports.compile = function(root) {
         )
     ];
     if (Array.isArray(head.children)) {
-        metas = head.children.concat(metas);
+        metas = metas.concat(head.children);
     }
     head.children = metas;
     // Move app attribute to <body>.

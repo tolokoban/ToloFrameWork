@@ -798,6 +798,29 @@ Project.prototype.linkForRelease = function(filename) {
     this.writeHtaccess("RELEASE");
     // Looking for manifest (Firefox OS or node-webkit).
     copyManifestWebapp.call(this, "RELEASE");
+
+    // Determine size of project.
+    var root = this.wwwPath("RELEASE");
+    function getSize(filename) {
+        var stats = FS.statSync(Path.join(root, filename));
+        return stats.size;
+    }
+    var jsSize = getSize("js/@" + shortedName + ".js");
+    var cssSize = getSize("css/@" + shortedName + ".css");
+    var resSize = 0;
+    manifestFiles.forEach(
+        function(name) {
+            resSize += getSize(name);
+        }
+    );
+    var total = jsSize + cssSize + resSize;
+    jsSize = ("" + Math.floor(.5 + jsSize / 1024)).bold;
+    cssSize = ("" + Math.floor(.5 + cssSize / 1024)).bold;
+    resSize = ("" + Math.floor(.5 + resSize / 1024)).bold;
+    total = ("" + Math.floor(.5 + total / 1024)).bold;
+    console.log(
+        "JS: " + jsSize + " kb, CSS: " 
+            + cssSize + ", Other: " + resSize + " kb -> Total: " + total + " kb.");
 };
 
 /**
