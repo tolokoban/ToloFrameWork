@@ -14,7 +14,7 @@ var Input = require('readline-sync');
 var JSON = require("./tolojson");
 
 /**
- * @class Project
+ * * `_modulesPath`: Array of pathes where to look for modules not found in local `src/mod` directory.
  */
 var Project = function(prjDir) {
     this._prjDir = Path.resolve(prjDir);
@@ -23,6 +23,7 @@ var Project = function(prjDir) {
     this._srcDir = this.mkdir(prjDir, "src");
     this._tmpDir = this.mkdir(prjDir, "tmp");
     this._wwwDir = this.mkdir(prjDir, "www");
+    this._modulesPath = [];
     this.Util = require("./lib/wdg/util.js");
     var configFile = Path.join(this._prjDir, "project.tfw.json");
     if (!FS.existsSync(configFile)) {
@@ -52,6 +53,24 @@ var Project = function(prjDir) {
     }
     if (typeof cfg.version !== 'string') {
         cfg.version = "0.0.0";
+    }
+    if (Array.isArray(cfg.modules)) {
+        cfg.modules.forEach(
+            function(item) {
+                item = Path.normalize(item);
+                if (FS.existsSync(item)) {
+                    this._modulesPath.push(Path.resolve(item));
+                } else {
+                    item = this.prjPath(item);
+                    if (Path.existsSync(item)) {
+                        this._modulesPath.push(item);
+                    } else {
+                        this.fatal("Unable to find module directory:\n" + item);
+                    }
+                }
+            },
+            this
+        );
     }
     var version = cfg.version.split(".");
     if (version.length < 3) {
@@ -108,6 +127,11 @@ var Project = function(prjDir) {
         console.info((cfg.name + " v" + cfg.version).bold + " (Node-Webkit)");
     }
     console.info();
+    this._modulesPath.forEach(
+        function(path) {
+            console.log("External lib: " + path.bold);
+        }
+    );
 };
 
 /**
@@ -170,12 +194,16 @@ Project.prototype.prjPath = function(path) {
 };
 
 /**
- * @param {string} path path relative to `src/` or `lib/`.
+ * @param {string} path path relative to `src/` or extenal modules or `lib/`.
  * @return an absolute path or null if the file does not exist.
  */
 Project.prototype.srcOrLibPath = function(path) {
     var result = this.srcPath(path);
     if (FS.existsSync(result)) return result;
+    for (var i = 0 ; i < this._modulesPath ; i++) {
+        result = this._modulesPath[i];
+        if (FS.existsSync(result)) return result;
+    }
     result = this.libPath(path);
     if (FS.existsSync(result)) return result;
     return null;
