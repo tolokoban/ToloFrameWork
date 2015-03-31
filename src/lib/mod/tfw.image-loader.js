@@ -29,6 +29,7 @@ module.exports = function(src) {
                     img.onload = next;
                     img.onerror = function(err) {
                         errors[url] = err;
+                        next();
                     };
                     img.src = url;
                 }
