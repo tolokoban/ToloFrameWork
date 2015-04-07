@@ -1,11 +1,13 @@
 /**
  * Widgets inherit this class.
  */
-
-
 function Widget(options) {
     try {
         if (typeof options === 'undefined') options = {};
+        if (typeof options.innerHTML !== 'undefined' && typeof options.childNodes !== 'undefined') {
+            // On passe directement un élément.
+            options = {element: options};
+        }
         if (typeof options.tag === 'undefined') options.tag = "div";
         if (options.element) {
             this.element(options.element);
@@ -16,7 +18,7 @@ function Widget(options) {
     }
     catch (ex) {
         console.error("[widget] ", ex);
-        console.error("[Widget] ", options);
+        console.error("[Widget] ", JSON.stringify(options));
         throw Error(ex);
     }
 }
@@ -32,7 +34,6 @@ Widget.prototype = {
             v = document.querySelector(v);
         }
         this._element = v;
-        v.$(this);
         return this;
     },
 
@@ -74,7 +75,7 @@ Widget.prototype = {
         var e = this.element();
         if (name == 'tap') {
             e.addEventListener(
-                "mousedown", 
+                "mousedown",
                 function(evt) {
                     evt.preventDefault();
                     evt.stopPropagation();
@@ -82,7 +83,7 @@ Widget.prototype = {
                 false
             );
             e.addEventListener(
-                "mouseup", 
+                "mouseup",
                 function(evt) {
                     evt.preventDefault();
                     evt.stopPropagation();
@@ -229,8 +230,8 @@ Widget.prototype = {
                         "[Widget.append] Unable to create a text node with this text: ", arg
                     );
                     console.error("[wdg] arguments=...", arguments);
-                    throw Error( 
-                        "[Widget.append] Unable to create a text node with this text: " 
+                    throw Error(
+                        "[Widget.append] Unable to create a text node with this text: "
                             + JSON.stringify(arg)
                     );
                 }
@@ -244,11 +245,11 @@ Widget.prototype = {
             } else {
                 var e = typeof arg.element === 'function' ? arg.element() : arg;
                 this._element.appendChild(e);
-/*
-                if (typeof arg.onAppend === 'function') {
-                    arg.onAppend.call(arg);
-                }
-*/
+                /*
+                 if (typeof arg.onAppend === 'function') {
+                 arg.onAppend.call(arg);
+                 }
+                 */
             }
         }
         return this;
@@ -292,20 +293,6 @@ Widget.prototype = {
     },
 
     /**
-     * @param {string} ... Class names.
-     * @return `true` if all classes belong to this element.
-     */
-    hasClass: function() {
-        var e = this._element.classList;
-        var i, arg;
-        for (i = 0 ; i < arguments.length ; i++) {
-            arg = arguments[i];
-            if (!e.contains(arg)) return false;
-        }
-        return true;
-    },
-
-    /**
      * @description
      * Add CSS classe(s) to this widget.
      * @memberof wdg
@@ -315,7 +302,12 @@ Widget.prototype = {
         var i, arg;
         for (i = 0 ; i < arguments.length ; i++) {
             arg = arguments[i];
-            e.add(arg);
+            if (typeof arg === 'string') {
+                arg = arg.trim();
+                if (arg.length > 0) e.add(arg);
+            } else {
+                console.error("[wdg.addClass] Arguments with bad type!", arguments);
+            }
         }
         return this;
     },
@@ -356,7 +348,15 @@ Widget.prototype = {
      * @memberof wdg
      */
     clear: function() {
-        this.html("");
+        // (!) On préfère retirer les éléments un par un du DOM plutôt que d'utiliser simplement
+        // this.html("").
+        // En effet, le code simplifié a des conséquences inattendues dans IE9 et IE10 au moins.
+        // Le bug des markers qui disparaissaients sur les cartes de Trail-Passion 4 a été corrigé
+        // avec cette modification.
+        var e = this.element();
+        while(e.firstChild){
+            e.removeChild(e.firstChild);
+        }
         var i, arg;
         for (i = 0 ; i < arguments.length ; i++) {
             arg = arguments[i];
@@ -453,39 +453,108 @@ Widget.prototype = {
         if (typeof slot === 'undefined') return this._Tap;
         var that = this;
         if (typeof sender === 'undefined') sender = that;
-        if (typeof slot === 'string') slot = sender.prototype[slot];
+        if (typeof slot === 'string') slot = sender[slot];
         if (!this._Tap) {
-            this.addEvent(
-                "touchstart",
-                function(evt) {}
-            );
-            this.addEvent(
-                "mousedown",
-                function(evt) {
-                    evt.preventDefault();
-                    evt.stopPropagation();
-                }
-            );
-            this.addEvent(
-                "touchend",
-                function(evt) {
-                    var tap = that._Tap;
-                    tap[0].call(tap[1], evt);
-                }
-            );
-            this.addEvent(
-                "mouseup",
-                function(evt) {
-                    var tap = that._Tap;
-                    tap[0].call(tap[1], evt);
-                    evt.preventDefault();
-                    evt.stopPropagation();
-                }
-            );
+            this.activatePointerEvents();
+            /*
+             this.addEvent(
+             "touchstart",
+             function(evt) {
+             console.log("touchestart");
+             }
+             );
+             this.addEvent(
+             "mousedown",
+             function(evt) {
+             console.log("mousedown");
+             evt.preventDefault();
+             evt.stopPropagation();
+             }
+             );
+             this.addEvent(
+             "touchend",
+             function(evt) {
+             console.log("touchend");
+             var tap = that._Tap;
+             tap[0].call(tap[1], evt);
+             }
+             );
+             this.addEvent(
+             "mouseup",
+             function(evt) {
+             console.log("mouseup");
+             var tap = that._Tap;
+             tap[0].call(tap[1], evt);
+             evt.preventDefault();
+             evt.stopPropagation();
+             }
+             );
+             */
         }
         this._Tap = [slot, sender];
         return this;
     }
+};
+
+/**
+ * @return void
+ */
+Widget.prototype.activatePointerEvents = function() {
+    if (this._pointerEvents) return this;
+    this._pointerEvents = {start: 0};
+    var pe = this._pointerEvents;
+    var that = this;
+    this.addEvent(
+        "touchstart",
+        function(evt) {
+            console.log("touchestart");
+            evt.preventDefault();
+            evt.stopPropagation();
+            pe.touch = 1;
+            pe.start = Date.now();
+        }
+    );
+    this.addEvent(
+        "touchend",
+        function(evt) {
+            console.log("touchend");
+            evt.preventDefault();
+            evt.stopPropagation();
+            var tap = that._Tap;
+            if (!tap) return;
+            pe.touch = 0;
+            var delta = Date.now() - pe.start;
+            if (delta > 50) {
+                tap[0].call(tap[1], evt);
+            }
+        }
+    );
+    this.addEvent(
+        "mousedown",
+        function(evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            if (pe.touch) return;
+            console.log("mousedown");
+            pe.start = Date.now();
+        }
+    );
+    this.addEvent(
+        "mouseup",
+        function(evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            console.log("mouseup");
+            var tap = that._Tap;
+            if (!tap) return;
+            var delta = Date.now() - pe.start;
+            if (delta > 50) {
+                tap[0].call(tap[1], evt);
+            }
+        }
+    );
+
+    return this;
 };
 
 /**
@@ -521,19 +590,6 @@ Widget.prototype.isInDOM = function() {
  */
 Widget.prototype.onAppend = function() {};
 
-
-/**
- *
- */
-window.Element.prototype.$ = function(widget) {
-    if (typeof widget === 'undefined') {
-        if (!this._$) {
-            new Widget({element: this});
-        }
-        return this._$;
-    }
-};
-
 Widget.create = function(args) {
     return new Widget(args);
 };
@@ -558,9 +614,9 @@ Widget.svg = function(tag, attribs) {
     if (typeof attribs === 'undefined') attribs = {};
     if (tag == 'svg') {
         if (typeof attribs.version === 'undefined') attribs.version = "1.1";
-        if (typeof attribs.viewBox === 'undefined' 
+        if (typeof attribs.viewBox === 'undefined'
             && typeof attribs.width === 'number'
-            && typeof attribs.height === 'number') 
+            && typeof attribs.height === 'number')
         {
             attribs.viewBox = "0 0 " + attribs.width + " " + attribs.height;
         }
@@ -619,4 +675,246 @@ Widget.id = function(id) {
     return new Widget({element: window.document.getElementById(id)});
 };
 
+/**
+ * Widget defining the `document.body` element.
+ */
+Widget.body = new Widget(document.body);
+
 module.exports = Widget;
+
+
+
+/*
+ * classList.js: Cross-browser full element.classList implementation.
+ * 2014-07-23
+ *
+ * By Eli Grey, http://eligrey.com
+ * Public Domain.
+ * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+ */
+
+/*global self, document, DOMException */
+
+/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js*/
+
+if ("document" in self) {
+
+    // Full polyfill for browsers with no classList support
+    if (!("classList" in document.createElement("_"))) {
+
+        (function (view) {
+
+            "use strict";
+
+            if (!('Element' in view)) return;
+
+            var
+            classListProp = "classList"
+            , protoProp = "prototype"
+            , elemCtrProto = view.Element[protoProp]
+            , objCtr = Object
+            , strTrim = String[protoProp].trim || function () {
+                return this.replace(/^\s+|\s+$/g, "");
+            }
+            , arrIndexOf = Array[protoProp].indexOf || function (item) {
+                var
+                i = 0
+                , len = this.length
+                ;
+                for (; i < len; i++) {
+                    if (i in this && this[i] === item) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+            // Vendors: please allow content code to instantiate DOMExceptions
+            , DOMEx = function (type, message) {
+                this.name = type;
+                this.code = DOMException[type];
+                this.message = message;
+            }
+            , checkTokenAndGetIndex = function (classList, token) {
+                if (token === "") {
+                    throw new DOMEx(
+                        "SYNTAX_ERR"
+                        , "An invalid or illegal string was specified"
+                    );
+                }
+                if (/\s/.test(token)) {
+                    throw new DOMEx(
+                        "INVALID_CHARACTER_ERR"
+                        , "String contains an invalid character"
+                    );
+                }
+                return arrIndexOf.call(classList, token);
+            }
+            , ClassList = function (elem) {
+                var
+                trimmedClasses = strTrim.call(elem.getAttribute("class") || "")
+                , classes = trimmedClasses ? trimmedClasses.split(/\s+/) : []
+                , i = 0
+                , len = classes.length
+                ;
+                for (; i < len; i++) {
+                    this.push(classes[i]);
+                }
+                this._updateClassName = function () {
+                    elem.setAttribute("class", this.toString());
+                };
+            }
+            , classListProto = ClassList[protoProp] = []
+            , classListGetter = function () {
+                return new ClassList(this);
+            }
+            ;
+            // Most DOMException implementations don't allow calling DOMException's toString()
+            // on non-DOMExceptions. Error's toString() is sufficient here.
+            DOMEx[protoProp] = Error[protoProp];
+            classListProto.item = function (i) {
+                return this[i] || null;
+            };
+            classListProto.contains = function (token) {
+                token += "";
+                return checkTokenAndGetIndex(this, token) !== -1;
+            };
+            classListProto.add = function () {
+                var
+                tokens = arguments
+                , i = 0
+                , l = tokens.length
+                , token
+                , updated = false
+                ;
+                do {
+                    token = tokens[i] + "";
+                    if (checkTokenAndGetIndex(this, token) === -1) {
+                        this.push(token);
+                        updated = true;
+                    }
+                }
+                while (++i < l);
+
+                if (updated) {
+                    this._updateClassName();
+                }
+            };
+            classListProto.remove = function () {
+                var
+                tokens = arguments
+                , i = 0
+                , l = tokens.length
+                , token
+                , updated = false
+                , index
+                ;
+                do {
+                    token = tokens[i] + "";
+                    index = checkTokenAndGetIndex(this, token);
+                    while (index !== -1) {
+                        this.splice(index, 1);
+                        updated = true;
+                        index = checkTokenAndGetIndex(this, token);
+                    }
+                }
+                while (++i < l);
+
+                if (updated) {
+                    this._updateClassName();
+                }
+            };
+            classListProto.toggle = function (token, force) {
+                token += "";
+
+                var
+                result = this.contains(token)
+                , method = result ?
+                    force !== true && "remove"
+                    :
+                    force !== false && "add"
+                ;
+
+                if (method) {
+                    this[method](token);
+                }
+
+                if (force === true || force === false) {
+                    return force;
+                } else {
+                    return !result;
+                }
+            };
+            classListProto.toString = function () {
+                return this.join(" ");
+            };
+
+            if (objCtr.defineProperty) {
+                var classListPropDesc = {
+                    get: classListGetter
+                    , enumerable: true
+                    , configurable: true
+                };
+                try {
+                    objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+                } catch (ex) { // IE 8 doesn't support enumerable:true
+                    if (ex.number === -0x7FF5EC54) {
+                        classListPropDesc.enumerable = false;
+                        objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+                    }
+                }
+            } else if (objCtr[protoProp].__defineGetter__) {
+                elemCtrProto.__defineGetter__(classListProp, classListGetter);
+            }
+
+        }(self));
+
+    } else {
+        // There is full or partial native classList support, so just check if we need
+        // to normalize the add/remove and toggle APIs.
+
+        (function () {
+            "use strict";
+
+            var testElement = document.createElement("_");
+
+            testElement.classList.add("c1", "c2");
+
+            // Polyfill for IE 10/11 and Firefox <26, where classList.add and
+            // classList.remove exist but support only one argument at a time.
+            if (!testElement.classList.contains("c2")) {
+                var createMethod = function(method) {
+                    var original = DOMTokenList.prototype[method];
+
+                    DOMTokenList.prototype[method] = function(token) {
+                        var i, len = arguments.length;
+
+                        for (i = 0; i < len; i++) {
+                            token = arguments[i];
+                            original.call(this, token);
+                        }
+                    };
+                };
+                createMethod('add');
+                createMethod('remove');
+            }
+
+            testElement.classList.toggle("c3", false);
+
+            // Polyfill for IE 10 and Firefox <24, where classList.toggle does not
+            // support the second argument.
+            if (testElement.classList.contains("c3")) {
+                var _toggle = DOMTokenList.prototype.toggle;
+
+                DOMTokenList.prototype.toggle = function(token, force) {
+                    if (1 in arguments && !this.contains(token) === !force) {
+                        return force;
+                    } else {
+                        return _toggle.call(this, token);
+                    }
+                };
+
+            }
+            testElement = null;
+        }());
+    }
+}
