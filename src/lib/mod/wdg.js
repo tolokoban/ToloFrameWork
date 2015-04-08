@@ -12,7 +12,7 @@ function Widget(options) {
         if (options.element) {
             this.element(options.element);
         } else {
-            this.element(document.createElement(options.tag));
+            this.element(window.document.createElement(options.tag));
             this.addClass("wdg", "custom");
         }
     }
@@ -31,7 +31,7 @@ Widget.prototype = {
     element: function(v) {
         if (v === undefined) return this._element;
         if (typeof v === 'string') {
-            v = document.querySelector(v);
+            v = window.document.querySelector(v);
         }
         this._element = v;
         return this;
@@ -224,7 +224,7 @@ Widget.prototype = {
                 continue;
             };
             if (typeof arg === 'string') {
-                arg = document.createTextNode(arg);
+                arg = window.document.createTextNode(arg);
                 if (!arg) {
                     console.error(
                         "[Widget.append] Unable to create a text node with this text: ", arg
@@ -278,7 +278,7 @@ Widget.prototype = {
      * @memberof wdg
      */
     appendToBody: function() {
-        document.body.appendChild(this._element);
+        window.document.body.appendChild(this._element);
         return this;
     },
 
@@ -380,7 +380,7 @@ Widget.prototype = {
         var e, text, i, child;
         if (typeof arg == 'string' || typeof arg == 'number') {
             this.clear();
-            this._element.appendChild(document.createTextNode(arg));
+            this._element.appendChild(window.document.createTextNode(arg));
             return this;
         } else {
             // On retourne le contenu textuel de ce widget.
@@ -609,7 +609,7 @@ Widget.svg = function(tag, attribs) {
         tag = "svg";
     }
     if (typeof tag !== 'string') tag = 'svg';
-    var e = document.createElementNS(namespace, tag);
+    var e = window.document.createElementNS(namespace, tag);
     var w = new Widget({element: e});
     if (typeof attribs === 'undefined') attribs = {};
     if (tag == 'svg') {
@@ -635,7 +635,7 @@ Widget.isInDOM = function(e) {
     if (typeof e.element === 'function') {
         e = e.element();
     }
-    if (e === document) return true;
+    if (e === window.document) return true;
     return Widget.isInDOM(e.parentNode);
 };
 
@@ -678,7 +678,7 @@ Widget.id = function(id) {
 /**
  * Widget defining the `document.body` element.
  */
-Widget.body = new Widget(document.body);
+Widget.body = new Widget(window.document.body);
 
 module.exports = Widget;
 
@@ -700,7 +700,7 @@ module.exports = Widget;
 if ("document" in self) {
 
     // Full polyfill for browsers with no classList support
-    if (!("classList" in document.createElement("_"))) {
+    if (!("classList" in window.document.createElement("_"))) {
 
         (function (view) {
 
@@ -875,7 +875,7 @@ if ("document" in self) {
         (function () {
             "use strict";
 
-            var testElement = document.createElement("_");
+            var testElement = window.document.createElement("_");
 
             testElement.classList.add("c1", "c2");
 
