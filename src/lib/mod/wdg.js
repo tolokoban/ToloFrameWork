@@ -696,7 +696,7 @@ module.exports = Widget;
 /*global self, document, DOMException */
 
 /*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js*/
-
+var self = self || {};
 if ("document" in self) {
 
     // Full polyfill for browsers with no classList support
