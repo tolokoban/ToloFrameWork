@@ -12,6 +12,11 @@ var Path = require("path");
  * @see {@link project~Project}
  */
 var Source = function(prj, file) {
+    var srcDir = prj.srcPath();
+    if (file.substr(0, srcDir.length) == srcDir) {
+        // Make this file relative.
+        file = file.substr(srcDir.length);
+    }
     this._prj = prj;
     this._name = file;
     this._tmpFile = prj.tmpPath(file);

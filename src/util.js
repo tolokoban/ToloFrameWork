@@ -2,6 +2,7 @@
  * @module util
  */
 
+var PathUtils = require("./pathutils");
 var UglifyJS = require("uglify-js");
 var Less = require("less");
 var Path = require("path");
@@ -79,30 +80,8 @@ exports.removeDoubles = function(arrInput) {
  */
 exports.cleanDir = function(path) {
     path = Path.resolve(path);
-    FS.readdirSync(path).forEach(
-        function(filename) {
-            var file = Path.resolve(Path.join(path, filename));
-            if (FS.existsSync(file)) {
-                var stat = FS.statSync(file);
-                if (stat.isFile()) {
-                    FS.unlinkSync(file);
-                }
-                else if (stat.isDirectory()) {
-                    this.cleanDir(file);
-                    try {
-                        FS.rmdirSync(file);
-                    }
-                    catch (ex) {
-                        console.error(
-                            "Unable to remove directory\n\"" + file + "\"\n\n".err()
-                        );
-                        console.error(ex.err());
-                    }
-                }
-            }
-        },
-        this
-    );
+    PathUtils.rmdir(path);
+    PathUtils.mkdir(path);
 };
 
 /**

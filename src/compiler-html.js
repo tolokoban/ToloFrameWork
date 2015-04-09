@@ -392,7 +392,7 @@ function initControllers(root, source) {
             if (!item) return;
             if (item.controller) {
                 var ctrlFilename = "mod/" + item.controller + ".js";
-                innerJS += "        require('" + item.controller + "')(";
+                innerJS += "        require('" + item.controller.toLowerCase() + "')(";
                 if (typeof item.init === 'object') {
                     innerJS += "{";
                     var sep = '', key, val;

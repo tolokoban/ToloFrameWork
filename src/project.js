@@ -12,6 +12,7 @@ var Source = require("./source");
 var Template = require("./template");
 var Input = require('readline-sync');
 var JSON = require("./tolojson");
+var PathUtils = require("./pathutils");
 
 /**
  * * `_modulesPath`: Array of pathes where to look for modules not found in local `src/mod` directory.
@@ -32,7 +33,7 @@ var Project = function(prjDir) {
         if (answer.trim().length > 0) {
             projectName = answer;
         }
-        FS.writeFileSync(
+        PathUtils.file(
             configFile,
             "{\n"
                 + '    "name": "' + projectName + '",\n'
@@ -79,7 +80,7 @@ var Project = function(prjDir) {
         version[version.length - 1] = parseInt(version[version.length - 1]) + 1;
     }
     cfg.version = version.join(".");
-    FS.writeFileSync(configFile, JSON.stringify(cfg, '    '));
+    PathUtils.file(configFile, JSON.stringify(cfg, '    '));
 
     var now = new Date();
     var mod = this.srcPath("mod");
@@ -87,7 +88,7 @@ var Project = function(prjDir) {
         FS.mkdir(mod);
     }
     var file = Path.join(mod, "$.js");
-    FS.writeFileSync(
+    PathUtils.file(
         file,
         "exports.config={\n"
             + "    name:" + JSON.stringify(cfg.name)
@@ -355,7 +356,7 @@ Project.prototype.makeDoc = function() {
         }
     );
     this.mkdir(docPath);
-    FS.writeFileSync(
+    PathUtils.file(
         Path.join(docPath, "modules.js"),
         modules
     );
@@ -384,9 +385,15 @@ Project.prototype.link = function() {
     this.mkdir(this.wwwPath("RELEASE"));
     this.findHtmlFiles().forEach(
         function(filename) {
+            filename = filename.split(Path.sep).join("/");
             console.log("Linking " + filename.yellow.bold);
-            this.linkForDebug(filename);
-            this.linkForRelease(filename);
+            var shiftPath = "";
+            var subdirCount = filename.split("/").length - 1;
+            for (var i = 0 ; i < subdirCount ; i++) {
+                shiftPath += "../";
+            }
+            this.linkForDebug(filename, shiftPath);
+            this.linkForRelease(filename, shiftPath);
         },
         this
     );
@@ -479,8 +486,13 @@ Project.prototype.topologicalSort = function(input) {
 /**
  * Linking in DEBUG mode.
  * Starting with an HTML file, we will find all dependent JS and CSS.
+ *
+ * Example: filename = "foo/bar.html"
+ * We will create:
+ * * `DEBUG/js/foo/@bar.js` for inner JS.
+ * * `DEBUG/css/foo/@bar.css` for inner CSS.
  */
-Project.prototype.linkForDebug = function(filename) {
+Project.prototype.linkForDebug = function(filename, shiftPath) {
     // Add this to a Javascript link to force webserver to deliver a non cached file.
     var seed = "?" + Date.now();
     // The HTML source file.
@@ -502,19 +514,20 @@ Project.prototype.linkForDebug = function(filename) {
         );
     }
 
+    // Needed CSS files.
     var cssDir = this.mkdir(this.wwwPath("DEBUG/css"));
     linkCSS.forEach(
         function(item) {
             var srcCSS = srcHTML.create(item);
             var shortName = Path.basename(srcCSS.getAbsoluteFilePath());
             var output = Path.join(cssDir, shortName);
-            FS.writeFileSync(output, srcCSS.tag("debug"));
+            PathUtils.file(output, srcCSS.tag("debug"));
             if (!head.children) head.children = [];
             head.children.push(
                 Tree.tag(
                     "link",
                     {
-                        href: "css/" + shortName + seed,
+                        href: shiftPath + "css/" + shortName + seed,
                         rel: "stylesheet",
                         type: "text/css"
                     }
@@ -561,7 +574,7 @@ Project.prototype.linkForDebug = function(filename) {
                         + "\n};\n";
                 }
             }
-            FS.writeFileSync(output, code);
+            PathUtils.file(output, code);
             if (this._type != 'nodewebkit') {
                 // Declaration and  manifest only needed for  project of
                 // type that is not "nodewebkit".
@@ -569,7 +582,7 @@ Project.prototype.linkForDebug = function(filename) {
                 head.children.push(
                     Tree.tag(
                         "script",
-                        {src: jsDirShortName + "/" + shortName + seed}
+                        {src: shiftPath + jsDirShortName + "/" + shortName + seed}
                     )
                 );
                 head.children.push({type: Tree.TEXT, text: "\n"});
@@ -594,16 +607,17 @@ Project.prototype.linkForDebug = function(filename) {
     );
 
     // Adding innerJS and innerCSS.
-    var shortNameJS = "@" + filename.substr(0, filename.length - 5) + ".js";
+    var shortNameJS = PathUtils.addPrefix(filename.substr(0, filename.length - 5), "@") + ".js";
     head.children.push(
         Tree.tag(
             "script",
-            {src: jsDirShortName + "/" + shortNameJS + seed}
+            {src: shiftPath + jsDirShortName + "/" + shortNameJS + seed}
         )
     );
     manifestFiles.push(jsDirShortName + "/" + shortNameJS);
-    FS.writeFileSync(
-        Path.join(jsDir, shortNameJS),
+    var wwwInnerJS = Path.join(jsDir, shortNameJS);
+    PathUtils.file(
+        wwwInnerJS,
         srcHTML.tag("innerJS")
     );
 
@@ -614,19 +628,19 @@ Project.prototype.linkForDebug = function(filename) {
         );
     } else {
         // If we want to externalise the inner CSS in the future, we can use this piece of code.
-        var shortNameCSS = "@" + filename.substr(0, filename.length - 5) + ".css";
+        var shortNameCSS = PathUtils.addPrefix(filename.substr(0, filename.length - 5), "@") + ".css";
         head.children.push(
             Tree.tag(
                 "link",
                 {
-                    href: "css/" + shortNameCSS + seed,
+                    href: shiftPath + "css/" + shortNameCSS + seed,
                     rel: "stylesheet",
                     type: "text/css"
                 }
             )
         );
-        manifestFiles.push("css/" + shortNameCSS);
-        FS.writeFileSync(
+        manifestFiles.push(shiftPath + "css/" + shortNameCSS);
+        PathUtils.file(
             Path.join(cssDir, shortNameCSS),
             srcHTML.tag("innerCSS")
         );
@@ -639,7 +653,7 @@ Project.prototype.linkForDebug = function(filename) {
             var manifestFilename = Tree.att("manifest");
             if (manifestFilename) {
                 // Writing manifest file only if needed.
-                FS.writeFileSync(
+                PathUtils.file(
                     Path.join(this.wwwPath("DEBUG"), filename + ".manifest"),
                     "CACHE MANIFEST\n"
                         + "# " + (new Date()) + " - " + Date.now() + "\n\n"
@@ -651,7 +665,7 @@ Project.prototype.linkForDebug = function(filename) {
         }
     }
     // Writing HTML file.
-    FS.writeFileSync(
+    PathUtils.file(
         Path.join(this.wwwPath("DEBUG"), filename),
         "<!-- " + (new Date()).toString() + " -->"
             + "<!DOCTYPE html>" + Tree.toString(tree)
@@ -667,7 +681,7 @@ Project.prototype.linkForDebug = function(filename) {
  * @return void
  */
 Project.prototype.writeHtaccess = function(mode) {
-    FS.writeFileSync(
+    PathUtils.file(
         Path.join(this.wwwPath(mode), ".htaccess"),
         "AddType application/x-web-app-manifest+json .webapp\n"
             + "AddType text/cache-manifest .manifest\n"
@@ -681,7 +695,7 @@ Project.prototype.writeHtaccess = function(mode) {
 /**
  * Linking in RELEASE mode.
  */
-Project.prototype.linkForRelease = function(filename) {
+Project.prototype.linkForRelease = function(filename, shiftPath) {
     var size = 0;
     var that = this;
     var seed = "?" + Date.now();
@@ -699,7 +713,10 @@ Project.prototype.linkForRelease = function(filename) {
     var cssDir = this.mkdir(this.wwwPath("RELEASE/css"));
     var manifestFiles = [];
     var shortedName = filename.substr(0, filename.length - 5);
-    var fdJS = FS.openSync(Path.join(jsDir, "@" + shortedName + ".js"), "w");
+    var shortedNameJS = PathUtils.addPrefix(shortedName, "@") + ".js";
+    var shortedNameCSS = PathUtils.addPrefix(shortedName, "@") + ".css";
+    PathUtils.file(Path.join(jsDir, shortedNameJS), "// in progress...");
+    var fdJS = FS.openSync(Path.join(jsDir, shortedNameJS), "w");
     FS.writeSync(fdJS, srcHTML.tag("zipJS"));
     linkJS.forEach(
         function(item) {
@@ -727,7 +744,8 @@ Project.prototype.linkForRelease = function(filename) {
         } ,
         this
     );
-    var fdCSS = FS.openSync(Path.join(cssDir, "@" + shortedName + ".css"), "w");
+    PathUtils.file(Path.join(cssDir, shortedNameCSS), "// in progress...");
+    var fdCSS = FS.openSync(Path.join(cssDir, shortedNameCSS), "w");
     var zipCSS = srcHTML.tag("zipCSS");
     if (zipCSS) {
         FS.writeSync(fdCSS, zipCSS);
@@ -736,7 +754,7 @@ Project.prototype.linkForRelease = function(filename) {
     if (innerCSS) {
         FS.writeSync(
             fdCSS,
-            Util.lessCSS("css/@" + shortedName + ".css", innerCSS, true)
+            Util.lessCSS("css/" + shortedNameCSS, innerCSS, true)
         );
     }
     linkCSS.forEach(
@@ -751,7 +769,7 @@ Project.prototype.linkForRelease = function(filename) {
             var resources = srcCSS.listResources();
             resources.forEach(
                 function(resource) {
-                    var shortName = "css/"  + resource[0];
+                    var shortName = shiftPath + "css/"  + resource[0];
                     var longName = resource[1];
                     manifestFiles.push(shortName);
                     this.copyFile(longName, Path.join(this.wwwPath("RELEASE"), shortName));
@@ -782,7 +800,7 @@ Project.prototype.linkForRelease = function(filename) {
         Tree.tag(
             "script",
             {
-                src: "js/@" + shortedName + ".js" + seed
+                src: shiftPath + "js/" + shortedNameJS + seed
             }
         )
     );
@@ -790,7 +808,7 @@ Project.prototype.linkForRelease = function(filename) {
         Tree.tag(
             "link",
             {
-                href: "css/@" + shortedName + ".css" + seed,
+                href: shiftPath + "css/" + shortedNameCSS + seed,
                 rel: "stylesheet",
                 type: "text/css"
             }
@@ -802,20 +820,20 @@ Project.prototype.linkForRelease = function(filename) {
         var manifestFilename = Tree.att("manifest");
         if (manifestFilename) {
             // Writing manifest file only if needed.
-            FS.writeFileSync(
+            PathUtils.file(
                 Path.join(this.wwwPath("RELEASE"), filename + ".manifest"),
                 "CACHE MANIFEST\n"
                     + "# " + Date.now() + "\n\n"
                     + "CACHE:\n"
                     + shortedName + ".html\n"
-                    + "js/@" + shortedName + ".js\n"
-                    + "css/@" + shortedName + ".css\n"
+                    + "js/" + shortedNameJS + "\n"
+                    + "css/" + shortedNameCSS + "\n"
                     + "\nNETWORK:\n*\n"
             );
         }
     }
     // Writing HTML file.
-    FS.writeFileSync(
+    PathUtils.file(
         Path.join(this.wwwPath("RELEASE"), filename),
         "<!-- " + (new Date()).toString() + " -->"
             + "<!DOCTYPE html>" + Tree.toString(tree)
@@ -833,8 +851,8 @@ Project.prototype.linkForRelease = function(filename) {
         var stats = FS.statSync(Path.join(root, filename));
         return stats.size;
     }
-    var jsSize = getSize("js/@" + shortedName + ".js");
-    var cssSize = getSize("css/@" + shortedName + ".css");
+    var jsSize = getSize("js/" + shortedNameJS);
+    var cssSize = getSize("css/" + shortedNameCSS);
     var resSize = 0;
     manifestFiles.forEach(
         function(name) {
@@ -862,7 +880,7 @@ function copyManifestWebapp(mode) {
     // Looking for webapp manifest for Firefox OS.
     if (false == FS.existsSync(this.srcPath(filename))) {
         out = Template.file(filename, this._config).out;
-        FS.writeFileSync(this.srcPath(filename), out);
+        PathUtils.file(this.srcPath(filename), out);
     }
     var webappFile = this.srcPath(filename);
     if (webappFile) {
@@ -877,7 +895,7 @@ function copyManifestWebapp(mode) {
         if (typeof json.window === 'object') {
             json.window.toolbar = (mode == "DEBUG");
         }
-        FS.writeFileSync(Path.join(this.wwwPath(mode), filename), JSON.stringify(json, '    '));
+        PathUtils.file(Path.join(this.wwwPath(mode), filename), JSON.stringify(json, '    '));
         var icons = json.icons || {};
         var key, val;
         for (key in icons) {
@@ -893,23 +911,36 @@ function copyManifestWebapp(mode) {
  * @return array of HTML files found in _srcDir_.
  */
 Project.prototype.findHtmlFiles = function() {
-    var filter = this._config["html-filter"] || "\\.html$";
-    if (typeof filter !== 'string') filter = "\\.html$";
-    filter = new RegExp(filter, "i");
-    var files = [];
-    FS.readdirSync(this._srcDir).forEach(
-        function(filename) {
-            var file = Path.resolve(Path.join(this._srcDir, filename));
-            if (FS.existsSync(file)) {
-                var stat = FS.statSync(file);
-                if (stat.isFile()) { // && Path.extname(file) == '.html') {
-                    if (filter.test(filename)) {                        
-                        files.push(filename);                        
-                    }
-                }
+    var filters = this._config["html-filter"] || "\\.html$";
+    var filter, i, rxFilters = [], arr;
+    if (!Array.isArray(filters)) {
+        filters = [filters];
+    }
+    for (i = 0 ; i < filters.length ; i++) {
+        filter = filters[i];
+        if (typeof filter !== 'string') {
+            this.fatal("Invalid atribute \"html-filter\" in \"project.tfw.json\"!\n"
+                       + "Must be a string or an array of strings.");
+        }
+        arr = [];
+        filter.split("/").forEach(
+            function(item) {
+                arr.push(new RegExp(item, "i"));
             }
-        },
-        this
+        );
+        rxFilters.push(arr);
+    }
+    var files = [];
+    var srcDir = this.srcPath();
+    var prefixLength = srcDir.length + 1;
+    rxFilters.forEach(
+        function(f) {
+            PathUtils.findFiles(srcDir, f).forEach(
+                function(item) {
+                    files.push(item.substr(prefixLength));
+                }
+            );
+        }
     );
     return files;
 };
