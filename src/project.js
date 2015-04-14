@@ -58,16 +58,12 @@ var Project = function(prjDir) {
     if (Array.isArray(cfg.modules)) {
         cfg.modules.forEach(
             function(item) {
-                item = Path.normalize(item);
+                item = Path.resolve(this._prjDir, item);
                 if (FS.existsSync(item)) {
-                    this._modulesPath.push(Path.resolve(item));
+                    this._modulesPath.push(item);
+                    console.log("Extra modules from: " + item);
                 } else {
-                    item = this.prjPath(item);
-                    if (Path.existsSync(item)) {
-                        this._modulesPath.push(item);
-                    } else {
-                        this.fatal("Unable to find module directory:\n" + item);
-                    }
+                    this.fatal("Unable to find module directory:\n" + item);
                 }
             },
             this
@@ -201,8 +197,9 @@ Project.prototype.prjPath = function(path) {
 Project.prototype.srcOrLibPath = function(path) {
     var result = this.srcPath(path);
     if (FS.existsSync(result)) return result;
-    for (var i = 0 ; i < this._modulesPath ; i++) {
+    for (var i = 0 ; i < this._modulesPath.length ; i++) {
         result = this._modulesPath[i];
+        result = Path.resolve(result, path);
         if (FS.existsSync(result)) return result;
     }
     result = this.libPath(path);

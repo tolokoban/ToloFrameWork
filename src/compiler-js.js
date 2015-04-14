@@ -37,8 +37,8 @@ exports.compile = function(source) {
     var dependsFinder = new DependsFinder(zip);
     dependsFinder.depends.forEach(
         function(file) {
-            var prj = source.prj(),
-            exist = prj.srcOrLibPath(file);
+            var prj = source.prj();
+            var exist = prj.srcOrLibPath(file);
             if (prj.isReservedModules(file)) {
                 // This is a reserved module (maybe defined in nodejs).
                 if (exist) {
