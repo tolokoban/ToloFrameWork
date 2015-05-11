@@ -1,7 +1,7 @@
 function load(storage) {
     return function(key, def) {
         var v = storage.getItem(key);
-        if (typeof v === 'null') {
+        if (v === null) {
             return def;
         }
         try {
