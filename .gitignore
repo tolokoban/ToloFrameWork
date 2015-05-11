@@ -1,3 +1,3 @@
-*~
-tst/prj/www/
-tst/prj/tmp/
+/**/*~
+node_modules/
+
