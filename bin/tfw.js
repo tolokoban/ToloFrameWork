@@ -10,10 +10,11 @@
 require("colors");
 var Path = require("path");
 var FS = require("fs");
-var Util = require("./util.js");
+var Util = require("../lib/util.js");
+var Project = require("../lib/project");
 
 // Read the version in the package file.
-var packageFile = Path.join(__dirname, "package.json");
+var packageFile = Path.join(__dirname, "../package.json");
 var cfg = JSON.parse(FS.readFileSync(packageFile));
 var txt = " ToloFrameWork " + cfg.version + " ";
 var sep = "";
@@ -46,7 +47,6 @@ String.prototype.err = function() {
     return txt.redBG.white;
 };
 
-var Project = require("./project");
 
 try {
     var prj = Project.createProject('.');
