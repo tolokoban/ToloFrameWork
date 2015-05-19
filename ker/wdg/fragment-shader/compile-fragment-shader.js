@@ -23,10 +23,10 @@ exports.compile = function(root) {
   }
   id = id.trim();
   var filename = Tree.text(root).trim();
-  var file = this.srcOrLibPath(filename);
+  var file = this.htmPath(filename);
   if (!FS.existsSync(file)) {
     this.fatal(
-      "Shader file not found: \"" + filename + "\"!\n" + this.srcPath(filename),
+      "Shader file not found: \"" + filename + "\"!\n" + file,
         -1,
       "<w:Fragment-Shader>"
     );
