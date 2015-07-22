@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Documentation Source: dom.Util.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.spacelab.css">
+
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top ">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">Documentation</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="dom.Util.html">dom.Util</a>
+						</li>
+						
+						<li>
+							<a href="WTag.html">WTag</a>
+						</li>
+						
+						<li>
+							<a href="wtag.Button.html">wtag.Button</a>
+						</li>
+						
+						<li>
+							<a href="wtag.Clickable.html">wtag.Clickable</a>
+						</li>
+						
+						<li>
+							<a href="wtag.IFireable.html">wtag.IFireable</a>
+						</li>
+						
+						<li>
+							<a href="wtag.Input.html">wtag.Input</a>
+						</li>
+						
+						<li>
+							<a href="wtag.List.html">wtag.List</a>
+						</li>
+						
+						<li>
+							<a href="wtag.Popup.html">wtag.Popup</a>
+						</li>
+						
+						<li>
+							<a href="wtag.Visible.html">wtag.Visible</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#$add">$add</a>
+						</li>
+						
+						<li>
+							<a href="global.html#$div">$div</a>
+						</li>
+						
+						<li>
+							<a href="global.html#$replace">$replace</a>
+						</li>
+						
+						<li>
+							<a href="global.html#$tag">$tag</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
+
+
+		<h1 class="page-title">Source: dom.Util.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">/**
+ * @created 19/09/2014
+ * @class dom.Util
+ */
+window["TFW::dom.Util"] = {
+    singleton: true,
+    classInit: function(vars) {
+        vars.globalSlots = {};
+        if (!window.WTag) {
+            window.WTag = {};
+        }
+
+        /**
+         * Replace a DOM element by another DOM element.
+         * @param oldElem DOM element to remove.
+         * @param newElem DOM element to add.
+         * @global
+         */
+        $replace = function(oldElem, newElem) {
+            oldElem = $(oldElem);
+            if (typeof newElem === 'string') {
+                newElem = document.createTextNode(newElem);
+            }
+            var parent = oldElem.parentNode;
+            parent.replaceChild(newElem, oldElem);
+            return newElem;
+        };
+
+        /**
+         * Create a DOM element.
+         * @param name Name of the element to be created.
+         * @param attribs [optional] Object of all attributes of the element.
+         * @global
+         */
+        $tag = function(name, attribs) {
+            if (attribs === undefined) attribs = {};
+            if (name === undefined) name = "div";
+            var e = document.createElement(name),
+            key, val, i;
+            for (key in attribs) {
+                val = attribs[key];
+                e.setAttribute(key, val);
+            }
+            for (i = 2 ; i &lt; arguments.length ; i++) {
+                $addClass(e, arguments[i]);
+            }
+
+            return e;
+        };
+
+        /**
+         * Créer un élément DIV.
+         * @param {object} attribs Attributes to add to the created element.
+         * @global
+         */
+        $div = function(attribs) {
+            return $tag("div", attribs);
+        };
+
+        /**
+         * Add a child to an element.
+         * @param {element} root DOM element into which you want to add `child`.
+         * @param {element} child DOM element to add into `root`.
+         * @global
+         */
+        $add = function(root, child) {
+            $(root).appendChild($(child));
+        };
+
+        /**
+         * Déplacer le contenu d'un élément vers un autre.
+         */
+        $moveContent = function(src, dst) {
+            var i, child, children = [];
+            if (!src) return null;
+            src = $(src);
+            dst = $(dst);
+            for (i = 0 ; i &lt; src.childNodes.length ; i++) {
+                children.push(src.childNodes[i]);
+            }
+            children.forEach(
+                function(child) {
+                    src.removeChild(child);
+                    dst.appendChild(child);
+                }
+            );
+            return dst;
+        };
+
+        /**
+         * Ajouter des slots pour les événements mouse/touch.
+         */
+        $events = function(element, slots) {
+            element = $(element);
+            var onTouchstart = function(evt) {
+                if (slots.touchstart) {
+                    slots.touchstart({target: element});
+                }
+            },
+            onTouchend = function(evt) {
+                evt.preventDefault();
+                if (slots.touchend) {
+                    slots.touchend({target: element});
+                }
+                if (slots.tap) {
+                    slots.tap({target: element});
+                }
+            };
+            slots._type = null;
+            element.addEventListener(
+                "touchstart",
+                function(evt) {
+                    if (slots._type) return;
+                    slots._type = "T";
+                    onTouchstart(evt);
+                }
+            );
+            element.addEventListener(
+                "mousedown",
+                function(evt) {
+                    if (slots._type) return;
+                    slots._type = "M";
+                    onTouchstart(evt);
+                }
+            );
+            element.addEventListener(
+                "touchend",
+                function(evt) {
+                    if (slots._type == "T") {
+                        onTouchend(evt);
+                    }
+                    delete slots._type;
+                }
+            );
+            element.addEventListener(
+                "mouseup",
+                function(evt) {
+                    if (slots._type == "M") {
+                        onTouchend(evt);
+                    }
+                    delete slots._type;
+                }
+            );
+            return element;
+        };
+
+        /**
+         * Si une classe existe, l'enlever, sinon l'ajouter.
+         * On peut passer un nombre variable de noms de classes en arguments.
+         */
+        $toggleClass = function(e) {
+            var i, classname;
+            e = $(e);
+            for (i = 0 ; i &lt; arguments.length ; i++) {
+                classname = arguments[i];
+                if ($hasClass(classname)) {
+                    $removeClass(classname);
+                } else {
+                    $addClass(classname);
+                }
+            }
+        };
+
+        /**
+         * Détermine si l'élément sous-jacent possède la classe CSS passée en argument.
+         */
+        $hasClass = function(e, cls) {
+            var cn, rx;
+            if (!e) return false;
+            e = $(e);
+            cn = e.className;
+            if (!cn) return false;
+            rx = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+            if (!cn.match(rx)) return false;
+            return true;
+        };
+
+        /**
+         * Chaque élément du DOM peut possèder une liste de classes CSS.
+         * Avec cette méthode, on peut en ajouter une.
+         */
+        $addClass = function(e) {
+            var i, cls;
+            if (!e) return;
+            e = $(e);
+            for (i = 1 ; i &lt; arguments.length ; i++) {
+                cls = arguments[i];
+                if (!e.className) {
+                    e.className = cls;
+                } else {
+                    if (!$hasClass(e, cls)) e.className += " "+cls;
+                }
+            }
+        };
+
+        /**
+         * Retire la classe passée en argument de la liste des classes CSS de l'élément sous-jacent.
+         */
+        $removeClass = function(e) {
+            var reg, i, cls;
+            if (!e) return this;
+            e = $(e);
+            for (i = 1 ; i &lt; arguments.length ; i++) {
+                cls = arguments[i];
+                if ($hasClass(e, cls)) {
+                    reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+                    e.className = e.className.replace(reg,' ');
+                }
+            }
+        };
+
+        $show = function(e) {
+            $removeClass(e, "dom-util-hidden", "-A", "-B");
+        };
+
+        $hide = function(e) {
+            $addClass(e, "dom-util-hidden", "-A", "-B");
+        };
+
+        $clear = function(e) {
+            var child;
+            e = $(e);
+            while (e.childNodes.length > 0) {
+                child = e.childNodes[0];
+                if (child.$widget) {
+                    child.$widget.destroy();
+                }
+                e.removeChild(child);
+            }
+        };
+
+        $focus = function(e) {
+            e = $(e);
+            setTimeout(
+                function() {
+                    if (typeof e.focus === 'function') {
+                        e.focus();
+                    }
+                },
+                100
+            );
+        };
+
+        $css = function(e, attribs) {
+            e = $(e);
+            var key, val;
+            for (key in attribs) {
+                val = attribs[key];
+                e.style[key] = val;
+            }
+        };
+
+        /**
+         * Effectuer un document.querySelector().
+         */
+        $ = function(selector) {
+            var elem = typeof selector === 'string' ? document.querySelector(selector) : selector;
+            if (!elem) {
+                throw new Error("Bad selector: \"" + selector + "\"!");
+            }
+            if (typeof elem === 'object') {
+                if (!elem.nodeName &amp;&amp; elem._element) {
+                    // This is a widget.
+                    return elem._element;
+                }
+            }
+            return elem;
+        };
+    },
+
+    functions: {
+	/**
+         * @description
+         * Clone an element of the DOM.
+         * 
+         * @param elem DOM element to clone or ID of such an element.
+         * @param id ID to give to the new element.
+         * All its children that own an ID will get it prefixed with the ID of the new element.
+         * @memberof dom.Util
+         */
+        clone: function(elem, id) {
+            if (typeof elem === 'string') {
+                elem = document.getElementById(elem);
+                if (!elem) return null;
+            }
+            var copy = elem.cloneNode(true);
+            if (typeof id === 'string') {
+                var i, div, divs, prefix = id + ".";
+                divs = copy.querySelectorAll("[id]");
+                for (i = 0 ; i &lt; divs.length ; i++) {
+                    div = divs[i];
+                    div.setAttribute("id", prefix + div.getAttribute("id"));
+                }
+                delete copy.style.display;
+                copy.removeAttribute("style");
+                copy.setAttribute("id", id);
+            }
+            return copy;
+        }
+    }
+};
+</pre>
+	</article>
+</section>
+
+
+
+
+
+				</div>
+
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a>
+		on 2014-10-11T22:29:14+02:00 using the <a
+			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
+
+			
+			<br clear="both">
+		</div>
+
+	</div>
+	<!--<script src="scripts/sunlight.js"></script>-->
+	<script src="scripts/docstrap.lib.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+	<script>
+		$( function () {
+			$( "[id*='$']" ).each( function () {
+				var $this = $( this );
+
+				$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+			} );
+
+			$( "#toc" ).toc( {
+				anchorName  : function ( i, heading, prefix ) {
+					return $( heading ).attr( "id" ) || ( prefix + i );
+				},
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : "100px"
+			} );
+
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+			$( '.dropdown-toggle' ).dropdown();
+//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+			$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+				var $this = $( this );
+
+				var example = $this.find( "code" );
+				exampleText = example.html();
+				var lang = /{@lang (.*?)}/.exec( exampleText );
+				if ( lang && lang[1] ) {
+					exampleText = exampleText.replace( lang[0], "" );
+					example.html( exampleText );
+					lang = lang[1];
+				} else {
+					lang = "javascript";
+				}
+
+				if ( lang ) {
+
+					$this
+						.addClass( "sunlight-highlight-" + lang )
+						.addClass( "linenums" )
+						.html( example.html() );
+
+				}
+			} );
+
+			Sunlight.highlightAll( {
+				lineNumbers : true,
+				showMenu : true,
+				enableDoclinks : true
+			} );
+		} );
+	 </script>
+
+
+
+	<!--Navigation and Symbol Display-->
+	
+	<script>
+		$( function () {
+			$( '#main' ).localScroll( {
+				offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+			} );
+			$( "dt.name" ).each( function () {
+				var $this = $( this ).find("h4");
+				var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+				var dt = $(this);
+				var children = dt.next( "dd" );
+
+				dt.prepend( icon ).css( {cursor : "pointer"} );
+				dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+				children.hide();
+
+				dt.children().on( "click", function () {
+					children = dt.next( "dd" );
+					console.debug(dt, children)
+					children.slideToggle( "fast", function () {
+
+						if ( children.is( ":visible" ) ) {
+							icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+							dt.addClass( "member-open" ).animate( "member-collapsed" );
+						} else {
+							icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+							dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+						}
+					} );
+				} );
+
+			} );
+		} );
+	</script>
+	
+
+
+	<!--Google Analytics-->
+	
+
+</body>
+</html>

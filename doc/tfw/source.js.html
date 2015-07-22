@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Documentation Source: source.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.spacelab.css">
+
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top ">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">Documentation</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="module-compile-html.html">compile-html</a>
+						</li>
+						
+						<li>
+							<a href="module-compiler-css.html">compiler-css</a>
+						</li>
+						
+						<li>
+							<a href="module-compiler-js.html">compiler-js</a>
+						</li>
+						
+						<li>
+							<a href="module-node.html">node</a>
+						</li>
+						
+						<li>
+							<a href="module-project.html">project</a>
+						</li>
+						
+						<li>
+							<a href="module-source.html">source</a>
+						</li>
+						
+						<li>
+							<a href="module-template.html">template</a>
+						</li>
+						
+						<li>
+							<a href="module-tfw.html">tfw</a>
+						</li>
+						
+						<li>
+							<a href="module-util.html">util</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="module-project-Project.html">project~Project</a>
+						</li>
+						
+						<li>
+							<a href="module-source-Source.html">source~Source</a>
+						</li>
+						
+						<li>
+							<a href="module-util-Dependencies.html">util~Dependencies</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
+
+
+		<h1 class="page-title">Source: source.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">/**
+ * @module source
+ */
+
+var FS = require("fs");
+var Path = require("path");
+
+/**
+ * @class Source
+ * @param {Project} prj {@link project~Project}
+ * @param {string} file path to the source file, relative to the source path.
+ * @see {@link project~Project}
+ */
+var Source = function(prj, file) {
+    this._prj = prj;
+    this._name = file;
+    this._tmpFile = prj.tmpPath(file);
+    if (!FS.existsSync(this._tmpFile)) {
+        prj.mkdir(Path.dirname(this._tmpFile));
+    }
+    this._absPath = prj.srcOrLibPath(file);
+    this._tags = null;
+};
+
+/**
+ * @return name of the file. It can be `index.html` or `cls/wtag.Button.js`.
+ */
+Source.prototype.name = function() {
+    return this._name;
+};
+
+/**
+ * @return the project ob
+ */
+Source.prototype.prj = function() {
+    return this._prj;
+};
+
+/**
+ * @return an instance of Source based on the same project.
+ */
+Source.prototype.create = function(file) {
+    return new Source(this._prj, file);
+};
+
+/**
+ * @return Text content of the source.
+ */
+Source.prototype.read = function() {
+    if (typeof this._absPath !== 'string') {
+        this._prj.fatal("File not found: \"" + this._name + "\"!");
+    }
+    return FS.readFileSync(this._absPath).toString();
+};
+
+/**
+ * @return `true` if the tags' file exists and is more recent than the source file.
+ */
+Source.prototype.isUptodate = function() {
+    if (!FS.existsSync(this._tmpFile)) {
+        return false;
+    }
+    var statSrc = FS.statSync(this._absPath);
+    var statTmp = FS.statSync(this._tmpFile);
+    if (statSrc.mtime &lt; statTmp.mtime) {
+        return true;
+    }
+    return false;
+};
+
+/**
+ * @return Last modification time of the source.
+ */
+Source.prototype.modificationTime = function() {
+    if (!FS.existsSync(this._tmpFile)) {
+        var statSrc = FS.statSync(this._absPath);
+        return statSrc.mtime;
+    }
+    var statTmp = FS.statSync(this._tmpFile);
+    return statTmp.mtime;
+};
+
+/**
+ * Store tags on disk and mark the source file as _uptodate_.
+ */
+Source.prototype.save = function() {
+    FS.writeFileSync(this._tmpFile, JSON.stringify(this._tags || {}));
+};
+
+/**
+ * @return Absolute  path of the source  file. It can be  in the project
+ * `src/` file  or in the ToloFrameWork  `lib/` path. If it  is nowhere,
+ * return _null_.
+ */
+Source.prototype.getAbsoluteFilePath = function() {
+    return this._absPath;
+};
+
+/**
+ * Get/Set tags.
+ * Don't forget to call method `save()` to store tags on disk and mark the source file has _uptodate_.
+ * @param {string} name name of the tag.
+ * @param value (optional) if defined, the value to set.
+ * @return If `value` is _undefined_, return the tag's value.
+ */
+Source.prototype.tag = function(name, value) {
+    if (!this._tags) {
+        if (FS.existsSync(this._tmpFile)) {
+            try {
+                this._tags = JSON.parse(FS.readFileSync(this._tmpFile).toString());
+            }
+            catch (ex) {
+                this._tags = {};
+            }
+        } else {
+            this._tags = {};
+        }
+    }
+    if (typeof value === 'undefined') {
+        return this._tags[name];
+    }
+    if (value === null) {
+        delete this._tags[name];
+    } else {
+        this._tags[name] = value;
+    }
+};
+
+
+
+/**
+ * Provides the class `Source` used to add __tags__ on source files.
+ */
+module.exports = Source;
+
+</pre>
+	</article>
+</section>
+
+
+
+
+
+				</div>
+
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a>
+		on 2014-10-11T22:29:13+02:00 using the <a
+			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
+
+			
+			<br clear="both">
+		</div>
+
+	</div>
+	<!--<script src="scripts/sunlight.js"></script>-->
+	<script src="scripts/docstrap.lib.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+	<script>
+		$( function () {
+			$( "[id*='$']" ).each( function () {
+				var $this = $( this );
+
+				$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+			} );
+
+			$( "#toc" ).toc( {
+				anchorName  : function ( i, heading, prefix ) {
+					return $( heading ).attr( "id" ) || ( prefix + i );
+				},
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : "100px"
+			} );
+
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+			$( '.dropdown-toggle' ).dropdown();
+//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+			$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+				var $this = $( this );
+
+				var example = $this.find( "code" );
+				exampleText = example.html();
+				var lang = /{@lang (.*?)}/.exec( exampleText );
+				if ( lang && lang[1] ) {
+					exampleText = exampleText.replace( lang[0], "" );
+					example.html( exampleText );
+					lang = lang[1];
+				} else {
+					lang = "javascript";
+				}
+
+				if ( lang ) {
+
+					$this
+						.addClass( "sunlight-highlight-" + lang )
+						.addClass( "linenums" )
+						.html( example.html() );
+
+				}
+			} );
+
+			Sunlight.highlightAll( {
+				lineNumbers : true,
+				showMenu : true,
+				enableDoclinks : true
+			} );
+		} );
+	 </script>
+
+
+
+	<!--Navigation and Symbol Display-->
+	
+	<script>
+		$( function () {
+			$( '#main' ).localScroll( {
+				offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+			} );
+			$( "dt.name" ).each( function () {
+				var $this = $( this ).find("h4");
+				var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+				var dt = $(this);
+				var children = dt.next( "dd" );
+
+				dt.prepend( icon ).css( {cursor : "pointer"} );
+				dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+				children.hide();
+
+				dt.children().on( "click", function () {
+					children = dt.next( "dd" );
+					console.debug(dt, children)
+					children.slideToggle( "fast", function () {
+
+						if ( children.is( ":visible" ) ) {
+							icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+							dt.addClass( "member-open" ).animate( "member-collapsed" );
+						} else {
+							icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+							dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+						}
+					} );
+				} );
+
+			} );
+		} );
+	</script>
+	
+
+
+	<!--Google Analytics-->
+	
+
+</body>
+</html>
