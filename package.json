@@ -1,53 +1,31 @@
 {
-  "name": "toloframework",
-  "version": "0.17.3",
-  "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
-  "bin": {
-    "tfw": "bin/tfw.js"
-  },
-  "directories": {
-    "test": "test"
-  },
+  "name": "ToloFrameWork",
+  "version": "1.0.0",
+  "description": "Web Apps' compiler with \"at compile time\" web components expansion.",
+  "main": "src/index.js",
   "scripts": {
-    "test": "node node_modules/jasmine/bin/jasmine.js"
+    "test": "jasmine"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/tolokoban/ToloFrameWork.git"
   },
   "keywords": [
-    "tolokoban",
-    "firefoxos",
-    "fxos",
-    "commonjs",
-    "mobile",
     "webapp",
-    "designer",
-    "framework",
-    "require"
+    "firefoxos",
+    "javascript",
+    "html",
+    "css"
   ],
   "author": "Tolokoban",
-  "license": "GNU GPL 3",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/tolokoban/ToloFrameWork/issues"
   },
-  "dependencies": {
-    "colors": "~0.6.2",
-    "connect": "~3.2.0",
-    "dox": "~0.6.1",
-    "esprima": "^1.2.2",
-    "highlight.js": "^8.4.0",
-    "htmlparser2": "~3.7.3",
-    "jasmine": "^2.3.1",
-    "less": "^1.7.5",
-    "marked": "^0.3.2",
-    "node-less": "^1.0.0",
-    "readline-sync": "~0.4.8",
-    "string": "^3.0.0",
-    "uglify-js": "~2.4.15",
-    "uglifycss": "0.0.9"
-  },
   "homepage": "https://github.com/tolokoban/ToloFrameWork",
-  "main": "index.js",
-  "devDependencies": {}
+  "dependencies": {
+    "colors": "^1.1.2",
+    "jasmine": "^2.3.2",
+    "readline-sync": "^1.2.19"
+  }
 }
