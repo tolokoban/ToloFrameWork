@@ -51,39 +51,39 @@ Tokens are methodless objects which must provide at leat one attribute : `id`. H
 
 * Provided by the lexer
   * __tag__: HTML tag (ex: <div class="toto">).
-    * __name__: tag name (including namespace).
-    * __open__: `true` is it is an opening tag.
-    * __close__: `true` is it is an closing tag. A tag can be self closing. In this case, both `open` and `close` are set to `true`.
-    * __attributes__: tag's attributes.
+      * __name__: tag name (including namespace).
+      * __open__: `true` is it is an opening tag.
+      * __close__: `true` is it is an closing tag. A tag can be self closing. In this case, both `open` and `close` are set to `true`.
+      * __attributes__: tag's attributes.
   * __pi__: Processing Instruction (ex: <?xml version="1.0" encoding="UTF-8"?>).
-    * __name__: pi name (`xml` in the example).
-    * __attributes__: pi's attributes.
+      * __name__: pi name (`xml` in the example).
+      * __attributes__: pi's attributes.
   * __directive__: HTML directive (ex: )
-    * __text__: content between `<!` and `>`.
+      * __text__: content between `<!` and `>`.
   * __entity__: HTML entity (ex: <!DOCTYPE html>).
   * __cdata__: HTML CDATA (ex: <![CDATA[this is verbatim]]).
-    * __text__: verbatim content of the CDATA.
+      * __text__: verbatim content of the CDATA.
   * __comment__: HTML comment (ex: <!-- This is a comment -->).
-    * __text__: content between `<!--` and `-->`.
+      * __text__: content between `<!--` and `-->`.
   * __text__: text node.
-    * __text__: text.
+      * __text__: text.
 * Provided by widgets
- * __require__: 
-   * __name__: javascript module required.
- * __css__: CSS stylesheet to load in the <HEAD>. You must choose only one of the following attributes.
-   * __src__: local file containing the style.
-   * __cdn__: URL of an external stylesheet.
-   * __text__: content of the style.
- * __javascript__: javascript to load in the <HEAD>. You must choose only one of the following attributes.
-   * __src__: local file containing the script.
-   * __cdn__: URL of an external javascsript.
-   * __text__: content of the script.
- * __worker__: WebWorkers need to have their code is a separate file.
-   * __name__: file name.
-   * __text__: javascript content.
- * __resource__: file to add to the final output.
-   * __src__:
-   * __dst__: 
+  * __require__: 
+      * __name__: javascript module required.
+  * __css__: CSS stylesheet to load in the <HEAD>. You must choose only one of the following attributes.
+      * __src__: local file containing the style.
+      * __cdn__: URL of an external stylesheet.
+      * __text__: content of the style.
+  * __javascript__: javascript to load in the <HEAD>. You must choose only one of the following attributes.
+      * __src__: local file containing the script.
+      * __cdn__: URL of an external javascsript.
+      * __text__: content of the script.
+  * __worker__: WebWorkers need to have their code is a separate file.
+      * __name__: file name.
+      * __text__: javascript content.
+  * __resource__: file to add to the final output.
+    * __src__:
+    * __dst__: 
 
 ## Special attributes
 
