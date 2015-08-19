@@ -11,15 +11,28 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9, ul {
     padding: 8px;
 }
 
-#modules {
+#modules > h1,
+#services > h1 {
+    display: block;
+    line-height: 24px;
+    font-size: 16px;
+    text-align: left;
+    padding: 0 8px;
+    margin: 0 0 8px 0;
+    border-bottom: 1px solid #000;
+    background-color: #9CD;
+}
+
+#modules,
+#services {
     float: right;
     margin-left: 8px;
     padding: 8px;
-    border-left: 1px solid #777;
-    border-bottom: 1px solid #777;
-    background-color: #eee;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #000;
 }
 
+#services a,
 #modules a {
     display: block;
     font-family: monospace;
