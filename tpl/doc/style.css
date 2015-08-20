@@ -8,7 +8,7 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9, ul {
 }
 
 #body {
-    padding: 8px;
+    padding: 8px 488px 8px 8px;
 }
 
 #modules > h1,
@@ -25,11 +25,24 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9, ul {
 
 #modules,
 #services {
-    float: right;
-    margin-left: 8px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 240px;
+    height: 100%;
     padding: 8px;
+    margin: 0;
+    overflow: auto;
     border-left: 1px solid #000;
-    border-bottom: 1px solid #000;
+    background-color: #fed;
+}
+
+#modules {
+    right: 0;
+}
+
+#services {
+    right: 240px;
 }
 
 #services a,

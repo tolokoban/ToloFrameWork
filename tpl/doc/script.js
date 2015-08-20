@@ -280,42 +280,30 @@ function init() {
   navModules = document.getElementById("modules");
   navServices = document.getElementById("services");
   body = document.getElementById("body");
+  var hash = Date.now();
+
+  window.setInterval(function() {
+    var curHash = window.location.hash.substr(1);
+    if (hash == curHash) return;
+    hash = curHash;
+    if (hash.substr(0, 4) == 'svc/') {
+      showService(hash.substr(4));
+    }
+    else if (hash.substr(0, 4) == 'mod/') {
+      showModule(hash.substr(4));
+    }
+  }, 40);
+
   var name, e;
   navModules.innerHTML = "<h1>Modules</h1>";
   navServices.innerHTML = "<h1>Services</h1>";
   for (name in M) {
-    e = TAG(
-      "a",
-      {
-        href: "#",
-        "data-name": name
-      }
-    );
-    e.addEventListener(
-      "click",
-      function(evt) {
-        showModule(evt.target.getAttribute("data-name"));
-      },
-      false
-    );
+    e = TAG("a", {href: "#mod/" + name});
     e.textContent = name;
     navModules.appendChild(e);
   }
   for (name in SERVICES) {
-    e = TAG(
-      "a",
-      {
-        href: "#",
-        "data-name": name
-      }
-    );
-    e.addEventListener(
-      "click",
-      function(evt) {
-        showService(evt.target.getAttribute("data-name"));
-      },
-      false
-    );
+    e = TAG("a", {href: "#svc/" + name});
     e.textContent = name;
     navServices.appendChild(e);
   }
