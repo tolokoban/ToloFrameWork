@@ -59,6 +59,7 @@ try {
     }
     prj.compile();
     prj.link();
+    //prj.spawnFirefox()
     prj.makeDoc();
 } catch (x) {
     if (x.fatal) {

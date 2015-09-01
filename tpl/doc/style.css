@@ -8,18 +8,44 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9, ul {
 }
 
 #body {
+    padding: 8px 488px 8px 8px;
+}
+
+#modules > h1,
+#services > h1 {
+    display: block;
+    line-height: 24px;
+    font-size: 16px;
+    text-align: left;
+    padding: 0 8px;
+    margin: 0 0 8px 0;
+    border-bottom: 1px solid #000;
+    background-color: #9CD;
+}
+
+#modules,
+#services {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 240px;
+    height: 100%;
     padding: 8px;
+    margin: 0;
+    overflow: auto;
+    border-left: 1px solid #000;
+    background-color: #fed;
 }
 
 #modules {
-    float: right;
-    margin-left: 8px;
-    padding: 8px;
-    border-left: 1px solid #777;
-    border-bottom: 1px solid #777;
-    background-color: #eee;
+    right: 0;
 }
 
+#services {
+    right: 240px;
+}
+
+#services a,
 #modules a {
     display: block;
     font-family: monospace;
