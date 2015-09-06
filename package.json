@@ -6,7 +6,7 @@
     "tfw": "bin/tfw.js"
   },
   "directories": {
-    "test": "test"
+    "test": "spec"
   },
   "scripts": {
     "test": "node node_modules/jasmine/bin/jasmine.js"
@@ -38,7 +38,7 @@
     "esprima": "^1.2.2",
     "highlight.js": "^8.4.0",
     "htmlparser2": "~3.7.3",
-    "jasmine": "^2.3.1",
+    "jasmine": "^2.3.2",
     "less": "^1.7.5",
     "marked": "^0.3.2",
     "node-less": "^1.0.0",
