@@ -28,7 +28,7 @@ exports.compile = function(root, libs) {
             index++;
             match = rxVarName.exec(content.substr(index));
             if (match) {
-                out += '(' + libs.getVar(match[0]) + ')';
+                out += libs.getVar(match[0]);
                 index += match[0].length;
                 cursor = index;
             }
