@@ -9,7 +9,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "node node_modules/jasmine/bin/jasmine.js"
+    "test": "node node_modules/jasmine/bin/jasmine.js",
+    "test:dbg": "node --debug-brk node_modules/jasmine/bin/jasmine.js"
   },
   "repository": {
     "type": "git",
@@ -49,5 +50,7 @@
   },
   "homepage": "https://github.com/tolokoban/ToloFrameWork",
   "main": "index.js",
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-core": "^5.8.23"
+  }
 }

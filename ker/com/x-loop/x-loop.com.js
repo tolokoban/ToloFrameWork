@@ -64,7 +64,9 @@ debugger;
         });
         // Adding a new child from the seed.
         current = JSON.parse(seed);
-        libs.compile(current);
+        current.forEach(function (child) {
+            libs.compile(child);
+        });
         children.push({children: current});
     }
 
