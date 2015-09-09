@@ -65,12 +65,14 @@ try {
     var prj = Project.createProject('.');
     for (var i = 2 ; i < process.argv.length ; i++) {
         var arg = process.argv[i];
-        if (arg == '-c' || arg=='--clean') {
+        if (arg == 'clean') {
             console.log("Cleaning...".green);
             Util.cleanDir("./tmp");
         }
+        else if (arg == 'build') {
+            prj.compile();            
+        }
     }
-    prj.compile();
 /*
     prj.link();
     //prj.spawnFirefox()
@@ -85,6 +87,7 @@ try {
     console.error("| FATAL ERROR |".redBG.white.bold + " " + x.id.red.bold);
     console.error((x.fatal).err());
     x.src.forEach(function (src, idx) {
+        src = src || "";
         console.error(src.red.bold);
     });
     console.error("\n");

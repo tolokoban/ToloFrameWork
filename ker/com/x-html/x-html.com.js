@@ -27,11 +27,12 @@ exports.close = function(file, libs) {};
  */
 exports.compile = function(root, libs) {
     var N = libs.Tree,
-    head = {type: N.TAG, name: "head", children: []},
-    body = {type: N.TAG, name: "body", children: []};
+        head = {type: N.TAG, name: "head", children: []},
+        body = {type: N.TAG, name: "body", children: []},
+        title = libs.getVar("$title");
     N.forEachAttrib(root, function (attName, attValue) {
         if (attName.toLowerCase() == 'title') {
-            head.children.push(N.tag("title", {}, attValue));
+            title = attValue;
         }
     });
     N.forEachChild(root, function (child) {
@@ -40,7 +41,7 @@ exports.compile = function(root, libs) {
                 N.forEachChild(child, function(subchild) {
                     head.child.push(subchild);
                 });
-            } 
+            }
             else if (child.name.toLowerCase() == 'body') {
                 body.attribs = child.attribs;
                 N.forEachChild(child, function(subchild) {
@@ -53,6 +54,46 @@ exports.compile = function(root, libs) {
             body.children.push(child);
         }
     });
+
+    // Add missing header tags.
+    var alreadyExist = {};
+    N.forEachChild(N, function (child) {
+        if (child.type != N.TAG) return;
+        var name = child.name.toLowerCase(),
+            atts = child.attribs;
+        if (name == 'title') {
+            alreadyExist.title = 1;
+        }
+        else if (name == 'meta') {
+            if (atts.charset) {
+                alreadyExist.meta_charset = 1;
+            }
+            else if (atts.name == 'viewport') {
+                alreadyExist.meta_name_viewport = 1;
+            }
+        }
+    });
+
+    if (!alreadyExist.title) {
+        head.children.push(N.tag("title", {}, title));
+    }
+    if (!alreadyExist.meta_charset) {
+        head.children.push(
+            {type: N.TAG, name: "meta", attribs: {charset: "utf-8"}, void: true}
+        );
+    }
+    if (!alreadyExist.meta_name_viewport) {
+        head.children.push(
+            {
+                type: N.TAG, name: "meta", 
+                attribs: {
+                    name: "viewport", 
+                    content: "width=device-width, initial-scale=1, maximum-scale=1"
+                }, 
+                void: true
+            }
+        );
+    }
 
     root.name = "html";
     delete root.attribs;
