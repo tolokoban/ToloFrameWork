@@ -34,6 +34,10 @@ exports.compile = function(root, libs) {
         if (attName.toLowerCase() == 'title') {
             title = attValue;
         }
+        else if (attName.toLowerCase() == 'app' && attValue.length > 0) {
+            libs.require(attValue);
+            libs.addInitJS("require('" + attValue + "');");
+        }
     });
     N.forEachChild(root, function (child) {
         if (child.type == N.TAG) {
