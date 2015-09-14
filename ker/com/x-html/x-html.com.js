@@ -27,18 +27,22 @@ exports.close = function(file, libs) {};
  */
 exports.compile = function(root, libs) {
     var N = libs.Tree,
-        head = {type: N.TAG, name: "head", children: []},
-        body = {type: N.TAG, name: "body", children: []},
-        title = libs.getVar("$title");
+    head = {type: N.TAG, name: "head", children: []},
+    body = {type: N.TAG, name: "body", children: []},
+    title = libs.getVar("$title"),
+    app;
     N.forEachAttrib(root, function (attName, attValue) {
         if (attName.toLowerCase() == 'title') {
             title = attValue;
         }
         else if (attName.toLowerCase() == 'app' && attValue.length > 0) {
-            libs.require(attValue);
-            libs.addInitJS("require('" + attValue + "');");
+            app = attValue;
         }
     });
+    if (app) {
+        libs.require(app);
+        libs.addInitJS("window.APP = require('" + app + "');");
+    }
     N.forEachChild(root, function (child) {
         if (child.type == N.TAG) {
             if (child.name.toLowerCase() == 'head') {
@@ -64,7 +68,7 @@ exports.compile = function(root, libs) {
     N.forEachChild(N, function (child) {
         if (child.type != N.TAG) return;
         var name = child.name.toLowerCase(),
-            atts = child.attribs;
+        atts = child.attribs;
         if (name == 'title') {
             alreadyExist.title = 1;
         }
@@ -89,11 +93,11 @@ exports.compile = function(root, libs) {
     if (!alreadyExist.meta_name_viewport) {
         head.children.push(
             {
-                type: N.TAG, name: "meta", 
+                type: N.TAG, name: "meta",
                 attribs: {
-                    name: "viewport", 
+                    name: "viewport",
                     content: "width=device-width, initial-scale=1, maximum-scale=1"
-                }, 
+                },
                 void: true
             }
         );

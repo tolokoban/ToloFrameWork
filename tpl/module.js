@@ -1,1 +1,1 @@
-window['#{{name}}'] = function(exports, module){ {{code}} {{intl}} }
+window['#{{name}}']=function(exports,module){ {{intl}} {{code}} }
