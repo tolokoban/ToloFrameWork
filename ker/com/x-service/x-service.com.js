@@ -1,8 +1,8 @@
 /**
- * Component x-book
+ * Component x-service
  */
 
-exports.tags = ["x-book"];
+exports.tags = ["x-service"];
 exports.priority = 0;
 
 /**
@@ -31,18 +31,8 @@ exports.close = function(file, libs) {};
  * Compile a node of the HTML tree.
  */
 exports.compile = function(root, libs) {
-    libs.require("tfw.wdg.book");
-    var id = root.attribs.id || libs.nextID();
-    var children = [];
-    root.children.forEach(function (child) {
-        if (child.type != libs.Tree.TAG) return;
-        child.attribs["data-page"] = child.name;
-        child.name = "div";
-        children.push(child);
-        libs.compile(child);
-    });
-    root.children = children;
-    root.name = "div";
-    root.attribs.id = id;
-    libs.addInitJS("require('tfw.wdg.book').create('" + id + "');");
+    var name = root.attribs.name;
+    if (!name) {
+        libs.fatal("Missing service's name: attribute \"name\"!");
+    }
 };

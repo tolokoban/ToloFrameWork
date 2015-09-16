@@ -227,6 +227,22 @@ Widget.prototype = {
         return this;
     },
 
+    insertAfter: function(target) {
+        if (typeof target.element === 'function') {
+            target = target.element();
+        }
+        target.parentNode.insertBefore(this.element(), target.nextSibling);
+        return this;
+    },
+
+     insertBefore: function(target) {
+        if (typeof target.element === 'function') {
+            target = target.element();
+        }
+        target.parentNode.insertBefore(this.element(), target);
+        return this;
+    },
+
     /**
      * Append children to this widget.
      */

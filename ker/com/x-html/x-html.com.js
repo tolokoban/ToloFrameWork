@@ -41,7 +41,10 @@ exports.compile = function(root, libs) {
     });
     if (app) {
         libs.require(app);
-        libs.addInitJS("window.APP = require('" + app + "');");
+        libs.addInitJS(
+            "APP = require('" + app + "');\n"
+            + "setTimeout(function (){if(typeof APP.start==='function')APP.start()});"
+        );
     }
     N.forEachChild(root, function (child) {
         if (child.type == N.TAG) {
