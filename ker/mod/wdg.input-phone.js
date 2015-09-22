@@ -3,6 +3,8 @@ var Storage = require("tfw.storage").local;
 var Widget = require("wdg");
 var Input = require("wdg.input");
 
+var LG = require("tfw.layout-grid").create;
+var D = Widget.div;
 var T = Widget.tag;
 
 /**
@@ -26,11 +28,12 @@ var InputPhone = function(options) {
             Storage.set(options.save, inpSMS.val());
         });
     }
-    
-    this.append(inpSMS);
-        var btnContact = T("a").text("Contacts");
-        this.append(btnContact);
+
+    var btnContact = T("a").text("Contacts");
+    this.append(LG([inpSMS, btnContact]));
     if ('MozActivity' in window) {
+        var name = D("contact-name");
+        this.append(name);
         btnContact.Tap(function () {
             var pick = new MozActivity({
                 name: "pick",
@@ -41,9 +44,10 @@ var InputPhone = function(options) {
             pick.onsuccess = function () {
                 var contact = this.result;
                 if( contact ){
-console.info("[wdg.input-phone] contact=...", contact);
+                    console.info("[wdg.input-phone] contact=...", contact);
                     inpSMS.val(contact.number);
                     Storage.set(options.save, contact.number);
+                    name.text(contact.name[0]);
                 }
             };
         });
