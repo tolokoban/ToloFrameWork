@@ -16,23 +16,40 @@ exports.BAD_TYPE = -2;
 exports.CONNECTION_FAILURE = -3;
 exports.MISSING_AUTOLOGIN = -4;
 exports.UNKNOWN_USER = -5;
+exports.HTTP_ERROR = -6;
 
 function svc(name, args, url) {
-    console.info("[lib/tfw.web-service] name=...", name);
-    console.info("[lib/tfw.web-service] args=...", args);
+    console.info("[tfw.web-service]", name, args);
     return new Promise(
         function(resolve, reject) {
             if (typeof url === 'undefined') url = config.url;
             var that = this;
             var xhr = new XMLHttpRequest({mozSystem: true});
+            if ('withCredentials' in xhr) {
+                xhr.open("POST", url + "/svc.php", true);
+                xhr.withCredentials = true;  // Indispensable pour le CORS.
+            } else {
+                // IE
+                xhr = new XDomainRequest();
+                xhr.open("POST", url + "/svc.php");
+            }
             xhr.onload = function() {
+                if (xhr.status != 200) {
+                    reject(
+                        {
+                            id: exports.HTTP_ERROR,
+                            msg: "(" + xhr.status + ") " + xhr.statusText,
+                            status: xhr.status
+                        }
+                    );
+                }
                 var value = xhr.responseText;
                 if (typeof value === "string") {
                     if (value.substr(0, 1) == "!") {
                         reject(
                             {
                                 id: exports.BAD_ROLE,
-                                err: Error("Service \"" + name + "\" needs role \""
+                                msg: Error("Service \"" + name + "\" needs role \""
                                            + value.substr(1) + "\"!")
                             }
                         );
@@ -45,7 +62,7 @@ function svc(name, args, url) {
                         reject(
                             {
                                 id: exports.BAD_TYPE,
-                                err: Error("Service \"" + name
+                                msg: Error("Service \"" + name
                                            + "\" should return a valid JSON!\n" + ex)
                             }
                         );
@@ -55,21 +72,25 @@ function svc(name, args, url) {
                     reject(
                         {
                             id: exports.BAD_TYPE,
-                            err: Error("Service \"" + name + "\" should return a string!")
+                            msg: Error("Service \"" + name + "\" should return a string!")
                         }
                     );
                 }
             };
             xhr.onerror = function() {
-                reject(Error("Connection to service \"" + name + "\" failed!\n" + xhr.statusText));
+                reject(
+                    {
+                        id: exports.HTTP_ERROR,
+                        msg: "(" + xhr.status + ") " + xhr.statusText,
+                        status: xhr.status
+                    }
+                );
             };
-            xhr.open("POST", url + "/svc.php", true);
             var params = "s=" + encodeURIComponent(name)
                 + "&i=" + encodeURIComponent(JSON.stringify(args));
             xhr.setRequestHeader(
                 "Content-type",
                 "application/x-www-form-urlencoded");
-            xhr.withCredentials = true;  // Indispensable pour le CORS.
             xhr.send(params);
         }
     );

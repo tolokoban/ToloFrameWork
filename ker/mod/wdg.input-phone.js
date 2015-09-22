@@ -17,7 +17,7 @@ var InputPhone = function(options) {
     var inpSMS = new Input(
         {
             placeholder: "Phone Number",
-            width: "10em"
+            width: "8em"
         }
     );
     if (typeof options.save === 'string') {
@@ -28,9 +28,9 @@ var InputPhone = function(options) {
     }
     
     this.append(inpSMS);
-    if ('MozActivity' in window) {
         var btnContact = T("a").text("Contacts");
         this.append(btnContact);
+    if ('MozActivity' in window) {
         btnContact.Tap(function () {
             var pick = new MozActivity({
                 name: "pick",
@@ -41,10 +41,14 @@ var InputPhone = function(options) {
             pick.onsuccess = function () {
                 var contact = this.result;
                 if( contact ){
+console.info("[wdg.input-phone] contact=...", contact);
                     inpSMS.val(contact.number);
+                    Storage.set(options.save, contact.number);
                 }
             };
         });
+    } else {
+        btnContact.attr("disabled", "true");
     }
     this._inpSMS = inpSMS;
 };

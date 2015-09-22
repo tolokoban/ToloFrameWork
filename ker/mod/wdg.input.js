@@ -97,33 +97,31 @@ var Input = function(opts) {
     input.addEvent(
         "keyup",
         function() {
-            that._onChange();
+            that.fireChange();
         }
     );
     if (typeof opts.onEnter === 'object' && typeof opts.onEnter.fire === 'function') {
         var onEnter = opts.onEnter;
-        opts.onEnter = function() {
+        this.Enter(function() {
             onEnter.fire();
-        };
+        });
     }
-    if (typeof opts.onEnter === 'function') {
-        input.addEvent(
-            "keyup",
-            function(evt) {
-                if (that._valid > -1 && evt.keyCode == 13) {
-                    // On  rend l'événement  asynchrone pour  éviter les
-                    // problèmes de clavier virtuel qui reste affiché.
-                    window.setTimeout(
-                        function() {
-                            opts.onEnter(that);
-                        }
-                    );
-                } else {
-                    that.validate();
-                }
+    input.addEvent(
+        "keyup",
+        function(evt) {
+            if (that._valid > -1 && evt.keyCode == 13) {
+                // On  rend l'événement  asynchrone pour  éviter les
+                // problèmes de clavier virtuel qui reste affiché.
+                window.setTimeout(
+                    function() {
+                        that.fireEnter();
+                    }
+                );
+            } else {
+                that.validate();
             }
-        );
-    }
+        }
+    );
     if (typeof opts.value !== 'string') {
         opts.value = "";
     }
@@ -174,7 +172,7 @@ Input.prototype.validate = function() {
 /**
  * @return void
  */
-Input.prototype._onChange = function() {
+Input.prototype.fireChange = function() {
     var slot = this._Change;
     if (typeof slot === 'function') {
         slot.call(this);
@@ -190,6 +188,27 @@ Input.prototype.Change = function(slot) {
         this._Change = slot;
     }
     return this;
+};
+
+/**
+ * Accessor for attribute Enter.
+ */
+Input.prototype.Enter = function(slot) {
+    if (typeof slot === 'undefined') return this._Enter;
+    if (typeof slot === 'function') {
+        this._Enter = slot;
+    }
+    return this;
+};
+
+/**
+ * @return void
+ */
+Input.prototype.fireEnter = function() {
+    var slot = this._Enter;
+    if (typeof slot === 'function') {
+        slot.call(this);
+    }
 };
 
 /**
