@@ -21,7 +21,23 @@ div.tfw-layout-grid > div > div {
     display: table-cell;
     padding: 2px 4px;
     margin: 0;
+    text-align: center;
+    vertical-align: middle;
 }
+
+div.tfw-layout-grid > div > div.L {
+    text-align: left;
+}
+div.tfw-layout-grid > div > div.R {
+    text-align: right;
+}
+div.tfw-layout-grid > div > div.T {
+    vertical-align: top;
+}
+div.tfw-layout-grid > div > div.B {
+    vertical-align: bottom;
+}
+
 
 div.tfw-layout-grid.left > div > div {
     text-align: left;
