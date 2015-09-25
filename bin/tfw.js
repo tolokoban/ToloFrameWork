@@ -63,15 +63,34 @@ String.prototype.err = function() {
 
 try {
     var prj = Project.createProject('.');
-    for (var i = 2 ; i < process.argv.length ; i++) {
-        var arg = process.argv[i];
-        if (arg == 'clean') {
-            console.log("Cleaning...".green);
-            Util.cleanDir("./tmp");
-        }
-        else if (arg == 'build') {
-            prj.compile();            
-        }
+    var options = {};
+    var done = false;
+    var args = process.argv;
+    args.shift();
+    args.shift();
+    if (args.indexOf('clean') > -1) {
+        console.log("Cleaning...".green);
+        Util.cleanDir("./tmp");
+        done = true;
+    }
+    if (args.indexOf('no-zip') > -1) {
+        console.log("Do not minify Javascript.".green);
+        options.noZip = true;
+    }
+    if (args.indexOf('build') > -1) {
+        prj.compile(options);            
+        done = true;
+    }
+    if (!done) {
+        console.log();
+        console.log("Accepted arguments:");
+        console.log("  clean".yellow + ":  remove all temporary files.");
+        console.log("  build".yellow + ":  compile project in the www/ folder.");
+        console.log("  no-zip".yellow + ": JS files won't be minified.");
+        console.log();
+        console.log("Example:");
+        console.log("  node tfw.js build clean");
+        console.log();
     }
 /*
     prj.link();
