@@ -26,13 +26,14 @@ exports.close = function(file, libs) {};
  * Compile a node of the HTML tree.
  */
 exports.compile = function(root, libs) {
-debugger;
     var N = libs.Tree,
     children = [],
     vars = [],
+    seed,
     sep = ';',
-    seed = JSON.stringify(root.children),
     current;
+    N.trimLeft(root);
+    seed = JSON.stringify(root.children),
     N.forEachAttrib(root, function (key, val) {
         if (key == 'sep') {
             sep = val;

@@ -3,12 +3,9 @@
  */
 
 var Marked = require("./marked");
-var Highlight = require("./highlight");
 var S = require("string");
 
-var LANGUAGES = ['js', 'css', 'html', 'xml'];
-
-exports.tags = ["x-md", "x-code"];
+exports.tags = ["x-md"];
 exports.priority = 0;
 
 /**
@@ -42,10 +39,12 @@ exports.compile = function(root, libs) {
             // Git Flavoured Markdown.
             gfm: true,
             // Use tables.
-            tables: true,
+            tables: true
+/*
             highlight: function (code, lang) {
                 return Highlight.parseCode(code, lang, libs);
             }
+*/
         }
     );
 
@@ -64,36 +63,16 @@ exports.compile = function(root, libs) {
         node = libs.parseHTML(
             libs.readFileContent(src)
         );
-console.log(node);
         libs.compileChildren(node);
-        content = libs.Tree.text(node);
-console.log("========================================");
-console.log(content);
-console.log("========================================");
+        content = libs.Tree.toString(node);
     } else {
         // Loading tag's content.
+        root.type = libs.Tree.VOID;
         libs.compileChildren(root);
-        content = libs.Tree.text(root);
+        content = libs.Tree.toString(root);
     }
 
-    if (root.name == 'x-code') {
-        // This  is not  a  MarkDown text,  just a  piece  of code  to
-        // highlight.
-        out = Highlight.parseCode(content, 'js', libs);
-    } else {
-/*
-        content = S(content);
-        LANGUAGES.forEach(
-            function(item) {
-                var str = S(content);
-                str = str.replaceAll('[' + item + ']', '```' + item + ' ');
-                str = str.replaceAll('[/' + item + ']', '```');
-            }
-        );
-        content = content.toString();
-*/
-        out = Highlight.parseMarkDown(content, libs, Marked);
-    }
+    out = Marked(content);
     var tree = libs.parseHTML(out);
 
     root.name = "div";
