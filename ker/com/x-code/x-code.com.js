@@ -47,7 +47,7 @@ exports.compile = function(root, libs) {
         }
         code = libs.readFileContent(src);
     } else {
-        code = libs.Tree.toString(root);
+        code = libs.Tree.text(root);
     }
     code = code.trim();
     var highlightedCode = Highlight.parseCode(code, 'js', libs);

@@ -76,6 +76,6 @@ exports.compile = function(root, libs) {
     var tree = libs.parseHTML(out);
 
     root.name = "div";
-    root.attribs = {"class": "-tfw-com-x-md custom"};
+    root.attribs = {"class": "x-md custom"};
     root.children = tree.children;
 };

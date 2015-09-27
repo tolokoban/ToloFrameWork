@@ -27,13 +27,13 @@ exports.close = function(file, libs) {};
  */
 exports.compile = function(root, libs) {
     var N = libs.Tree,
-    result = [],
-    head = null,
-    title = libs.getVar("$title"),
-    app,
-    refs = {},
-    links = [],
-    pageIndex = 0;
+        result = [],
+        head = null,
+        title = libs.getVar("$title"),
+        app,
+        refs = {},
+        links = [],
+        pageIndex = 0;
     N.forEachAttrib(root, function (attName, attValue) {
         if (attName.toLowerCase() == 'title') {
             title = attValue;
@@ -42,7 +42,7 @@ exports.compile = function(root, libs) {
             app = attValue;
         }
     });
-    
+
     N.forEachChild(root, function (child) {
         if (child.type != N.TAG) return;
         var name = child.name.toLowerCase();
@@ -50,13 +50,41 @@ exports.compile = function(root, libs) {
             head = child;
         }
         else if (name == 'page') {
-            child.name = 'x-html';
-            if (typeof child.attribs.title === 'undefined') child.attribs.title = title;
-            if (typeof child.attribs.app === 'undefined') child.attribs.app = app;
+            var article = {
+                type: N.TAG,
+                name: "article",
+                attribs: {},
+                children: []
+            };
+            var section = {
+                type: N.TAG,
+                name: "section",
+                attribs: {"class": "x-article custom"},
+                children: []
+            };
+            var html = {
+                type: N.TAG,
+                name: "x-html",
+                attribs: {},
+                children: []
+            };
+            child.name = 'x-md';
+            if (typeof child.attribs.title === 'undefined') {
+                html.attribs.title = title;
+                section.children.push(
+                    libs.parseHTML(
+                        "<header>"
+                            + title + "</header>"
+                    )
+                );
+            }
+            section.children.push(article);
+            if (typeof child.attribs.app === 'undefined') html.attribs.app = app;
             if (head) {
-                child.children.push(head);
+                html.children.push(head);
             }
             libs.compile(child);
+            // Looking for references over all pages.
             N.walk(child, function(node) {
                 if (node.type == N.TAG && node.name.toLowerCase() == 'a') {
                     node.page = pageIndex;
@@ -68,9 +96,11 @@ exports.compile = function(root, libs) {
                     }
                 }
             });
+            article.children.push(child);
+            html.children.push(section);
+            result.push(html);
             pageIndex++;
-            result.push(child);
-        }        
+        }
     });
     links.forEach(function (link) {
         var href = link.attribs.href.substr(1);
@@ -86,6 +116,30 @@ exports.compile = function(root, libs) {
             link.attribs.href = filename + '#' + href;
         }
     });
+
+    // Add page navigation if more than one page.
+    if (result.length > 1) {
+        result.forEach(function (page, idx) {
+            var filename,
+                footer = "<footer><div>";
+            for (var idxPage = 0 ; idxPage < result.length ; idxPage++) {
+                filename = libs.getVar('$filename');
+                if (idxPage > 0) {
+                    filename = filename.substr(0, filename.length - 4) + idxPage + '.html';
+                }
+                footer += "<div>";
+                if (idx == idxPage) {
+                    footer += "<div class='selected'>" + (1 + idx) + "</div>";
+                } else {
+                    footer += "<a href='" + filename + "'>" + (idxPage + 1) + "</a>";
+                }
+                footer += "</div>";
+            }
+            footer += "</div></footer>";
+            page.children[page.children.length - 1].children.push(libs.parseHTML(footer));
+        });
+
+    }
 
     root.type = N.PAGES;
     delete root.name;
