@@ -18,12 +18,12 @@ section.x-article {
     background-color: lightgoldenrodyellow;
 }
 
-section.x-article  a {
+section.x-article  a[href] {
     color: #a50;
     text-decoration: none;
 }
 
-section.x-article  a:hover {
+section.x-article  a[href]:hover {
     text-decoration: underline;
 }
 
@@ -93,7 +93,7 @@ section.x-article > footer > div > div > div {
     line-height: 1.6em;
 }
 
-section.x-article > footer > div > div > a {
+section.x-article > footer > div > div > a[href] {
     display: inline-block;
     font-weight: normal;
     text-decoration: none;
