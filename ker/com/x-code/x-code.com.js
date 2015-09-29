@@ -45,6 +45,7 @@ exports.compile = function(root, libs) {
         if (!libs.fileExists(src)) {
             libs.fatal("File not found: \"" + src + "\"!");
         }
+        libs.addInclude(src);
         code = libs.readFileContent(src);
     } else {
         code = libs.Tree.text(root);

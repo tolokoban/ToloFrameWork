@@ -12,6 +12,13 @@ var SYMBOLS = {
     neq: 'NotEqual'
 };
 
+// Symbols with superscript and subscripts on top and bottom.
+var UNDEROVER = {
+    sum: 'sum',
+    prod: 'prod',
+    coprod: 'coprod'
+};
+
 function style(css) {
     return function(tokenizer, parent) {        
         var child = parseItemOrGroup(tokenizer);
@@ -24,7 +31,7 @@ function style(css) {
 }
 
 /**
- * Macros are functions with this prototype: (tokenizer, parent).
+ * Macros are functions with this prototype: (tokenizer, parent, idx).
  * If a macro returns a tag, it will be added to the `parent`.
  */
 var MACROS = {
@@ -34,6 +41,13 @@ var MACROS = {
         // first `firstArgLength` children.
         parent.firstArgLength = parent.children.length;
         parent.tag = 'mfrac';
+    },
+    limits: function(tokenizer, parent, idx) {
+        var err = "Limit controls must follow a math operator.";
+        if (parent.children.length < 1) tokenizer.fatal(err, idx);
+        var lastTag = parent.children[parent.children.length - 1];
+        if (lastTag.tag != 'mo') tokenizer.fatal(err, idx);
+        lastTag.limits = true;
     }
 };
 
@@ -86,13 +100,13 @@ function tagToString(item) {
     var attValue;
     if (item.msub || item.msup) {
         if (!item.msup) {
-            subsup = 'msub';
+            subsup = item.limits ? 'munder' : 'msub';
         }
         else if (!item.msub) {
-            subsup = 'msup';
+            subsup = item.limits ? 'mover' : 'msup';
         }
         else {
-            subsup = 'msubsup';
+            subsup = item.limits ? 'munderover' : 'msubsup';
         }
     }
     if (subsup) {
@@ -113,10 +127,10 @@ function tagToString(item) {
             out += '<mrow>';
         }
         item.children.forEach(function (child, idx) {
-            out += tagToString(child);
-            if (item.firstArgLength && idx == item.firstArgLength) {
+            if (idx === item.firstArgLength) {
                 out += '</mrow><mrow>';
             }
+            out += tagToString(child);
         });
         if (item.firstArgLength) {
             out += '</mrow>';
@@ -151,6 +165,10 @@ function tokenToTag(tkn) {
         if (typeof macro === 'function') {
             return macro;
         } else {
+            entity = UNDEROVER[tkn.txt];
+            if (entity) {
+                return {tag: 'mo', children: '&' + entity + ';', limits: true};
+            }
             entity = SYMBOLS[tkn.txt] || tkn.txt;
             return {tag: 'mo', children: '&' + entity + ';'};
         }
@@ -190,7 +208,7 @@ function parseGroup(tokenizer) {
             }
             lastItem = mrow.children[mrow.children.length - 1];
             if (lastItem.msup) {
-                throw "Double superscript.\n" + tokenizer.extractCode(tkn.idx);
+                tokenizer.fatal("Double superscript.", tkn.idx);
             }
             lastItem.msup = parseItemOrGroup(tokenizer);
         }
@@ -200,7 +218,7 @@ function parseGroup(tokenizer) {
             }
             lastItem = mrow.children[mrow.children.length - 1];
             if (lastItem.msub) {
-                throw "Double subscript.\n" + tokenizer.extractCode(tkn.idx);
+                tokenizer.fatal("Double subscript.", tkn.idx);
             }
             lastItem.msub = parseItemOrGroup(tokenizer);
         }
@@ -208,7 +226,7 @@ function parseGroup(tokenizer) {
         else if (tkn.typ == 'prime') {
             lastItem = mrow.children[mrow.children.length - 1];
             if (lastItem.msup) {
-                throw "Double superscript because of a prime.\n" + tokenizer.extractCode(tkn.idx);
+                tokenizer.fatal("Double superscript because of a prime.", tkn.idx);
             }
             lastItem.msup = {tag: 'mo', children: tkn.txt};
         }
@@ -222,12 +240,13 @@ function parseGroup(tokenizer) {
             if (typeof tag === 'function') {
                 // This is a macro.
                 macro = tag;
-                tag = macro(tokenizer, mrow);
-                if (!tag) {
-                    break;
+                tag = macro(tokenizer, mrow, tkn.idx);
+                if (tag) {
+                    mrow.children.push(tag);
                 }
+            } else {
+                mrow.children.push(tag);
             }
-            mrow.children.push(tag);
         }
     }
     return mrow;
@@ -254,15 +273,15 @@ function Tokenizer(txt) {
 }
 
 /**
- * Extract code for error messages.
+ * Throw an exception with a cursor on the position in the code.
  */
-Tokenizer.prototype.extractCode = function(idx) {
-    var out = this.txt + "\n";
+Tokenizer.prototype.fatal = function(msg, idx) {
+    var out = msg + "\n" + this.txt + "\n";
     while (idx > 0) {
         out += ' ';
         idx--;
     }
-    return out + '^\n';
+    throw out + '^\n';
 };
 
 /**
