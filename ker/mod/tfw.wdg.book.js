@@ -1,4 +1,5 @@
 "use strict";
+var Hash = require("tfw.hash-watcher");
 var Widget = require("wdg");
 
 /**
@@ -15,14 +16,15 @@ var Widget = require("wdg");
  * book.show("game");
  * @class Book
  */
-var Book = function(book) {
+var Book = function(book, hashPrefix) {
     if (typeof book === 'string') {
         book = document.getElementById(book);
     }
     Widget.call(this, {element: book});
     book.$ctrl = this;
     this.addClass("tfw-wdg-book", "fullscreen");
-    var i, child, id, pages = {}, current, count = 0;
+    var that = this,
+        i, child, id, pages = {}, current, count = 0;
     for (i = 0 ; i < book.childNodes.length ; i++) {
         child = book.childNodes[i];
         if (child.nodeType != 1) continue;
@@ -51,6 +53,23 @@ var Book = function(book) {
     if (!current) {
         console.error("[tfw.wdg.book] Book without pages!");
         console.error("[tfw.wdg.book] Pages must have the \"data-page\" attribute!");
+    }
+
+    // If hashPrefix has been set, we watch at the hash to change pages.
+    // For instance, if the prefix is "MyBook", the hash "/MyBook/MyPage"
+    // will switch to the page "MyPage" if it exists.
+    if (typeof hashPrefix !== 'undefined') {
+        Hash(function () {
+            var hashes = Hash.hash().split(';');
+            hashes.forEach(function (hash) {
+                hash = hash.trim();
+                var page;
+                if (hash.substr(0, hashPrefix.length + 2) == '/' + hashPrefix + '/') {
+                    page = hash.substr(hashPrefix.length + 2).trim();
+                    that.show(page);
+                }
+            });
+        });
     }
 };
 
@@ -94,7 +113,7 @@ Book.prototype.show = function(pageID) {
 };
 
 
-Book.create = function(book) {
-    return new Book(book);
+Book.create = function(book, hashPrefix) {
+    return new Book(book, hashPrefix);
 };
 module.exports = Book;

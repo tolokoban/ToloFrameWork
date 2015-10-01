@@ -1,5 +1,5 @@
 /**
- * Component tag-.+
+ * Component tag:.+
  */
 
 exports.tags = ["tag-.+"];

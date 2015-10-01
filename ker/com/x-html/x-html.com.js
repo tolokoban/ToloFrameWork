@@ -50,13 +50,13 @@ exports.compile = function(root, libs) {
         if (child.type == N.TAG) {
             if (child.name.toLowerCase() == 'head') {
                 N.forEachChild(child, function(subchild) {
-                    head.child.push(subchild);
+                    head.children.push(subchild);
                 });
             }
             else if (child.name.toLowerCase() == 'body') {
                 body.attribs = child.attribs;
                 N.forEachChild(child, function(subchild) {
-                    body.child.push(subchild);
+                    body.children.push(subchild);
                 });
             } else {
                 body.children.push(child);

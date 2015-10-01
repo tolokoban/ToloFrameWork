@@ -44,5 +44,9 @@ exports.compile = function(root, libs) {
     root.children = children;
     root.name = "div";
     root.attribs.id = id;
-    libs.addInitJS("require('tfw.wdg.book').create('" + id + "');");
+    var args = "'" + id + "'";
+    if (root.attribs.hash) {
+        args += ", " + JSON.stringify(root.attribs.hash);
+    }
+    libs.addInitJS("require('tfw.wdg.book').create(" + args + ");");
 };
