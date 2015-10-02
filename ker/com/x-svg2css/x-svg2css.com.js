@@ -60,7 +60,7 @@ exports.compile = function(root, libs) {
         );
     }
 
-    var zippedSVG = zipSVG(libs, libs.readFileContent(src));
+    var zippedSVG = zipSVG(libs, libs.readFileContent(src), src);
     var dstFileName = "x-svg2css/" + className + ".svg";
     // CSS style to add in the Inner part.
     var css = '.' + className + "{background-repeat:no-repeat;"
@@ -80,7 +80,7 @@ exports.compile = function(root, libs) {
 /**
  * Return the lightest SVG possible.
  */
-function zipSVG(libs, svgContent) {
+function zipSVG(libs, svgContent, src) {
     svgContent = svgContent
     // Remove space between two tags.
         .replace(/>[ \t\n\r]+</g, '><')
@@ -97,9 +97,20 @@ function zipSVG(libs, svgContent) {
     libs.Tree.walk(svgTree, function(node) {
         if (node.type !== libs.Tree.TAG) return;
         var name = node.name.toLowerCase();
+        if (name == 'flowroot') {
+            libs.warning(
+                "Please don't use <flowRoot> nor <flowRegion> in your SVG (\"" + src + "\")!\n"
+                    + "If it was created with Inkscape, convert it in SVG 1.1 by opening the `Text` menu\n"
+                    + "and selecting \"Convert to Text\".",
+                src,
+                svgContent,
+                node.pos
+            );
+        }
         var nodeToDelete = startsWith(
             name,
-            "metadata", "inkscape:", "sodipodi:", "image", "dc:", "cc:", "rdf:"
+            "metadata", "inkscape:", "sodipodi:", "image", "dc:", "cc:", "rdf:",
+            "flowroot", "flowregion"
         );
         if (nodeToDelete) {
             node.type = libs.Tree.VOID;
