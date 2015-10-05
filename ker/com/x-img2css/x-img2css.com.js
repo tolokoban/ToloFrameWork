@@ -1,12 +1,12 @@
 /**
- * Component x-svg2css
+ * Component x-img2css
  *
  * Convert a SVG in a CSS style embeded in a DataURL.
  */
 
 var RX_LOCAL_URL = /url[ \t]*\([ \t]*#([^ \t\)]+)[ \t]*\)/g;
 
-exports.tags = ["x-svg2css"];
+exports.tags = ["x-img2css"];
 exports.priority = 0;
 
 /**
@@ -61,7 +61,7 @@ exports.compile = function(root, libs) {
     }
 
     var zippedSVG = zipSVG(libs, libs.readFileContent(src), src);
-    var dstFileName = "x-svg2css/" + className + ".svg";
+    var dstFileName = "x-img2css/" + className + ".svg";
     // CSS style to add in the Inner part.
     var css = '.' + className + "{background-repeat:no-repeat;"
         + "background-position:50% 50%;"
