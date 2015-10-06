@@ -624,6 +624,15 @@ Widget.svg = function(tag, attribs) {
     if (typeof attribs === 'undefined') attribs = {};
     if (tag == 'svg') {
         if (typeof attribs.version === 'undefined') attribs.version = "1.1";
+        if (typeof attribs['xmlns:svg'] === 'undefined') {
+            attribs['xmlns:svg'] = 'http://www.w3.org/2000/svg';
+        }
+        if (typeof attribs['xmlns'] === 'undefined') {
+            attribs['xmlns'] = 'http://www.w3.org/2000/svg';
+        }
+        if (typeof attribs['xmlns:xlink'] === 'undefined') {
+            attribs['xmlns:xlink'] = 'http://www.w3.org/1999/xlink';
+        }
         if (typeof attribs.viewBox === 'undefined'
             && typeof attribs.width === 'number'
             && typeof attribs.height === 'number')
