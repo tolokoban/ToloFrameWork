@@ -6,10 +6,12 @@ var map1 = {"version":3,"file":"test.js.map","sources":["test.js"],"sourcesConte
 "mappings":"AAAAA,OAAO,SAAS,SAASC,EAAQC,GAAUC,QAAQC,IAAI,KACvD,IAAIC,GAAK,IACTJ,GAAQK,GAAKD"};
 
 describe("SourceMap", function() {
-    describe("...", function() {
-        it(".", function() {
-            var srcMap = new SourceMap(map1);
-            console.log(JSON.stringify(srcMap._lines, '  '));
+    describe("mappings", function() {
+        it("should encode what was decoded", function() {
+            var srcMap = new SourceMap();
+            var mappings = "AAAAA,OAAO,SAAS,SAASC,EAAQC,GAAUC,QAAQC,IAAI,KACvD,IAAIC,GAAK,IACTJ,GAAQK,GAAKD";
+            var lines = srcMap.decodeMappings(mappings);
+            expect(srcMap.encodeMappings(lines)).toBe(mappings);
         });
     });
 });
