@@ -40,13 +40,11 @@
     "highlight.js": "^8.4.0",
     "htmlparser2": "~3.7.3",
     "jasmine": "^2.3.1",
-    "less": "^1.7.5",
+    "less": "^2.5.3",
     "marked": "^0.3.2",
-    "node-less": "^1.0.0",
     "readline-sync": "~0.4.8",
     "string": "^3.0.0",
-    "uglify-js": "~2.4.15",
-    "uglifycss": "0.0.9"
+    "uglify-js": "^2.5.0"
   },
   "homepage": "https://github.com/tolokoban/ToloFrameWork",
   "main": "index.js",

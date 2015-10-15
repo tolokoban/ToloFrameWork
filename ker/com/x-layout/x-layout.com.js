@@ -127,7 +127,6 @@ exports.compile = function(root, libs) {
         '.' + className + '{position:absolute;left:0;top:0;width:100%;height:100%}'
     );
     root.children = cells;
-console.log(cells);
 };
 
 
