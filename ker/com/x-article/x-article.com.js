@@ -1,26 +1,9 @@
 /**
  * Component x-article
  */
+var Path = require("path");
 
 exports.tags = ["x-article"];
-exports.priority = 0;
-
-/**
- * Called the  first time the  component is  used in the  complete build
- * process.
- */
-exports.initialize = function(libs) {};
-
-/**
- * Called the first time the component is used in a specific HTML file.
- */
-exports.open = function(file, libs) {};
-
-/**
- * Called after a specific HTML file  as been processed. And called only
- * if the component has been used in this HTML file.
- */
-exports.close = function(file, libs) {};
 
 /**
  * Compile a node of the HTML tree.
@@ -73,8 +56,8 @@ exports.compile = function(root, libs) {
                 html.attribs.title = title;
                 section.children.push(
                     libs.parseHTML(
-                        "<header>"
-                            + title + "</header>"
+                        "<header><a class='back' href='" + libs.getBackToRoot(libs.getVar('$filename'))
+                            + "index.html'>◀</a>" + title + "</header>"
                     )
                 );
             }
@@ -97,6 +80,8 @@ exports.compile = function(root, libs) {
                 }
             });
             article.children.push(child);
+            // Adding a tailing space. This is needed for aesthetic reasons.
+            article.children.push( N.div({style: 'height:1rem'}) );
             html.children.push(section);
             result.push(html);
             pageIndex++;
@@ -109,7 +94,7 @@ exports.compile = function(root, libs) {
             libs.fatal("Reference not found: \"" + href + "\"!\n" + N.toString(link));
         }
         if (link.page != ref) {
-            var filename = libs.getVar('$filename');
+            var filename = Path.basename(libs.getVar('$filename'));
             if (ref > 0) {
                 filename = filename.substr(0, filename.length - 4) + ref + '.html';
             }
@@ -123,7 +108,7 @@ exports.compile = function(root, libs) {
             var filename,
                 footer = "<footer><div>";
             for (var idxPage = 0 ; idxPage < result.length ; idxPage++) {
-                filename = libs.getVar('$filename');
+                filename = Path.basename(libs.getVar('$filename'));
                 if (idxPage > 0) {
                     filename = filename.substr(0, filename.length - 4) + idxPage + '.html';
                 }

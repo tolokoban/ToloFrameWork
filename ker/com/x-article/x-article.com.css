@@ -41,10 +41,28 @@ section.x-article > header {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 0 .5em;
+    padding: 0 .5em 0 0;
     box-shadow: 0 2px 1em #000;
     border-bottom: 1px solid #000;
 }
+
+section.x-article > header > a[href] {
+    display: inline-block;
+    width: 2em;
+    text-align: center;
+    margin: 0 1em 0 0;
+    color: orange;
+    border-right: 1px solid rgba(255,128,0,.6);
+    text-shadow: 1px 1px #000;
+}
+
+section.x-article > header > a[href]:hover {
+    background-color: orange;
+    text-decoration: none;
+    color: #420;
+}
+
+
 
 section.x-article > article {
     position: absolute;

@@ -60,6 +60,7 @@ exports.compile = function(root, libs) {
         if (!libs.fileExists(src)) {
             libs.fatal("File not found: \"" + src + "\"!");
         }
+        libs.addInclude(src);
         node = libs.parseHTML(
             libs.readFileContent(src)
         );
