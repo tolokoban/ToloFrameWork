@@ -49,6 +49,7 @@
   "homepage": "https://github.com/tolokoban/ToloFrameWork",
   "main": "index.js",
   "devDependencies": {
+    "less": "^2.5.3",
     "source-map": "^0.5.1",
     "uglify-js": "^2.4.24"
   }

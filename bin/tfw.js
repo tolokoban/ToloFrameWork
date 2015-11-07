@@ -74,7 +74,7 @@ try {
         done = true;
     }
     if (args.indexOf('no-zip') > -1) {
-        console.log("Do not minify Javascript.".green);
+        console.log("Do not minify JS nor CSS.".green);
         options.noZip = true;
     }
     if (args.indexOf('build') > -1) {
@@ -86,10 +86,10 @@ try {
         console.log("Accepted arguments:");
         console.log("  clean".yellow + ":  remove all temporary files.");
         console.log("  build".yellow + ":  compile project in the www/ folder.");
-        console.log("  no-zip".yellow + ": JS files won't be minified.");
+        console.log("  no-zip".yellow + ": JS and CSS files won't be minified.");
         console.log();
         console.log("Example:");
-        console.log("  node tfw.js build clean");
+        console.log("  tfw build clean");
         console.log();
     }
 /*
@@ -103,7 +103,8 @@ try {
     x.id = x.id || "Internal javascript error";
     console.error("\n");
     console.error("+-------------+".redBG.white.bold);
-    console.error("| FATAL ERROR |".redBG.white.bold + " " + x.id.red.bold);
+    console.error("| FATAL ERROR |".redBG.white.bold + " " 
+                  + (typeof x.id === 'string' ? x.id.red.bold : ''));
     console.error((x.fatal).err());
     x.src.forEach(function (src, idx) {
         src = src || "";
