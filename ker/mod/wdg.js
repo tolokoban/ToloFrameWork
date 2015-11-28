@@ -18,7 +18,7 @@ function Widget(options) {
         } else if (typeof options.id !== 'undefined') {
             e = window.document.getElementById(options.id);
             if (!e) {
-                throw Error("[wdg] Element not found: #" + options.id);
+                throw Error("Can't find element with id: \"" + options.id + "\"!");
             }
             this.element(e);
         } else {
