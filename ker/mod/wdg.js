@@ -6,6 +6,7 @@
 function Widget(options) {
     this.__data = {};
     try {
+        var e;
         if (typeof options === 'undefined') options = {};
         if (typeof options.innerHTML !== 'undefined' && typeof options.childNodes !== 'undefined') {
             // On passe directement un élément.
@@ -15,7 +16,11 @@ function Widget(options) {
         if (options.element) {
             this.element(options.element);
         } else if (typeof options.id !== 'undefined') {
-            this.element(window.document.getElementById(options.id));
+            e = window.document.getElementById(options.id);
+            if (!e) {
+                throw Error("[wdg] Element not found: #" + options.id);
+            }
+            this.element(e);
         } else {
             this.element(window.document.createElement(options.tag));
             this.addClass("wdg", "custom");
