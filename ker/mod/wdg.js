@@ -38,6 +38,10 @@ Widget.prototype = {
         if (typeof v === 'string') {
             v = window.document.querySelector(v);
         }
+        while (typeof v.element === 'function') {
+            // If we pass a Widget instead of a DOM element, we must convert it.
+            v = v.element();
+        }
         this._element = v;
         return this;
     },
@@ -235,7 +239,7 @@ Widget.prototype = {
         return this;
     },
 
-     insertBefore: function(target) {
+    insertBefore: function(target) {
         if (typeof target.element === 'function') {
             target = target.element();
         }
@@ -563,7 +567,10 @@ Widget.prototype.activatePointerEvents = function() {
             }
         }
     );
-
+    this.addEvent("click", function(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+    });
     return this;
 };
 
@@ -608,6 +615,18 @@ Widget.find = function(query) {
     return new Widget({element: window.document.querySelector(query)});
 };
 
+/**
+ * Create a DIV with the specified text or html in it.
+ * @param {string} txt - If the `txt` starts with `<html>` it has to be processed an unescaped HTML.
+ */
+Widget.fromTextOrHtml = function(txt) {
+    var div = new Widget();
+    if (txt.substr(0, 6) == '<html>') {
+        return div.html(txt.substr(6));
+    } else {
+        return div.text(txt);
+    }
+};
 
 /**
  * Create a SVG élément with attributes.

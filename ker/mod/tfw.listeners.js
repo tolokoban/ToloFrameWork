@@ -49,13 +49,13 @@ Listeners.prototype.clear = function() {
 /**
  * Emettre l'événement. Si un listener retourne ```false```, on n'appelle pas les listeners suivants.
  */
-Listeners.prototype.fire = function(arg) {
+Listeners.prototype.fire = function() {
     var i, listener, obj, x;
     for (i = 0 ; i < this._list.length ; i++) {
         x = this._list[i];
         listener = x[0];
         obj = x[1];
-        if (false === listener.call(obj, arg)) return false;
+        if (false === listener.apply(obj, arguments)) return false;
     }    
     return true;
 };

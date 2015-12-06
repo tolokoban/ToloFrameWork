@@ -10,6 +10,7 @@
  */
 
 if (!window.Promise) {
+    console.warn("Polyfill installed for `Promise`!");
     (function() {
         "use strict";
 
