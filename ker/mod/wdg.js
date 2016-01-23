@@ -6,6 +6,7 @@
 function Widget(options) {
     this.__data = {};
     try {
+        var e;
         if (typeof options === 'undefined') options = {};
         if (typeof options.innerHTML !== 'undefined' && typeof options.childNodes !== 'undefined') {
             // On passe directement un élément.
@@ -15,7 +16,11 @@ function Widget(options) {
         if (options.element) {
             this.element(options.element);
         } else if (typeof options.id !== 'undefined') {
-            this.element(window.document.getElementById(options.id));
+            e = window.document.getElementById(options.id);
+            if (!e) {
+                throw Error("Can't find element with id: \"" + options.id + "\"!");
+            }
+            this.element(e);
         } else {
             this.element(window.document.createElement(options.tag));
             this.addClass("wdg", "custom");
@@ -37,10 +42,6 @@ Widget.prototype = {
         if (v === undefined) return this._element;
         if (typeof v === 'string') {
             v = window.document.querySelector(v);
-        }
-        while (typeof v.element === 'function') {
-            // If we pass a Widget instead of a DOM element, we must convert it.
-            v = v.element();
         }
         this._element = v;
         return this;
@@ -239,7 +240,7 @@ Widget.prototype = {
         return this;
     },
 
-    insertBefore: function(target) {
+     insertBefore: function(target) {
         if (typeof target.element === 'function') {
             target = target.element();
         }
@@ -567,10 +568,7 @@ Widget.prototype.activatePointerEvents = function() {
             }
         }
     );
-    this.addEvent("click", function(evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
-    });
+
     return this;
 };
 
@@ -615,18 +613,6 @@ Widget.find = function(query) {
     return new Widget({element: window.document.querySelector(query)});
 };
 
-/**
- * Create a DIV with the specified text or html in it.
- * @param {string} txt - If the `txt` starts with `<html>` it has to be processed an unescaped HTML.
- */
-Widget.fromTextOrHtml = function(txt) {
-    var div = new Widget();
-    if (txt.substr(0, 6) == '<html>') {
-        return div.html(txt.substr(6));
-    } else {
-        return div.text(txt);
-    }
-};
 
 /**
  * Create a SVG élément with attributes.

@@ -29,42 +29,100 @@ console.log(sep);
 console.log();
 
 String.prototype.err = function() {
+    var sep = "+------------------------------------------------------------------------------------------------------------------------+";
     var txt = '';
-    var lines = this.split("\n");
-    var line;
-    var i;
-    for (i = 0 ; i < lines.length ; i++) {
-        line = lines[i];
-        while(line.length < 80) {
-            line += ' ';
+    this.split("\n").forEach(function (line) {
+        var buff = '| ', i, c, mode = 0;
+        for (i = 0; i < line.length; i++) {
+            c = line.charCodeAt(i);
+            if (mode == 0) {
+                if (c > 31) {
+                    buff += line.charAt(i);
+                }
+                else if (c == 7) {
+                    buff += "    ";
+                }
+                else if (c == 27) {
+                    // Remove all color information.
+                    mode = 1;
+                }
+            } else {
+                if (c == 109) {
+                    mode = 0;
+                }
+            }
         }
-        if (txt.length > 0) {
-            txt += "\n";
+        while(buff.length < 120) {
+            buff += ' ';
         }
-        txt += line;
-    }
-
-    return txt.redBG.white;
+        txt += (buff + " |").redBG.white.bold + "\n";
+    });
+    return sep.redBG.white.bold + "\n" + txt + sep.redBG.white.bold + "\n";
 };
 
 
 try {
     var prj = Project.createProject('.');
-    for (var i = 2 ; i < process.argv.length ; i++) {
-        var arg = process.argv[i];
-        if (arg == '-c' || arg=='--clean') {
-            console.log("Cleaning...".green);
-            Util.cleanDir("./tmp");
-        }
+    var options = {};
+    var done = false;
+    var args = process.argv;
+    args.shift();
+    args.shift();
+    if (args.indexOf('clean') > -1) {
+        console.log("Cleaning...".green);
+        Util.cleanDir("./tmp");
+        done = true;
     }
-    prj.compile();
+    if (args.indexOf('no-zip') > -1) {
+        console.log("Do not minify JS nor CSS.".green);
+        options.noZip = true;
+    }
+    if (args.indexOf('build') > -1) {
+        prj.compile(options);            
+        done = true;
+    }
+    if (args.indexOf('php') > -1) {
+        prj.services(options);            
+        done = true;
+    }
+    if (args.indexOf('doc') > -1) {
+        prj.makeDoc(options);            
+        done = true;
+    }
+    if (!done) {
+        console.log();
+        console.log("Accepted arguments:");
+        console.log("  clean".yellow + ":  remove all temporary files.");
+        console.log("  build".yellow + ":  compile project in the www/ folder.");
+        console.log("  no-zip".yellow + ": JS and CSS files won't be minified.");
+        console.log("  php".yellow + ":    add PHP services.");
+        console.log("  doc".yellow + ":    create documentation.");
+        console.log();
+        console.log("Example:");
+        console.log("  tfw build clean");
+        console.log();
+    }
+/*
     prj.link();
     //prj.spawnFirefox()
     prj.makeDoc();
+*/
 } catch (x) {
-    if (x.fatal) {
-        console.error("\n" + ("\nError #" + x.id + " from " + x.src + "\n").err());
-        console.error((x.fatal + "\n").err() + "\n");
+    x.fatal = x.fatal || "" + x;
+    x.src = x.src || [""];
+    x.id = x.id || "Internal javascript error";
+    console.error("\n");
+    console.error("+-------------+".redBG.white.bold);
+    console.error("| FATAL ERROR |".redBG.white.bold + " " 
+                  + (typeof x.id === 'string' ? x.id.red.bold : ''));
+    console.error((x.fatal).err());
+    x.src.forEach(function (src, idx) {
+        src = src || "";
+        console.error(src.red.bold);
+    });
+    console.error("\n");
+    if (x.stack) {
+        console.error(x.stack.trim().red);
+        console.error("\n");
     }
-    throw x;
 }

@@ -3,8 +3,6 @@
  * @module Multiply
  */
 
-var Util = require("../util");
-
 /**
  * 
  * @example

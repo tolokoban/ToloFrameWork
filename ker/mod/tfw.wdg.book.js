@@ -1,8 +1,6 @@
 "use strict";
 var Hash = require("tfw.hash-watcher");
 var Widget = require("wdg");
-var Listeners = require("tfw.listeners");
-
 
 /**
  * @example
@@ -16,24 +14,11 @@ var Listeners = require("tfw.listeners");
  * var Book = require("tfw.wdg.book");
  * var book = new Book("book-id");
  * book.show("game");
- *
- * @example
- * var Book = require("tfw.wdg.book");
- * var book = new Book({
- *   welcome: wdgWelcome,
- *   game: wdgGame,
- *   highscores: wdgHighscores
- * });
- * book.show("game");
+ * @class Book
  */
 var Book = function(book, hashPrefix) {
-    // Événement déclenché lorsqu'on change de page.
-    this.eventChange = new Listeners();
-
     if (typeof book === 'string') {
         book = document.getElementById(book);
-    } else {
-        book = expandObject(book);
     }
     Widget.call(this, {element: book});
     book.$ctrl = this;
@@ -81,7 +66,6 @@ var Book = function(book, hashPrefix) {
                 var page;
                 if (hash.substr(0, hashPrefix.length + 2) == '/' + hashPrefix + '/') {
                     page = hash.substr(hashPrefix.length + 2).trim();
-                    page = page.split('/');
                     that.show(page);
                 }
             });
@@ -97,9 +81,7 @@ Book.prototype.constructor = Book;
 /**
  * @return void
  */
-Book.prototype.show = function(args) {
-    if (!Array.isArray(args)) args = [args];
-    var pageID = args[0];
+Book.prototype.show = function(pageID) {
     var rect;
     var pages = this._pages;
     var page = pages[pageID];
@@ -128,7 +110,6 @@ Book.prototype.show = function(args) {
     page.addClass("transition");
 
     this._current = page;
-    Listeners.prototype.fire.apply(this.eventChange, args);
 };
 
 
@@ -136,24 +117,3 @@ Book.create = function(book, hashPrefix) {
     return new Book(book, hashPrefix);
 };
 module.exports = Book;
-
-
-
-/**
- * @param {object} book - Pages of the book. The name of this object's
- * attributes  will be  the `data-page`,  the value  will be  the page
- * itself and it can be a DOM element or a Widget..
- */
-function expandObject(book) {
-    var div = Widget.div();
-    var key, val;
-    for (key in book) {
-        val = book[key];
-        if (typeof val.append !== 'function') {
-            val = Widget.create({element: val});
-        }
-        val.attr("data-page", key);
-        div.append(val);
-    }
-    return div.element();
-}

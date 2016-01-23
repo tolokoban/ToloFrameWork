@@ -1,15 +1,16 @@
 {
   "name": "toloframework",
-  "version": "0.19.0",
+  "version": "1.0.0",
   "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
   "bin": {
     "tfw": "bin/tfw.js"
   },
   "directories": {
-    "test": "spec"
+    "test": "test"
   },
   "scripts": {
-    "test": "node node_modules/jasmine/bin/jasmine.js"
+    "test": "node node_modules/jasmine/bin/jasmine.js",
+    "test:dbg": "node --debug-brk node_modules/jasmine/bin/jasmine.js"
   },
   "repository": {
     "type": "git",
@@ -33,21 +34,14 @@
   },
   "dependencies": {
     "colors": "~0.6.2",
-    "connect": "~3.2.0",
-    "dox": "~0.6.1",
-    "esprima": "^1.2.2",
     "highlight.js": "^8.4.0",
-    "htmlparser2": "~3.7.3",
-    "jasmine": "^2.3.2",
-    "less": "^1.7.5",
+    "jasmine": "^2.3.1",
+    "less": "^2.5.3",
     "marked": "^0.3.2",
-    "node-less": "^1.0.0",
     "readline-sync": "~0.4.8",
     "string": "^3.0.0",
-    "uglify-js": "~2.4.15",
-    "uglifycss": "0.0.9"
+    "uglify-js": "^2.5.0"
   },
   "homepage": "https://github.com/tolokoban/ToloFrameWork",
-  "main": "index.js",
-  "devDependencies": {}
+  "main": "index.js"
 }
