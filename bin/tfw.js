@@ -81,12 +81,22 @@ try {
         prj.compile(options);            
         done = true;
     }
+    if (args.indexOf('php') > -1) {
+        prj.services(options);            
+        done = true;
+    }
+    if (args.indexOf('doc') > -1) {
+        prj.makeDoc(options);            
+        done = true;
+    }
     if (!done) {
         console.log();
         console.log("Accepted arguments:");
         console.log("  clean".yellow + ":  remove all temporary files.");
         console.log("  build".yellow + ":  compile project in the www/ folder.");
         console.log("  no-zip".yellow + ": JS and CSS files won't be minified.");
+        console.log("  php".yellow + ":    add PHP services.");
+        console.log("  doc".yellow + ":    create documentation.");
         console.log();
         console.log("Example:");
         console.log("  tfw build clean");
