@@ -60,78 +60,130 @@ String.prototype.err = function() {
     return sep.redBG.white.bold + "\n" + txt + sep.redBG.white.bold + "\n";
 };
 
-
-try {
-    var prj = Project.createProject('.');
-    var options = {};
-    var done = false;
-    var args = process.argv;
-    var modules;
-    args.shift();
-    args.shift();
-    if (args.indexOf('clean') > -1) {
+var firstProcess = true;
+var tasks = [];
+var options = {};
+var args = process.argv;
+args.shift();
+args.shift();
+if (args.indexOf('clean') > -1) {
+    tasks.push(function(prj) {
         console.log("Cleaning...".green);
         Util.cleanDir("./tmp");
-        done = true;
-    }
-    if (args.indexOf('no-zip') > -1) {
+    });
+}
+if (args.indexOf('version') > -1) {
+    tasks.push(function(prj) {
+        if (firstProcess) {
+            console.log("Incrementing version...".green);
+            prj.makeVersion();
+        }
+    });
+}
+if (args.indexOf('no-zip') > -1) {
+    tasks.push(function(prj) {
         console.log("Do not minify JS nor CSS.".green);
         options.noZip = true;
-    }
-    if (args.indexOf('build') > -1) {
-        modules = prj.compile(options);            
-        done = true;
-    }
-    if (args.indexOf('php') > -1) {
-        prj.services(options);            
-        done = true;
-    }
-    if (args.indexOf('doc') > -1) {
-        prj.makeDoc(options);            
-        done = true;
-    }
-    if (args.indexOf('test') > -1) {
-        if (!modules) {
+    });
+}
+if (args.indexOf('build') > -1) {
+    tasks.push(function(prj) {
+        prj.compile(options);
+    });
+}
+if (args.indexOf('php') > -1) {
+    tasks.push(function(prj) {
+        prj.services(options);
+    });
+}
+if (args.indexOf('doc') > -1) {
+    tasks.push(function(prj) {
+        prj.makeDoc(options);
+    });
+}
+if (args.indexOf('test') > -1) {
+    tasks.push(function(prj) {
+        modules = prj.getCompiledFiles();
+        if (modules.length == 0) {
             modules = prj.compile(options);
         }
-        prj.makeTest(modules, options);            
-        done = true;
-    }
-    if (!done) {
-        console.log();
-        console.log("Accepted arguments:");
-        console.log("  clean".yellow + ":  remove all temporary files.");
-        console.log("  build".yellow + ":  compile project in the www/ folder.");
-        console.log("  no-zip".yellow + ": JS and CSS files won't be minified.");
-        console.log("  php".yellow + ":    add PHP services.");
-        console.log("  test".yellow + ":   prepare Karma tests.");
-        console.log("  doc".yellow + ":    create documentation.");
-        console.log();
-        console.log("Example:");
-        console.log("  tfw build clean");
-        console.log();
-    }
-/*
-    prj.link();
-    //prj.spawnFirefox()
-    prj.makeDoc();
-*/
-} catch (x) {
-    x.fatal = x.fatal || "" + x;
-    x.src = x.src || [""];
-    x.id = x.id || "Internal javascript error";
-    console.error("\n");
-    console.error("+-------------+".redBG.white.bold);
-    console.error("| FATAL ERROR |".redBG.white.bold + " " 
-                  + (typeof x.id === 'string' ? x.id.red.bold : ''));
-    console.error((x.fatal).err());
-    x.src.forEach(function (src, idx) {
-        src = src || "";
-        console.error(src.red.bold);
+        prj.makeTest(modules, options);
     });
-    console.error("\n");
-    if (x.stack) {
-        console.error(x.stack.trim().red);
-        console.error("\n");
+}
+if (tasks.length == 0) {
+    console.log();
+    console.log("Accepted arguments:");
+    console.log("  clean".yellow + ":   remove all temporary files.");
+    console.log("  build".yellow + ":   compile project in the www/ folder.");
+    console.log("  no-zip".yellow + ":  JS and CSS files won't be minified.");
+    console.log("  php".yellow + ":     add PHP services.");
+    console.log("  test".yellow + ":    prepare Karma tests.");
+    console.log("  doc".yellow + ":     create documentation.");
+    console.log("  watch".yellow + ":   watch for files change.");
+    console.log("  version".yellow + ": increment version number.");
+    console.log();
+    console.log("Example:");
+    console.log("  tfw build clean");
+    console.log();
+} else {
+    function process() {
+        try {
+            var time = Date.now();
+            var prj = Project.createProject('.');
+            tasks.forEach(function(task) {
+                task(prj);
+            });
+            var now = Date.now();
+            console.log('----------------------------------------');
+            console.log(
+                "Time: "
+                    + ((now - time) / 1000).toFixed(3).bold
+                    + " seconds.");
+            return prj;
+        } catch (x) {
+            x.fatal = x.fatal || "" + x;
+            x.src = x.src || [""];
+            x.id = x.id || "Internal javascript error";
+            console.error("\n");
+            console.error("+-------------+".redBG.white.bold);
+            console.error("| FATAL ERROR |".redBG.white.bold + " "
+                          + (typeof x.id === 'string' ? x.id.red.bold : ''));
+            console.error((x.fatal).err());
+            x.src.forEach(function (src, idx) {
+                src = src || "";
+                console.error(src.red.bold);
+            });
+            console.error("\n");
+            if (x.stack) {
+                console.error(x.stack.trim().red);
+                console.error("\n");
+            }
+            return false;
+        }
+    }
+
+    var timer = 0;
+    function processLater(eventName, filename) {
+        if (filename) {
+            // Don't compile if only `manifest.webapp` changed.
+            if (filename == 'manifest.webapp') return;
+            console.log("File change: " + filename.bold.yellow);
+        }
+        if (timer) {
+            clearTimeout(timer);
+        }
+        timer = setTimeout(process, 50);
+    }
+
+    var prj = process();
+    firstProcess = false;
+
+    // Watch files?
+    if (args.indexOf("watch") > -1) {
+        console.log();
+        console.log("Watching files...".cyan);
+        console.log();
+        FS.watch(prj.srcPath()).on('change', processLater);
+        FS.watch(prj.srcPath('mod')).on('change', processLater);
     }
 }
