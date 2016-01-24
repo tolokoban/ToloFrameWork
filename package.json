@@ -28,20 +28,14 @@
     "require"
   ],
   "author": "Tolokoban",
-  "license": "GNU GPL 3",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/tolokoban/ToloFrameWork/issues"
   },
-  "dependencies": {
-    "colors": "~0.6.2",
-    "highlight.js": "^8.4.0",
-    "jasmine": "^2.3.1",
-    "less": "^2.5.3",
-    "marked": "^0.3.2",
-    "readline-sync": "~0.4.8",
-    "string": "^3.0.0",
-    "uglify-js": "^2.5.0"
-  },
+  "dependencies": {},
   "homepage": "https://github.com/tolokoban/ToloFrameWork",
-  "main": "index.js"
+  "main": "index.js",
+  "devDependencies": {
+    "jasmine": "^2.4.1"
+  }
 }

@@ -66,6 +66,7 @@ try {
     var options = {};
     var done = false;
     var args = process.argv;
+    var modules;
     args.shift();
     args.shift();
     if (args.indexOf('clean') > -1) {
@@ -78,7 +79,7 @@ try {
         options.noZip = true;
     }
     if (args.indexOf('build') > -1) {
-        prj.compile(options);            
+        modules = prj.compile(options);            
         done = true;
     }
     if (args.indexOf('php') > -1) {
@@ -89,6 +90,13 @@ try {
         prj.makeDoc(options);            
         done = true;
     }
+    if (args.indexOf('test') > -1) {
+        if (!modules) {
+            modules = prj.compile(options);
+        }
+        prj.makeTest(modules, options);            
+        done = true;
+    }
     if (!done) {
         console.log();
         console.log("Accepted arguments:");
@@ -96,6 +104,7 @@ try {
         console.log("  build".yellow + ":  compile project in the www/ folder.");
         console.log("  no-zip".yellow + ": JS and CSS files won't be minified.");
         console.log("  php".yellow + ":    add PHP services.");
+        console.log("  test".yellow + ":   prepare Karma tests.");
         console.log("  doc".yellow + ":    create documentation.");
         console.log();
         console.log("Example:");
