@@ -103,7 +103,7 @@ if (args.indexOf('doc') > -1) {
 }
 if (args.indexOf('test') > -1) {
     tasks.push(function(prj) {
-        modules = prj.getCompiledFiles();
+        var modules = prj.getCompiledFiles();
         if (modules.length == 0) {
             modules = prj.compile(options);
         }
