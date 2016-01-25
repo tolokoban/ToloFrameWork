@@ -82,10 +82,11 @@ if (args.indexOf('version') > -1) {
         }
     });
 }
-if (args.indexOf('no-zip') > -1) {
+if (args.indexOf('dev') > -1) {
     tasks.push(function(prj) {
-        console.log("Do not minify JS nor CSS.".green);
-        options.noZip = true;
+        console.log("Build for DEVELOPMENT. Don't minify, don't combine.".green);
+        options.dev = true;
+        console.log("options: ", options);
     });
 }
 if (args.indexOf('build') > -1) {
