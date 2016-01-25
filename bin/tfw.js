@@ -12,6 +12,8 @@ var Path = require("path");
 var FS = require("fs");
 var Util = require("../lib/util.js");
 var Project = require("../lib/project");
+var PathUtils = require("../lib/pathutils");
+
 
 // Read the version in the package file.
 var packageFile = Path.join(__dirname, "../package.json");
@@ -181,9 +183,21 @@ if (tasks.length == 0) {
     // Watch files?
     if (args.indexOf("watch") > -1) {
         console.log();
-        console.log("Watching files...".cyan);
+        var fringe = [prj.srcPath()];
+        var path;
+        while (fringe.length > 0) {
+            path = fringe.pop();
+            console.log("Watching ".cyan + path);
+            FS.watch(path).on('change', processLater);
+            FS.readdirSync(path).forEach(
+                function(filename) {
+                    var subpath = Path.join(path, filename);
+                    if (PathUtils.isDirectory(subpath)) {
+                        fringe.push(subpath);
+                    }
+                }
+            );
+        }
         console.log();
-        FS.watch(prj.srcPath()).on('change', processLater);
-        FS.watch(prj.srcPath('mod')).on('change', processLater);
     }
 }
