@@ -130,6 +130,9 @@ if (tasks.length == 0) {
 } else {
     function process() {
         try {
+            console.log();
+            console.log(("" + (new Date())).green);
+            console.log();
             var time = Date.now();
             var prj = Project.createProject('.');
             tasks.forEach(function(task) {
@@ -169,6 +172,9 @@ if (tasks.length == 0) {
         if (filename) {
             // Don't compile if only `manifest.webapp` changed.
             if (filename == 'manifest.webapp') return;
+            if (filename.charAt(0) == '#') return;
+            if (filename.substr(0, 2) == '.#') return;
+            if (filename.charAt(filename.length - 1) == '~') return;
             console.log("File change: " + filename.bold.yellow);
         }
         if (timer) {

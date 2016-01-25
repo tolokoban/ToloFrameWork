@@ -240,7 +240,7 @@ Widget.prototype = {
         return this;
     },
 
-     insertBefore: function(target) {
+    insertBefore: function(target) {
         if (typeof target.element === 'function') {
             target = target.element();
         }
