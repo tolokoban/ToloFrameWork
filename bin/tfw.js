@@ -179,6 +179,8 @@ if (tasks.length == 0) {
         watcher.on('change', processLater);
     }
 
+    var prj = process();
+    firstProcess = false;
 
     function processLater(eventName, filename) {
         if (filename) {
@@ -196,15 +198,14 @@ if (tasks.length == 0) {
                 return;
             }
             console.log("File change: " + path.bold.yellow);
+            // If a resource file changes, we have to touch the corresponding module's JS file.
+            prj.cascadingTouch(path);
         }
         if (timer) {
             clearTimeout(timer);
         }
         timer = setTimeout(process, 50);
     }
-
-    var prj = process();
-    firstProcess = false;
 
     // Watch files?
     if (args.indexOf("watch") > -1) {
