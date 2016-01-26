@@ -82,10 +82,11 @@ if (args.indexOf('version') > -1) {
         }
     });
 }
-if (args.indexOf('no-zip') > -1) {
+if (args.indexOf('dev') > -1) {
     tasks.push(function(prj) {
-        console.log("Do not minify JS nor CSS.".green);
-        options.noZip = true;
+        console.log("Build for DEVELOPMENT. Don't minify, don't combine.".green);
+        options.dev = true;
+        console.log("options: ", options);
     });
 }
 if (args.indexOf('build') > -1) {
@@ -168,6 +169,17 @@ if (tasks.length == 0) {
     }
 
     var timer = 0;
+    var watchedDirectories = [];
+
+    function watch(path) {
+        console.log("Watching ".cyan + path);
+        watchedDirectories.push(path);
+        var watcher = FS.watch(path);
+        watcher.path = path;
+        watcher.on('change', processLater);
+    }
+
+
     function processLater(eventName, filename) {
         if (filename) {
             // Don't compile if only `manifest.webapp` changed.
@@ -175,7 +187,15 @@ if (tasks.length == 0) {
             if (filename.charAt(0) == '#') return;
             if (filename.substr(0, 2) == '.#') return;
             if (filename.charAt(filename.length - 1) == '~') return;
-            console.log("File change: " + filename.bold.yellow);
+            var path = Path.join(this.path, filename);
+            if (PathUtils.isDirectory(path)) {                
+                if (!FS.existsSync(path)) return;
+                if (watchedDirectories.indexOf(filename) == -1) {
+                    watch(path);
+                }
+                return;
+            }
+            console.log("File change: " + path.bold.yellow);
         }
         if (timer) {
             clearTimeout(timer);
@@ -193,8 +213,7 @@ if (tasks.length == 0) {
         var path;
         while (fringe.length > 0) {
             path = fringe.pop();
-            console.log("Watching ".cyan + path);
-            FS.watch(path).on('change', processLater);
+            watch(path);
             FS.readdirSync(path).forEach(
                 function(filename) {
                     var subpath = Path.join(path, filename);

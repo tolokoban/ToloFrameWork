@@ -522,7 +522,6 @@ Widget.prototype.activatePointerEvents = function() {
     this.addEvent(
         "touchstart",
         function(evt) {
-            console.log("touchestart");
             evt.preventDefault();
             evt.stopPropagation();
             pe.touch = 1;
@@ -532,7 +531,6 @@ Widget.prototype.activatePointerEvents = function() {
     this.addEvent(
         "touchend",
         function(evt) {
-            console.log("touchend");
             evt.preventDefault();
             evt.stopPropagation();
             var tap = that._Tap;
@@ -550,7 +548,6 @@ Widget.prototype.activatePointerEvents = function() {
             evt.preventDefault();
             evt.stopPropagation();
             if (pe.touch) return;
-            console.log("mousedown");
             pe.start = Date.now();
         }
     );
@@ -559,7 +556,6 @@ Widget.prototype.activatePointerEvents = function() {
         function(evt) {
             evt.preventDefault();
             evt.stopPropagation();
-            console.log("mouseup");
             var tap = that._Tap;
             if (!tap) return;
             var delta = Date.now() - pe.start;
