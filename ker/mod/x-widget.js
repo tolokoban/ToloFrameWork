@@ -2,8 +2,12 @@
 
 
 module.exports = function(id, modName, args) {
-    var module = require(modName);
     var dst = document.getElementById(id);
+    if (!dst) {
+        // This widget does not exist!
+        return;
+    }
+    var module = require(modName);
     var src = new module(args);
     src.element().$ctrl = src;
     src = src.element();

@@ -36,17 +36,29 @@ exports.compile = function(root, libs) {
         libs.fatal("[x-widget] Missing attribute \"name\"!");
     }
     var id = root.attribs.id || name;
+    var src = (root.attribs.src || "").trim();
     root.attribs = {
         id: id,
         style: "display:none"
     };
-    var args = libs.Tree.text(root).trim();
-    if (args.charAt(0) == '{' || args.charAt(0) == '[') {
+    var args = null;
+    if (src.length > 0) {
+        if (!libs.fileExists(src)) {
+            libs.fatal("File not found: \"" + src + "\"!");
+        }
+        libs.addInclude(src);
+        args = libs.readFileContent(src);
+    }
+    if (!args) {
+        args = libs.Tree.text(root).trim();
+    }
+    if (args.charAt(0) != '{' && args.charAt(0) != '[') {
         try {
             args = JSON.parse(args);
         }
         catch (ex) {
-            libs.fatal("Invalid JSON: " + args);
+            // This is a string.
+            args = JSON.stringify(args);
         }
     }
     root.children = [];
@@ -55,5 +67,9 @@ exports.compile = function(root, libs) {
 
     libs.require(name);
     libs.require("x-widget");
-    libs.addInitJS("require('x-widget')('" + id + "','" + name + "'," + JSON.stringify(args) + ");");
+    libs.addInitJS(
+        "try{"
+        + "require('x-widget')('" + id + "','" + name + "'," + args + ")"
+        + "}catch(x){console.error('Unable to initialize " + name + "!', x)}"
+    );
 };
