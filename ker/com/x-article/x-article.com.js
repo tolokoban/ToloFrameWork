@@ -123,7 +123,6 @@ exports.compile = function(root, libs) {
             footer += "</div></footer>";
             page.children[page.children.length - 1].children.push(libs.parseHTML(footer));
         });
-
     }
 
     root.type = N.PAGES;
