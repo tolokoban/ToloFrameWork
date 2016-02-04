@@ -118,7 +118,7 @@ if (tasks.length == 0) {
     console.log("Accepted arguments:");
     console.log("  clean".yellow + ":   remove all temporary files.");
     console.log("  build".yellow + ":   compile project in the www/ folder.");
-    console.log("  no-zip".yellow + ":  JS and CSS files won't be minified.");
+    console.log("  dev".yellow + ":  JS and CSS files won't be minified.");
     console.log("  php".yellow + ":     add PHP services.");
     console.log("  test".yellow + ":    prepare Karma tests.");
     console.log("  doc".yellow + ":     create documentation.");
