@@ -9,7 +9,8 @@ exports.priority = 0;
 // http://www.w3.org/TR/MathML2/chapter6.html#chars.entity.tables
 var SYMBOLS = {
     cdots: 'ctdot',
-    neq: 'NotEqual'
+    neq: 'NotEqual',
+    iif: 'hArr'
 };
 
 // Symbols with superscript and subscripts on top and bottom.
@@ -18,6 +19,9 @@ var UNDEROVER = {
     prod: 'prod',
     coprod: 'coprod'
 };
+
+// Functions `f` must be converted in `<mo>f</mo>`.
+var FUNCTIONS = ['cos', 'sin', 'tan'];
 
 function style(css) {
     return function(tokenizer, parent) {        
@@ -48,6 +52,10 @@ var MACROS = {
         var lastTag = parent.children[parent.children.length - 1];
         if (lastTag.tag != 'mo') tokenizer.fatal(err, idx);
         lastTag.limits = true;
+    },
+    sqrt: function(tokenizer, parent, idx) {
+        var child = parseItemOrGroup(tokenizer);
+        return {tag: 'msqrt', children: [child]};
     }
 };
 
@@ -161,6 +169,9 @@ function tokenToTag(tkn) {
     // Macro function.
     var macro;
     if (tkn.typ == 'macro') {
+        if (FUNCTIONS.indexOf(tkn.txt) > -1) {
+            return {tag: 'mo', children: tkn.txt};
+        }
         macro = MACROS[tkn.txt];
         if (typeof macro === 'function') {
             return macro;
