@@ -24,7 +24,7 @@ var UNDEROVER = {
 var FUNCTIONS = ['cos', 'sin', 'tan'];
 
 function style(css) {
-    return function(tokenizer, parent) {        
+    return function(tokenizer, parent) {
         var child = parseItemOrGroup(tokenizer);
         if (!child.attribs) {
             child.attribs = {};
@@ -89,6 +89,8 @@ exports.compile = function(root, libs) {
         root.type = libs.Tree.VERBATIM;
         var mrow = parseGroup(new Tokenizer(libs.Tree.text(root)));
         root.text = '<math>' + tagToString(mrow) + '</math>';
+        libs.require("polyfill.mathml");
+        libs.addInitJS( "require('polyfill.mathml');" );
     }
     catch (ex) {
         libs.fatal(ex, '<x-latex>');
