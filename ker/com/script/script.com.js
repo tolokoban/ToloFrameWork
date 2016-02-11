@@ -35,7 +35,8 @@ exports.compile = function(root, libs) {
     if (!src) return;
     if (src.substr(0, 5) == 'http:' || src.substr(0, 6) == 'https:') return;
     if (!libs.fileExists(src)) {
-        libs.fatal("File not found: \"" + src + "\"!");
+        libs.fatal("<script> File not found: \"" + src + "\"!");
     }
+    src = libs.filePath(src);
     libs.addResourceFile(src, src, src);
 };

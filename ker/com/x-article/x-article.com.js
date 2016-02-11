@@ -56,7 +56,8 @@ exports.compile = function(root, libs) {
                 html.attribs.title = title;
                 section.children.push(
                     libs.parseHTML(
-                        "<header><a class='back' href='" + libs.getBackToRoot(libs.getVar('$filename'))
+                        "<header><a class='back' href='" 
+                            + libs.getBackToRoot(libs.getVar('$filename'))
                             + "index.html'>◀</a>" + title + "</header>"
                     )
                 );
