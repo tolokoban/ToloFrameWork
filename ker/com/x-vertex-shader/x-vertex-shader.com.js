@@ -36,6 +36,7 @@ exports.compile = function(root, libs) {
         libs.fatal("This is not a file: \"" + file + "\"!", -1, "<x-vertex-shader>");
     }
     libs.addInclude(filename);
+console.info("[x-vertex-shader.com] file=", file);
     var content = FS.readFileSync(file).toString().trim();
     root.type = Tree.VOID;
     delete root.attribs;
