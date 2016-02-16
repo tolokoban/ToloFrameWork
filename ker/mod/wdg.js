@@ -418,6 +418,9 @@ Widget.prototype = {
     text: function(arg) {
         var e, text, i, child;
         if (typeof arg == 'string' || typeof arg == 'number') {
+            arg = '' + arg;
+            if (arg.substr(0, 6) == '<html>') return this.html( arg.substr( 6 ) );
+            
             this.clear();
             this._element.appendChild(window.document.createTextNode(arg));
             return this;
