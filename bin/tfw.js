@@ -14,7 +14,6 @@ var Util = require("../lib/util.js");
 var Project = require("../lib/project");
 var PathUtils = require("../lib/pathutils");
 
-
 // Read the version in the package file.
 var packageFile = Path.join(__dirname, "../package.json");
 var cfg = JSON.parse(FS.readFileSync(packageFile));
