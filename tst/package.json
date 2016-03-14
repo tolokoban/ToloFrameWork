@@ -1,0 +1,26 @@
+{
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tolokoban/ToloFrameWork.git"
+    },
+    "homepage": "https://github.com/tolokoban/ToloFrameWork",
+    "bugs": {
+        "url": "https://github.com/tolokoban/ToloFrameWork/issues"
+    },
+    "scripts": {
+        "test": "jasmine",
+        "test:dbg": "node --debug-brk node_modules/jasmine/bin/jasmine.js"
+    },
+    "name": "Test",
+    "version": "1",
+    "author": "Tolokoban",
+    "description": "Used to pontual testings.",
+    "license": "GPL",
+    "tfw": {
+        "modules": [],
+        "compile": {
+            "type": "firefoxos",
+            "files": "\\.html$"
+        }
+    }
+}

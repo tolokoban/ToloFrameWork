@@ -540,7 +540,7 @@ Widget.prototype.activatePointerEvents = function() {
             if (!tap) return;
             pe.touch = 0;
             var delta = Date.now() - pe.start;
-            if (delta > 50) {
+            if (delta < 900) {
                 tap[0].call(tap[1], evt);
             }
         }
