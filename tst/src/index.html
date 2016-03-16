@@ -1,0 +1,24 @@
+<x-html title="Test">
+    <x-template id="test.contact">
+        <fieldset>
+            <legend>Contact</legend>
+            <dl>
+                <dt>Name:</dt>
+                <dd>
+                    <input type="text">
+                        <x-tpl att="value" var="name" />
+                    </input>
+                </dd>
+            </dl>
+            <dl>
+                <dt>E-Mail:</dt>
+                <dd>
+                    <input type="text">
+                        <x-tpl att="value" var="email" />
+                        <x-tpl remove-class="invalid" var="email$valid" />
+                    </input>
+                </dd>
+            </dl>
+        </fieldset>
+    </x-template>
+</x-html>
