@@ -1,1 +1,1 @@
-window['#{{name}}']=function(exports,module){ {{intl}} {{code}} }
+require( '{{name}}', function(exports, module) { {{intl}} {{code}} });

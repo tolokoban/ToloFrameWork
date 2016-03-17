@@ -1,9 +1,14 @@
 var require = function() {
     var modules = {};
-    
-    return function(id, body) {
+    var definitions = {};
+
+    var f = function(id, body) {
+        if( typeof body === 'function' ) {
+            definitions[id] = body;
+            return;
+        }
         var mod;
-        body = window["#" + id];
+        body = definitions[id];
         if (typeof body === 'undefined') {
             var err = new Error("Required module is missing: " + id);   
             console.error(err.stack);
@@ -20,4 +25,5 @@ var require = function() {
         }
         return mod;
     };
+    return f;
 }();
