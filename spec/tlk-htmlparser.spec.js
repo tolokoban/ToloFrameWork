@@ -74,6 +74,32 @@ describe('htmlparser', function () {
             ]}
         );
     });
+    it('should deal with simple autoclose elements with attributes', function () {
+        check(
+            '<$number toto="yes"/>',
+            {children:[
+                {type: Tree.TAG, name: '$number', attribs: {toto: "yes"}, children:[], pos: 0, autoclose: true}
+            ]}
+        );
+    });
+    it('should deal with simple autoclose elements with attributes and space before last slash', function () {
+        check(
+            '<$number toto="yes" />',
+            {children:[
+                {type: Tree.TAG, name: '$number', attribs: {toto: "yes"}, children:[], pos: 0, autoclose: true}
+            ]}
+        );
+    });
+    it('should deal with simple autoclose element in a DIV', function () {
+        check(
+            '<div><$number/></div>',
+            {children:[{
+                type: Tree.TAG, name: "div", attribs: {}, children:[
+                    {type: Tree.TAG, name: '$number', attribs: {}, children:[], pos: 5, autoclose: true}
+                ], pos: 0
+            }]}
+        );
+    });
     it('should deal with simple autoclose elements with namespace', function () {
         check(
             '<tag:div/>',
