@@ -40,6 +40,7 @@ var Book = function(book, hashPrefix) {
             pages[id] = child;
             if (!current) {
                 current = child;
+                activate.call( this, child );
             } else {
                 child.addClass("hide");
             }
@@ -85,6 +86,10 @@ Book.prototype.show = function(pageID) {
     var rect;
     var pages = this._pages;
     var page = pages[pageID];
+    if( typeof page === 'undefined' ) {
+        console.error( "[tfw.wdg.book.show] Unknown page `" + pageID + "`!" );
+        return false;
+    }
     var current = this._current;
     var pageIdx = parseInt(page.attr("data-index")) || 0;
     var currentIdx = parseInt(current.attr("data-index")) || 0;
@@ -108,8 +113,24 @@ Book.prototype.show = function(pageID) {
     }
     current.addClass("transition");
     page.addClass("transition");
-
     this._current = page;
+
+    activate.call( this, page );
+};
+
+
+function activate( page ) {
+    var autofocusable = page.element().querySelector("input[autofocus]");
+    if( autofocusable ) {
+        window.setTimeout( autofocusable.focus.bind( autofocusable ), 300 );
+    }
+    var slotName = page.attr( 'data-activate' );
+    if( slotName ) {
+        var slot = window.APP[slotName];
+        if( typeof slot === 'function' ) {
+            slot( this );
+        }
+    }
 };
 
 
