@@ -1,6 +1,22 @@
-/**
- * Component x-book
- */
+/**********************************************************************
+ require( 'x-book.com' )
+ -----------------------------------------------------------------------
+ @example
+<x-book>
+  <login>
+
+  </login>
+
+  <tasks-list>
+
+  </tasks-list>
+
+  <tasks-add>
+
+  </tasks-add>
+</x-book>
+ **********************************************************************/
+
 
 exports.tags = ["x-book"];
 exports.priority = 0;
@@ -34,6 +50,7 @@ exports.compile = function(root, libs) {
     libs.require("tfw.wdg.book");
     var id = root.attribs.id || libs.nextID();
     var children = [];
+    // Loop on each page definition.
     root.children.forEach(function (child) {
         if (child.type != libs.Tree.TAG) return;
         child.attribs["data-page"] = child.name;
