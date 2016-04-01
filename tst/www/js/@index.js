@@ -42,6 +42,57 @@ addListener(
         // Attach controllers.
         APP = require('main');
 setTimeout(function (){if(typeof APP.start==='function')APP.start()});
+/****************************************
+<x-template mod="test.contact">
+        <fieldset>
+            <legend $tpl="title">Contact</legend>
+            <dl>
+                <dt>Name:</dt>
+                <dd>
+                    <input type="text" $tpl="name">
+                </dd>
+            </dl>
+            <dl>
+                <dt>E-Mail:</dt>
+                <dd>
+                    <input type="text" $tpl="email">
+                </dd>
+            </dl>
+        </fieldset>
+    </x-template>
+****************************************/
+require('x-template').register("Contact", function( root ) {
+    var $ = require( 'dom' );
+    var elem1 = $.tag( "fieldset" );
+    var elem2 = $.tag( "legend" );
+    elem1.appenChild( elem2 );
+    var elem3 = $.txt( "Contact" );
+    elem2.appenChild( elem3 );
+    var elem4 = $.tag( "dl" );
+    elem1.appenChild( elem4 );
+    var elem5 = $.tag( "dt" );
+    elem4.appenChild( elem5 );
+    var elem6 = $.txt( "Name:" );
+    elem5.appenChild( elem6 );
+    var elem7 = $.tag( "dd" );
+    elem4.appenChild( elem7 );
+    var elem8 = $.tag( "input" );
+    $.att( elem8, {"type":"text"} );
+    elem7.appenChild( elem8 );
+    var elem9 = $.tag( "dl" );
+    elem1.appenChild( elem9 );
+    var elem10 = $.tag( "dt" );
+    elem9.appenChild( elem10 );
+    var elem11 = $.txt( "E-Mail:" );
+    elem10.appenChild( elem11 );
+    var elem12 = $.tag( "dd" );
+    elem9.appenChild( elem12 );
+    var elem13 = $.tag( "input" );
+    $.att( elem13, {"type":"text"} );
+    elem12.appenChild( elem13 );
+    return { "title": elem2, "name": elem8, "email": elem13 };
+};
+
     }
 );
 /* Copyright © 2011-2015 by Neil Jenkins. MIT Licensed. */
