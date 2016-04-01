@@ -1,12 +1,19 @@
 <x-html title="Test" app="main">
-    <x-template mod="test.task-list" tag="article" attribs="todos=[]">
-        <h1>Todo</h1>
-        <ul>
-            <tpl-loop array="$todos" var="$task">
-                <li><tpl-text>$task</tpl-text></li>
-            </tpl-loop>
-        </ul>
-        <input type="text" get:value="$value" set:value="$clear" />
-        <button event:tap="$todos.Push($value); $clear=''">Add #<tpl-text>$todos.length</tpl-text></button>
+    <x-template mod="test.contact">
+        <fieldset>
+            <legend $tpl="title">Contact</legend>
+            <dl>
+                <dt>Name:</dt>
+                <dd>
+                    <input type="text" $tpl="name">
+                </dd>
+            </dl>
+            <dl>
+                <dt>E-Mail:</dt>
+                <dd>
+                    <input type="text" $tpl="email">
+                </dd>
+            </dl>
+        </fieldset>
     </x-template>
 </x-html>

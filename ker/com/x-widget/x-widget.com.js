@@ -1,6 +1,16 @@
-/**
- * Component x-widget
- */
+/**********************************************************************
+ @example
+<x-widget name="tfw.input">
+{
+  label: "Email",
+  validator: "[^@]+@[^@]\\.[^@.]+"
+}
+</x-widget>
+
+<x-widget name="tfw.input" $label="Email" $validator="[^@]+@[^@]\\.[^@.]+"/>
+
+ **********************************************************************/
+
 exports.tags = ["x-widget"];
 exports.priority = 0;
 
@@ -16,10 +26,6 @@ exports.compile = function(root, libs) {
     }
     var id = root.attribs.id || (name + ID++);
     var src = (root.attribs.src || "").trim();
-    root.attribs = {
-        id: id,
-        style: "display:none"
-    };
     var args = null;
     if (src.length > 0) {
         if (!libs.fileExists(src)) {
@@ -40,9 +46,26 @@ exports.compile = function(root, libs) {
             args = JSON.stringify(args);
         }
     }
+    if( args == '""' ) {
+        // All the attributes that start with a '$' are used as args attributes.
+        args = {};
+        var key, val;
+        for( key in root.attribs ) {
+            if( key.charAt(0) == '$' ) {
+                val = root.attribs[key];
+                args[key.substr( 1 )] = val;
+            }
+        }
+        args = JSON.stringify( args );
+    }
+
     root.children = [];
     root.name = "div";
     delete root.autoclose;
+    root.attribs = {
+        id: id,
+        style: "display:none"
+    };
 
     libs.require(name);
     libs.require("x-widget");
