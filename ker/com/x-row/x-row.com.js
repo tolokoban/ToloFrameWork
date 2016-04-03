@@ -12,6 +12,14 @@ exports.priority = 0;
  * Compile a node of the HTML tree.
  */
 exports.compile = function(root, libs) {
+    // Simplify `dir` attribute. Because you can set the whole word or
+    // the first letter only. Possible values for `dir` attribute are:
+    // * `H` or `horizontal`.
+    // * `V` or `vertical`.
+    // * `W` or `wide`.
+    // * `N` or `narrow`.
+    if( !root.attribs.dir ) root.attribs.dir = 'W';
+    else root.attribs.dir = root.attribs.dir.charAt(0).toUpperCase();
     // `N` is just a shortcut for `libs.Tree`.
     var N = libs.Tree;
     // Default anchor.

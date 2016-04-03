@@ -203,7 +203,11 @@ function addClass(elem) {
         return elem;
     }
     args.forEach(function (className) {
-        elem.classList.add( className );
+        if( typeof className === 'string' ) {
+            className = className.trim();
+            if( className.length == 0 ) return;
+            elem.classList.add( className );
+        }
     });
     return elem;
 };
