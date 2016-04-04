@@ -1,9 +1,33 @@
+/**********************************************************************
+ require( 'require' )
+ -----------------------------------------------------------------------
+ @example
+
+ var Path = require("node://path");  // Only in NodeJS/NW.js environment.
+ var Button = require("tfw.button");
+
+ **********************************************************************/
+
 var require = function() {
     var modules = {};
-    
-    return function(id, body) {
+    var definitions = {};
+    var nodejs_require = typeof window.require === 'function' ? window.require : null;
+
+    var f = function(id, body) {
+        if( id.substr( 0, 7 ) == 'node://' ) {
+            // Calling for a NodeJS module.
+            if( !nodejs_require ) {
+                throw Error( "[require] NodeJS is not available to load module `" + id + "`!" );
+            }
+            return nodejs_require( id.subtr( 7 ) );
+        }
+
+        if( typeof body === 'function' ) {
+            definitions[id] = body;
+            return;
+        }
         var mod;
-        body = window["#" + id];
+        body = definitions[id];
         if (typeof body === 'undefined') {
             var err = new Error("Required module is missing: " + id);   
             console.error(err.stack);
@@ -20,4 +44,5 @@ var require = function() {
         }
         return mod;
     };
+    return f;
 }();
