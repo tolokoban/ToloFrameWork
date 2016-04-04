@@ -111,19 +111,25 @@ function att( element, attribs ) {
 }
 
 function add( element ) {
-    var i, child;
-    for (i = 1 ; i < arguments.length ; i++) {
-        child = arguments[i];
-        if( typeof child === 'string' || typeof child === 'number' ) {
-            child = document.createTextNode( child );
+    try {
+        var i, child;
+        for (i = 1 ; i < arguments.length ; i++) {
+            child = arguments[i];
+            if( typeof child === 'string' || typeof child === 'number' ) {
+                child = document.createTextNode( child );
+            }
+            else if( typeof child.element === 'function' ) {
+                // Backward compatibility with Widgets.
+                child = child.element();
+            }
+            element.appendChild( child );
         }
-        else if( typeof child.element === 'function' ) {
-            // Backward compatibility with Widgets.
-            child = child.element();
-        }
-        element.appendChild( child );
+        return element;
     }
-    return element;
+    catch( ex ) {
+        console.error( "[DOM.add] arguments=", [].slice.call( arguments ) );
+        throw Error( "[DOM.add] " + ex );
+    }
 }
 
 function on( element, slots, capture ) {
