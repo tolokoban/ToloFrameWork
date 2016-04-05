@@ -73,10 +73,12 @@ exports.wrap = wrap;
  */
 exports.clear = clear;
 
-function wrap( obj, element ) {
+function wrap( obj, element, nomethods ) {
     Object.defineProperty( obj, 'element', {
         value: element, writable: false, configurable: false, enumerable: true
     });
+    if( nomethods ) return obj;
+    
     obj.on = on.bind( obj, element );
     obj.css = css.bind( obj, element );
     obj.add = add.bind( obj, element );
@@ -152,7 +154,6 @@ function on( element, slots, capture ) {
         var tap = slots.tap;
         if( typeof tap === 'function' || tap === null ) {
             evt.stopPropagation();
-            evt.preventDefault();
             if( tap !== null ) tap( element );
         }
     }, capture);
