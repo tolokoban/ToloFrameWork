@@ -78,7 +78,7 @@ function wrap( obj, element, nomethods ) {
         value: element, writable: false, configurable: false, enumerable: true
     });
     if( nomethods ) return obj;
-    
+
     obj.on = on.bind( obj, element );
     obj.css = css.bind( obj, element );
     obj.add = add.bind( obj, element );
@@ -181,7 +181,11 @@ function tagNS( ns, name ) {
         } else {
             switch( typeof arg ) {
             case "string":
-                addClass(e, arg);
+                arg.split( ' ' ).forEach(function ( item ) {
+                    if( item.length > 0 ) {
+                        addClass(e, item);
+                    }
+                });
                 break;
             case "object":
                 for( key in arg ) {
@@ -213,7 +217,13 @@ function addClass(elem) {
         if( typeof className === 'string' ) {
             className = className.trim();
             if( className.length == 0 ) return;
-            elem.classList.add( className );
+            try {
+                elem.classList.add( className );
+            }
+            catch( ex ) {
+                console.error( "[dom.addClass] Invalid class name: ", className );
+                console.error( ex );
+            }
         }
     });
     return elem;
@@ -232,7 +242,13 @@ function removeClass(elem) {
         return elem;
     }
     args.forEach(function (className) {
-        elem.classList.remove( className );
+        try {
+            elem.classList.remove( className );
+        }
+        catch( ex ) {
+            console.error( "[dom.removeClass] Invalid class name: ", className );
+            console.error( ex );
+        }
     });
     return elem;
 };

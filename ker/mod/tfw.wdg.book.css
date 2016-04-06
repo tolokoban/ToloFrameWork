@@ -24,6 +24,11 @@
     z-index: 1;
 }
 
+.tfw-wdg-book[scroll] > *.page,
+.tfw-wdg-book > *.page[scroll] {
+    overflow: auto;
+}
+
 .tfw-wdg-book > *.page {
     display: block;
     left: 0;
@@ -32,7 +37,7 @@
     bottom: 0;
     width: 100%;
     height: 100%;
-    margin: 0;
+    margin: 0;    
     transform: translateX(0);
 }
 
