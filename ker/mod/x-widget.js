@@ -45,7 +45,7 @@ Widget.template = function( attribs ) {
 function register( id, wdg ) {
     widgets[id] = wdg;
     var mySlots = slots[id];
-    console.info("[x-widget] mySlots=...", mySlots);
+    console.info("[x-widget] widget creation=...", id);
     if( typeof mySlots !== 'undefined' ) {
         window.setTimeout(function() {
             mySlots.forEach(function (slot) {
