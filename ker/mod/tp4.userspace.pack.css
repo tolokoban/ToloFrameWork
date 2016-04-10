@@ -1,0 +1,11 @@
+div.tp4-userspace-pack {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    right: 4px;
+    bottom: 4px;
+    width: auto;
+    height: auto;
+    padding: 1em;
+    background: #555;
+}

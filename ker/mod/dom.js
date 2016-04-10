@@ -36,6 +36,12 @@ exports.toggleClass = toggleClass;
  */
 exports.replace = replace;
 /**
+ * Remove element from its parent.
+ * @param element {Element} - Element to detach from its parent.
+ * @return The parent element.
+ */
+exports.detach = detach;
+/**
  * Add event handlers to one or many elements.
  *
  * @param element {object|array} - list of elements on which apply events handlers.
@@ -90,7 +96,7 @@ function wrap( obj, element, nomethods ) {
 }
 
 function replace( newElem, oldElem ) {
-    oldElem.nodeParent.replaceChild( newElem, oldElem );
+    oldElem.parentNode.replaceChild( newElem, oldElem );
     return newElem;
 }
 
@@ -274,7 +280,6 @@ function clear( element ) {
     }
     var args = [].slice.call( arguments );
     if( args.length > 1 ) {
-        args.shift();
         add.apply( this, args );
     }
     return element;
@@ -286,4 +291,11 @@ function get( element, query ) {
         element = window.document;
     }
     return element.querySelector( query );
+}
+
+function detach( element ) {
+    var parent = element.parentElement;
+    if( !parent ) return parent;
+    parent.removeChild( element );
+    return parent;
 }
