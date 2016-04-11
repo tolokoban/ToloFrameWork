@@ -28,6 +28,7 @@ exports.get = get;
 exports.css = css;
 exports.att = att;
 exports.addClass = addClass;
+exports.hasClass = hasClass;
 exports.removeClass = removeClass;
 exports.toggleClass = toggleClass;
 /**
@@ -90,6 +91,7 @@ function wrap( obj, element, nomethods ) {
     obj.add = add.bind( obj, element );
     obj.att = att.bind( obj, element );
     obj.addClass = addClass.bind( obj, element );
+    obj.hasClass = hasClass.bind( obj, element );
     obj.removeClass = removeClass.bind( obj, element );
     obj.toggleClass = toggleClass.bind( obj, element );
     return obj;
@@ -233,7 +235,12 @@ function addClass(elem) {
         }
     });
     return elem;
-};
+}
+
+
+function hasClass( elem, className ) {
+    return elem.classList.contains( className );
+}
 
 
 function removeClass(elem) {
@@ -257,7 +264,7 @@ function removeClass(elem) {
         }
     });
     return elem;
-};
+}
 
 
 function toggleClass(elem) {
@@ -266,7 +273,8 @@ function toggleClass(elem) {
         elem.classList.toggle( className );
     });
     return elem;
-};
+}
+
 
 function clear( element ) {
     // (!) On préfère retirer les éléments un par un du DOM plutôt que d'utiliser simplement
