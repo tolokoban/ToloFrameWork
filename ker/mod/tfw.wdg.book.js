@@ -1,42 +1,73 @@
 "use strict";
 var Hash = require("tfw.hash-watcher");
 var Widget = require("wdg");
+var Listeners = require("tfw.listeners");
+
 
 /**
- * @example
- * <div id="book-id">
- *   <div data-page="welcome">...</div>
- *   <div data-page="game">...</div>
- *   <div data-page="highscores">...</div>
- * </div>
- *
- * @example
- * var Book = require("tfw.wdg.book");
- * var book = new Book("book-id");
- * book.show("game");
- * @class Book
+ @example
+ <div id="book-id">
+ <div data-page="welcome">...</div>
+ <div data-page="game">...</div>
+ <div data-page="highscores">...</div>
+ </div>
+
+ @example
+ var Book = require("tfw.wdg.book");
+ var book = new Book("book-id");
+ book.show("game");
+
+ @example
+ var Book = require("tfw.wdg.book");
+ var book = Book.create({
+ list: list,
+ import: importBibs,
+ edit: edit,
+ print: print
+ }, 'book');
+
  */
 var Book = function(book, hashPrefix) {
-    if (typeof book === 'string') {
-        book = document.getElementById(book);
-    }
-    Widget.call(this, {element: book});
-    book.$ctrl = this;
-    this.addClass("tfw-wdg-book", "fullscreen");
     var that = this,
         i, child, id, pages = {}, current, count = 0;
-    for (i = 0 ; i < book.childNodes.length ; i++) {
-        child = book.childNodes[i];
-        if (child.nodeType != 1) continue;
-        child = new Widget({element: child});
-        id = child.attr("data-page");
-        if (id && id.length > 0) {
-            child.addClass("page");
-            if (!child.attr("data-index")) {
-                child.attr("data-index", count);
+
+    Object.defineProperty( this, 'eventChange', { value: new Listeners() } );
+    if (typeof book === 'string') {
+        book = document.getElementById(book);
+        Widget.call(this, {element: book});
+        book.$ctrl = this;
+        for (i = 0 ; i < book.childNodes.length ; i++) {
+            child = book.childNodes[i];
+            if (child.nodeType != 1) continue;
+            child = new Widget({element: child});
+            id = child.attr("data-page");
+            if (id && id.length > 0) {
+                child.addClass("page");
+                if (!child.attr("data-index")) {
+                    child.attr("data-index", count);
+                } else {
+                    count = parseInt(child.attr("data-index")) || 0;
+                }
+                pages[id] = child;
+                if (!current) {
+                    current = child;
+                    this._pageID = id;
+                    activate.call( this, child );
+                } else {
+                    child.addClass("hide");
+                }
             } else {
-                count = parseInt(child.attr("data-index")) || 0;
+                child.addClass("overlay");
             }
+            count++;
+        }
+    } else {
+        Widget.call( this );
+        for( id in book ) {
+            child = book[id];
+            this.append( child );
+            child.addClass("page");
+            child.attr("data-index", count);
             pages[id] = child;
             if (!current) {
                 current = child;
@@ -44,11 +75,10 @@ var Book = function(book, hashPrefix) {
             } else {
                 child.addClass("hide");
             }
-        } else {
-            child.addClass("overlay");
         }
-        count++;
     }
+    this.addClass("tfw-wdg-book", "fullscreen");
+
     this._pages = pages;
     this._current = current;
     if (!current) {
@@ -66,7 +96,7 @@ var Book = function(book, hashPrefix) {
                 hash = hash.trim();
                 var page;
                 if (hash.substr(0, hashPrefix.length + 2) == '/' + hashPrefix + '/') {
-                    page = hash.substr(hashPrefix.length + 2).trim();
+                    page = hash.substr(hashPrefix.length + 2).trim().split( '/' )[0];
                     that.show(page);
                 }
             });
@@ -114,6 +144,7 @@ Book.prototype.show = function(pageID) {
     current.addClass("transition");
     page.addClass("transition");
     this._current = page;
+    this._pageID = pageID;
 
     activate.call( this, page );
 };
@@ -131,6 +162,8 @@ function activate( page ) {
             slot( this );
         }
     }
+    // Fire an event because page has changed.
+    this.eventChange.fire( this._pageID, page );
 };
 
 

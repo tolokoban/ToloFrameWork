@@ -19,89 +19,12 @@ header('Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS');
 header('Access-Control-Max-Age: 900');
 
 date_default_timezone_set("Europe/Paris");
-include_once("php/db.inc");
 
 class FatalException extends Exception {}
 
 function fatal($code, $message="") {
     throw new FatalException($message, $code);
 }
-
-class User {
-    var $user = null;
-
-    function __construct() {
-        if (isset($_SESSION["USER"])) {
-            $this->user = &$_SESSION["USER"];
-            if (!isset($this->user["data"])) {
-                $this->user["data"] = Array();
-            }
-        } else {
-            $this->user = null;
-        }
-    }
-
-    function hasRole($role) {
-        $role = strtoupper(trim($role));
-        if ($role == "") return true;
-        if ($this->user == null) return false;
-        if (!isset($this->user["roles"])) return false;
-        $roles = $this->user["roles"];
-        if (!is_array($roles)) return false;
-        return in_array($role, $roles);
-    }
-
-    function isLogged() {
-        if ($this->user == null) return false;
-        return true;
-    }
-
-    function isEnabled() {
-        if (!$this->isLogged()) return false;
-        if (!isset($this->user["enabled"])) return false;
-        if ($this->user["enabled"]) return true;
-        return false;
-    }
-
-    function getId() {
-        return $this->user["id"];
-    }
-
-    function getLogin() {
-        return $this->user["login"];
-    }
-
-    function getName() {
-        return $this->user["name"];
-    }
-
-    /**
-     * Set data attribute.
-     */
-    function set($key, $val) {
-        $this->user["data"][$key] = $val;
-    }
-
-    function get($key) {
-        if (!isset($this->user["data"][$key])) return null;
-        return $this->user["data"][$key];
-    }
-
-    function save() {
-        if (!$this->isLogged()) return false;
-
-        global $DB;
-        $DB->query("UPDATE " . $DB->table("user")
-                 . " SET data=?"
-                 . " WHERE id=?",
-                   json_encode($this->user["data"]),
-                   $this->user["id"]);
-        return true;
-    }
-}
-
-
-
 
 // Protection contre les modification de quotes selon la config du serveur PHP.
 if (get_magic_quotes_gpc()) {
@@ -228,6 +151,8 @@ class SystemData {
     }
 };
 
+
+include_once("php/db.inc");
 
 // Cette fonction permet d'éviter d'utiliser des includes
 // pour chaque classe que l'on souhaite utiliser.
