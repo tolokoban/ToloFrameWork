@@ -1,20 +1,20 @@
 /**********************************************************************
-x-dynamic-module
+ x-dynamic-module
  -----------------------------------------------------------------------
 
-The following statement will seek for all `*.js` files in `data/actions` directory and create a module called `mymodules.actions` which exports as many attributes as found files.
-For instance, if you have `foo.js` and `bar.js`, the module will be:
+ The following statement will seek for all `*.js` files in `data/actions` directory and create a module called `mymodules.actions` which exports as many attributes as found files.
+ For instance, if you have `foo.js` and `bar.js`, the module will be:
 
-```
-exports.foo = ...
-exports.bar = ...
+ ```
+ exports.foo = ...
+ exports.bar = ...
 
 
-@example
+ @example
 
-<x-dynamic-module src="data/actions" name="mymodules.actions" />
+ <x-dynamic-module src="data/actions" name="mymodules.actions" />
 
- 
+
  **********************************************************************/
 var FS = require("fs");
 var Path = require("path");
@@ -34,8 +34,9 @@ exports.compile = function(root, libs) {
     if( !name ) libs.fatal( 'Missing mandatory attribute `name` in <x-dynamic-module>!' );
     if( !libs.fileExists( src ) ) libs.fatal( 'Folder not found in <x-dynamic-module>: "' + src + '"!' );
 
-    var mod = '';
     var path = libs.filePath( src );
+    var mod = readdir( path );
+    /*
     var files = FS.readdirSync( path );
     files.forEach(function ( file ) {
         if( file.substr( file.length - 3 ) == '.js' ) {
@@ -43,8 +44,28 @@ exports.compile = function(root, libs) {
             mod += FS.readFileSync( Path.join( path, file ) ).toString() + "\n";
         }
     });
-
+     */
     libs.addDynamicModule( name, mod );
     root.type = libs.Tree.VOID;
     delete root.children;
 };
+
+
+function readdir( path, prefix ) {
+    if( typeof prefix === 'undefined' ) prefix = '';
+    var mod = '';
+    var files = FS.readdirSync( path );
+    files.forEach(function ( filename ) {
+        var filepath = Path.join( path, filename );
+        var stats = FS.statSync( filepath );
+        if( stats.isDirectory() ) {
+            mod += readdir( filepath, prefix + filename + ":" );
+        } else {
+            if( filename.substr( filename.length - 3 ) == '.js' ) {
+                mod += "exports['" + prefix + filename.substr( 0, filename.length - 3 ) + "'] = ";
+                mod += FS.readFileSync( Path.join( path, filename ) ).toString() + "\n";
+            }
+        }
+    });
+    return mod;
+}
