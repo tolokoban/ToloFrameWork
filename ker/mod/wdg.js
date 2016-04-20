@@ -282,13 +282,10 @@ Widget.prototype = {
                     }, this
                 );
             } else {
-                var e = typeof arg.element === 'function' ? arg.element() : arg;
+                var e = arg;
+                if( typeof e.element === 'function' ) e = e.element();
+                else if( e.element ) e = e.element;
                 this._element.appendChild(e);
-                /*
-                 if (typeof arg.onAppend === 'function') {
-                 arg.onAppend.call(arg);
-                 }
-                 */
             }
         }
         return this;
