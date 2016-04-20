@@ -20,6 +20,7 @@ exports.compile = function(root, libs) {
         libs.fatal( "File not found: \"" + src + "\"!" );
     }
     libs.addInclude( src );
+    console.log( "Inlucde HTML: ", src );
     var node = libs.parseHTML(
         libs.readFileContent( src )
     );

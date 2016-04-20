@@ -5,6 +5,8 @@
 
 .x-row[fullwidth] {
     width: 100%;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .x-row[fill],
@@ -22,6 +24,8 @@
 .x-row > div > div {
     margin: 0;
     padding: 0;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .x-row > div > div {
@@ -33,10 +37,14 @@
 
 .x-row[dir=H] > div {
     display: table-cell;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .x-row[dir=V] > div {
     display: table-row;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .x-row > div.TRBL > div > div,
@@ -45,6 +53,8 @@
 .x-row > div.RL > div > div
 {
     width: 100%;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .x-row > div.TRBL > div > div,
@@ -53,11 +63,15 @@
 .x-row > div.TB > div > div
 {
     height: 100%;
+    text-align: center;
+    vertical-align: middle;
 }
 
 @media (orientation: portrait) {
     .x-row[dir=N] > div {
         display: table-cell;
+        text-align: center;
+        vertical-align: middle;
     }
     .x-row[dir=W] > div {
         display: table-row;
@@ -67,8 +81,13 @@
 @media (orientation: landscape) {
     .x-row[dir=W] > div {
         display: table-cell;
+        text-align: center;
+        vertical-align: middle;
     }
     .x-row[dir=N] > div {
         display: table-row;
+        text-align: center;
+        vertical-align: middle;
+
     }
 }
