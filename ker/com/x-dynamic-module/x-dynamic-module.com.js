@@ -63,7 +63,14 @@ function readdir( path, prefix ) {
         } else {
             if( filename.substr( filename.length - 3 ) == '.js' ) {
                 mod += "exports['" + prefix + filename.substr( 0, filename.length - 3 ) + "'] = ";
-                mod += FS.readFileSync( Path.join( path, filename ) ).toString() + "\n";
+                var content = FS.readFileSync( Path.join( path, filename ) ).toString();
+                mod += content + "\n";
+                try {
+                    var evaluation = eval( content );
+                }
+                catch( ex ) {
+                    console.log( "ERROR in your Dynamic module: `" + prefix + filename + "`".red );
+                }
             }
         }
     });

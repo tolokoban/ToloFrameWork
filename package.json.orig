@@ -1,10 +1,10 @@
 {
   "name": "toloframework",
 <<<<<<< HEAD
-  "version": "0.34.2",
+  "version": "0.34.9",
 =======
-  "version": "0.34.1",
->>>>>>> 31994e970e782913b362027b4248042fd07e89e5
+  "version": "0.34.10",
+>>>>>>> 657418515c7e415ea40a990d977154ac638f432b
   "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
   "bin": {
     "tfw": "bin/tfw.js"
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "colors": "^1.1.2",
-    "less": "^2.5.3",
+    "less": "^2.6.1",
     "marked": "^0.3.5",
     "readline-sync": "^1.2.22",
     "string": "^3.3.1",
