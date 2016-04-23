@@ -8,22 +8,27 @@
  * @module tfw
  */
 require("colors");
-var Path = require("path");
 var FS = require("fs");
+var Path = require("path");
 var Util = require("../lib/util.js");
+var GitHub = require("../lib/github.js");
 var Project = require("../lib/project");
 var PathUtils = require("../lib/pathutils");
 
 // Read the version in the package file.
 var packageFile = Path.join(__dirname, "../package.json");
-var cfg = JSON.parse(FS.readFileSync(packageFile));
+var cfg = {};
+console.log( packageFile );
+if( FS.existsSync( packageFile ) ) {
+    cfg = JSON.parse( FS.readFileSync( packageFile ) );
+}
 var txt = " ToloFrameWork " + cfg.version + " ";
 var sep = "";
 for (var i = 0 ; i < txt.length ; i++) {
     sep += "-";
 }
 sep = "+" + sep + "+";
-txt = "|" + txt + "|";
+txt = "| ToloFrameWork " + cfg.version.bold + " |";
 console.log(sep);
 console.log(txt);
 console.log(sep);
@@ -73,6 +78,10 @@ if (args.indexOf('clean') > -1) {
         Util.cleanDir("./tmp");
     });
 }
+if (args.indexOf('github') > -1) {
+    GitHub.start();
+    return;
+}
 if (args.indexOf('version') > -1) {
     tasks.push(function(prj) {
         if (firstProcess) {
@@ -115,9 +124,10 @@ if (args.indexOf('test') > -1) {
 if (tasks.length == 0) {
     console.log();
     console.log("Accepted arguments:");
+    console.log("  github".yellow + ":  create a new empty project based on Github.");
     console.log("  clean".yellow + ":   remove all temporary files.");
     console.log("  build".yellow + ":   compile project in the www/ folder.");
-    console.log("  dev".yellow + ":  JS and CSS files won't be minified.");
+    console.log("  dev".yellow + ":     JS and CSS files won't be minified.");
     console.log("  php".yellow + ":     add PHP services.");
     console.log("  test".yellow + ":    prepare Karma tests.");
     console.log("  doc".yellow + ":     create documentation.");
