@@ -1,6 +1,6 @@
 {
   "name": "toloframework",
-  "version": "0.34.11",
+  "version": "0.35.0",
   "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
   "bin": {
     "tfw": "bin/tfw.js"
@@ -38,7 +38,7 @@
     "marked": "^0.3.5",
     "readline-sync": "^1.2.22",
     "string": "^3.3.1",
-    "uglify-js": "^2.6.1"
+    "uglify-js": "^2.6.2"
   },
   "homepage": "https://github.com/tolokoban/ToloFrameWork",
   "main": "index.js",

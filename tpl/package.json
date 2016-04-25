@@ -1,23 +1,39 @@
 {
-  "main": "index.html",
-  "name": "{{name}}",
-  "description": "This is my first node-webkit's App!",
-  "version": "{{version}}",
-  "keywords": [ "toloframework", "node-webkit" ],
-  "window": {
-    "title": "{{name}}",
-    "icon": "icon.png",
-    "toolbar": true,
-    "frame": true,
-    "width": 800,
-    "height": 500,
-    "position": "mouse",
-    "min_width": 400,
-    "min_height": 200,
-    "max_width": 800,
-    "max_height": 600
-  },
-  "webkit": {
-    "plugin": true
-  }
+    "name": "{{name}}",
+    "author": "{{author}}",
+    "description": "{{desc}}",
+    "repository": {
+        "type": "git",
+        "url": "{{url}}"
+    },
+    "homepage": "{{homepage}}",
+    "license": "GPL-3.0",
+    "scripts": {
+        "test": "node node_modules/karma/bin/karma start karma.conf.js",
+        "test:dbg": "node --debug-brk node_modules/karma/bin/karma start karma.conf.js",
+        "debug": "node node_modules/toloframework/bin/tfw.js build dev test php watch",
+        "clean": "node node_modules/toloframework/bin/tfw.js clean",
+        "release": "node node_modules/toloframework/bin/tfw.js build version php clean"
+    },
+    "bugs": {
+        "url": "{{bugs}}"
+    },
+    "tfw": {
+        "modules": [],
+        "compile": {
+            "type": "firefoxos",
+            "files": [ "\\.html$" ]
+        },
+        "output": "www"
+    },
+    "version": "0.0.1",
+    "reservedModules": [],
+    "dependencies": {
+        "jasmine-core": "^2.4.1",
+        "karma": "^0.13.19",
+        "karma-chrome-launcher": "^0.2.2",
+        "karma-firefox-launcher": "^0.1.7",
+        "karma-jasmine": "^0.3.6",
+        "toloframework": "^0.34.0"
+    }
 }
