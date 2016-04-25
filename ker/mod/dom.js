@@ -269,8 +269,12 @@ function removeClass(elem) {
 
 function toggleClass(elem) {
     var args = [].slice.call( arguments, 1 );
-    args.forEach(function (className) {
-        elem.classList.toggle( className );
+    args.forEach(function( className ) {
+        if( hasClass( elem, className ) ) {
+            removeClass( elem, className );
+        } else {
+            addClass( elem, className );
+        }
     });
     return elem;
 }
