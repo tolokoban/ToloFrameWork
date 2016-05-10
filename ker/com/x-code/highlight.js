@@ -7,7 +7,7 @@ var TOKENS = {
         keyword: /^(?:[^a-zA-Z$_0-9])(break|continue|do|for|import|new|this|void|case|default|else|function|in|return|typeof|while|comment|delete|export|if|label|switch|var|with|catch|enum|throw|class|extends|try|const|finally|debugger|super|let)(?=[^a-zA-Z$_0-9])/,
         keyword2: /^(?:[^a-zA-Z$_0-9])(window|require|module|exports)(?=[^a-zA-Z$_0-9])/,
         comment: /^(\/\/[^\n]*[\n]|\/\*([^\*]+|\*[^\/])*\*\/)/,
-        regexp: /^\/(\\\/|[^\/])+\/[gmi]*/,
+        regexp: /^\/(\\\/|[^\/\n\t])+\/[gmi]*/,
         symbol: /^\[\(\),;:\{\}\[\]]+/,
         operator: /^(\&[a-zA-Z]+;|===|!==|==|!=|<=|>=|<|>|\|\||&&|\*|\+|\-|\/|%|[\+=&\|\-]+)/
     }
