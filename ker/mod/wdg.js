@@ -56,7 +56,6 @@ Widget.prototype = {
     },
 
     /**
-     * @description
      * Remove this element from its parent.
      * @memberof wdg
      */
@@ -72,8 +71,6 @@ Widget.prototype = {
     },
 
     /**
-     * @description
-     *
      * @param name
      * @memberof wdg
      */
@@ -292,7 +289,6 @@ Widget.prototype = {
     },
 
     /**
-     * @description
      * Append this widget to a parent.
      * @param parent
      * @memberof wdg
@@ -309,7 +305,6 @@ Widget.prototype = {
     },
 
     /**
-     * @description
      * Append this widget to BODY.
      * @memberof wdg
      */
@@ -329,7 +324,6 @@ Widget.prototype = {
     },
 
     /**
-     * @description
      * Add CSS classe(s) to this widget.
      * @memberof wdg
      */
@@ -349,7 +343,6 @@ Widget.prototype = {
     },
 
     /**
-     * @description
      * Remove CSS classe(s) to this widget.
      * @memberof wdg
      */
@@ -446,7 +439,6 @@ Widget.prototype = {
     },
 
     /**
-     * @description
      *
      * @param html
      * @memberof wdg
@@ -458,7 +450,6 @@ Widget.prototype = {
     },
 
     /**
-     * @description
      * If applicable, give focus to this element.
      * @memberof wdg
      */
@@ -472,7 +463,6 @@ Widget.prototype = {
     },
 
     /**
-     * @description
      * Returns the bounds of the underlying element.
      * @memberof wdg
      */
@@ -483,7 +473,6 @@ Widget.prototype = {
     },
 
     /**
-     * @description
      *
      * @param
      * @memberof wdg
