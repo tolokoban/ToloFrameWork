@@ -112,6 +112,11 @@ if (args.indexOf('doc') > -1) {
         prj.makeDoc(options);
     });
 }
+if (args.indexOf('jsdoc') > -1) {
+    tasks.push(function(prj) {
+        prj.makeJSDoc(options);
+    });
+}
 if (args.indexOf('test') > -1) {
     tasks.push(function(prj) {
         var modules = prj.getCompiledFiles();
@@ -131,6 +136,7 @@ if (tasks.length == 0) {
     console.log("  php".yellow + ":     add PHP services.");
     console.log("  test".yellow + ":    prepare Karma tests.");
     console.log("  doc".yellow + ":     create documentation.");
+    console.log("  jsdoc".yellow + ":   create JSDoc documentation.");
     console.log("  watch".yellow + ":   watch for files change.");
     console.log("  version".yellow + ": increment version number.");
     console.log();
