@@ -253,7 +253,8 @@ Widget.prototype = {
         for (i = 0 ; i < arguments.length ; i++) {
             arg = arguments[i];
             if (typeof arg === 'number') arg = "" + arg;
-            if (typeof arg === 'undefined' || (typeof arg !== 'object' && typeof arg !== 'string')) {
+            if (typeof arg === 'undefined' || typeof arg === 'null'
+                || (typeof arg !== 'object' && typeof arg !== 'string')) {
                 console.error("[Widget.append] Argument #" + i + " is invalid!", arguments);
                 console.error("[Widget.append] Is type is: " + (typeof arg));
                 continue;
