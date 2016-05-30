@@ -1,13 +1,7 @@
 /**********************************************************************
  @example
-<x-widget name="tfw.input">
-{
-  label: "Email",
-  validator: "[^@]+@[^@]\\.[^@.]+"
-}
-</x-widget>
-
-<x-widget name="tfw.input" $label="Email" $validator="[^@]+@[^@]\\.[^@.]+"/>
+ <x-widget name="tfw.input" $value="Email" $validator="[^@]+@[^@]\\.[^@.]+"/>
+ <x-widget name="tfw.input" $validator="[^@]+@[^@]\\.[^@.]+">Email</x-widget>
 
  **********************************************************************/
 
@@ -46,6 +40,9 @@ exports.compile = function(root, libs) {
             args = JSON.stringify(args);
         }
     }
+    // Attributes can have post initialization, especially for data bindings.
+    var postInit = {};
+    var hasPostInit = false;
     if( args == '""' ) {
         // All the attributes that start with a '$' are used as args attributes.
         args = {};
@@ -54,6 +51,15 @@ exports.compile = function(root, libs) {
             if( key.charAt(0) == '$' ) {
                 val = root.attribs[key];
                 args[key.substr( 1 )] = val;
+            }
+            else if (key.substr( 0, 5 ) == 'bind:') {
+                val = root.attribs[key];
+                key = key.substr( 5 );
+                if( typeof postInit[key] === 'undefined' ) postInit[key] = {};
+                val = val.split( ':' );
+                if (val.length < 2) val.push('value');
+                postInit[key].B = val.map(function(itm){ return itm.trim(); });
+                hasPostInit = true;
             }
         }
         args = JSON.stringify( args );
@@ -69,9 +75,15 @@ exports.compile = function(root, libs) {
 
     libs.require(name);
     libs.require("x-widget");
+    libs.addInitJS("var W = require('x-widget');");
     libs.addInitJS(
         "try{"
-        + "require('x-widget')('" + id + "','" + name + "'," + args + ")"
-        + "}catch(x){console.error('Unable to initialize " + name + "!', x)}"
+            + "W('" + id + "','" + name + "'," + args + ")"
+            + "}catch(x){console.error('Unable to initialize " + name + "!', x)}"
     );
+    if (hasPostInit) {
+        libs.addPostInitJS(
+            "W.bind('" + id + "'," + JSON.stringify(postInit) + ");"
+        );
+    }
 };

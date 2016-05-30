@@ -1,5 +1,7 @@
 "use strict";
 
+var DB = require("tfw.data-binding");
+
 var widgets = {};
 // Used for `onWidgetCreation()`.
 var slots = {};
@@ -31,7 +33,7 @@ Widget.template = function( attribs ) {
         }
         else if( key.charAt(0)=='$' ) {
             args[key.substr( 1 )] = val;
-        }        
+        }
     }
     var module = require( name );
     var wdg = new module( args );
@@ -52,7 +54,7 @@ function register( id, wdg ) {
                 slot( wdg );
             });
             delete slots[id];
-        });        
+        });
     }
     return typeof wdg.element === 'function' ? wdg.element : (wdg.element || wdg);
 };
@@ -73,6 +75,24 @@ Widget.onWidgetCreation = function( id, slot ) {
                 slot( widgets[id] );
             }
         );
+    }
+};
+
+Widget.bind = function( id, attribs ) {
+    var dstObj = widgets[id];
+    var dstAtt, binding;
+    var srcObj, srcAtt;
+    for( dstAtt in attribs ) {
+        binding = attribs[dstAtt].B;
+        srcObj = widgets[binding[0]];
+        if( typeof srcObj === 'undefined' ) {
+            console.error( "[x-widget:bind] Trying to bind attribute \"" + dstAtt
+                         + "\" of widget \"" + id + "\" to the unexisting widget \""
+                         + binding[0] + "\"!");
+            return;
+        }
+        srcAtt = binding[1];
+        DB.bind( srcObj, srcAtt, dstObj, dstAtt );
     }
 };
 

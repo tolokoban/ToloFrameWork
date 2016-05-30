@@ -1,7 +1,7 @@
 require("polyfill.classList");
 
 // Used to store data on the DOM element without colliding with existing attributes.
-var SYMBOL = '$' + Date.now();
+var SYMBOL = 'dom' + Date.now();
 
 
 exports.tagNS = tagNS;
