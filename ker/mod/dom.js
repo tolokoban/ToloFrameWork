@@ -1,3 +1,16 @@
+/**
+ * @module dom
+ *
+ * @description
+ * Functions which facilitate DOm manipulations.
+ * Included __interact.js__. You can find documentation for it here:
+ * [http://interactjs.io/docs/]
+ *
+ * @example
+ * var mod = require('dom');
+ */
+
+
 require("polyfill.classList");
 
 // Used to store data on the DOM element without colliding with existing attributes.
@@ -15,7 +28,12 @@ exports.svg = tagNS.bind( undefined, "http://www.w3.org/2000/svg" );
 exports.tag = tagNS.bind( undefined, "http://www.w3.org/1999/xhtml" );
 exports.div = tagNS.bind( undefined, "http://www.w3.org/1999/xhtml", "div" );
 exports.txt = window.document.createTextNode.bind( window.document );
+exports.textOrHtml = textOrHtml;
 exports.get = get;
+/**
+ * Add a readonly `element` property to `obj` and return it.
+ */
+exports.elem = elem;
 /**
  * Apply css rules on `element`.
  *
@@ -27,6 +45,7 @@ exports.get = get;
  */
 exports.css = css;
 exports.att = att;
+exports.removeAtt = removeAtt;
 exports.addClass = addClass;
 exports.hasClass = hasClass;
 exports.removeClass = removeClass;
@@ -45,15 +64,21 @@ exports.detach = detach;
 /**
  * Add event handlers to one or many elements.
  *
- * @param element {object|array} - list of elements on which apply events handlers.
- * @param  slots {object|function}  - If  a function  is given,  it is
- * considered as a slot for the event `tap`.
- * Otherwise, the object is a map  between events' names (the key) and
- * function to handle the event (the value).
+ * @param {object|array}  element -  list of  elements on  which apply
+ * events handlers.
+ * 
+ * @param  {object|function} slots  - If  a function  is given,  it is
+ * considered as a slot for the event `tap`.  Otherwise, the object is
+ * a map  between events' names (the  key) and function to  handle the
+ * event (the value).
  * Events' names are:
  * * __tap__: When  the element is  pressed and released in  less than
- 900 ms and without too much sliding.
- * @param capture {boolean} - If `true` events are captured before they reach the children.
+     900 ms and without too much sliding.
+ * * __doubletap__
+ * * __dragmove__
+ * 
+ * @param {boolean} capture - If `true` events are captured before they reach the children.
+ * 
  * @example
  *    DOM.on( [screen, button], function() {...} );
  *    DOM.on( body, null );   // Do nothing, but stop propagation.
@@ -120,6 +145,11 @@ function att( element, attribs ) {
     return element;
 }
 
+function removeAtt( element, attrib ) {
+    element.removeAttribute( attrib );
+    return element;
+}
+
 function add( element ) {
     try {
         var i, child;
@@ -153,18 +183,19 @@ function on( element, slots, capture ) {
         return element;
     }
 
-    // If `touched` is true, we must delete mouse events.
-    var touched = false;
-    var x0, y0, t0;
+    if( typeof element[SYMBOL] === 'undefined' ) {
+        element[SYMBOL] = interact(element);
+    }
 
-    // @TODO Change `click` for something more suitable to touch events.
-    element.addEventListener( 'click', function(evt) {
-        var tap = slots.tap;
-        if( typeof tap === 'function' || tap === null ) {
-            evt.stopPropagation();
-            if( tap !== null ) tap( element );
+    var key, val;
+    for( key in slots ) {
+        val = slots[key];
+        if (key == 'keydown' || key == 'keyup') {
+            element.addEventListener( key, val );
+        } else {
+            element[SYMBOL].on( key, val );
         }
-    }, capture);
+    }
 
     return element;
 }
@@ -310,4 +341,25 @@ function detach( element ) {
     if( !parent ) return parent;
     parent.removeChild( element );
     return parent;
+}
+
+function elem( target ) {
+    var args = [].slice.call( arguments );
+    args.shift();
+    if (args.length == 0) args = ['div'];
+    var e = exports.tag.apply( exports, args );
+    Object.defineProperty( target, 'element', {
+        value: e, writable: false, configurable: false, enumerable: true
+    });
+    return e;
+}
+
+function textOrHtml( element, content ) {
+    if (typeof content !== 'string') content = JSON.stringify( content );
+    if (content.substr(0, 6) == '<html>') {
+        element.innerHTML = content.substr(6);
+    } else {
+        element.textContent = content;
+    }
+    return element;
 }

@@ -5,7 +5,7 @@
 
  **********************************************************************/
 
-exports.tags = ["x-widget"];
+exports.tags = ["x-widget", "wdg:.+"];
 exports.priority = 0;
 
 var ID = 0;
@@ -15,8 +15,12 @@ var ID = 0;
  */
 exports.compile = function(root, libs) {
     var name = root.attribs.name;
-    if (!name || name.length == 0) {
-        libs.fatal("[x-widget] Missing attribute \"name\"!");
+    if (root.name.substr( 0, 4 ) == 'wdg:' ) {
+        name = "wdg." + root.name.substr( 4 );
+    } else {
+        if (!name || name.length == 0) {
+            libs.fatal("[x-widget] Missing attribute \"name\"!");
+        }
     }
     var id = root.attribs.id || (name + ID++);
     var src = (root.attribs.src || "").trim();

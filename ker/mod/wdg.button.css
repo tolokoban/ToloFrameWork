@@ -1,127 +1,102 @@
-a.wdg.wdg-button {
-    font-variant: small-caps;
+a.tfw-view-button,
+button.tfw-view-button {
+    vertical-align: middle;
     position: relative;
-    display: -ms-inline-flexbox;
-    display: inline-flex;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    -ms-flex-align: center;
-    align-items: center;
-    color: #fff;
-    padding: .4em .8em;
-    margin: .1em;
-    border-radius: .2em;
-    box-shadow: 0 1px rgb(255,255,255,.3) inset,
-                0 -1px rgb(0,0,0,.5) inset;
+    display: inline-block;
+    line-height: 2em;
+    padding: 0 1em;
+    background: #9cd;
+    color: #000;
+    text-decoration: none;
+    border-radius: 1em;
+    text-shadow: none;
     cursor: pointer;
-    background: #37a;
-    border: 1px solid #37a;
-}
-
-a.wdg.wdg-button.vertical {
-    flex-direction: column;
-}
-
-a.wdg.wdg-button.wide {
-    display: -ms-flexbox;
-    display: flex;
-}
-
-a.wdg.wdg-button.red {
-    background: #a33;
-    border: 1px solid #a33;
-}
-
-a.wdg.wdg-button.green {
-    background: #3a7;
-    border: 1px solid #3a7;
-}
-
-a.wdg.wdg-button.blue {
-    background: #37a;
-    border: 1px solid #37a;
-}
-
-a.wdg.wdg-button::after {
-  position: absolute;
-  content: "";
-  left: 0;
-  top: 0;
-  right: 0;
-  height: 50%;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-a.wdg.wdg-button:hover {
-    color: yellow;
-    text-shadow: 0 0 3px #000;
-}
-
-a.wdg.wdg-button:active {
-    transform: translate(.2em,.2em);
-}
-
-a.wdg.wdg-button > div {
-    -ms-flex-grow: 1;
-    -ms-flex-shrink: 0;
-    flex-grow: 1;
-    flex-shrink: 0;
-}
-
-a.wdg.wdg-button > div.caption {
-    display: block;
+    margin: 4px 4px;
+    text-overflow: ellipsis;
     white-space: nowrap;
-    padding-right: 1em;
+    overflow: hidden;
+    font-size: 100%;
+    box-shadow: 3px 3px rgba(127,127,127,.5);
+    min-width: 64px;
+    transform: translate(0,0);
+    transition: all .2s;
+    text-align: center;
+    border: none;
 }
 
-a.wdg.wdg-button.vertical > div.caption {
-    padding: 0;
-    padding-bottom: .5em;
+a.tfw-view-button.wide,
+button.tfw-view-button.wide {
+    display: block;
+    width: 100%;
 }
 
-a.wdg.wdg-button.vertical.flip > div.caption {
-    padding: 0;
-    padding-top: .5em;
-}
-
-a.wdg.wdg-button > div.icon {
-    content: "";
-    display: inline-block;
-    font-size: 0;
-    padding: 0;
+a.tfw-view-button.small,
+button.tfw-view-button.small {
+    font-size: 70%;
+    padding: 0 .5em;
     margin: 0;
-    display: inline-block;
-    background-repeat: no-repeat;
-    background-position: right 50%;
-    background-site: contain;    
+    font-variant: small-caps;
+    min-width: 2em;
 }
 
-a.wdg.wdg-button.flip > div.caption {
-    -ms-order: 1;
-    order: 1;
-    padding: 0;
-    padding-left: 1em;
+a.tfw-view-button.press,
+button.tfw-view-button.press {
+    box-shadow: 0px 0px rgba(127,127,127,.5);
+    transform: translate(2px,2px);
+    transition: all .2s;
 }
 
-a.wdg.wdg-button.flip > div.icon {
-    -ms-order: 0;
-    order: 0;
-    background-position: left 50%;
+a.tfw-view-button[disabled=yes].press,
+button.tfw-view-button[disabled=yes].press {
+    transform: translate(0,0);
 }
 
-a.wdg.wdg-button > div.icon.hide {
-    display: none;
+a.tfw-view-button[disabled=yes]:hover,
+a.tfw-view-button[disabled=yes],
+button.tfw-view-button[disabled=yes]:hover,
+button.tfw-view-button[disabled=yes] {
+    text-decoration: none;
+    cursor: default;
+    background: #888;
+    color: #ccc;
+    text-shadow: none;
+    box-shadow: none;
+    font-style: italic;
 }
 
-a.wdg.wdg-button > div.icon.ok {
-    width: 20px;
-    height: 20px;
-    background-image: url(wdg.button/ok.png);
+a.tfw-view-button.shadow,
+button.tfw-view-button.shadow {
+    background-color: #69A;
 }
 
-a.wdg.wdg-button > div.icon.cancel {
-    width: 20px;
-    height: 20px;
-    background-image: url(wdg.button/cancel.png);
+a.tfw-view-button.warning,
+button.tfw-view-button.warning {
+    background-color: #c50;
+    color: #fff;
 }
 
+a.tfw-view-button.green,
+button.tfw-view-button.green {
+    background-color: #9dc;
+}
+
+a.tfw-view-button.simple,
+button.tfw-view-button.simple {
+    color: #69b;
+    border-radius: none;
+    background: none;
+    text-shadow: none;
+    box-shadow: none;
+    font-size: 100%;
+}
+
+a.tfw-view-button.simple:hover,
+button.tfw-view-button.simple:hover {
+    text-decoration: underline;
+}
+
+a.tfw-view-button:focus,
+button.tfw-view-button:focus {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+}

@@ -1,50 +1,64 @@
 {
-  "name": "toloframework",
-  "version": "0.36.6",
-  "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
-  "bin": {
-    "tfw": "bin/tfw.js"
-  },
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "node node_modules/jasmine/bin/jasmine.js",
-    "test:dbg": "node --debug-brk node_modules/jasmine/bin/jasmine.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tolokoban/ToloFrameWork.git"
-  },
-  "keywords": [
-    "tolokoban",
-    "firefoxos",
-    "fxos",
-    "commonjs",
-    "mobile",
-    "webapp",
-    "designer",
-    "framework",
-    "require"
-  ],
-  "author": "Tolokoban",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/tolokoban/ToloFrameWork/issues"
-  },
-  "dependencies": {
-    "colors": "^1.1.2",
-    "jaguar": "^1.1.10",
-    "jsdoc": "^3.4.0",
-    "less": "^2.6.1",
-    "marked": "^0.3.5",
-    "readline-sync": "^1.2.22",
-    "string": "^3.3.1",
-    "uglify-js": "^2.6.2"
-  },
-  "homepage": "https://github.com/tolokoban/ToloFrameWork",
-  "main": "index.js",
-  "devDependencies": {
-    "jasmine": "^2.4.1"
-  }
+    "name": "toloframework",
+    "version": "0.36.7",
+    "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
+    "bin": {
+        "tfw": "bin/tfw.js"
+    },
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "clean": "node bin/tfw.js clean",
+        "debug": "node bin/tfw.js build dev watch",
+        "release": "node bin/tfw.js build version clean",
+        "test": "node node_modules/jasmine/bin/jasmine.js",
+        "test:dbg": "node --debug-brk node_modules/jasmine/bin/jasmine.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tolokoban/ToloFrameWork.git"
+    },
+    "keywords": [
+        "tolokoban",
+        "firefoxos",
+        "fxos",
+        "commonjs",
+        "mobile",
+        "webapp",
+        "designer",
+        "framework",
+        "require"
+    ],
+    "author": "Tolokoban",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/tolokoban/ToloFrameWork/issues"
+    },
+    "dependencies": {
+        "colors": "^1.1.2",
+        "jaguar": "^1.1.10",
+        "jsdoc": "^3.4.0",
+        "less": "^2.6.1",
+        "marked": "^0.3.5",
+        "readline-sync": "^1.2.22",
+        "string": "^3.3.1",
+        "uglify-js": "^2.6.2"
+    },
+    "homepage": "https://github.com/tolokoban/ToloFrameWork",
+    "main": "index.js",
+    "tfw": {
+        "modules": [],
+        "compile": {
+            "type": "firefoxos",
+            "files": [
+                "\\.html$"
+            ]
+        },
+        "output": "gh-pages"
+    },
+    "devDependencies": {
+        "jasmine": "^2.4.1"
+    },
+    "reservedModules": []
 }

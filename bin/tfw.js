@@ -224,6 +224,7 @@ if (tasks.length == 0) {
 
     // Watch files?
     if (args.indexOf("watch") > -1) {
+        if (!prj) return;
         console.log();
         var fringe = [prj.srcPath()];
         var path;
