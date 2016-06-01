@@ -1,0 +1,23 @@
+.wdg-code {
+    display: block;
+    padding: 8px;
+    width: 300px;
+    float: left;
+    margin: 0 1em 1em 0;
+    background: #ddd;
+}
+
+.wdg-code > .light {
+    background: #fff;
+}
+
+.wdg-code > .dark {
+    background: #000;
+}
+
+.wdg-code > div {
+    padding: .5em;
+    margin: .1em;
+    border-radius: 1em;
+    box-shadow: 0 0 1px 1px #888;
+}

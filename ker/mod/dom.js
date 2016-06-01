@@ -9,9 +9,8 @@
  * @example
  * var mod = require('dom');
  */
-
-
 require("polyfill.classList");
+var DB = require("tfw.data-binding");
 
 // Used to store data on the DOM element without colliding with existing attributes.
 var SYMBOL = 'dom' + Date.now();
@@ -66,7 +65,7 @@ exports.detach = detach;
  *
  * @param {object|array}  element -  list of  elements on  which apply
  * events handlers.
- * 
+ *
  * @param  {object|function} slots  - If  a function  is given,  it is
  * considered as a slot for the event `tap`.  Otherwise, the object is
  * a map  between events' names (the  key) and function to  handle the
@@ -76,9 +75,9 @@ exports.detach = detach;
      900 ms and without too much sliding.
  * * __doubletap__
  * * __dragmove__
- * 
+ *
  * @param {boolean} capture - If `true` events are captured before they reach the children.
- * 
+ *
  * @example
  *    DOM.on( [screen, button], function() {...} );
  *    DOM.on( body, null );   // Do nothing, but stop propagation.
@@ -136,8 +135,13 @@ function css( element, styles ) {
     return element;
 }
 
-function att( element, attribs ) {
+function att( element, attribs, value ) {
     var key, val;
+    if (typeof attribs === 'string') {
+        key = attribs;
+        attribs = {};
+        attribs[key] = value;
+    }
     for( key in attribs ) {
         val = attribs[key];
         element.setAttribute( key, val );
@@ -347,9 +351,24 @@ function elem( target ) {
     var args = [].slice.call( arguments );
     args.shift();
     if (args.length == 0) args = ['div'];
+    args.push('dom', 'custom');
     var e = exports.tag.apply( exports, args );
     Object.defineProperty( target, 'element', {
         value: e, writable: false, configurable: false, enumerable: true
+    });
+    DB.propBoolean(target, 'wide')(function(v) {
+        if (v) {
+            addClass(e, 'wide');
+        } else {
+            removeClass(e, 'wide');
+        }
+    });
+    DB.propBoolean(target, 'visible')(function(v) {
+        if (v) {
+            removeClass(e, 'hide');
+        } else {
+            addClass(e, 'hide');
+        }
     });
     return e;
 }

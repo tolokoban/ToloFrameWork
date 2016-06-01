@@ -8,13 +8,13 @@ var LaterAction = require("tfw.timer").laterAction;
  * @description  HTML5 text input with many options.
  *
  * __Attributes__:
- * * {string} `value`: 
- * * {string} `value`: 
- * * {string} `value`: 
- * * {string} `value`: 
- * * {string} `value`: 
- * * {string} `value`: 
- * * {string} `value`: 
+ * * {string} `value`:
+ * * {string} `value`:
+ * * {string} `value`:
+ * * {string} `value`:
+ * * {string} `value`:
+ * * {string} `value`:
+ * * {string} `value`:
  */
 var Text = function(opts) {
     var that = this;
@@ -22,31 +22,22 @@ var Text = function(opts) {
     var label = $.div( 'label' );
     var input = $.tag( "input" );
     this._input = input;
-    var elem = $.elem( this, 'div', 'tfw-edit-text', 'custom', [label, input] );
+    var elem = $.elem( this, 'div', 'wdg-text', [label, input] );
 
-    opts = DB.extend({
-        value: '',
-        type: 'text',
-        enabled: true,
-        label: null,
-        placeholder: '',
-        width: '140px'
-    }, opts);
-
-    DB.prop(this, 'value')(function(v) {
+    DB.propString(this, 'value')(function(v) {
         input.value = v;
     });
-    DB.prop(this, 'type')(function(v) {
+    DB.propString(this, 'type')(function(v) {
         $.att(input, {type: v});
     });
-    DB.prop(this, 'enabled')(function(v) {
+    DB.propBoolean(this, 'enabled')(function(v) {
         if (v) {
             $.removeAtt(input, 'disabled');
         } else {
             $.att(input, {disabled: v});
         }
     });
-    DB.prop(this, 'label')(function(v) {
+    DB.propString(this, 'label')(function(v) {
         if (v === null) {
             $.addClass(elem, 'no-label');
         } else {
@@ -59,18 +50,24 @@ var Text = function(opts) {
             }
         }
     });
-    DB.prop(this, 'placeholder')(function(v) {
+    DB.propString(this, 'placeholder')(function(v) {
         $.att(input, {placeholder: v});
     });
-    DB.prop(this, 'width')(function(v) {
+    DB.propString(this, 'width')(function(v) {
         elem.style.width = v;
     });
-    DB.prop(this, 'action', 0);
+    DB.propInteger(this, 'action', 0);
 
-    var key;
-    for( key in opts ) {
-        this[key] = opts[key];
-    }
+    opts = DB.extend({
+        value: '',
+        type: 'text',
+        enabled: true,
+        label: null,
+        placeholder: '',
+        width: '140px',
+        wide: false,
+        visible: true
+    }, opts, this);
 
     var actionUpdateValue = LaterAction(function() {
         that.value = input.value;

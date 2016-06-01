@@ -1,0 +1,20 @@
+<x-html title="Module wdg.button">
+    <wdg-code:wdg.button
+             id="btn"
+             text="OK / txtText"
+             value="button / txtValue"
+             enabled="true / chkEnabled"
+             wide="false / chkWide"
+             visible="true / chkVisible" />
+    <div style="width: 300px; float: left">
+        <wdg:text id="txtText" $label="text" $value="OK" $wide="true" />
+        <wdg:text id="txtValue" $label="value" $value="button" $wide="true" />
+        <wdg:checkbox id="chkEnabled"
+                      $text="enabled" $value="true" $wide="true" />
+        <wdg:checkbox id="chkWide"
+                      $text="wide" $value="false" $wide="true" />
+        <wdg:checkbox id="chkVisible"
+                      $text="visible" $value="true" $wide="true"/>
+        <wdg:label $value="" bind:value="btn:action"/>
+    </div>
+</x-html>

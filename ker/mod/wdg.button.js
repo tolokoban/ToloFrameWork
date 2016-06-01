@@ -27,54 +27,52 @@ var TYPES = ['standard', 'simple', 'warning', 'shadow', 'special'];
 var Button = function(opts) {
     var that = this;
 
-    $.elem( this, typeof opts.href === 'string' ? 'a' : 'button', 'tfw-view-button', 'custom' );
+    var elem = $.elem(this, typeof opts.href === 'string' ? 'a' : 'button', 'wdg-button');
 
-    DB.prop(this, 'value')(function(v) {
-        that.element.textContent = v;
+    DB.propString(this, 'text')(function(v) {
+        elem.textContent = v;
     });
-    DB.prop(this, 'type')(function(v) {
+    DB.prop(this, 'value');
+    DB.propString(this, 'type')(function(v) {
         if (TYPES.indexOf( v ) == -1) {
             console.error("[tfw.view.button.type] Unknown type: \"" + v + "\"!");
             that.type = TYPES[0];
             return;
         }
         TYPES.forEach(function (type) {
-            $.removeClass(that.element, type);
+            $.removeClass(elem, type);
         });
-        $.addClass(that.element, v);
+        $.addClass(elem, v);
     });
-    DB.prop(this, 'enabled')(function(v) {
+    DB.propBoolean(this, 'enabled')(function(v) {
         if (v) {
-            $.removeAtt(that.element, 'disabled');
+            $.removeAtt(elem, 'disabled');
         } else {
-            $.att(that.element, 'disabled', 'yes');
+            $.att(elem, 'disabled', 'yes');
         }
     });
     DB.prop(this, 'action', 0);
 
     opts = DB.extend({
-        value: "OK",
+        text: "OK",
+        value: "action",
         enabled: true,
+        wide: false,
+        visible: true,
         type: "standard"
-    }, opts);
-
-    this.enabled = opts.enabled;
-    this.value = opts.value;
-    this.type = opts.type;
+    }, opts, this);
 
     // Animate the pressing.
     $.on(this.element, {
         down: function() {
             if (that.enabled) {
-                $.addClass(that.element, 'press');
+                $.addClass(elem, 'press');
             }
         },
         up: function() {
-            $.removeClass(that.element, 'press');
+            $.removeClass(elem, 'press');
         },
-        tap: function() {
-            that.action++;
-        },
+        tap: that.fire.bind( that ),
         keydown: function(evt) {
             if (evt.keyCode == 13 || evt.keyCode == 32) {
                 evt.preventDefault();
@@ -89,7 +87,7 @@ var Button = function(opts) {
  * Simulate a click on the button if it is enabled.
  */
 Button.prototype.fire = function() {
-    if (this.enabled) this.action++;
+    if (this.enabled) DB.fire( this, 'action', this.value );
 };
 
 /**

@@ -1,3 +1,4 @@
 <x-html title="Toloframework">
-    <wdg:button />
+    <wdg:checkbox id="chkEnabled" $text="button.enabled" $value="false"/>
+    <wdg:button bind:enabled="chkEnabled:value" $enabled="false"/>
 </x-html>

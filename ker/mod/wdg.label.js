@@ -14,7 +14,7 @@ var DB = require("tfw.data-binding");
 
 function Label( opts ) {
     opts = DB.extend( { value: '' }, opts );
-    var elem = $.elem( this, 'span', 'tfw-view-label', 'custom' );
+    var elem = $.elem( this, 'span', 'tfw-view-label' );
     DB.prop(this, 'value')(function(v) {
         $.textOrHtml(elem, v);
     });
