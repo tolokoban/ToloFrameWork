@@ -81,9 +81,9 @@ button.wdg-button.warning {
     color: #fff;
 }
 
-a.wdg-button.green,
-button.wdg-button.green {
-    background-color: #9dc;
+a.wdg-button.special,
+button.wdg-button.special {
+    background-color: #9d7;
 }
 
 a.wdg-button.simple,

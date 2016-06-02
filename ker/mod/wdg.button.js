@@ -7,7 +7,7 @@ var TYPES = ['standard', 'simple', 'warning', 'shadow', 'special'];
  * Liste des classes CSS applicables sur un bouton :
  * * __simple__ : Simple lien, sans l'aspect "bouton".
  * * __shadow__ : Bouton légèrement plus foncé.
- * * __warning__ : Bouton orangé pour indiquer une action potentiellement dangeureuse.
+ * * __warning__ : Bouton orangé pour indiquer une action potentiellement dangereuse.
  * * __small__ : Bouton de petite taille (environ 70%).
  *
  * @param {object} opts
@@ -33,12 +33,7 @@ var Button = function(opts) {
         elem.textContent = v;
     });
     DB.prop(this, 'value');
-    DB.propString(this, 'type')(function(v) {
-        if (TYPES.indexOf( v ) == -1) {
-            console.error("[tfw.view.button.type] Unknown type: \"" + v + "\"!");
-            that.type = TYPES[0];
-            return;
-        }
+    DB.propEnum( TYPES )(this, 'type')(function(v) {
         TYPES.forEach(function (type) {
             $.removeClass(elem, type);
         });
@@ -51,11 +46,19 @@ var Button = function(opts) {
             $.att(elem, 'disabled', 'yes');
         }
     });
+    DB.propBoolean(this, 'small')(function(v) {
+        if (v) {
+            $.addClass(elem, 'small');
+        } else {
+            $.removeClass(elem, 'small');
+        }
+    });
     DB.prop(this, 'action', 0);
 
     opts = DB.extend({
         text: "OK",
         value: "action",
+        samll: false,
         enabled: true,
         wide: false,
         visible: true,

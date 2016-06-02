@@ -28,6 +28,18 @@ var converters = {
         }
         return false;
     },
+    castEnum: function( enumeration ) {
+        var lowerCaseEnum = enumeration.map(String.toLowerCase);
+        return function(v) {
+            if (typeof v === 'number') {
+                return enumeration[Math.floor( v ) % enumeration.length];
+            }
+            if (typeof v !== 'string') return enumeration[0];
+            var idx = lowerCaseEnum.indexOf( v.trim().toLowerCase() );
+            if (idx < 0) idx = 0;
+            return enumeration[idx];
+        };
+    },
     castInteger: function(v) {
         if (typeof v === 'number') {
             return Math.floor( v );
@@ -94,7 +106,9 @@ exports.prop = propCast.bind( null, null );
 exports.propBoolean = propCast.bind( null, converters.castBoolean );
 exports.propInteger = propCast.bind( null, converters.castInteger );
 exports.propString = propCast.bind( null, converters.castString );
-
+exports.propEnum = function( enumeration ) {
+    return propCast.bind( null, converters.castEnum( enumeration ) );
+};
 
 exports.bind = function( srcObj, srcAtt, dstObj, dstAtt, options ) {
     if( typeof srcObj[ID] === 'undefined' || typeof srcObj[ID][srcAtt] === 'undefined' ) {
