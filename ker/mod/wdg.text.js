@@ -18,6 +18,8 @@ var LaterAction = require("tfw.timer").laterAction;
 var Text = function(opts) {
     var that = this;
 
+    var dataListHasFocus = false;
+
     var label = $.div( 'label' );
     var input = $.tag( 'input' );
     var datalist = $.div( 'datalist' );
@@ -113,15 +115,48 @@ var Text = function(opts) {
         if (!that.list || that.list.length == 0) return;
 
         $.clear( datalist );
-        var list = that.list.slice();
-        
+        var list = that.list.map(String.toLowerCase);
+        var needle = input.value.trim().toLowerCase();
+
+        if (needle.length > 0) {
+            list = list.map(function(itm, idx) {
+                return [idx, itm.indexOf( needle )];
+            }).filter(function(itm) {
+                return itm[1] > -1;
+            }).sort(function(a, b) {
+                var d = a[1] - b[1];
+                if (d != 0) return d;
+                var sa = that.list[a[0]];
+                var sb = that.list[b[0]];
+                if (sa < sb) return -1;
+                if (sa > sb) return 1;
+                return 0;
+            }).map(function(itm) {
+                var t = that.list[itm[0]];
+                var i = itm[1];
+                return t.substr(0, i) 
+                    + "<b>" + t.substr(i, needle.length) + "</b>" 
+                    + t.substr(i + needle.length);
+            });
+        } else {
+            list = list.sort();
+        }
+
         list.forEach(function (item) {
             var div = $.div();
             div.innerHTML = item;
             $.add( datalist, div );
             $.on( div, {
-                'down': function() {
+                down: function() {
+                    dataListHasFocus = true;
+                },
+                up: function() {
+                    dataListHasFocus = false;
+                    input.focus();
+                },
+                tap: function() {
                     that.value = div.textContent.trim();
+                    $.removeClass( elem, 'list' );
                 }
             });
         });
@@ -132,14 +167,18 @@ var Text = function(opts) {
     var actionUpdateValue = LaterAction(function() {
         that.value = input.value;
     }, 300);
-    input.addEventListener('keyup', actionUpdateValue.fire.bind( actionUpdateValue ));
+    input.addEventListener('keyup', function() {
+        complete();
+        actionUpdateValue.fire();
+    });
     input.addEventListener('blur', function() {
         that.value = input.value;
-        $.removeClass( elem, "list" );
+        if (!dataListHasFocus) {
+            $.removeClass( elem, "list" );
+        }
     });
     input.addEventListener('focus', that.selectAll.bind(that));
     input.addEventListener('keydown', function(evt) {
-        complete();
         if (evt.keyCode == 13) {
             evt.preventDefault();
             evt.stopPropagation();
