@@ -58,7 +58,7 @@ var Button = function(opts) {
     opts = DB.extend({
         text: "OK",
         value: "action",
-        samll: false,
+        small: false,
         enabled: true,
         wide: false,
         visible: true,

@@ -13,6 +13,11 @@
     transition: background-image 300ms;
 }
 
+.dark .wdg-checkbox {
+    color: #eee;
+}
+
+
 .wdg-checkbox.align-left {
     text-align: left;
 }

@@ -5,14 +5,16 @@
 
  **********************************************************************/
 
-exports.tags = ["wdg-code:.+"];
+exports.tags = ["wdg-code"];
 exports.priority = 0;
 
 /**
  * Compile a node of the HTML tree.
  */
 exports.compile = function(root, libs) {
-    var name = root.name.substr( 9 );
+    var name = root.attribs.$name;
+    delete root.attribs.$name;
+    
     var attribs = {};
     var attKey, attVal, attValue, attBind;
     var pre = '<pre>\n&lt;';
@@ -61,5 +63,13 @@ exports.compile = function(root, libs) {
     libs.compile( wdg );
     root.name = "div";
     root.attribs = {"class": "wdg-code"};
+    var content = root.children;
     root.children = [pre, wdg];
+    if (content.length > 0) {
+        root.children.push( {type: libs.Tree.TAG, name: 'hr'} );
+    }
+    content.forEach(function (child) {
+        libs.compile( child );
+        root.children.push( child );
+    });
 };

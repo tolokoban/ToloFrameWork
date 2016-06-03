@@ -19,14 +19,14 @@ var converters = {
             v = v.trim().toLowerCase();
             if (v == '1' || v == 'true' || v == 'yes') {
                 return true;
-            } else {
+            } else if (v == '0' || v == 'false' || v == 'no') {
                 return false;
             }
         }
         if (typeof v === 'number') {
             return v ? true : false;
         }
-        return false;
+        return null;
     },
     castEnum: function( enumeration ) {
         var lowerCaseEnum = enumeration.map(String.toLowerCase);
@@ -53,6 +53,28 @@ var converters = {
     castString: function(v) {
         if (typeof v === 'string') return v;
         return JSON.stringify( v );
+    },
+    castStringArray: function(v) {
+        if (Array.isArray( v )) return v;
+        if (typeof v === 'string') {
+            return v.split( ',' ).map(String.trim);
+        }
+        return [JSON.stringify( v )];
+    },
+    castValidator: function(v) {
+        if (typeof v === 'function') return v;
+        if (typeof v === 'boolean') return function() { return v; };
+        if (typeof v === 'string' && v.trim().length != 0 ) {
+            try {
+                var rx = new RegExp( v );
+                return rx.test.bind( rx );
+            }
+            // Ignore Regular Expression errors.
+            catch (ex) {
+                console.error("[castValidator] /" + v + "/ ", ex);
+            }
+        };
+        return function() { return null; };
     }
 };
 
@@ -104,11 +126,13 @@ exports.fire = function( obj, att, val ) {
 exports.prop = propCast.bind( null, null );
 
 exports.propBoolean = propCast.bind( null, converters.castBoolean );
-exports.propInteger = propCast.bind( null, converters.castInteger );
-exports.propString = propCast.bind( null, converters.castString );
 exports.propEnum = function( enumeration ) {
     return propCast.bind( null, converters.castEnum( enumeration ) );
 };
+exports.propInteger = propCast.bind( null, converters.castInteger );
+exports.propString = propCast.bind( null, converters.castString );
+exports.propStringArray = propCast.bind( null, converters.castStringArray );
+exports.propValidator = propCast.bind( null, converters.castValidator );
 
 exports.bind = function( srcObj, srcAtt, dstObj, dstAtt, options ) {
     if( typeof srcObj[ID] === 'undefined' || typeof srcObj[ID][srcAtt] === 'undefined' ) {

@@ -1,17 +1,57 @@
 div.wdg-text {
+    position: relative;
     display: inline-block;
-    width: 240px;
-    height: 40px;
+    width: auto;
+    height: 3em;
     padding: 0;
-    margin: 4px;
+    margin: .25em;
+    font-size: 1em;
     vertical-align: middle;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
+div.wdg-text > div.datalist {
+    position: absolute;
+    width: 100%;
+    display: none;
+    background: #fff;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #000;
+    max-height: 10em;
+    overflow: auto;
+    z-index: 999;
+}
+
+div.wdg-text.list > div.datalist {
+    display: inline-block;
+}
+
+div.wdg-text > div.datalist > div:hover {
+    background-color: orange;
+}
+
+div.wdg-text > div.datalist > div {
+    display: block;
+    margin: 0;
+    font-size: .75em;
+    line-height: 1.5em;
+    white-space: nowrap;
+    padding: 0 1em;
+    color: #444;
+    cursor: pointer;
+}
+
+div.wdg-text > div.datalist > div b {
+    color: #000;
+    font-weight: bold;
+}
+
+
 div.wdg-text.no-label {
-    height: 24px;
+    height: 2em;
 }
 
 div.wdg-text.wide {
@@ -23,15 +63,16 @@ div.wdg-text > * {
     display: block;
     margin: 0;
     width: 100%;
+    font-size: 1em;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
 div.wdg-text > input {
-    height: 24px;
+    height: 2em;
     box-shadow: 0 0 1px 1px #ddd;
-    padding: 0 6px;
+    padding: 0 .5em;
     background-color: #fff;
     border: 1px solid #000;
     border-bottom: 3px solid #000;
@@ -42,11 +83,11 @@ div.wdg-text > input[disabled] {
     background-color: #aaa;
 }
 
-div.wdg-text > input.valid {
+div.wdg-text.valid > input {
     border-bottom: 3px solid #3d3;
 }
 
-div.wdg-text > input.not-valid {
+div.wdg-text.not-valid > input {
     border-bottom: 3px solid #d33;
     color: #d33;
 }
@@ -61,13 +102,13 @@ div.wdg-text.no-label > div.label {
 
 div.wdg-text > div.label {
     background-color: #468;
-    border-radius: 12px 12px 0 0;
+    border-radius: 1em 1em 0 0;
     color: #fff;
     font-family: sans-serif;
-    font-size: 10px;
-    line-height: 16px;
-    height: 16px;
-    padding: 0 12px;
+    font-size: 75%;
+    line-height: 1.5em;
+    height: 1.5em;
+    padding: 0 1em;
     white-space: nowrap;
     text-overflow: ellipsis;
 }

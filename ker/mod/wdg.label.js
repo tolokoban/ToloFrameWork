@@ -13,12 +13,11 @@ var DB = require("tfw.data-binding");
 
 
 function Label( opts ) {
-    opts = DB.extend( { value: '' }, opts );
-    var elem = $.elem( this, 'span', 'tfw-view-label' );
+    var elem = $.elem( this, 'span', 'wdg-label' );
     DB.prop(this, 'value')(function(v) {
         $.textOrHtml(elem, v);
     });
-    this.value = opts.value;
+    opts = DB.extend( { value: '', visible: true, wide: false }, opts, this );
 }
 
 /**

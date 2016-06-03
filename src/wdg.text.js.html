@@ -1,0 +1,28 @@
+<x-html title="Module wdg.text">
+    <wdg-code $name="wdg.text"
+             value="true / txtValue"
+             label="My Label / txtLabel"
+             size="0 / txtSize"
+             placeholder="Type text... / txtPlaceholder"
+             type="My Label / txtType"
+             validator=" / txtValidator"
+             list="Animal, Bomb, Castel, Deus, Extravaganza, Fabulous, Gangster / txtList"
+             enabled="true / chkEnabled"
+             wide="false / chkWide"
+             visible="true / chkVisible">
+        <wdg:text id="txtValue" $label="value" $value="true" $wide="true" />
+        <wdg:text id="txtLabel" $label="label" $value="My Label" $wide="true" />
+        <wdg:text id="txtSize" $label="size" $value="0" $wide="true" />
+        <wdg:text id="txtPlaceholder" $label="placeholder" $value="Type text..." $wide="true" />
+        <wdg:text id="txtType" $label="type" $value="" $wide="true"
+                  $list="text, button, checkbox, color, date, datetime, email, file, hidden, image, month, password, radio, range, reset, search, submit, tel, time, url, week" />
+        <wdg:text id="txtValidator" $label="validator" $value="" $wide="true" />
+        <wdg:text id="txtList" $label="list" $value="Animal, Bomb, Castel, Deus, Extravaganza, Fabulous, Gangster" $wide="true" />
+        <wdg:checkbox id="chkWide"
+                      $text="wide" $value="false" $wide="true" />
+        <wdg:checkbox id="chkEnabled"
+                      $text="enabled" $value="true" $wide="true" />
+        <wdg:checkbox id="chkVisible"
+                      $text="visible" $value="true" $wide="true"/>
+    </wdg-code>
+</x-html>

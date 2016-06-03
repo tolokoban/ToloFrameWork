@@ -4,7 +4,12 @@
     width: 300px;
     float: left;
     margin: 0 1em 1em 0;
+}
+
+.wdg-code > pre {
     background: #ddd;
+    padding: .2em;
+    border: 1px solid #444;
 }
 
 .wdg-code > .light {
@@ -15,9 +20,10 @@
     background: #000;
 }
 
-.wdg-code > div {
+.wdg-code > div.light,
+.wdg-code > div.dark {
     padding: .5em;
-    margin: .1em;
+    margin: .25em 0;
     border-radius: 1em;
     box-shadow: 0 0 1px 1px #888;
 }

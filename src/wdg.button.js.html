@@ -1,16 +1,17 @@
 <x-html title="Module wdg.button">
-    <wdg-code:wdg.button
+    <wdg-code $name="wdg.button"
              id="btn"
              text="OK / txtText"
              type="standard / txtType"
              value="button / txtValue"
-             small="true / chkSmall"
+             small="false / chkSmall"
              enabled="true / chkEnabled"
              wide="false / chkWide"
-             visible="true / chkVisible" />
-    <div style="width: 300px; float: left">
+             visible="true / chkVisible">
         <wdg:text id="txtText" $label="text" $value="OK" $wide="true" />
-        <wdg:text id="txtType" $label="type" $value="standard" $wide="true" />
+        <wdg:text id="txtType" $label="type" $value="standard"
+                  $list="standard, simple, warning, shadow, special"
+                  $wide="true" />
         <wdg:text id="txtValue" $label="value" $value="button" $wide="true" />
         <wdg:checkbox id="chkSmall"
                       $text="small" $value="false" $wide="true" />
@@ -21,5 +22,5 @@
         <wdg:checkbox id="chkVisible"
                       $text="visible" $value="true" $wide="true"/>
         <wdg:label $value="" bind:value="btn:action"/>
-    </div>
+    </wdg-code>
 </x-html>
