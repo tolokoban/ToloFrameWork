@@ -1,0 +1,17 @@
+.wdg-icon {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.wdg-icon:hover {
+    background-color: orange;
+}
+
+.wdg-icon > * {
+    margin: 0;
+}

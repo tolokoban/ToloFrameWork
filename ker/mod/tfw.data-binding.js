@@ -28,6 +28,9 @@ var converters = {
         }
         return null;
     },
+    castColor: function(v) {
+        return "" + v;
+    },
     castEnum: function( enumeration ) {
         var lowerCaseEnum = enumeration.map(String.toLowerCase);
         return function(v) {
@@ -60,6 +63,9 @@ var converters = {
             return v.split( ',' ).map(String.trim);
         }
         return [JSON.stringify( v )];
+    },
+    castUnit: function(v) {
+        return "" + v;
     },
     castValidator: function(v) {
         if (typeof v === 'function') return v;
@@ -126,12 +132,14 @@ exports.fire = function( obj, att, val ) {
 exports.prop = propCast.bind( null, null );
 
 exports.propBoolean = propCast.bind( null, converters.castBoolean );
+exports.propColor = propCast.bind( null, converters.castColor );
 exports.propEnum = function( enumeration ) {
     return propCast.bind( null, converters.castEnum( enumeration ) );
 };
 exports.propInteger = propCast.bind( null, converters.castInteger );
 exports.propString = propCast.bind( null, converters.castString );
 exports.propStringArray = propCast.bind( null, converters.castStringArray );
+exports.propUnit = propCast.bind( null, converters.castUnit );
 exports.propValidator = propCast.bind( null, converters.castValidator );
 
 exports.bind = function( srcObj, srcAtt, dstObj, dstAtt, options ) {
