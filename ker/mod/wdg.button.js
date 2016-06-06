@@ -133,34 +133,24 @@ Button.prototype.waitOff = function() {
 };
 
 
-function genericButton( id, classes, defaults ) {
-    var btn = new Button({ caption: _(id) });
-    if ( classes.length > 0 ) {
-        var i, cls;
-        for (i = 0 ; i < classes.length ; i++) {
-            cls = classes[i];
-            btn.addClass( cls );
-        }
-    } else {
-        if (typeof defaults === 'undefined') return btn;
-        if (!Array.isArray(defaults)) {
-            defaults = [defaults];
-        }
-        defaults.forEach(function (cls) {
-            btn.addClass( cls );
-        });
-    }
+function genericButton( id, type ) {
+    if( typeof type === 'undefined' ) type = 'standard';
+    var iconName = id;
+    var intl = id;
+    if( intl == 'yes' ) intl = 'ok';
+    if( intl == 'no' ) intl = 'cancel';
+    var btn = new Button({ text: _(intl), icon: id, value: id, type: type });
     return btn;
 }
 
-Button.Cancel = function() { return genericButton('cancel', arguments); };
-Button.Close = function() { return genericButton('close', arguments, 'simple'); };
-Button.Delete = function() { return genericButton('delete', arguments, 'warning'); };
-Button.No = function() { return genericButton('no', arguments); };
-Button.Ok = function() { return genericButton('ok', arguments); };
-Button.Edit = function() { return genericButton('edit', arguments); };
-Button.Save = function() { return genericButton('save', arguments, 'warning'); };
-Button.Yes = function() { return genericButton('yes', arguments); };
+Button.Cancel = function() { return genericButton('cancel', 'shadow'); };
+Button.Close = function() { return genericButton('close', 'simple'); };
+Button.Delete = function() { return genericButton('delete', 'warning'); };
+Button.No = function() { return genericButton('no'); };
+Button.Ok = function() { return genericButton('ok'); };
+Button.Edit = function() { return genericButton('edit'); };
+Button.Save = function() { return genericButton('save', 'special'); };
+Button.Yes = function() { return genericButton('yes'); };
 
 Button.default = {
     caption: "OK",

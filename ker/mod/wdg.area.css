@@ -1,0 +1,114 @@
+.wdg-area {
+    position: relative;
+    display: inline-block;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: .25em;
+    font-size: 1em;
+    vertical-align: middle;
+    border: 0;
+    box-shadow: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.wdg-area.no-label > div.label {
+    display: none;
+}
+
+.wdg-area > div.label {
+    display: block;
+    background-color: #468;
+    border-radius: 1em 1em 0 0;
+    color: #fff;
+    font-family: sans-serif;
+    font-size: 75%;
+    line-height: 1.5em;
+    height: 1.5em;
+    padding: 0 1em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.wdg-area > pre {    
+    display: block;
+    padding: .5em;
+    border: 1px solid #000;
+    overflow: hidden;
+    max-height: 6em;
+    margin: 0;
+    color: #000;
+    background: #fff;
+}
+
+.wdg-area-screen {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.8);
+    z-index: 999999;
+}
+
+.wdg-area-screen > div.label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 2em;;
+    line-height: 2em;
+    vertical-align: middle;
+    padding: 0 1em;
+    font-size: 1em;
+    background-color: #468;
+    color: #fff;
+}
+
+.wdg-area-screen > .container {
+    position: absolute;
+    left: .5em;
+    top: 2.5em;
+    right: .5em;
+    bottom: 4em;
+    border-radius: 1em;
+    background: #fff;
+}
+
+.wdg-area-screen > .container > textarea {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 1em;
+    color: #000;
+    background: transparent;
+    resize: none;
+}
+
+.wdg-area-screen > div.buttons {
+    position: absolute;
+    display: table;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 4rem;
+    padding: 0;
+}
+
+.wdg-area-screen > div.buttons > div {
+    position: relative;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}

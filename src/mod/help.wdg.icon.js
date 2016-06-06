@@ -1,4 +1,5 @@
 var $ = require("dom");
+var Wdg = require("x-widget");
 var Icon = require("wdg.icon");
 
 var X = function() {
@@ -12,11 +13,15 @@ var X = function() {
     names.sort();
 
     names.forEach(function (name) {
-        $.add( elem, $.div(
+        var icon = $.div(
             {title: name},
             [
                 new Icon({content: name, size: '2em'})
-            ]));
+            ]);
+        $.on( icon, function() {
+            Wdg.getById('txtContent').value = name;            
+        });
+        $.add( elem, icon );
     });
 };
 

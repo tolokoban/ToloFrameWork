@@ -4,6 +4,7 @@ var DB = require("tfw.data-binding");
 var Icon = function(opts) {
     var that = this;
 
+    var mapColors = [];
     var g = $.svg('g', {
         'stroke-width': 6,
         fill: "none",
@@ -18,7 +19,7 @@ var Icon = function(opts) {
     }, 'wdg-icon');
     var elem = $.elem(this, root);
     $.add( root, g );
-    DB.prop(this, 'content')(setContent.bind( this, g ));
+    DB.prop(this, 'content')(setContent.bind( this, mapColors, g ));
     DB.prop(this, 'value');
     DB.propUnit(this, 'size')(function(v) {
         $.att(root, {
@@ -27,12 +28,21 @@ var Icon = function(opts) {
         });
     });
     DB.prop(this, 'action');
-    DB.propColor(this, 'color0');
-    DB.propColor(this, 'color1');
-    DB.propColor(this, 'color3');
-    DB.propColor(this, 'color4');
-    DB.propColor(this, 'color5');
-    DB.propColor(this, 'color6');
+
+    var updateColor = function( index, color ) {
+        var children = mapColors[index];
+        if( typeof children === 'undefined' ) return;
+        children.fill.forEach(function (child) {
+            $.att( child, "fill", that['color' + index] );
+        });
+        children.stroke.forEach(function (child) {
+            $.att( child, "stroke", that['color' + index] );
+        });
+    };
+
+    for (var i = 0; i < 6; i++) {
+        DB.propColor(this, 'color' + i)(updateColor.bind( this, i ));
+    }
 
     opts = DB.extend({
         color0: '#000000',
@@ -44,7 +54,10 @@ var Icon = function(opts) {
         content: ['circle', {
             stroke: 1, fill: 0, r: 90, cx: 0, cy: 0
         }],
-        size: '2em'
+        size: '2em',
+        value: "icon",
+        wide: false,
+        visible: true
     }, opts, this);
 };
 
@@ -57,7 +70,7 @@ Icon.prototype.fire = function() {
 };
 
 
-function setContent(root, v) {
+function setContent(mapColors, root, v) {
     if (typeof v === 'string') {
         var def = Icon.Icons[v.trim().toLowerCase()];
         if( typeof def !== 'undefined' ) v = def;
@@ -78,7 +91,7 @@ function setContent(root, v) {
 
     $.clear( root );
     try {
-        addChild.call( this, root, v );
+        addChild.call( this, mapColors, root, v );
     }
     catch (ex) {
         console.error("[wdg.icon:content] Bad content: ", v);
@@ -87,7 +100,7 @@ function setContent(root, v) {
 }
 
 
-function addChild( parent, child ) {
+function addChild( mapColors, parent, child ) {
     if (!Array.isArray( child ) || child.length == 0) {
         console.error("[wdg.icon:content] `child` must be an array: ", child);
         console.error("parent = ", parent);
@@ -96,7 +109,7 @@ function addChild( parent, child ) {
 
     var node;
     child.forEach(function (itm, idx) {
-        var key, val, att;
+        var key, val, att, color;
         if (idx == 0) {
             node = $.svg(itm);
             $.add( parent, node );
@@ -105,15 +118,19 @@ function addChild( parent, child ) {
                 $.addClass( node, itm );
             } else if (Array.isArray( itm )) {
                 itm.forEach(function (subchild) {
-                    addChild.call( this, node, subchild );
+                    addChild.call( this, mapColors, node, subchild );
                 }, this);
             } else if (typeof itm === 'object') {
                 for( key in itm ) {
                     val = itm[key];
-                    key = antiCamelCase( key );
                     if ((key == 'fill' || key == 'stroke') && typeof val === 'number') {
-                        att = 'color' + Math.floor( val );
+                        color = Math.floor( val ) % 6;
+                        att = 'color' + color;
                         val = this[att];
+                        if (typeof mapColors[color] === 'undefined') {
+                            mapColors[color] = { fill: [], stroke: [] };
+                        }
+                        mapColors[color][key].push( node );
                     }
                     $.att( node, key, val );
                 }
@@ -122,134 +139,170 @@ function addChild( parent, child ) {
     }, this);
 }
 
-
-function antiCamelCase(v) {
-    var out = '', c;
-    for (var i = 0; i < v.length ; i++) {
-        c = v.charAt(i);
-        if (c == c.toUpperCase()) {
-            c = c.toLowerCase();
-            out += '-';
-        }
-        out += c;
-    }
-    return out;
+function draw(d) {
+    return ['g', [
+        ['path', { d: d, stroke: 0, 'stroke-width': 40 }],
+        ['path', { d: d, stroke: 1, 'stroke-width': 24 }]
+    ]];
 }
 
-
 Icon.Icons = {
-    close: ['g', [
-        ['path', {
-            d: 'M-40,-40L40,40M-40,40L40,-40',
-            stroke: 0, strokeWidth: 40
-        }],
-        ['path', {
-            d: 'M-40,-40L40,40M-40,40L40,-40',
-            stroke: 1, strokeWidth: 24
-        }]
-    ]],
     ok: ['g', [
         ['path', {
             d: 'M-30,0L-10,30,30,-30',
-            stroke: 0, strokeWidth: 30
+            stroke: 0, 'stroke-width': 30
         }],
         ['path', {
             d: 'M-30,0L-10,30,30,-30',
-            stroke: 4, strokeWidth: 16
+            stroke: 4, 'stroke-width': 16
         }]
     ]],
     cancel: ['g', [
         ['path', {
             d: 'M-30,-30L30,30M-30,30L30,-30',
-            stroke: 0, strokeWidth: 30
+            stroke: 0, 'stroke-width': 30
         }],
         ['path', {
             d: 'M-30,-30L30,30M-30,30L30,-30',
-            stroke: 3, strokeWidth: 16
+            stroke: 3, 'stroke-width': 16
         }]
     ]],
-    menu: ['g', [
+    close: draw('M-40,-40L40,40M-40,40L40,-40'),
+    menu: draw('M-40,-34h80M-40,0h80M-40,34h80'),
+    left: draw('M30,-30L-30,0,30,30'),
+    'left-double': draw('M-10,-30L-40,0,-10,30M40,-30L10,0,40,30'),
+    right: draw('M-30,-30L30,0,-30,30'),
+    'right-double': draw('M10,-30L40,0,10,30M-40,-30L-10,0,-40,30'),
+    up: draw('M-30,30L0,-30,30,30'),
+    'up-double': draw('M-30,40L0,10,30,40M-30,-10L0,-40,30,-10'),
+    down: draw('M-30,-30L0,30,30,-30'),
+    'down-double': draw('M-30,-40L0,-10,30,-40M-30,10L0,40,30,10'),
+    fullscreen: ['g', [
         ['path', {
-            d: 'M-40,-34h80M-40,0h80M-40,34h80',
-            stroke: 0, strokeWidth: 40
+            d: 'M-20,-10h70v50h-70Z',
+            stroke: 0, fill: 1, 'stroke-width': 8
         }],
         ['path', {
-            d: 'M-40,-34h80M-40,0h80M-40,34h80',
-            stroke: 1, strokeWidth: 24
-        }]
-    ]],
-    left: ['g', [
-        ['path', {
-            d: 'M30,-30L-30,0,30,30',
-            stroke: 0, strokeWidth: 40
-        }],
-        ['path', {
-            d: 'M30,-30L-30,0,30,30',
-            stroke: 1, strokeWidth: 24
-        }]
-    ]],
-    right: ['g', [
-        ['path', {
-            d: 'M-30,-30L30,0,-30,30',
-            stroke: 0, strokeWidth: 40
-        }],
-        ['path', {
-            d: 'M-30,-30L30,0,-30,30',
-            stroke: 1, strokeWidth: 24
-        }]
-    ]],
-    up: ['g', [
-        ['path', {
-            d: 'M-30,30L0,-30,30,30',
-            stroke: 0, strokeWidth: 40
-        }],
-        ['path', {
-            d: 'M-30,30L0,-30,30,30',
-            stroke: 1, strokeWidth: 24
-        }]
-    ]],
-    down: ['g', [
-        ['path', {
-            d: 'M-30,-30L0,30,30,-30',
-            stroke: 0, strokeWidth: 40
-        }],
-        ['path', {
-            d: 'M-30,-30L0,30,30,-30',
-            stroke: 1, strokeWidth: 24
+            d: 'M-40,-30h70v50h-70Z',
+            stroke: 0, fill: 1, 'stroke-width': 8
         }]
     ]],
     'tri-left': ['g', [
         ['path', {
             d: 'M30,-30L-30,0,30,30Z',
-            stroke: 0, fill: 1, strokeWidth: 8
+            stroke: 0, fill: 1, 'stroke-width': 8
         }]
     ]],
     'tri-right': ['g', [
         ['path', {
             d: 'M-30,-30L30,0,-30,30Z',
-            stroke: 0, fill: 1, strokeWidth: 8
+            stroke: 0, fill: 1, 'stroke-width': 8
         }]
     ]],
     'tri-up': ['g', [
         ['path', {
             d: 'M-30,30L0,-30,30,30Z',
-            stroke: 0, fill: 1, strokeWidth: 8
+            stroke: 0, fill: 1, 'stroke-width': 8
         }]
     ]],
     'tri-down': ['g', [
         ['path', {
             d: 'M-30,-30L0,30,30,-30Z',
-            stroke: 0, fill: 1, strokeWidth: 8
+            stroke: 0, fill: 1, 'stroke-width': 8
         }]
     ]],
-    wait: ['g', [
+    plus: draw("M-45,0H45M0,-45V45"),
+    minus: draw("M-45,0H45"),
+    "plus-o": ["g", [
+        ["circle", { r: 60, stroke: "none", fill: 0 }],
+        ["circle", { r: 50, stroke: "none", fill: 1 }],
+        ["path", { d: "M-30,0H30M0,-30V30", fill: "none", stroke: 0, "stroke-width": 16 }]
+    ]],
+    "minus-o": ["g", [
+        ["circle", { r: 60, stroke: "none", fill: 0 }],
+        ["circle", { r: 50, stroke: "none", fill: 1 }],
+        ["path", { d: "M-30,0H30", fill: "none", stroke: 0, "stroke-width": 16 }]
+    ]],
+    "plus-small": draw("M-30,0H30M0,-30V30"),
+    "minus-small": draw("M-30,0H30"),
+    hand: draw("M-10,36v-80M10,46v-50M30,46v-50M45,31v-25M-40,16l40,30h30l15,-15"),
+    location: ["g", {"stroke-linejoin": "miter"}, [
+        ["path", {
+            "fill": 1, "stroke": 0, "stroke-width": 8,
+            "d": "M0,50L20,0c20,-20,10,-50,-20,-50c-30,0,-40,30,-20,50Z"
+        }],
+        ["circle", {
+            "fill": 0, "stroke": "none", "r": 10, "cy": -20
+        }]
+    ]],
+    "flag-jp": ["g", {stroke: "none"}, [
+        ["path", {fill: "#000", d: "M-50,35h100v-70h-100z"}],
+        ["path", {fill: "#fff", d: "M-45,30h90v-60h-90z"}],
+        ["circle", {fill: "#bc002d", r: 18}]
+    ]],
+    "flag-fr": ["g", {stroke: "none"}, [
+        ["path", {fill: "#000", d: "M-50,35h100v-70h-100z"}],
+        ["path", {fill: "#002395", d: "M-45,30h30v-60h-30z"}],
+        ["path", {fill: "#fff", d: "M-15,30h30v-60h-30z"}],
+        ["path", {fill: "#ed2939", d: "M15,30h30v-60h-30z"}]
+    ]],
+    "flag-it": ["g", {stroke: "none"}, [
+        ["path", {fill: "#000", d: "M-50,35h100v-70h-100z"}],
+        ["path", {fill: "#009246", d: "M-45,30h30v-60h-30z"}],
+        ["path", {fill: "#fff", d: "M-15,30h30v-60h-30z"}],
+        ["path", {fill: "#ce2b37", d: "M15,30h30v-60h-30z"}]
+    ]],
+    "flag-de": ["g", {stroke: "none"}, [
+        ["path", {fill: "#000", d: "M-65,41h130v-82h-130z"}],
+        ["path", {fill: "#ffce00", d: "M-60,36h120v-24h-120z"}],
+        ["path", {fill: "#dd0000", d: "M-60,12h120v-24h-120z"}]
+    ]],
+    "flag-en": ["g", {stroke: "none"}, [
+        ["path", {fill: "#000", d: "M-65,37h130v-75h-130z"}],
+        ["path", {fill: "#bb133e", d: "M-60,32h120v-65h-120z"}],
+        ["path", {fill: "#fff", d: "M-60,22h120v5h-120z"}],
+        ["path", {fill: "#fff", d: "M-60,12h120v5h-120z"}],
+        ["path", {fill: "#fff", d: "M-60,2h120v5h-120z"}],
+        ["path", {fill: "#fff", d: "M-60,-8h120v5h-120z"}],
+        ["path", {fill: "#fff", d: "M-60,-18h120v5h-120z"}],
+        ["path", {fill: "#fff", d: "M-60,-28h120v5h-120z"}],
+        ["path", {fill: "#002664", d: "M-60,-33h48v35h-48z"}],
+        
+    ]],
+    edit: ["g", [
+        ["path", {
+            "d": "M-50,50h70v-90h-70Z",
+            "fill": 1, "stroke": 0, "stroke-width":8
+        }],
+        ["path", {
+            "d": "M50,-50L-20,20",
+            "fill": "none", "stroke": 0, "stroke-width": 28
+        }],
+        ["path", {
+            "stroke-linecap": "miter", "fill": "none",
+            "d": "M50,-50L0,0",
+            "stroke": 1, "stroke-width": 12
+        }],
+        ["path", {
+            "fill": 1, "stroke": "none",
+            "d": "M-25,25l20,-10,-10,-10Z"
+        }]
+    ]],
+    user: ["g", [
+        ["path", {
+            "d": "M-50,0l30,50h40l30,-50c0,-30,-100,-30,-100,0",
+            "fill": 1, "stroke": 0, "stroke-width":8
+        }],
+        ["circle", { "r": 27, "cy": -30, "fill": 1, "stroke": 0, "stroke-width":8 }]
+    ]],
+    wait: ['g', {transform: "rotate(0)"}, [
         ['path', {
             d: "M0,40 A40,40,0,1,1,40,0",
-            stroke: 0, strokeWidth: 40
+            stroke: 0, 'stroke-width': 40
         }],
         ['path', {
             d: "M0,40 A40,40,0,1,1,40,0",
-            stroke: 1, strokeWidth: 24
+            stroke: 1, 'stroke-width': 24
         }],
         ['animateTransform', {
             attributeName: "transform",
@@ -264,3 +317,24 @@ Icon.Icons = {
 };
 
 module.exports = Icon;
+
+
+var x =
+        ["g", [
+            ["path", {
+                "d": "M-50,50h60v-90h-60Z",
+                "fill": 1, "stroke": 0, "stroke-width":8
+            }],
+            ["path", {
+                "d": "M50,-50L-20,20",
+                "fill": "none", "stroke": 0, "stroke-width": 28
+            }],
+
+            ["path", {
+                "stroke-linecap": "miter", "fill": "none",
+                "d": "M50,-50L-20,20",
+                "stroke": 0, "stroke-width": 12
+            }]
+
+        ]]
+;
