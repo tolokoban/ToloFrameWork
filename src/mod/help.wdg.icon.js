@@ -18,8 +18,13 @@ var X = function() {
             [
                 new Icon({content: name, size: '2em'})
             ]);
-        $.on( icon, function() {
-            Wdg.getById('txtContent').value = name;            
+        $.on( icon, {
+            tap: function() {
+                Wdg.getById('txtContent').value = name;
+            },
+            doubletap: function() {
+                Wdg.getById('txtContent').value = JSON.stringify( Icon.Icons[name], null, '  ' );
+            }
         });
         $.add( elem, icon );
     });

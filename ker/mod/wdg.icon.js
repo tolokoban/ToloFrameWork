@@ -236,21 +236,21 @@ Icon.Icons = {
         }]
     ]],
     "flag-jp": ["g", {stroke: "none"}, [
-        ["path", {fill: "#000", d: "M-50,35h100v-70h-100z"}],
-        ["path", {fill: "#fff", d: "M-45,30h90v-60h-90z"}],
-        ["circle", {fill: "#bc002d", r: 18}]
+        ["path", {fill: "#000", d: "M-65,50h130v-100h-130z"}],
+        ["path", {fill: "#fff", d: "M-60,45h120v-90h-120z"}],
+        ["circle", {fill: "#bc002d", r: 24}]
     ]],
     "flag-fr": ["g", {stroke: "none"}, [
-        ["path", {fill: "#000", d: "M-50,35h100v-70h-100z"}],
-        ["path", {fill: "#002395", d: "M-45,30h30v-60h-30z"}],
-        ["path", {fill: "#fff", d: "M-15,30h30v-60h-30z"}],
-        ["path", {fill: "#ed2939", d: "M15,30h30v-60h-30z"}]
+        ["path", {fill: "#000", d: "M-65,50h130v-100h-130z"}],
+        ["path", {fill: "#002395", d: "M-60,45h40v-90h-40z"}],
+        ["path", {fill: "#fff", d: "M-20,45h40v-90h-40z"}],
+        ["path", {fill: "#ed2939", d: "M20,45h40v-90h-40z"}]
     ]],
     "flag-it": ["g", {stroke: "none"}, [
-        ["path", {fill: "#000", d: "M-50,35h100v-70h-100z"}],
-        ["path", {fill: "#009246", d: "M-45,30h30v-60h-30z"}],
-        ["path", {fill: "#fff", d: "M-15,30h30v-60h-30z"}],
-        ["path", {fill: "#ce2b37", d: "M15,30h30v-60h-30z"}]
+        ["path", {fill: "#000", d: "M-65,50h130v-100h-130z"}],
+        ["path", {fill: "#009246", d: "M-60,45h40v-90h-40z"}],
+        ["path", {fill: "#fff", d: "M-20,45h40v-90h-40z"}],
+        ["path", {fill: "#ce2b37", d: "M20,45h40v-90h-40z"}]
     ]],
     "flag-de": ["g", {stroke: "none"}, [
         ["path", {fill: "#000", d: "M-65,41h130v-82h-130z"}],
