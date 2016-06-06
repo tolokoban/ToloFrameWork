@@ -1,0 +1,19 @@
+<x-html title="Module wdg.icon">
+    <wdg-code $name="wdg.icon"
+              content="ok / txtContent"
+              value="icon / txtValue"
+              size="2em / txtSize"
+              wide="false / chkWide"
+              visible="true / chkVisible">
+        <wdg:text id="txtContent" $label="content" $value="ok" $wide="true"
+                  $list="Close, OK, Cancel"/>
+        <wdg:text id="txtValue" $label="value" $value="icon" $wide="true" />
+        <wdg:text id="txtSize" $label="size" $value="2em" $wide="true"
+                  validator="[0-9]*(.[0-9]+)?(%|em|ex|vw|vh|mm|cm|pt|vmin|vmax)?"/>
+        <wdg:checkbox id="chkWide"
+                      $text="wide" $value="false" $wide="true" />
+        <wdg:checkbox id="chkVisible"
+                      $text="visible" $value="true" $wide="true"/>
+    </wdg-code>
+    <x-widget name="help.wdg.icon" />
+</x-html>

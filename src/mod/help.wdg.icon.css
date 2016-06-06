@@ -1,0 +1,5 @@
+div.help-wdg-icon > * {
+    display: inline-block;
+    box-shadow: 0 0 0 1px #777;
+    margin: .5em;
+}

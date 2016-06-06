@@ -4,19 +4,31 @@
     margin: 0;
     border: 0;
     background: none;
-    background-repeat:   no-repeat;
-    background-position: left center;
-    background-image:    url(wdg.checkbox/cancel.png);
-    padding: 0 8px 0 20px;
+    padding: 0 8px 0 8px;
     text-align: left;
+    font-size: 1em;
+    text-height: 2em;
     cursor: pointer;
-    transition: background-image 300ms;
 }
+
+.wdg-checkbox > * {
+    display: inline-block;
+    vertical-align: middle;
+    text-height: 2em;
+}
+
+.wdg-checkbox > *.wdg-icon {
+    margin: 0;
+}
+
+.wdg-checkbox > div {
+    margin-left: .5em;
+}
+
 
 .dark .wdg-checkbox {
     color: #eee;
 }
-
 
 .wdg-checkbox.align-left {
     text-align: left;
@@ -28,8 +40,4 @@
 
 .wdg-checkbox.align-right {
     text-align: right;
-}
-
-.wdg-checkbox.checked {
-    background-image:    url(wdg.checkbox/ok.png);
 }

@@ -1,5 +1,6 @@
 var $ = require("dom");
 var DB = require("tfw.data-binding");
+var Icon = require("wdg.icon");
 
 var TYPES = ['standard', 'simple', 'warning', 'shadow', 'special'];
 
@@ -28,16 +29,36 @@ var Button = function(opts) {
     var that = this;
 
     var elem = $.elem(this, typeof opts.href === 'string' ? 'a' : 'button', 'wdg-button');
+    var icon = null;
 
-    DB.propString(this, 'text')(function(v) {
-        elem.textContent = v;
-    });
+    var refresh = function() {
+        $.clear( elem );
+        if (icon) {
+            $.add( elem, icon.element, that.text );
+        } else {
+            elem.textContent = that.text;
+        }        
+    };
+    
     DB.prop(this, 'value');
     DB.propEnum( TYPES )(this, 'type')(function(v) {
         TYPES.forEach(function (type) {
             $.removeClass(elem, type);
         });
         $.addClass(elem, v);
+    });
+    DB.prop(this, 'icon')(function(v) {
+        if (!v || (typeof v === 'string' && v.trim().length == 0)) {
+            icon = null;
+        } else if (v.element) {
+            icon = v.element;
+        } else {
+            icon = new Icon({content: v, size: "1.2em"});
+        }
+        refresh();
+    });
+    DB.propString(this, 'text')(function(v) {
+        refresh();
     });
     DB.propBoolean(this, 'enabled')(function(v) {
         if (v) {
@@ -58,6 +79,7 @@ var Button = function(opts) {
     opts = DB.extend({
         text: "OK",
         value: "action",
+        icon: "",
         small: false,
         enabled: true,
         wide: false,

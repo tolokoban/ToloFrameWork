@@ -2,6 +2,7 @@
     <wdg-code $name="wdg.button"
              id="btn"
              text="OK / txtText"
+             icon="ok / txtIcon"
              type="standard / txtType"
              value="button / txtValue"
              small="false / chkSmall"
@@ -12,6 +13,8 @@
         <wdg:text id="txtType" $label="type" $value="standard"
                   $list="standard, simple, warning, shadow, special"
                   $wide="true" />
+        <wdg:text id="txtIcon" $label="icon" $value="ok" $wide="true"
+        $list="ok, cancel, close, menu"/>
         <wdg:text id="txtValue" $label="value" $value="button" $wide="true" />
         <wdg:checkbox id="chkSmall"
                       $text="small" $value="false" $wide="true" />

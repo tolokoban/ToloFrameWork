@@ -25,6 +25,18 @@ button.wdg-button {
     border: none;
 }
 
+a.wdg-button > *,
+button.wdg-button > * {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+
+a.wdg-button > .wdg-icon,
+button.wdg-button > .wdg-icon {
+    margin: 0 .5em 0 -.5em;
+}
+
 a.wdg-button.wide,
 button.wdg-button.wide {
     display: block;

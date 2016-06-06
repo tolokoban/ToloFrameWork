@@ -1,20 +1,28 @@
 var $ = require("dom");
 var DB = require("tfw.data-binding");
+var Icon = require("wdg.icon");
 
 var Checkbox = function(opts) {
     var that = this;
 
-    var elem = $.elem( this, 'button', 'wdg-checkbox' );
+    var yes = new Icon({content: "ok", size: "1.1em"});
+    var no = new Icon({content: "cancel", size: "1.1em"});
+    var text = $.div();
+    var elem = $.elem( this, 'button', 'wdg-checkbox', [yes, no, text] );
 
     DB.propBoolean(this, 'value')(function(v) {
         if (v) {
             $.addClass( elem, 'checked' );
+            yes.visible = true;
+            no.visible = false;
         } else {
             $.removeClass( elem, 'checked' );
+            yes.visible = false;
+            no.visible = true;
         }
     });
     DB.propString(this, 'text')(function(v) {
-        elem.textContent = v;
+        text.textContent = v;
     });
     DB.propInteger(this, 'action', 0);
 

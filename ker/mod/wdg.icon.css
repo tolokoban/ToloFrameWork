@@ -6,12 +6,5 @@
     border: none;
     outline: none;
     box-shadow: none;
-}
-
-.wdg-icon:hover {
-    background-color: orange;
-}
-
-.wdg-icon > * {
-    margin: 0;
+    vertical-align: middle;
 }

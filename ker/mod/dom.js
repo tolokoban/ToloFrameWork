@@ -72,7 +72,7 @@ exports.detach = detach;
  * event (the value).
  * Events' names are:
  * * __tap__: When  the element is  pressed and released in  less than
-     900 ms and without too much sliding.
+ 900 ms and without too much sliding.
  * * __doubletap__
  * * __dragmove__
  *
@@ -166,6 +166,9 @@ function add( element ) {
                 // Backward compatibility with Widgets.
                 child = child.element();
             }
+            else if( typeof child.element !== 'undefined' ) {
+                child = child.element;
+            }
             element.appendChild( child );
         }
         return element;
@@ -205,43 +208,49 @@ function on( element, slots, capture ) {
 }
 
 function tagNS( ns, name ) {
-    var e = document.createElementNS( ns, name );
-    var i, arg, key, val;
-    for (i = 2 ; i < arguments.length ; i++) {
-        arg = arguments[i];
-        if( Array.isArray(arg) ) {
-            // Array are for children.
-            arg.forEach(function (child) {
-                switch( typeof child ) {
-                case 'string':
-                case 'number':
-                case 'boolean':
-                    child = document.createTextNode( "" + child );
-                    break;
-                }
-                add( e, child );
-            });
-        } else {
-            switch( typeof arg ) {
-            case "string":
-                arg.split( ' ' ).forEach(function ( item ) {
-                    if( item.length > 0 ) {
-                        addClass(e, item);
+    try {
+        var e = document.createElementNS( ns, name );
+        var i, arg, key, val;
+        for (i = 2 ; i < arguments.length ; i++) {
+            arg = arguments[i];
+            if( Array.isArray(arg) ) {
+                // Array are for children.
+                arg.forEach(function (child) {
+                    switch( typeof child ) {
+                    case 'string':
+                    case 'number':
+                    case 'boolean':
+                        child = document.createTextNode( "" + child );
+                        break;
                     }
+                    add( e, child );
                 });
-                break;
-            case "object":
-                for( key in arg ) {
-                    val = arg[key];
-                    e.setAttribute( key, val );
+            } else {
+                switch( typeof arg ) {
+                case "string":
+                    arg.split( ' ' ).forEach(function ( item ) {
+                        if( item.length > 0 ) {
+                            addClass(e, item);
+                        }
+                    });
+                    break;
+                case "object":
+                    for( key in arg ) {
+                        val = arg[key];
+                        e.setAttribute( key, val );
+                    }
+                    break;
+                default:
+                    throw Error("[dom.tag] Error creating <" + name + ">: Invalid argument #" + i + "!");
                 }
-                break;
-            default:
-                throw Error("[dom.tag] Error creating <" + name + ">: Invalid argument #" + i + "!");
             }
         }
+        return e;
     }
-    return e;
+    catch (ex) {
+        console.error("[dom.tagNS] Error with `ns` = ", ns, " and `name` = ", name);
+        console.error(ex);
+    }
 };
 
 
@@ -352,7 +361,16 @@ function elem( target ) {
     args.shift();
     if (args.length == 0) args = ['div'];
     args.push('dom', 'custom');
-    var e = exports.tag.apply( exports, args );
+    var e;
+    if (typeof args[0].element !== 'undefined') {
+        e = args[0].element;
+        addClass( e, 'dom', 'custom' );
+    } else if (typeof args[0].appendChild === 'function') {
+        e = args[0];
+        addClass( e, 'dom', 'custom' );
+    } else {
+        e = exports.tag.apply( exports, args );
+    }
     Object.defineProperty( target, 'element', {
         value: e, writable: false, configurable: false, enumerable: true
     });
