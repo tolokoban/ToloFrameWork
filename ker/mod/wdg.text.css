@@ -7,9 +7,6 @@ div.wdg-text {
     margin: .25em;
     font-size: 1em;
     vertical-align: middle;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
 }
 
 div.wdg-text > div.datalist {
