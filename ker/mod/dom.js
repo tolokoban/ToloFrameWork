@@ -194,13 +194,19 @@ function on( element, slots, capture ) {
         element[SYMBOL] = interact(element);
     }
 
-    var key, val;
+    var key, val, preview;
     for( key in slots ) {
         val = slots[key];
-        if (key == 'keydown' || key == 'keyup') {
-            element.addEventListener( key, val );
+        if (key.charAt(0) == '!') {
+            key = key.substr(1);
+            preview = true;
         } else {
-            element[SYMBOL].on( key, val );
+            preview = false;
+        }
+        if (key == 'keydown' || key == 'keyup') {
+            element.addEventListener( key, val, preview );
+        } else {
+            element[SYMBOL].on( key, val, preview );
         }
     }
 

@@ -7,6 +7,7 @@
  * @example
  * var mod = require('tfw.data-binding');
  */
+require("polyfill.string");
 var Listeners = require("tfw.listeners");
 
 

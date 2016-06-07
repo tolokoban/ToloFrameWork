@@ -21,6 +21,13 @@ var Icon = function(opts) {
     $.add( root, g );
     DB.prop(this, 'content')(setContent.bind( this, mapColors, g ));
     DB.prop(this, 'value');
+    DB.propBoolean(this, 'rotate')(function(v) {
+        if (v) {
+            $.addClass( elem, "rotate" );
+        } else {
+            $.removeClass( elem, "rotate" );
+        }
+    });
     DB.propUnit(this, 'size')(function(v) {
         $.att(root, {
             width: v,
@@ -56,6 +63,7 @@ var Icon = function(opts) {
         }],
         size: '2em',
         value: "icon",
+        rotate: false,
         wide: false,
         visible: true
     }, opts, this);
@@ -271,22 +279,32 @@ Icon.Icons = {
     ]],
     heart: ["g", [
         ["path", {
-            "d": "M0,0c0,-30,30,-30,30,0q0,10,-30,30q-30,-20,-30,-30c0,-30,30,-30,30,0",
-            "stroke-width": 6, "fill": 1, "stroke": 0
+            "d": "M0,-20c0,-30,40,-30,40,0c0,40,-40,40,-40,60c0,-20,-40,-20,-40,-60c0,-30,40,-30,40,0",
+            "stroke-width": 8,
+            "fill": 1,
+            "stroke": 0
         }]
     ]],
     "heart-anim": ["g", [
         ["path", {
-            "d": "M0,0c0,-30,30,-30,30,0q0,10,-30,30q-30,-20,-30,-30c0,-30,30,-30,30,0",
-            "stroke-width": 6, "fill": 1, "stroke": 0
+            "d": "M0,-20c0,-30,40,-30,40,0c0,40,-40,40,-40,60c0,-20,-40,-20,-40,-60c0,-30,40,-30,40,0",
+            "stroke-width": 8,
+            "fill": 1,
+            "stroke": 0
         }],
         ['animateTransform', {
             attributeName: "transform",
             begin: "0s",
-            dur: "3s",
+            dur: "2s",
             type: "scale",
-            values: "1;1;1;1.5;1;1.5;1",
+            values: "1;1;1;1;1;1.3;.8;1.3;1",
             repeatCount: "indefinite"
+        }]
+    ]],
+    star: ["g", [
+        ["path", {
+            "d": "M0,-60L18,-24L57,-19L29,9L35,49L0,30L-35,49L-29,9L-57,-19L-18,-24Z",
+            "stroke-width": 8, "fill": 1, "stroke": 0
         }]
     ]],
     edit: ["g", [
@@ -308,6 +326,10 @@ Icon.Icons = {
             "d": "M-25,25l20,-10,-10,-10Z"
         }]
     ]],
+    gear: ["path", {
+        "d": "M0,-60L12,-59Q8,-18,35,-49L45,-40L52,-30L57,-19Q20,-2,60,6L57,19L52,30L45,40Q12,16,24,55L12,59L0,60L-12,59Q-8,18,-35,49L-45,40L-52,30L-57,19Q-20,2,-60,-6L-57,-19L-52,-30L-45,-40Q-12,-16,-24,-55L-12,-59L0,-60M20,0A15,15,0,1,0,-20,0M-20,0A15,15,0,1,0,20,0",
+        "stroke-width": 8, "fill": 1, "stroke": 0
+    }],
     user: ["g", [
         ["path", {
             "d": "M-50,0l30,50h40l30,-50c0,-30,-100,-30,-100,0",
@@ -323,15 +345,6 @@ Icon.Icons = {
         ['path', {
             d: "M0,40 A40,40,0,1,1,40,0",
             stroke: 1, 'stroke-width': 24
-        }],
-        ['animateTransform', {
-            attributeName: "transform",
-            begin: "0s",
-            dur: "1s",
-            type: "rotate",
-            from: 0,
-            to: 360,
-            repeatCount: "indefinite"
         }]
     ]]
 };

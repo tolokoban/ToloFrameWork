@@ -9,6 +9,6 @@
     "512": "/icon-512.png"
   },
   "name": "toloframework",
-  "version": "0.37.1",
+  "version": "0.37.2",
   "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style."
 }

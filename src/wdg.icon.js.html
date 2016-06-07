@@ -2,25 +2,27 @@
     <wdg-code $name="wdg.icon"
               content="ok / txtContent"
               value="icon / txtValue"
+              rotate="false / chkRotate"
+              size="2em / txtSize"
               color0="#000 / txtColor0"
               color1="#fff / txtColor1"
               color2="#777 / txtColor2"
               color3="#f00 / txtColor3"
               color4="#0f0 / txtColor4"
               color5="#00f / txtColor5"
-              size="2em / txtSize"
               wide="false / chkWide"
               visible="true / chkVisible">
         <wdg:area id="txtContent" $label="content" $value="ok" $wide="true" />
+        <wdg:text id="txtSize" $label="size" $value="2em" $wide="true"
+                  validator="[0-9]*(.[0-9]+)?(%|em|ex|vw|vh|mm|cm|pt|vmin|vmax)?"/>
         <wdg:text id="txtValue" $label="value" $value="icon" $wide="true" />
+        <wdg:checkbox id="chkRotate" $text="rotate" $value="false" $wide="true" />
         <wdg:text id="txtColor0" $label="color0" $value="#000" $wide="true" />
         <wdg:text id="txtColor1" $label="color1" $value="#fff" $wide="true" />
         <wdg:text id="txtColor2" $label="color2" $value="#777" $wide="true" />
         <wdg:text id="txtColor3" $label="color3" $value="#f00" $wide="true" />
         <wdg:text id="txtColor4" $label="color4" $value="#0f0" $wide="true" />
         <wdg:text id="txtColor5" $label="color5" $value="#00f" $wide="true" />
-        <wdg:text id="txtSize" $label="size" $value="2em" $wide="true"
-                  validator="[0-9]*(.[0-9]+)?(%|em|ex|vw|vh|mm|cm|pt|vmin|vmax)?"/>
         <wdg:checkbox id="chkWide"
                       $text="wide" $value="false" $wide="true" />
         <wdg:checkbox id="chkVisible"

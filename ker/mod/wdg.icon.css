@@ -1,3 +1,21 @@
+@-webkit-keyframes wdg-icon-rotation {
+    from { -webkit-transform: rotate(0); transform: rotate(0) }
+    to { -webkit-transform: rotate(360deg); transform: rotate(360deg) }
+}
+@-moz-keyframes wdg-icon-rotation {
+    from { -webkit-transform: rotate(0); transform: rotate(0) }
+    to { -webkit-transform: rotate(360deg); transform: rotate(360deg) }
+}
+@-o-keyframes wdg-icon-rotation {
+    from { -webkit-transform: rotate(0); transform: rotate(0) }
+    to { -webkit-transform: rotate(360deg); transform: rotate(360deg) }
+}
+@keyframes wdg-icon-rotation {
+    from { -webkit-transform: rotate(0); transform: rotate(0) }
+    to { -webkit-transform: rotate(360deg); transform: rotate(360deg) }
+}
+
+
 .wdg-icon {
     display: inline-block;
     margin: 0;
@@ -7,4 +25,9 @@
     outline: none;
     box-shadow: none;
     vertical-align: middle;
+}
+
+.wdg-icon.rotate {
+    animation: wdg-icon-rotation 1.5s linear infinite;
+    -webkit-animation: wdg-icon-rotation 1.5s linear infinite;
 }
