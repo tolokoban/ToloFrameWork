@@ -267,7 +267,27 @@ Icon.Icons = {
         ["path", {fill: "#fff", d: "M-60,-18h120v5h-120z"}],
         ["path", {fill: "#fff", d: "M-60,-28h120v5h-120z"}],
         ["path", {fill: "#002664", d: "M-60,-33h48v35h-48z"}],
-        
+
+    ]],
+    heart: ["g", [
+        ["path", {
+            "d": "M0,0c0,-30,30,-30,30,0q0,10,-30,30q-30,-20,-30,-30c0,-30,30,-30,30,0",
+            "stroke-width": 6, "fill": 1, "stroke": 0
+        }]
+    ]],
+    "heart-anim": ["g", [
+        ["path", {
+            "d": "M0,0c0,-30,30,-30,30,0q0,10,-30,30q-30,-20,-30,-30c0,-30,30,-30,30,0",
+            "stroke-width": 6, "fill": 1, "stroke": 0
+        }],
+        ['animateTransform', {
+            attributeName: "transform",
+            begin: "0s",
+            dur: "3s",
+            type: "scale",
+            values: "1;1;1;1.5;1;1.5;1",
+            repeatCount: "indefinite"
+        }]
     ]],
     edit: ["g", [
         ["path", {
