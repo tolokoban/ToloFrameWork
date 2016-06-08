@@ -165,6 +165,7 @@ exports.extend = function( def, ext, obj ) {
 
     var key, val;
     for( key in ext ) {
+        if (key.charAt(0) == '$') continue;
         val = ext[key];
         if( typeof out[key] === 'undefined' ) {
             console.error("[tfw.data-binding.extend] Undefined argument: `" + key + "`!");
@@ -174,7 +175,17 @@ exports.extend = function( def, ext, obj ) {
     }
 
     if (typeof obj !== 'undefined') {
+        for( key in ext ) {
+            if (key.charAt(0) != '$') continue;
+                Object.defineProperty( obj, key, {
+                    value: ext[key],
+                    writable: false,
+                    configurable: false,
+                    enumerable: false
+                });
+        }
         for( key in out ) {
+            if (key.charAt(0) == '$') continue;
             obj[key] = out[key];
         }
     }
