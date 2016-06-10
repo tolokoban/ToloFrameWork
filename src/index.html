@@ -8,7 +8,16 @@
         <li><a href="wdg.text.js.html">wdg.text</a></li>
     </ul>
 
-    <wdg:combo $value="fr" $label="Choix de la langue">
-        <content json>{"en": "English", "fr": "French", "it": "Italiano"}</content>
-    </wdg:combo>
+    <wdg:label $value="Hello " />
+    <wdg:label $value=" World!" />
+    
+    <wdg:text $label="Markers" $value="Départ">
+        <content list>
+            <div id="Allo" style="box-shadow: 0 0 1px orange">
+J'aime bien les <b>crevettes</b>. Pas vous ?
+            </div>
+            <wdg:button $text="Yes" />
+            <wdg:button $text="Nein !" />
+        </content>
+    </wdg:text>
 </x-html>

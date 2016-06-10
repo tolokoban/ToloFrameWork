@@ -102,7 +102,7 @@ var Text = function(opts) {
         validator: null,
         valid: true,
         list: null,
-        label: null,
+        label: '',
         placeholder: '',
         size: 10,
         width: 'auto',

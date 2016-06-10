@@ -9,11 +9,41 @@ exports.tags = ["x-widget", "wdg:.+"];
 exports.priority = 0;
 
 var ID = 0;
+// When a widget is child of another widget, we will skip it and parse its content.
+var SKIP = false;
 
 /**
  * Compile a node of the HTML tree.
  */
 exports.compile = function(root, libs) {
+    if (SKIP) {
+        // For widgets, children of other widgets, we want to compile the properties' children.
+        root.children.forEach(function (child) {
+            if (child.type == libs.Tree.TAG) {
+                libs.compileChildren( child );
+            }
+        });
+        return;
+    }
+
+    SKIP = true;
+    var com = parseComponent( root, libs, '        ' );
+
+    libs.require("x-widget");
+    libs.require(com.name);
+    libs.addInitJS("var W = require('x-widget');");
+    libs.addInitJS(
+        "        W('" + com.attr.id + "', '" + com.name + "', "
+            + stringifyProperties(com.prop, '          ') + ")"
+    );
+    SKIP = false;
+};
+
+
+/**
+ * @return `{ attr: {id:...}, prop: {value:...}, bind: {enabled:...}, name: "wdg.text", require: []}`
+ */
+function parseComponent(root, libs, indent) {
     var com = {
         // HTML element attributes.
         attr: {},
@@ -27,20 +57,11 @@ exports.compile = function(root, libs) {
         temp: {}
     };
 
-    parseComponent( root, libs, com );
-
-};
-
-
-/**
- * @return `{ attr: {id:...}, prop: {value:...}, bind: {enabled:...}, name: "wdg.text", require: []}`
- */
-function parseComponent(root, libs, com) {
     getModuleName( root, libs, com );
     getUniqueIdentifier( root, libs, com );
     getRootChildren( root, libs, com );
-    getPropertiesAndBindings( root, libs, com );
-    parseChilrenProperties( root, libs, com );
+    getPropertiesAndBindings( root, libs, com, indent );
+    parseChildrenProperties( root, libs, com, indent );
 
     root.children = [];
     root.name = "div";
@@ -50,14 +71,7 @@ function parseComponent(root, libs, com) {
         style: "display:none"
     };
 
-    libs.require(com.name);
-    libs.require("x-widget");
-    libs.addInitJS("var W = require('x-widget');");
-    libs.addInitJS(
-        "try{W('" + com.attr.id + "','" + com.name + "'," 
-            + stringifyProperties(com.prop) + ")"
-            + "}\ncatch(x) {console.error('Unable to initialize " + com.name + "!', x)}"
-    );
+    return com;
 };
 
 
@@ -69,20 +83,57 @@ function camelCase( text ) {
 }
 
 
-function stringifyProperties( prop ) {
-    var first = true;
-    var out = '{';
+function stringifyProperties( prop, indent ) {
+    var count = 0;
     var key, val;
+    var out;
+
+    // We want to know if there is more than one item.
     for( key in prop ) {
-        val = prop[key];
-        if (first) {
-            first = false;
-        } else {
-            out += ",";
-        }
-        out += "\n  " + camelCase(key) + ": " + val;
+        count++;
+        if (count > 1) break;
     }
-    return out + '}';
+
+    if (count == 0) return "{}";
+    else if (count == 1) {
+        for( key in prop ) {
+            return "{" + JSON.stringify( key ) + ": " + prop[key] + "}";
+        }
+    }
+    else {
+        var first = true;
+        out = '{';
+        for( key in prop ) {
+            val = prop[key];
+            if (first) {
+                first = false;
+            } else {
+                out += ",";
+            }
+            out += "\n  " + indent + camelCase(key) + ": " + val;
+        }
+        return out + '}';
+    }
+}
+
+
+/**
+ * @param {array} arr - Array of strings.
+ *
+ * If `arr` has more than one element, it will be displayed on several lines.
+ */
+function stringifyArray( arr, indent ) {
+    var hasMoreThanOneItem = arr.length > 1;
+    if (hasMoreThanOneItem) {
+        var out = '[';
+        arr.forEach(function (itm, idx) {
+            if (idx > 0) out += ",";
+            out += "\n" + indent + itm;
+        });
+        return out + "]";
+    } else {
+        return "[" + (arr.length == 1 ? arr[0] : '') + "]";
+    }
 }
 
 /**
@@ -95,7 +146,7 @@ function getModuleName(root, libs, com) {
         name = "wdg." + root.name.substr( 4 );
     } else {
         if (!name || name.length == 0) {
-            libs.fatal("[x-widget] Missing attribute \"name\"!");
+            libs.fatal("[x-widget] Missing attribute \"name\"!", root);
         }
     }
     com.name = name;
@@ -132,7 +183,7 @@ function getRootChildren(root, libs, com) {
 /**
  * Properties and bindings.
  */
-function getPropertiesAndBindings(root, libs, com) {
+function getPropertiesAndBindings(root, libs, com, indent) {
     // Attributes can have post initialization, especially for data bindings.
     var postInit = {};
     var hasPostInit = false;
@@ -156,39 +207,135 @@ function getPropertiesAndBindings(root, libs, com) {
 
     if (hasPostInit) {
         libs.addPostInitJS(
-            "W.bind('" + com.attr.id + "'," + JSON.stringify(postInit) + ");"
+            "        W.bind('" + com.attr.id + "'," + JSON.stringify(postInit) + ");"
         );
     }
 }
 
 
 /**
-@example
+ @example
 
-<wdg:combo $key="fr">
-  <content json>
-{
-  "en": "English",
-  "fr": "Français",
-  "it": "Italiano"
-}
-  </content>
-</wdg:combo>
+ <wdg:combo $key="fr">
+ <content json>
+ {
+ "en": "English",
+ "fr": "Français",
+ "it": "Italiano"
+ }
+ </content>
+ </wdg:combo>
  */
-function parseChilrenProperties(root, libs, com) {
+function parseChildrenProperties(root, libs, com, indent) {
     root.children.forEach(function (child) {
         if (child.type != libs.Tree.TAG) return;
-        console.info("[x-widget.com] child=...", JSON.stringify(child));
+        libs.compileChildren( child );
 
-        if (child.attribs.json === null) {
-            var text = libs.Tree.text( child ).trim();
-            try {
-                com.prop[child.name] = JSON.stringify(JSON.parse( text ), null, '  ');
-            }
-            catch (ex) {
-                libs.fatal("Unable to parse JSON value of property `" + child.name + "`: "
-                          + ex + "\n" + text);
-            }
+        if (child.attribs.json === null) parsePropertyJSON(child, libs, com);
+        else if (child.attribs.list === null) parsePropertyList(child, libs, com, indent + "  ");
+    });
+}
+
+
+function parsePropertyJSON(root, libs, com) {
+    var text = libs.Tree.text( root ).trim();
+    try {
+        com.prop[root.name] = JSON.stringify(JSON.parse( text ), null, '  ');
+    }
+    catch (ex) {
+        libs.fatal("Unable to parse JSON value of property `" + root.name + "`: "
+                   + ex + "\n" + text);
+    }
+}
+
+
+/**
+ @example
+
+ <wdg:layout-line>
+ <content list>
+ <div>
+ J'aime bien les <b>crevettes</b>. Pas vous ?
+ </div>
+ <wdg:button $text="Yes" />
+ <wdg:button $text="Nein !" />
+ </content>
+ </wdg:layout-line>
+ */
+function parsePropertyList(root, libs, com, indent) {
+    var first = true;
+    var out = '[';
+    root.children.forEach(function (child) {
+        if (child.type != libs.Tree.TAG) return;
+        if (first) {
+            first = false;
+        } else {
+            out += ",";
+        }
+        out += "\n" + indent;
+        if (isWidget( child )) {
+            out += parseWidget( child, libs, com, indent + '  ' );
+        } else {
+            out += parseElement( child, libs, com, indent + '  ' );
         }
     });
+
+    out += ']';
+    com.prop[root.name] = out;
+}
+
+
+function parseElement(root, libs, com, indent) {
+    var out = "W({\n" + indent + "  elem: " + JSON.stringify(root.name);
+    var attr = {}, hasAttributes = false;
+    var prop = {}, hasProperties = false;
+    var attKey, attVal;
+    for( attKey in root.attribs ) {
+        attVal = root.attribs[attKey];
+        if (attKey.charAt(0) == '$') {
+            hasProperties = true;
+            prop[attKey.substr( 1 )] = JSON.stringify( attVal );
+        } else {
+            hasAttributes = true;
+            attr[attKey] = JSON.stringify( attVal );
+        }
+    };
+    if (hasAttributes) {
+        out += ",\n" + indent + "  attr: " + stringifyProperties( attr, indent + '  ' );
+    }
+    if (hasProperties) {
+        out += ",\n" + indent + "  prop: " + stringifyProperties( prop, indent + '  ' );
+    }
+    var children = [];
+    root.children.forEach(function (child) {
+        if (child.type == libs.Tree.TEXT) {
+            children.push(JSON.stringify( child.text ));
+        }
+        else if (child.type == libs.Tree.TAG) {
+            children.push( parseElement( child, libs, com, indent + '    ' ) );
+        }
+    });
+    if (children.length > 0) {
+        out += ",\n" + indent + "  children: " + stringifyArray(children, indent + '    ');
+    }
+
+    return out + "})";
+}
+
+
+function parseWidget(root, libs, parent, indent) {
+    var com = parseComponent( root, libs, indent );
+    libs.require(com.name);
+    return indent + "W('" + com.attr.id + "', '" + com.name + "', "
+        + stringifyProperties(com.prop, indent) + ")";
+}
+
+
+function isWidget( root ) {
+    var name = root.name;
+    if (name.substr(0, 4) == 'wdg:' || name == 'x-widget') {
+        console.log(name + " is a WIDGET!");
+        return true;
+    }
+    return false;
 }

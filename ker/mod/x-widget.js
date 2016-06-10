@@ -8,17 +8,24 @@ var slots = {};
 
 
 var Widget = function(id, modName, args) {
-    var dst = document.getElementById( id );
-    if (!dst) {
-        // This widget does not exist!
-        return;
+    try {
+        var dst = document.getElementById( id );
+        if (!dst) {
+            // This widget does not exist!
+            return;
+        }
+        var module = require( modName );
+        var wdg = new module( args );
+        var elem = typeof wdg.element === 'function' ? wdg.element() : wdg.element;
+        elem.setAttribute( 'id', id );
+        dst.parentNode.replaceChild( elem, dst );
+        register( id, wdg );
     }
-    var module = require( modName );
-    var wdg = new module( args );
-    var elem = typeof wdg.element === 'function' ? wdg.element() : wdg.element;
-    elem.setAttribute( 'id', id );
-    dst.parentNode.replaceChild( elem, dst );
-    register( id, wdg );
+    catch (ex) {
+        console.error("[x-widget] Unable to create widget `" + modName + "`!");
+        console.error("[x-widget] id = ", id, ", args = ", args);
+        throw Error(ex);
+    }
 };
 
 Widget.template = function( attribs ) {
@@ -87,8 +94,8 @@ Widget.bind = function( id, attribs ) {
         srcObj = widgets[binding[0]];
         if( typeof srcObj === 'undefined' ) {
             console.error( "[x-widget:bind] Trying to bind attribute \"" + dstAtt
-                         + "\" of widget \"" + id + "\" to the unexisting widget \""
-                         + binding[0] + "\"!");
+                           + "\" of widget \"" + id + "\" to the unexisting widget \""
+                           + binding[0] + "\"!");
             return;
         }
         srcAtt = binding[1];
