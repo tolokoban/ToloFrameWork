@@ -1,5 +1,5 @@
 "use strict";
-
+var $ = require("dom");
 var DB = require("tfw.data-binding");
 
 var widgets = {};
@@ -8,11 +8,16 @@ var slots = {};
 
 
 var Widget = function(id, modName, args) {
+    if (typeof id === 'string') return Widget1.call( this, id, modName, args );
+    else return Widget2.call( this, id );
+};
+
+function Widget1(id, modName, args ) {
     try {
         var dst = document.getElementById( id );
         if (!dst) {
             // This widget does not exist!
-            return;
+            return null;
         }
         var module = require( modName );
         var wdg = new module( args );
@@ -20,6 +25,7 @@ var Widget = function(id, modName, args) {
         elem.setAttribute( 'id', id );
         dst.parentNode.replaceChild( elem, dst );
         register( id, wdg );
+        return wdg;
     }
     catch (ex) {
         console.error("[x-widget] Unable to create widget `" + modName + "`!");
@@ -27,6 +33,60 @@ var Widget = function(id, modName, args) {
         throw Error(ex);
     }
 };
+
+/**
+ * @example
+ var W = require("x-widget");
+ W({
+ elem: "div",
+ attr: {"class": "black"},
+ prop: {"$key": "menu"},
+ children: [
+ "This is the ",
+ W({
+ elem: "b",
+ children: ["menu"]}),
+ "..."]});
+ */
+function Widget2(args) {
+    var id;
+    var elem = $.tag( args.elem );
+    if (args.attr) {
+        // Adding DOM element attributes.
+        $.att( elem, args.attr );
+        id = args.attr.id;
+    }
+
+    if (Array.isArray( args.children )) {
+        // Adding DOM element children.
+        args.children.forEach(function (child) {
+            $.add( elem, child );
+        });
+    }
+    // Converting into a widget.
+    var key, val;
+    var wdg = {};
+
+    if (args.prop) {
+        // Adding READ-ONLY properties to the widget.
+        for( key in args.prop ) {
+            val = args.prop[key];
+            Object.defineProperty( wdg, key, {
+                value: val, writable: false, configurable: false, enumerable: true
+            });
+        }
+    }
+    // Assigning the element to the widget.
+    Object.defineProperty( wdg, 'element', {
+        value: elem, writable: false, configurable: false, enumerable: true
+    });
+
+    if( typeof id !== 'undefined' ) {
+        // Registering the widget only if it as got an id.
+        register( id, wdg );
+    }
+    return wdg;
+}
 
 Widget.template = function( attribs ) {
     var key, val, id, name = '', args = {};

@@ -188,20 +188,22 @@ function getPropertiesAndBindings(root, libs, com, indent) {
     var postInit = {};
     var hasPostInit = false;
     // All the attributes that start with a '$' are used as args attributes.
-    var key, val;
+    var key, val, values;
     for( key in root.attribs ) {
         if( key.charAt(0) == '$' ) {
             val = root.attribs[key];
             com.prop[key.substr( 1 )] = JSON.stringify(val);
         }
         else if (key.substr( 0, 5 ) == 'bind:') {
-            val = root.attribs[key];
-            key = key.substr( 5 );
-            if( typeof postInit[key] === 'undefined' ) postInit[key] = {};
-            val = val.split( ':' );
-            if (val.length < 2) val.push('value');
-            postInit[key].B = val.map(function(x){return x.trim();});
-            hasPostInit = true;
+            values = root.attribs[key].split(",");
+            values.forEach(function (val) {
+                key = key.substr( 5 );
+                if( typeof postInit[key] === 'undefined' ) postInit[key] = {};
+                val = val.split( ':' );
+                if (val.length < 2) val.push('value');
+                postInit[key].B = val.map(function(x){return x.trim();});
+                hasPostInit = true;
+            });
         }
     }
 
@@ -265,6 +267,7 @@ function parsePropertyJSON(root, libs, com) {
 function parsePropertyList(root, libs, com, indent) {
     var first = true;
     var out = '[';
+    libs.compileChildren( root );
     root.children.forEach(function (child) {
         if (child.type != libs.Tree.TAG) return;
         if (first) {
@@ -286,6 +289,7 @@ function parsePropertyList(root, libs, com, indent) {
 
 
 function parseElement(root, libs, com, indent) {
+console.log("parseElement".red + ": " + JSON.stringify(root, null, '  '));
     var out = "W({\n" + indent + "  elem: " + JSON.stringify(root.name);
     var attr = {}, hasAttributes = false;
     var prop = {}, hasProperties = false;
@@ -312,7 +316,12 @@ function parseElement(root, libs, com, indent) {
             children.push(JSON.stringify( child.text ));
         }
         else if (child.type == libs.Tree.TAG) {
-            children.push( parseElement( child, libs, com, indent + '    ' ) );
+console.log(JSON.stringify(child, null, '  ').green);
+            if (isWidget( child )) {
+                children.push( parseWidget( child, libs, com, indent + '    ' ) );
+            } else {
+                children.push( parseElement( child, libs, com, indent + '    ' ) );
+            }
         }
     });
     if (children.length > 0) {
@@ -324,6 +333,7 @@ function parseElement(root, libs, com, indent) {
 
 
 function parseWidget(root, libs, parent, indent) {
+console.log("parseWidget".red + ": " + JSON.stringify(root, null, '  '));
     var com = parseComponent( root, libs, indent );
     libs.require(com.name);
     return indent + "W('" + com.attr.id + "', '" + com.name + "', "

@@ -2,16 +2,18 @@ exports.config={
     name:"toloframework",
     description:"Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
     author:"Tolokoban",
-    version:"0.37.2",
+    version:"0.37.3",
     major:0,
     minor:37,
-    revision:2,
-    date:new Date(2016,5,7,8,23,33)
+    revision:3,
+    date:new Date(2016,5,15,10,33,26)
 };
 var currentLang = null;
 exports.lang = function(lang) {
     if (lang === undefined) {
-        lang = window.localStorage.getItem("Language");
+        if (window.localStorage) {
+            lang = window.localStorage.getItem("Language");
+        }
         if (!lang) {
             lang = window.navigator.language;
             if (!lang) {
@@ -24,7 +26,9 @@ exports.lang = function(lang) {
         lang = lang.substr(0, 2).toLowerCase();
     }
     currentLang = lang;
-    window.localStorage.setItem("Language", lang);
+    if (window.localStorage) {
+        window.localStorage.setItem("Language", lang);
+    }
     return lang;
 };
 exports.intl = function(words, params) {

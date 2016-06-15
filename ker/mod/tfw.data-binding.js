@@ -119,6 +119,8 @@ function propCast( caster, obj, att, val ) {
 
 exports.fire = function( obj, att, val ) {
     var currentValue = obj[att];
+    if( typeof val === 'undefined' ) val = currentValue;
+
     obj[att] = val;
     if ( val === currentValue ) {
         // If the value is the same, we must force the event firing.

@@ -23,12 +23,13 @@ var LayoutStack = function(opts) {
     var that = this;
 
     var elem = $.elem( this, 'div', 'wdg-layout-stack' );
+    var children = {};
 
     DB.propString(this, 'value')(function(v) {
         var key, val;
-        for( key in that.content ) {
-            val = that.content[key];
-            if (typeof val.element() === 'function') {
+        for( key in children ) {
+            val = children[key];
+            if (typeof val.element === 'function') {
                 val = val.element();
             }
             else if (typeof val.element !== 'undefined') {
@@ -38,18 +39,39 @@ var LayoutStack = function(opts) {
         }
     });
     DB.prop(this, 'content')(function(v) {
-        var key, val;
+        if (Array.isArray( v )) {
+            // Convert array into map.
+            // Each item should have the `$key` property.
+            // If not, an incremental ID will be provided.
+            var obj = {};
+            v.forEach(function (itm, idx) {
+                if( typeof itm.$key === 'undefined' ) itm.$key = idx;
+                obj[itm.$key] = itm;
+            });
+            v = obj;
+        }
+
+        // Clearing current element to add children.
+        $.clear( elem );
+
+        var key, val, container;
         for( key in v ) {
             val = v[key];
-            if (typeof val.element() === 'function') {
+            if (typeof val.element === 'function') {
                 val = val.element();
             }
             else if (typeof val.element !== 'undefined') {
                 val = val.element;
             }
-            $.add( elem, $.div())
+            container = $.div([val]);
+            if (typeof val.$scroll !== 'undefined') {
+                $.addClass( container, 'scroll' );
+            }
+            $.add( elem, container );
         }
 
+        children = v;
+        DB.fire( that, 'value' );
     });
 
     opts = DB.extend({
