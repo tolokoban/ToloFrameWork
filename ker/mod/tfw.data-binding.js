@@ -186,6 +186,7 @@ exports.extend = function( def, ext, obj ) {
                     enumerable: false
                 });
         }
+        // Setting values.
         for( key in out ) {
             if (key.charAt(0) == '$') continue;
             obj[key] = out[key];
