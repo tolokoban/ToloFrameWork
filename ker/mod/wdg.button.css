@@ -87,6 +87,7 @@
     text-shadow: none;
     box-shadow: none;
     font-size: 100%;
+    font-weight: bold;
 }
 
 .wdg-button.simple:hover {

@@ -1,0 +1,7 @@
+{
+    "js": "squire/squire-raw.js",
+    "res": {
+        "squire/squire.js": "squire/squire.js",
+        "squire/squire.html": "squire/squire.html"
+    }
+}
