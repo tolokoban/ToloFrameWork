@@ -1,0 +1,17 @@
+div.x-spc {
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    content: "-";
+    font-size: 0;
+    border: none;
+    box-shadow: 0;
+}
+
+div.x-spc.W {
+    display: inline-block;
+}
+
+div.x-spc.H {
+    display: inline;
+}

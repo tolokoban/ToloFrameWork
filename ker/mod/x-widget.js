@@ -14,16 +14,16 @@ var Widget = function(id, modName, args) {
 
 function Widget1(id, modName, args ) {
     try {
-        var dst = document.getElementById( id );
-        if (!dst) {
-            // This widget does not exist!
-            return null;
-        }
         var module = require( modName );
         var wdg = new module( args );
         var elem = typeof wdg.element === 'function' ? wdg.element() : wdg.element;
         elem.setAttribute( 'id', id );
-        dst.parentNode.replaceChild( elem, dst );
+        var dst = document.getElementById( id );
+        if (dst) {
+            // This widget does exist in the current DOM.
+            // We have to replace it.
+            dst.parentNode.replaceChild( elem, dst );
+        }
         register( id, wdg );
         return wdg;
     }
@@ -145,21 +145,39 @@ Widget.onWidgetCreation = function( id, slot ) {
     }
 };
 
+/**
+ * @example
+ * var W = require("x-widget");
+ * W.bind('wdg.layout-stack0',{"value":{"B":["btnNewTask","action","btnCancel","action"]}});
+ */
 Widget.bind = function( id, attribs ) {
+    // Destination object: the one on the attributes of which we want to bind.
     var dstObj = widgets[id];
-    var dstAtt, binding;
+    // Destination attribute name.
+    var dstAtt;
+    // Temporary variables to hold source object and attributes.
     var srcObj, srcAtt;
+    // @example
+    // ["btnNewTask","action","btnCancel","action"]
+    var binding;
+    // Index used to parse multiple bindings.
+    var idx;
     for( dstAtt in attribs ) {
         binding = attribs[dstAtt].B;
-        srcObj = widgets[binding[0]];
-        if( typeof srcObj === 'undefined' ) {
-            console.error( "[x-widget:bind] Trying to bind attribute \"" + dstAtt
-                           + "\" of widget \"" + id + "\" to the unexisting widget \""
-                           + binding[0] + "\"!");
-            return;
+        // `binding` is an array with an even number of elements.
+        // In each couple, the first is the ID if the source object,
+        // and the second is the attribute to bind on.
+        for (idx = 0; idx < binding.length; idx += 2) {
+            srcObj = widgets[binding[idx + 0]];
+            if( typeof srcObj === 'undefined' ) {
+                console.error( "[x-widget:bind] Trying to bind attribute \"" + dstAtt
+                               + "\" of widget \"" + id + "\" to the unexisting widget \""
+                               + binding[idx + 0] + "\"!");
+                return;
+            }
+            srcAtt = binding[idx + 1];
+            DB.bind( srcObj, srcAtt, dstObj, dstAtt );
         }
-        srcAtt = binding[1];
-        DB.bind( srcObj, srcAtt, dstObj, dstAtt );
     }
 };
 

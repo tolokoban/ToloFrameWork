@@ -4,9 +4,10 @@ div.wdg-text {
     width: auto;
     height: 3em;
     padding: 0;
-    margin: .25em;
+    margin: .5em;
     font-size: 1em;
     vertical-align: middle;
+    background-color: #fff;
 }
 
 div.wdg-text > div.datalist {
@@ -16,18 +17,28 @@ div.wdg-text > div.datalist {
     background: #fff;
     padding: 0;
     margin: 0;
-    border: 1px solid #000;
     max-height: 9em;
     overflow: auto;
     z-index: 999;
+    top: 4em;
 }
+
+div.wdg-text.no-label > div.datalist {
+    top: 3em;
+}
+
 
 div.wdg-text.list > div.datalist {
     display: inline-block;
 }
 
-div.wdg-text > div.datalist > div:hover {
-    background-color: orange;
+div.wdg-text > div.datalist:hover > div:first-child {
+    background-color: #fff;
+}
+
+div.wdg-text > div.datalist > div:first-child,
+div.wdg-text > div.datalist:hover > div:hover {
+    background-color: #aef;
 }
 
 div.wdg-text > div.datalist > div {
@@ -44,8 +55,12 @@ div.wdg-text > div.datalist > div {
 }
 
 div.wdg-text > div.datalist > div b {
-    color: #000;
+    display: inline-block;
+    color: #006;
+    text-decoration: underline;
     font-weight: bold;
+    margin: 0;
+    padding: 0;
 }
 
 
@@ -63,18 +78,14 @@ div.wdg-text > * {
     margin: 0;
     width: 100%;
     font-size: 1em;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
 }
 
 div.wdg-text > input {
     height: 2em;
-    box-shadow: 0 0 1px 1px #ddd;
+    box-shadow: none;
     padding: 0 .5em;
     background-color: #fff;
-    border: 1px solid #000;
-    border-bottom: 3px solid #000;
+    border: none;
     color: #000;
 }
 
@@ -82,17 +93,9 @@ div.wdg-text > input[disabled] {
     background-color: #aaa;
 }
 
-div.wdg-text.valid > input {
-    border-bottom: 3px solid #3d3;
-}
-
 div.wdg-text.not-valid > input {
-    border-bottom: 3px solid #d33;
-    color: #d33;
-}
-
-div.wdg-text > input:focus {
-    box-shadow: 0 0 1px 1px #ff8;
+    background-color: #fee;
+    color: #900;
 }
 
 div.wdg-text.no-label > div.label {
@@ -100,14 +103,13 @@ div.wdg-text.no-label > div.label {
 }
 
 div.wdg-text > div.label {
-    background-color: #468;
-    border-radius: 1em 1em 0 0;
-    color: #fff;
+    vertical-align: bottom;
+    color: #468;
     font-family: sans-serif;
     font-size: 75%;
     line-height: 1.5em;
     height: 1.5em;
-    padding: 0 1em;
+    padding: 0 .75em;
     white-space: nowrap;
     text-overflow: ellipsis;
 }

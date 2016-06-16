@@ -19,12 +19,14 @@ var Text = function(opts) {
     var that = this;
 
     var dataListHasFocus = false;
+    var autocompleteProposals = [];
+    var autocompleteShift = 0;
 
     var label = $.div( 'label' );
     var input = $.tag( 'input' );
-    var datalist = $.div( 'datalist' );
+    var datalist = $.div( 'datalist', 'elevation-12' );
     this._input = input;
-    var elem = $.elem( this, 'div', 'wdg-text', [label, input, datalist] );
+    var elem = $.elem( this, 'div', 'wdg-text', 'elevation-2', [label, input, datalist] );
 
     DB.propString(this, 'value')(function(v) {
         input.value = v;
@@ -134,17 +136,24 @@ var Text = function(opts) {
             }).map(function(itm) {
                 var t = that.list[itm[0]];
                 var i = itm[1];
-                return t.substr(0, i) 
-                    + "<b>" + t.substr(i, needle.length) + "</b>" 
+                return t.substr(0, i)
+                    + "<b>" + t.substr(i, needle.length) + "</b>"
                     + t.substr(i + needle.length);
             });
         } else {
             list = list.sort();
         }
+        if (autocompleteShift > 0) {
+            // Put the current item to the top of the list.
+            // Use arrow keys to change `autocompleteShift`.
+            list = list.slice( autocompleteShift ).concat( list.slice( 0, autocompleteShift ) );
+        }
+        autocompleteProposals = list;
 
-        list.forEach(function (item) {
+        list.forEach(function (item, idx) {
             var div = $.div();
             div.innerHTML = item;
+            list[idx] = div.textContent.trim();
             $.add( datalist, div );
             $.on( div, {
                 down: function() {
@@ -156,37 +165,70 @@ var Text = function(opts) {
                 },
                 tap: function() {
                     that.value = div.textContent.trim();
+                    console.info("[wdg.text] div=...", div);
                     $.removeClass( elem, 'list' );
                 }
             });
         });
-        
+
         $.addClass( elem, "list" );
     };
 
     var actionUpdateValue = LaterAction(function() {
         that.value = input.value;
     }, 300);
-    input.addEventListener('keyup', function() {
-        complete();
-        actionUpdateValue.fire();
+    input.addEventListener('keyup', function(evt) {
+        if (evt.keyCode == 13) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            if ($.hasClass( elem, 'list' )) {
+                $.removeClass( elem, 'list' );
+                that.value = autocompleteProposals[0];
+            }
+            else if (that.valid !== false) {
+                DB.fire( that, 'value', input.value );
+                DB.fire( that, 'action', input.value );
+            }
+        }
+        else if (evt.keyCode == 27) {
+            $.removeClass( elem, "list" );
+            autocompleteShift = 0;
+            evt.preventDefault();
+            evt.stopPropagation();
+        }
+        else if (evt.keyCode == 40 && $.hasClass( elem, 'list' )) {
+            autocompleteShift = (autocompleteShift + 1) % autocompleteProposals.length;
+            complete();
+            evt.preventDefault();
+            evt.stopPropagation();
+        }
+        else if (evt.keyCode == 38 && $.hasClass( elem, 'list' )) {
+            autocompleteShift = (autocompleteShift + autocompleteProposals.length - 1)
+                % autocompleteProposals.length;
+            complete();
+            evt.preventDefault();
+            evt.stopPropagation();
+        }
+        else {
+            autocompleteShift = 0;
+            complete();
+            actionUpdateValue.fire();
+        }
     });
     input.addEventListener('blur', function() {
         that.value = input.value;
         if (!dataListHasFocus) {
             $.removeClass( elem, "list" );
         }
+        $.addClass( elem, "elevation-2" );
+        $.removeClass( elem, "elevation-8" );
     });
-    input.addEventListener('focus', that.selectAll.bind(that));
+    input.addEventListener('focus', function() {
+        that.selectAll();
+        $.removeClass( elem, "elevation-2" );
+        $.addClass( elem, "elevation-8" );
+    });
     input.addEventListener('keydown', function(evt) {
-        if (evt.keyCode == 13) {
-            evt.preventDefault();
-            evt.stopPropagation();
-            if (that.valid !== false) {
-                DB.fire( that, 'value', input.value );
-                DB.fire( that, 'action', input.value );
-            }
-        }
     });
 
     this.validate();

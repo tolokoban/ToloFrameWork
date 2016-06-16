@@ -28,7 +28,7 @@ var TYPES = ['standard', 'simple', 'warning', 'shadow', 'special'];
 var Button = function(opts) {
     var that = this;
 
-    var elem = $.elem(this, typeof opts.href === 'string' ? 'a' : 'button', 'wdg-button');
+    var elem = $.elem(this, typeof opts.href === 'string' ? 'a' : 'button', 'wdg-button', 'elevation-2');
     var icon = null;
 
     var refresh = function() {
@@ -91,11 +91,13 @@ var Button = function(opts) {
     $.on(this.element, {
         down: function() {
             if (that.enabled) {
-                $.addClass(elem, 'press');
+                $.removeClass(elem, 'elevation-2');
+                $.addClass(elem, 'elevation-8');
             }
         },
         up: function() {
-            $.removeClass(elem, 'press');
+            $.addClass(elem, 'elevation-2');
+            $.removeClass(elem, 'elevation-8');
         },
         tap: that.fire.bind( that ),
         keydown: function(evt) {
