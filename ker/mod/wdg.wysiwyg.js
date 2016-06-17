@@ -6,6 +6,7 @@
 "use strict";
 var $ = require("dom");
 var DB = require("tfw.data-binding");
+var Icon = require("wdg.icon");
 
 /**
  * @example
@@ -20,9 +21,12 @@ var WysiwygEditor = function( opts ) {
     var postponedFocus = false;
     this.focus = function() { postponedFocus = true; };
 
-    var elem = $.elem(this, 'button', 'wdg-wysiwyg', 'elevation-2');
-    var header = $.tag('header');
-    var menu = $.tag('menu');
+    var elem = $.elem(this, 'div', 'wdg-wysiwyg', 'elevation-2');
+    var iconFullscreen = new Icon({ content: Icon.Icons.fullscreen });
+    var label = $.tag('span', 'label');
+    var header = $.div('header', [iconFullscreen, label]);
+    var slider = $.div('slider');
+    var menu = $.div('menu');
     var iframe = $.tag( 'iframe', { src: 'squire/squire.html' } );
     iframe.addEventListener( 'load', function() {
         // Storing a reference to the wysiwyg editor.
@@ -32,8 +36,8 @@ var WysiwygEditor = function( opts ) {
         if( postponedFocus ) {
             that.focus();
         }
-        // Adding edotir buttons.
-        initHeader.call( that, header );
+        // Adding editor buttons.
+        //initHeader.call( that, header );
         if( that._postponedHTML ) {
             that._squire.setHTML( that._postponedHTML );
             delete that._postponedHTML;
@@ -53,10 +57,24 @@ var WysiwygEditor = function( opts ) {
             console.info("[tp4.wysiwyg-editor] squire.getSelection()=...", squire.getSelection());
         });
     }, false);
-    var body = $.div([iframe]);
-    $.add( elem, [header, menu, body]);
+    var body = $.div('body', [iframe]);
+    $.add( elem, header, menu, body, slider);
 
-    this.append( header, $.div([ iframe ]) );
+    DB.propString(this, 'label')(function(v) {
+        if (typeof v === 'number') v = '' + v;
+        if (typeof v !== 'string') v = '';
+        label.textContent = v;
+    });
+    DB.propInteger(this, 'height')(function(v) {
+        $.att(elem, "height", v + "px");
+    });
+    
+    DB.extend({
+        label: "",
+        value: "",
+        height: 180,
+        visible: true
+    }, opts, this);
 };
 
 
@@ -229,11 +247,6 @@ function addButton( header, name, slot ) {
     $.add( header, button );
     return button;
 }
-
-
-WysiwygEditor.create = function( options ) {
-    return new WysiwygEditor( options );
-};
 
 /**
  * Open a popup with `html` in the editor and `caption` as title.

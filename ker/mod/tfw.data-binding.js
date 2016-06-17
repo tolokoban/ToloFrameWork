@@ -85,7 +85,7 @@ var converters = {
     }
 };
 
-function propCast( caster, obj, att, val ) {
+function propCast( caster, obj, att, val, getter ) {
     if( typeof obj[ID] === 'undefined' ) obj[ID] = {};
     obj[ID][att] = {
         value: val,
@@ -108,8 +108,12 @@ function propCast( caster, obj, att, val ) {
             }
         };
     }
+    if (typeof getter !== 'function') {
+        // Default getter.
+        getter = function() { return obj[ID][att].value; };
+    }
     Object.defineProperty( obj, att, {
-        get: function() { return obj[ID][att].value; },
+        get: getter,
         set: setter,
         configurable: false,
         enumerable: true

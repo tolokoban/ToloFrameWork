@@ -79,6 +79,7 @@ var Button = function(opts) {
     opts = DB.extend({
         text: "OK",
         value: "action",
+        action: 0,
         icon: "",
         small: false,
         enabled: true,
@@ -91,12 +92,12 @@ var Button = function(opts) {
     $.on(this.element, {
         down: function() {
             if (that.enabled) {
-                $.removeClass(elem, 'elevation-2');
+                //$.removeClass(elem, 'elevation-2');
                 $.addClass(elem, 'elevation-8');
             }
         },
         up: function() {
-            $.addClass(elem, 'elevation-2');
+            //$.addClass(elem, 'elevation-2');
             $.removeClass(elem, 'elevation-8');
         },
         tap: that.fire.bind( that ),

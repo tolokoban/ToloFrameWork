@@ -8,6 +8,9 @@
 exports.tags = ["x-widget", "wdg:.+"];
 exports.priority = 0;
 
+String.trim = function(x) { return x.trim(); };
+
+
 var ID = 0;
 // When a widget is child of another widget, we will skip it and parse its content.
 var SKIP = false;
@@ -188,7 +191,9 @@ function getPropertiesAndBindings(root, libs, com, indent) {
     var postInit = {};
     var hasPostInit = false;
     // All the attributes that start with a '$' are used as args attributes.
-    var key, val, values, binding;
+    var key, val, values;
+    var bindings;
+    var slots;
     for( key in root.attribs ) {
         if( key.charAt(0) == '$' ) {
             val = root.attribs[key];
@@ -196,18 +201,42 @@ function getPropertiesAndBindings(root, libs, com, indent) {
         }
         else if (key.substr( 0, 5 ) == 'bind:') {
             // @example
-            // <wdg.checkbox bind:value="btn1:action" />
-            // <wdg.checkbox bind:value="btn1:action, btn2, action" />
+            // <wdg:checkbox bind:value="btn1:action" />
+            // <wdg:checkbox bind:value="btn1:action, btn2, action" />
             values = root.attribs[key].split(",");
             key = key.substr( 5 );
             if( typeof postInit[key] === 'undefined' ) postInit[key] = {};
-            binding = [];
+            bindings = [];
             values.forEach(function (val) {
                 val = val.split( ':' );
                 if (val.length < 2) val.push('value');
-                binding.push.apply( binding, val );
+                bindings.push.apply( bindings, val );
             });
-            postInit[key].B = binding.map(function(x){return x.trim();});
+            postInit[key].B = bindings.map(String.trim);
+            hasPostInit = true;
+        }
+        else if (key.substr( 0, 5 ) == 'slot:') {
+            // @example
+            // <wdg:button slot:action="removeOrder" />
+            // <wdg:button slot:action="removeOrder, changePage" />
+            // <wdg:button slot:action="my-module:my-function" />
+            values = root.attribs[key].split(",");
+            key = key.substr( 5 );
+            if( typeof postInit[key] === 'undefined' ) postInit[key] = {};
+            slots = [];
+            values.forEach(function (val) {
+                // Before the colon (:) there is the module name.
+                // After, there is the function name.
+                // If there is no colon, `APP` is used as module.
+                val = val.split( ':' );
+                if (val.length < 2) {
+                    slots.push( val[0].trim() );
+                } else {
+                    slots.push( val.map(String.trim) );
+                    libs.require( val[0] );
+                }
+            });
+            postInit[key].S = slots;
             hasPostInit = true;
         }
     }

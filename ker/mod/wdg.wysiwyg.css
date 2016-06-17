@@ -5,28 +5,47 @@
     align-items: stretch;
     position: relative;
     border: none;
-    min-width: 192px;
-    min-height: 128px;
+    width: 100%;
+    min-width: 240px;
+    min-height: 180px;
     font-size: 1em;
+    margin: .5em 0;
+    background-color: #fff;
+    color: #000;
 }
 
-.wdg-wysiwyg > header {
-    flex: 0 0;
+.wdg-wysiwyg > * {
+    display: block;
+    position: relative;
+    width: 100%;
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+.wdg-wysiwyg > .header {
     height: 2em;
     line-height: 2em;
     padding: 0 
 }
 
-.wdg-wysiwyg > menu {
-    flex: 0 0;
+.wdg-wysiwyg > .slider {
+    height: 4px;
+    margin: 5px 3px 2px 3px;
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+    width: auto;
+    cursor: row-resize;
+}
+
+.wdg-wysiwyg > .menu {
 
 }
 
-.wdg-wysiwyg > div {
+.wdg-wysiwyg > .body {
     flex: 1 0;
 }
 
-.wdg-wysiwyg > div > iframe {
+.wdg-wysiwyg > .body > iframe {
     border: none;
     margin: 0;
     position: absolute;

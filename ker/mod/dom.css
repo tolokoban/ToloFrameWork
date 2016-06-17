@@ -2,7 +2,7 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    margin: 4px;
+    margin: .5em;
 }
 
 .dom.wide {
@@ -12,8 +12,24 @@
     margin-left: 0;
 }
 
+.dom.wide-flex {
+    display: flex;
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+}
+
 .dom.hide {
     display: none;
+}
+
+.label {
+    color: #468;
+    font-family: sans-serif;
+    font-size: 75%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-variant: small-caps;
 }
 
 

@@ -159,24 +159,54 @@ Widget.bind = function( id, attribs ) {
     var srcObj, srcAtt;
     // @example
     // ["btnNewTask","action","btnCancel","action"]
-    var binding;
+    var bindings;
+    var slots;
     // Index used to parse multiple bindings.
     var idx;
     for( dstAtt in attribs ) {
-        binding = attribs[dstAtt].B;
-        // `binding` is an array with an even number of elements.
-        // In each couple, the first is the ID if the source object,
-        // and the second is the attribute to bind on.
-        for (idx = 0; idx < binding.length; idx += 2) {
-            srcObj = widgets[binding[idx + 0]];
-            if( typeof srcObj === 'undefined' ) {
-                console.error( "[x-widget:bind] Trying to bind attribute \"" + dstAtt
-                               + "\" of widget \"" + id + "\" to the unexisting widget \""
-                               + binding[idx + 0] + "\"!");
-                return;
+        bindings = attribs[dstAtt].B;
+        if (Array.isArray( bindings )) {
+            // `binding` is an array with an even number of elements.
+            // In each couple, the first is the ID if the source object,
+            // and the second is the attribute to bind on.
+            for (idx = 0; idx < bindings.length; idx += 2) {
+                srcObj = widgets[bindings[idx + 0]];
+                if( typeof srcObj === 'undefined' ) {
+                    console.error( "[x-widget:bind] Trying to bind attribute \"" + dstAtt
+                                   + "\" of widget \"" + id + "\" to the unexisting widget \""
+                                   + bindings[idx + 0] + "\"!");
+                    return;
+                }
+                srcAtt = bindings[idx + 1];
+                DB.bind( srcObj, srcAtt, dstObj, dstAtt );
             }
-            srcAtt = binding[idx + 1];
-            DB.bind( srcObj, srcAtt, dstObj, dstAtt );
+        }
+
+        slots = attribs[dstAtt].S;
+        if (Array.isArray( slots )) {
+            // Each item is the name of a function to call when the value of this attribute changes.
+            // If the item is a `string`, the function is from the global `APP` object.
+            // Otherwise, the item must be an array with two children:
+            // the first one  is the module's name and  the second one
+            // id the name of the function.
+            // The slots are called with two arguments:
+            //  * the value and
+            //  * the object the attribute belongs.
+            slots.forEach(function (slot) {
+                var mod = APP;
+                var fct = slot;
+                if (Array.isArray( slot )) {
+                    mod = require(slot[0]);
+                    fct = slot[1];
+                }
+                fct = mod[fct];
+                if (typeof fct !== 'function') {
+                    console.error("[x-widget:bind] slot not found: ", slot);
+                } else {
+                    fct(dstObj[dstAtt], dstObj);
+                }
+            });
+
         }
     }
 };
