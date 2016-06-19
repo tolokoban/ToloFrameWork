@@ -1,0 +1,56 @@
+.tfw-login {
+    position: fixed;
+    display: flex;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    cursor: not-allowed;
+    margin: 0;
+    background-color: rgba(0,0,0,.2);
+    z-index: 999999;
+}
+
+.tfw-login > div {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: stretch;
+    margin: auto auto;
+    background-color: #eee;
+    padding: 1rem;
+    cursor: default;
+    height: 280px;
+    width: 70%;
+    max-width: 480px;
+    min-width: 300px;
+    transform: scale(1);
+}
+
+.tfw-login.fade-out > div {
+    transform: scale(0);
+    transition: transform .3s;
+}
+
+.tfw-login > div > * {
+    flex: 0 1 auto;
+}
+
+.tfw-login > div > .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: stretch;
+}
+
+.tfw-login > div > .hint {
+    font-size: 70%;
+}
+
+.tfw-login > div > .row > * {
+    flex: 0 1 auto;
+}
+

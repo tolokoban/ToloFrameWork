@@ -28,7 +28,14 @@ var TYPES = ['standard', 'simple', 'warning', 'shadow', 'special'];
 var Button = function(opts) {
     var that = this;
 
-    var elem = $.elem(this, typeof opts.href === 'string' ? 'a' : 'button', 'wdg-button', 'elevation-2');
+    var elem = $.elem(
+        this, 
+        typeof opts.href === 'string' ? 'a' : 'button', 'wdg-button', 'elevation-2'
+    );
+    if (typeof opts.href === 'string' && opts.href.length > 0) {
+        $.att( elem, 'href', opts.href );
+    }
+
     var icon = null;
 
     var refresh = function() {

@@ -56,6 +56,7 @@ var converters = {
     },
     castString: function(v) {
         if (typeof v === 'string') return v;
+        if (v === undefined || v === null) return '';
         return JSON.stringify( v );
     },
     castStringArray: function(v) {

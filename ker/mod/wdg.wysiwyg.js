@@ -20,6 +20,9 @@ var WysiwygEditor = function( opts ) {
     // Real focus function will be set when iframe will be loaded.
     var postponedFocus = false;
     this.focus = function() { postponedFocus = true; };
+    var postponedHTML = null;
+    var squire = null;
+    var iframeIsLoaded = false;
 
     var elem = $.elem(this, 'div', 'wdg-wysiwyg', 'elevation-2');
     var iconFullscreen = new Icon({ content: Icon.Icons.fullscreen });
@@ -29,18 +32,18 @@ var WysiwygEditor = function( opts ) {
     var menu = $.div('menu');
     var iframe = $.tag( 'iframe', { src: 'squire/squire.html' } );
     iframe.addEventListener( 'load', function() {
+        iframeIsLoaded = true;
         // Storing a reference to the wysiwyg editor.
-        var squire = iframe.contentWindow.editor;
-        that._squire = squire;
-        that.focus = that._squire.focus.bind( squire );
+        squire = iframe.contentWindow.editor;
+        that.focus = squire.focus.bind( squire );
         if( postponedFocus ) {
             that.focus();
         }
         // Adding editor buttons.
         //initHeader.call( that, header );
-        if( that._postponedHTML ) {
-            that._squire.setHTML( that._postponedHTML );
-            delete that._postponedHTML;
+        if( postponedHTML !== null ) {
+            squire.setHTML( postponedHTML );
+            postponedHTML = null;
         }
         // Adding onChange event when focus is lost.
         var lastContent = '';
@@ -48,8 +51,8 @@ var WysiwygEditor = function( opts ) {
             lastContent = squire.getHTML();
         });
         squire.addEventListener( 'blur', function() {
-            if( typeof that._Change === 'function' && lastContent !== squire.getHTML() ) {
-                that._Change.call( that );
+            if( lastContent !== squire.getHTML() ) {
+                that.value = squire.getHTML();
             }
         });
         squire.addEventListener( 'pathChange', function( path ) {
@@ -68,6 +71,12 @@ var WysiwygEditor = function( opts ) {
     DB.propInteger(this, 'height')(function(v) {
         $.att(elem, "height", v + "px");
     });
+    DB.propString(this, 'value', function() {
+        return iframeIsLoaded ? squire.getHTML() : '';
+    })(function(v) {
+        if (iframeIsLoaded) squire.setHTML( v );
+        else postponedHTML = v;
+    });
     
     DB.extend({
         label: "",
@@ -75,41 +84,16 @@ var WysiwygEditor = function( opts ) {
         height: 180,
         visible: true
     }, opts, this);
-};
 
+    var startPageY = 0;
 
-/**
- * Get/Set the HTML content of the editor.
- */
-Object.defineProperty( WysiwygEditor.prototype, 'content', {
-    get: function() {
-        if( typeof this._squire === 'undefined' ) {
-            // IFrame is not ready.
-            return this._postponedHTML || "";
-        }
-        return this._squire.getHTML();
-    },
-    set: function( html ) {
-        if( typeof this._squire === 'undefined' ) {
-            // IFrame is  not ready.  We store  the `html`  and it
-            // will  be inserted  as soon  as the  iframe will  be
-            // loaded.
-            this._postponedHTML = html;
-            return;
-        }
-        this._squire.setHTML( html );
-    },
-    configurable: false,
-    enumarable: true
-});
-
-/**
- * Accessor for attribute Change.
- */
-WysiwygEditor.prototype.Change = function(v) {
-    if (typeof v === 'undefined') return this._Change;
-    this._Change = v;
-    return this;
+    interact( slider ).draggable({
+        axis: 'y'
+    }).on('dragend', function (event) {
+        that.height += event.pageY - event.y0;
+    }).on('dragmove', function (event) {
+        $.css( elem, {height: (that.height + event.pageY - event.y0) + "px"});
+    });
 };
 
 

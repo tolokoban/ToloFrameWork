@@ -2,9 +2,9 @@
     vertical-align: middle;
     position: relative;
     display: inline-block;
-    line-height: 2em;
-    min-height: 2em;
-    padding: 0 1em;
+    line-height: 2rem;
+    min-height: 2rem;
+    padding: 0 1rem;
     background: #9cd;
     color: #000;
     text-decoration: none;
@@ -22,12 +22,14 @@
     border: none;
 }
 
+/*
 .wdg-button:hover {
     -o-filter: saturate(200%);
     -ms-filter: saturate(200%);
     -webkit-filter: saturate(200%);
     filter: saturate(200%);
 }
+*/
 
 .wdg-button > * {
     vertical-align: middle;
@@ -36,7 +38,7 @@
 
 
 .wdg-button > .wdg-icon {
-    margin: 0 .5em 0 -.5em;
+    margin: 0 .5rem 0 -.5rem;
 }
 
 .wdg-button.wide {
@@ -50,10 +52,10 @@
 
 .wdg-button.small {
     font-size: 70%;
-    padding: 0 .5em;
+    padding: 0 .5rem;
     margin: 0;
     font-variant: small-caps;
-    min-width: 2em;
+    min-width: 2rem;
 }
 
 .wdg-button[disabled=yes]:hover,

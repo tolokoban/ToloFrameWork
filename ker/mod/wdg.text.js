@@ -24,6 +24,9 @@ var Text = function(opts) {
 
     var label = $.div( 'label' );
     var input = $.tag( 'input' );
+    this.focus = function() {
+        window.setTimeout( input.focus.bind( input ) );
+    };
     var datalist = $.div( 'datalist', 'elevation-12' );
     this._input = input;
     var elem = $.elem( this, 'div', 'wdg-text', 'elevation-2', [label, input, datalist] );
@@ -45,7 +48,9 @@ var Text = function(opts) {
         v.forEach(function ( item ) {
             $.add( datalist, $.div( [item] ) );
         });
-        $.att( elem, "list" );
+        if( v.length > 0 ) {
+            $.att( elem, "list" );
+        }
     });
     DB.propValidator(this, 'validator')(this.validate.bind( this ));
     DB.propBoolean(this, 'valid')(function(v) {
@@ -170,8 +175,11 @@ var Text = function(opts) {
                 }
             });
         });
-
-        $.addClass( elem, "list" );
+        if (list.length > 0) {
+            $.addClass( elem, "list" );
+        } else {
+            $.removeClass( elem, "list" );
+        }
     };
 
     var actionUpdateValue = LaterAction(function() {

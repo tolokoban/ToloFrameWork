@@ -203,7 +203,7 @@ Widget.bind = function( id, attribs ) {
                 if (typeof fct !== 'function') {
                     console.error("[x-widget:bind] slot not found: ", slot);
                 } else {
-                    fct(dstObj[dstAtt], dstObj);
+                    DB.bind( dstObj, dstAtt, fct );
                 }
             });
 

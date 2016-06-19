@@ -2,11 +2,11 @@ exports.config={
     name:"toloframework",
     description:"Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
     author:"Tolokoban",
-    version:"0.37.3",
+    version:"0.37.4",
     major:0,
     minor:37,
-    revision:3,
-    date:new Date(2016,5,15,10,33,26)
+    revision:4,
+    date:new Date(2016,5,19,10,49,30)
 };
 var currentLang = null;
 exports.lang = function(lang) {
