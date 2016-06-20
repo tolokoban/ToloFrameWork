@@ -96,6 +96,7 @@ div.wdg-text > input:focus {
 div.wdg-text.no-valid > input,
 div.wdg-text.no-valid > input:focus {
     background-color: #fdd;
+    box-shadow: none;
     color: red;
 }
 

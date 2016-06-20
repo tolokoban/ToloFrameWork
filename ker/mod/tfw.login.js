@@ -21,16 +21,18 @@ module.exports = function(opts) {
 
     return new Promise(function (resolve, reject) {
         var root = $.div( 'tfw-login' );
-console.info("[tfw.login] WS=...", WS);
+        var lastLogin = WS.config('usr');
         var inpLogin = new T({
-            value: WS.config.usr || '',
+            value: lastLogin || '',
             label: _('login'), 
             placeholder: _('login'),
             validator: "admin|test|[^ \t@]+@[^ \t@]+",
             wide: true
         });
+        var lastPassword = WS.config('pwd');
         var inpPassword = new T({
-            value: WS.config.pwd || '',
+            value: lastPassword || '',
+            type: "password",
             label: _('password'), 
             placeholder: _('password'),
             wide: true

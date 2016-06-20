@@ -226,7 +226,7 @@ if (tasks.length == 0) {
     if (args.indexOf("watch") > -1) {
         if (!prj) return;
         console.log();
-        var fringe = [prj.srcPath()];
+        var fringe = [Path.join(__dirname, "../ker"), prj.srcPath()];
         var path;
         while (fringe.length > 0) {
             path = fringe.pop();

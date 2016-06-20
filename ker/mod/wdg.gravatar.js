@@ -1,5 +1,4 @@
 // https://secure.gravatar.com/site/implement/images/
-
 var Widget = require("wdg");
 var Md5 = require("md5");
 

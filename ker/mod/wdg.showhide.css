@@ -1,0 +1,43 @@
+.wdg-showhide {
+    position: static;
+    padding: 0;
+    margin: .5rem;
+    background: #fff;
+}
+
+.wdg-showhide > .head {
+    position: static;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    height: 2rem;
+    line-height: 2rem;
+    cursor: pointer;
+}
+
+.wdg-showhide > .head > *:first-child {
+    transition: transform .2s;
+    transform: rotate(0);
+}
+
+.wdg-showhide > .head .label {
+    padding-left: 1rem;
+}
+
+.wdg-showhide > .body {
+    display: none;
+    margin: 0;
+    padding: .5rem;
+}
+
+.wdg-showhide.show > .head > *:first-child {
+    transition: transform .2s;
+    transform: rotate(90deg);
+}
+
+.wdg-showhide.show > .body {
+    display: block;
+}
+
+
