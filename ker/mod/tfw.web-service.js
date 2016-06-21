@@ -237,7 +237,7 @@ exports.get = function(name, args, url) {
                         exports.login().then(
                             function() {
                                 svc(name, args, url).then(resolve, reject);
-                            },
+                            },                            
                             reject
                         );
                     } else {

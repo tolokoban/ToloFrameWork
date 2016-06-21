@@ -3,6 +3,7 @@
  <x-widget name="tfw.input" $value="Email" $validator="[^@]+@[^@]\\.[^@.]+"/>
  <x-widget name="tfw.input" $validator="[^@]+@[^@]\\.[^@.]+">Email</x-widget>
  <wdg:checkbox $value="false" $wide="true" />
+ <wdg:label intl:value="title-text" $wide="true" />
  **********************************************************************/
 
 exports.tags = ["x-widget", "wdg:.+"];
@@ -198,6 +199,11 @@ function getPropertiesAndBindings(root, libs, com, indent) {
         if( key.charAt(0) == '$' ) {
             val = root.attribs[key];
             com.prop[key.substr( 1 )] = JSON.stringify(val);
+        }
+        else if (key.substr( 0, 5 ) == 'intl:') {
+            // Internationalization.
+            val = root.attribs[key];
+            com.prop[key.substr( 5 )] = "APP._(" + JSON.stringify(val) + ")";
         }
         else if (key.substr( 0, 5 ) == 'bind:') {
             // @example
