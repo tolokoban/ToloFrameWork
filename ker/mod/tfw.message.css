@@ -1,0 +1,33 @@
+.tfw-message {
+    position: fixed;
+    left: 50%;
+    top: 48px;
+    width: 300px;
+    padding: 1rem;
+    margin: 0;
+    margin-left: -150px;
+    z-index: 999999;
+    cursor: pointer;
+
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: all .2s;
+}
+
+.tfw-message.show {
+    transform: translateY(0);
+    opacity: 1;
+    transition: all .3s;
+}
+
+.tfw-message.info {
+    background-color: #fff;
+    color: #000;
+    font-weight: normal;
+}
+
+.tfw-message.error {
+    background-color: #e00;
+    color: #fff;
+    font-weight: bold;
+}

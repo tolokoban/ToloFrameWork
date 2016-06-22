@@ -2,7 +2,7 @@
  * @module tfw.login
  *
  * @description
- * 
+ *
  *
  * @example
  * var mod = require('tfw.login');
@@ -13,6 +13,7 @@ var T = require("wdg.text");
 var B = require("wdg.button");
 var WS = require("tfw.web-service");
 var DB = require("tfw.data-binding");
+var Msg = require("tfw.message");
 
 var CANCEL = 1;
 
@@ -24,7 +25,7 @@ module.exports = function(opts) {
         var lastLogin = WS.config('usr');
         var inpLogin = new T({
             value: lastLogin || '',
-            label: _('login'), 
+            label: _('login'),
             placeholder: _('login'),
             validator: "admin|test|[^ \t@]+@[^ \t@]+",
             wide: true
@@ -33,7 +34,7 @@ module.exports = function(opts) {
         var inpPassword = new T({
             value: lastPassword || '',
             type: "password",
-            label: _('password'), 
+            label: _('password'),
             placeholder: _('password'),
             wide: true
         });
@@ -65,16 +66,29 @@ module.exports = function(opts) {
                 return;
             }
             $.addClass( root, "fade-out" );
-            WS.login(inpLogin.value, inpPassword.value).then(
-                function( user ) {
-                    resolve( user );
-                    $.detach( root );
-                },
-                function( errCode ) {
-                    reject( errCode );
-                    $.detach( root );
-                }
-            );
+            if (inpPassword.value == '') {
+                WS.get('tp4.NewAccount', {mail: inpLogin.value}).then(
+                    function( user ) {
+                        Msg.info( _('email') );
+                        $.removeClass( root, 'fade-out' );
+                    },
+                    function( errCode ) {
+                        Msg.error( _('error' + errCode.id) );
+                        $.removeClass( root, 'fade-out' );
+                    }
+                );
+            } else {
+                WS.login(inpLogin.value, inpPassword.value).then(
+                    function( user ) {
+                        resolve( user );
+                        $.detach( root );
+                    },
+                    function( errCode ) {
+                        Msg.error( _('error' + errCode.id) );
+                        $.removeClass( root, 'fade-out' );
+                    }
+                );
+            }
         };
         DB.bind( btnOK, 'action', onLogin );
         DB.bind( inpPassword, 'action', onLogin );

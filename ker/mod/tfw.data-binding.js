@@ -86,7 +86,11 @@ var converters = {
     }
 };
 
-function propCast( caster, obj, att, val, getter ) {
+/**
+ * @param {any|function} val - Default value, or a specific getter (if `val` is a function).
+ */
+function propCast( caster, obj, att, val ) {
+    var hasSpecialGetter = typeof val === 'function';
     if( typeof obj[ID] === 'undefined' ) obj[ID] = {};
     obj[ID][att] = {
         value: val,
@@ -96,20 +100,25 @@ function propCast( caster, obj, att, val, getter ) {
     if (typeof caster === 'function') {
         setter = function(v) {
             v = caster( v );
-            if( obj[ID][att].value !== v ) {
+            // If there is a special getter, any set will fire.
+            // Otherwise, we fire only if the value has changed.
+            if( hasSpecialGetter || obj[ID][att].value !== v) {
                 obj[ID][att].value = v;
                 obj[ID][att].event.fire( v, obj, att );
             }
         };
     } else {
         setter = function(v) {
-            if( obj[ID][att].value !== v ) {
+            // If there is a special getter, any set will fire.
+            // Otherwise, we fire only if the value has changed.
+            if( hasSpecialGetter || obj[ID][att].value !== v ) {
                 obj[ID][att].value = v;
                 obj[ID][att].event.fire( v, obj, att );
             }
         };
     }
-    if (typeof getter !== 'function') {
+    var getter = val;
+    if (!hasSpecialGetter) {
         // Default getter.
         getter = function() { return obj[ID][att].value; };
     }

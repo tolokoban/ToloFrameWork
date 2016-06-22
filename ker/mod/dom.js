@@ -11,6 +11,8 @@
  */
 require("polyfill.classList");
 var DB = require("tfw.data-binding");
+var PointerEvents = require("tfw.pointer-events");
+
 
 // Used to store data on the DOM element without colliding with existing attributes.
 var SYMBOL = 'dom' + Date.now();
@@ -191,7 +193,7 @@ function on( element, slots, capture ) {
     }
 
     if( typeof element[SYMBOL] === 'undefined' ) {
-        element[SYMBOL] = interact(element);
+        element[SYMBOL] = new PointerEvents( element );
     }
 
     var key, val, preview;
@@ -272,16 +274,15 @@ function addClass(elem) {
         return elem;
     }
     args.forEach(function (className) {
-        if( typeof className === 'string' ) {
-            className = className.trim();
-            if( className.length == 0 ) return;
-            try {
-                elem.classList.add( className );
-            }
-            catch( ex ) {
-                console.error( "[dom.addClass] Invalid class name: ", className );
-                console.error( ex );
-            }
+        if (typeof className !== 'string') return;
+        className = className.trim();
+        if( className.length == 0 ) return;
+        try {
+            elem.classList.add( className );
+        }
+        catch( ex ) {
+            console.error( "[dom.addClass] Invalid class name: ", className );
+            console.error( ex );
         }
     });
     return elem;
@@ -305,6 +306,7 @@ function removeClass(elem) {
         return elem;
     }
     args.forEach(function (className) {
+        if (typeof className !== 'string') return;
         try {
             elem.classList.remove( className );
         }
