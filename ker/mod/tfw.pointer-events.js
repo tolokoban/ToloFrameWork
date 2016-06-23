@@ -19,7 +19,9 @@ var G = {
     // Current mouse position on body.
     x: 0, y: 0,
     // drag event.
-    onDrag: null
+    onDrag: null,
+    // Last time tap for double tap detection.
+    lastTapTime: 0
 };
 
 document.body.addEventListener( 'mousedown', function(evt) {
@@ -63,10 +65,10 @@ function PointerEvents( element ) {
         if (slots.drag) {
             G.onDrag = function() {
                 slots.drag({
-                action: 'drag',
-                target: element,
-                dx: G.x - G.downX,
-                dy: G.y - G.downY
+                    action: 'drag',
+                    target: element,
+                    dx: G.x - G.downX,
+                    dy: G.y - G.downY
                 });
             };
         }
@@ -80,11 +82,15 @@ function PointerEvents( element ) {
         }
 
         var screen = document.createElement( 'div' );
-        screen.style.cursor = element.style.cursor || 'move';
+        if (slots.drag) {
+            // If the slot `drag` has been defined, we change the cursor.
+            screen.style.cursor = element.style.cursor || 'move';
+        }
         screen.className = "tfw-pointer-events";
         document.body.appendChild( screen );
 
         screen.addEventListener( 'mouseup', function(evt) {
+            var time = Date.now();
             G.onDrag = null;
             document.body.removeChild( screen );
             var slots = that._slots;
@@ -100,15 +106,31 @@ function PointerEvents( element ) {
                     dy: dy
                 });
             }
-            if (slots.tap && dx * dx + dy * dy < 256) {
-                evt.stopPropagation();
-                evt.preventDefault();
-                slots.tap({
-                    action: 'tap',
-                    target: that.element,
-                    x: evt.clientX,
-                    y: evt.clientY
-                });
+            // Tap or doubletap.
+            if (dx * dx + dy * dy < 256) {
+                if (G.lastTapTime > 0) {
+                    if (slots.doubletap && time - G.lastTapTime < 400) {
+                        slots.doubletap({
+                            action: 'doubletap',
+                            target: that.element,
+                            x: evt.clientX,
+                            y: evt.clientY
+                        });
+                    } else {
+                        G.lastTapTime = 0;
+                    }
+                }
+                if (slots.tap && G.lastTapTime == 0) {
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                    slots.tap({
+                        action: 'tap',
+                        target: that.element,
+                        x: evt.clientX,
+                        y: evt.clientY
+                    });
+                }
+                G.lastTapTime = time;
             }
         }, false);
 

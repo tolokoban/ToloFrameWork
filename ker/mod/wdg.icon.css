@@ -16,18 +16,33 @@
 }
 
 
-.wdg-icon {
+div.wdg-icon {
     display: inline-block;
     margin: 0;
     padding: 0;
     background: none;
     border: none;
     outline: none;
-    box-shadow: none;
     vertical-align: middle;
 }
 
-.wdg-icon.rotate {
+div.wdg-icon.button {
+    background: #fff;
+    border-radius: 100%;
+    margin: .25rem;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: all .2s;
+}
+
+
+.wdg-icon > svg {
+    margin: 0;
+    vertical-align: middle;
+}
+
+
+.wdg-icon > svg.rotate {
     animation: wdg-icon-rotation 1.5s linear infinite;
     -webkit-animation: wdg-icon-rotation 1.5s linear infinite;
 }
