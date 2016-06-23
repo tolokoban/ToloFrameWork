@@ -8,6 +8,20 @@ var $ = require("dom");
 var DB = require("tfw.data-binding");
 var Icon = require("wdg.icon");
 
+
+var DEFAULT_MENU = [
+    'format-bold',
+    'format-italic',
+    'format-underline',
+    '-',
+    'format-align-left',
+    'format-align-center',
+    'format-align-right',
+    'format-align-justify',
+    '-'
+];
+
+
 /**
  * @example
  * var WysiwygEditor = require("tp4.wysiwyg-editor");
@@ -21,7 +35,6 @@ var WysiwygEditor = function( opts ) {
     var postponedFocus = false;
     this.focus = function() { postponedFocus = true; };
     var postponedHTML = null;
-    var squire = null;
     var iframeIsLoaded = false;
 
     var elem = $.elem(this, 'div', 'wdg-wysiwyg', 'elevation-2');
@@ -30,11 +43,11 @@ var WysiwygEditor = function( opts ) {
     var header = $.div('header', [iconFullscreen, label]);
     var slider = $.div('slider');
     var menu = $.div('menu');
-    var iframe = $.tag( 'iframe', { src: 'squire/squire.html' } );
+    var iframe = $.tag( 'iframe', { src: 'squire2/squire.html' } );
     iframe.addEventListener( 'load', function() {
         iframeIsLoaded = true;
         // Storing a reference to the wysiwyg editor.
-        squire = iframe.contentWindow.editor;
+        var squire = iframe.contentWindow.editor;
         that.focus = squire.focus.bind( squire );
         if( postponedFocus ) {
             that.focus();
@@ -55,9 +68,14 @@ var WysiwygEditor = function( opts ) {
                 that.value = squire.getHTML();
             }
         });
+/*
         squire.addEventListener( 'pathChange', function( path ) {
             console.info("[tp4.wysiwyg-editor] path=...", path);
             console.info("[tp4.wysiwyg-editor] squire.getSelection()=...", squire.getSelection());
+        });
+*/
+        Object.defineProperty( that, 'squire', {
+            value: squire, writable: false, configurable: true, enumerable: true
         });
     }, false);
     var body = $.div('body', [iframe]);
@@ -69,24 +87,53 @@ var WysiwygEditor = function( opts ) {
         label.textContent = v;
     });
     DB.propInteger(this, 'height')(function(v) {
-        $.att(elem, "height", v + "px");
+        $.css(elem, {height: v + "px"});
+    });
+    DB.prop(this, 'menu')(function(v) {
+        $.clear( menu );
+        v.forEach(function (itm) {
+            if (itm == '-') {
+                $.add( menu, $.div( 'sep', [itm] ));
+            } else {
+                var icon = new Icon({size: '2em', content: itm});
+                $.addClass( icon.element, 'icon' );
+                $.on( icon.element, {
+                    down: $.addClass.bind( $, icon.element, 'down' ),
+                    up: $.removeClass.bind( $, icon.element, 'down' ),
+                    tap: onMenu.bind( that, itm )
+                });
+                $.add( menu, icon );
+            }
+        });
+
     });
     DB.propString(this, 'value', function() {
-        return iframeIsLoaded ? squire.getHTML() : '';
+        return iframeIsLoaded ? that.squire.getHTML() : '';
     })(function(v) {
-        if (iframeIsLoaded) squire.setHTML( v );
+        if (iframeIsLoaded) that.squire.setHTML( v );
         else postponedHTML = v;
     });
-    
+
     DB.extend({
         label: "",
         value: "",
+        menu: DEFAULT_MENU,
         height: 180,
         visible: true
     }, opts, this);
 
-    var startPageY = 0;
+    var initialHeight = this.height;
 
+    $.on( slider, {
+        down: function() {
+            initialHeight = that.height;
+console.info("[wdg.wysiwyg] initialHeight=...", initialHeight);
+        },
+        drag: function(evt) {
+            that.height = Math.max( 180, initialHeight + evt.dy );
+        }
+    });
+/*
     interact( slider ).draggable({
         axis: 'y'
     }).on('dragend', function (event) {
@@ -94,6 +141,7 @@ var WysiwygEditor = function( opts ) {
     }).on('dragmove', function (event) {
         $.css( elem, {height: (that.height + event.pageY - event.y0) + "px"});
     });
+*/
 };
 
 
@@ -163,7 +211,7 @@ function setFontFaceSizeColor() {
     ['serif', 'sans-serif', 'monospace'].forEach(function (fontname) {
         optFontName[fontname] = $.div({ style: 'font-family:' + fontname }, [_('sentence')]);
     });
-    var selFontName = S( _('font-name'), optFontName );    
+    var selFontName = S( _('font-name'), optFontName );
     var selFontSize = S( _('font-name'), {
         '70': '70 %',
         '80': '80 %',
@@ -177,7 +225,7 @@ function setFontFaceSizeColor() {
     selFontSize.val( '100' );
     var selFontColor = C( _('font-color') );
     selFontColor.val( 'black' );
-    
+
     Modal.confirm(
         $.div([
             selFontName.element(),
@@ -221,34 +269,51 @@ function makeLink() {
 
 
 /**
- * Add an editor button into the header.
+ * `this` is the squire object.
  */
-function addButton( header, name, slot ) {
-    var button = $.div( 'button', { id: name, 'data-name': name, title: _('icon-' + name) }, [
-        $.tag( 'i', 'fa', 'fa-' + name )
-    ]);
-    $.on( button, slot );
-    $.add( header, button );
-    return button;
+function onMenu( id ) {
+    var squire = this.squire;
+
+    switch( id ) {
+    case 'format-bold':
+        if (squire.hasFormat( 'b' )) {
+            squire.removeBold();
+        } else {
+            squire.bold();
+        }
+        break;
+    case 'format-italic':
+        if (squire.hasFormat( 'i' ) || squire.hasFormat( 'em' )) {
+            squire.removeItalic();
+        } else {
+            squire.italic();
+        }
+        break;
+    case 'format-underline':
+        if (squire.hasFormat( 'u' )) {
+            squire.removeUnderline();
+        } else {
+            squire.underline();
+        }
+        break;
+    case 'format-align-left':
+        squire.setTextAlignment( 'left' );
+        break;
+    case 'format-align-center':
+        squire.setTextAlignment( 'center' );
+        break;
+    case 'format-align-right':
+        squire.setTextAlignment( 'right' );
+        break;
+    case 'format-align-justify':
+        squire.setTextAlignment( 'justify' );
+        break;
+    default:
+        alert( id );
+    }
+
+    this.focus();
 }
 
-/**
- * Open a popup with `html` in the editor and `caption` as title.
- * Il the __Validate__  button is clicked, call `onValidate` with the resulting HTML as argument.
- */
-WysiwygEditor.edit = function( caption, html, onValidate ) {
-    var editor = new WysiwygEditor();
-    editor.content = html || "";
-    var footer = $.tag( 'footer' );
-    var body = $.div( 'tp4-wysiwyg-editor-popup', [editor, footer] );
-    var close = Popup( caption, body );
-    var btnCancel = Button.Cancel().Tap( close );
-    var btnOK = Button.Ok().Tap( function() {
-        onValidate( editor.content );
-        close();
-    } );
-    $.add( footer, $.div([ btnCancel.element() ]), $.div([ btnOK.element() ]) );
-    editor.focus();
-};
 
 module.exports = WysiwygEditor;
