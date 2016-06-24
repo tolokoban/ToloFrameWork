@@ -11,31 +11,60 @@ var Icon = function(opts) {
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round'
     });
-    var root = $.svgRoot({
+    var svg = $.svgRoot({
         width: '100%',
         height: '100%',
         viewBox: '-63.5 -63.5 128 128',
         preserveAspectRatio: "xMidYMid meet"
-    }, 'wdg-icon');
+    });
+    var root = $.div('wdg-icon', [svg]);
     var elem = $.elem(this, root);
-    $.add( root, g );
+    $.add( svg, g );
     DB.prop(this, 'content')(setContent.bind( this, mapColors, g ));
     DB.prop(this, 'value');
     DB.propBoolean(this, 'rotate')(function(v) {
         if (v) {
-            $.addClass( elem, "rotate" );
+            $.addClass( svg, "rotate" );
         } else {
-            $.removeClass( elem, "rotate" );
+            $.removeClass( svg, "rotate" );
+        }
+    });
+    DB.propBoolean(this, 'button')(function(v) {
+        if (v) {
+            $.addClass( elem, 'button', 'elevation-8');
+            $.css( elem, {
+                padding: ".5rem" //(that.size * (Math.sqrt(2) - 1)) + 'px'
+            });
+            that.size = '2rem';
+        } else {
+            $.removeClass( elem, 'button', 'elevation-8');
+            $.css( elem, {
+                padding: 0
+            });
         }
     });
     DB.propUnit(this, 'size')(function(v) {
-        $.css(root, {
+        $.css(svg, {
             width: v,
             height: v
         });
     });
     DB.prop(this, 'action');
 
+    $.on( elem, {
+        down: function() {
+            if (that.button) {
+                $.addClass(elem, 'elevation-12');
+            }
+        },
+        up: function() {
+            $.removeClass(elem, 'elevation-12');
+        },
+        tap: function() {
+            DB.fire( that, 'action', that.value );
+        }
+    });
+    
     var updateColor = function( index, color ) {
         var children = mapColors[index];
         if( typeof children === 'undefined' ) return;
@@ -61,7 +90,9 @@ var Icon = function(opts) {
         content: ['circle', {
             stroke: 1, fill: 0, r: 90, cx: 0, cy: 0
         }],
-        size: '2em',
+        angle: 0,
+        size: '2rem',        
+        button: false,
         value: "icon",
         rotate: false,
         wide: false,
@@ -78,7 +109,7 @@ Icon.prototype.fire = function() {
 };
 
 
-function setContent(mapColors, root, v) {
+function setContent(mapColors, svg, v) {
     if (typeof v === 'string') {
         var def = Icon.Icons[v.trim().toLowerCase()];
         if( typeof def !== 'undefined' ) v = def;
@@ -97,9 +128,9 @@ function setContent(mapColors, root, v) {
         return;
     }
 
-    $.clear( root );
+    $.clear( svg );
     try {
-        addChild.call( this, mapColors, root, v );
+        addChild.call( this, mapColors, svg, v );
     }
     catch (ex) {
         console.error("[wdg.icon:content] Bad content: ", v);
@@ -228,10 +259,7 @@ Icon.Icons = {
             stroke: 0, fill: 1, 'stroke-width': 8
         }]
     ]],
-    gear: ["path", {
-        "d": "M0,-60L12,-59Q8,-18,35,-49L45,-40L52,-30L57,-19Q20,-2,60,6L57,19L52,30L45,40Q12,16,24,55L12,59L0,60L-12,59Q-8,18,-35,49L-45,40L-52,30L-57,19Q-20,2,-60,-6L-57,-19L-52,-30L-45,-40Q-12,-16,-24,-55L-12,-59L0,-60M20,0A15,15,0,1,0,-20,0M-20,0A15,15,0,1,0,20,0",
-        "stroke-width": 8, "fill": 1, "stroke": 0
-    }],
+    gear: path2('M0,18A18,18,0,0,1,-17,0A18,18,0,0,1,0,-17A18,18,0,0,1,18,0A18,18,0,0,1,0,18M37,5C37,3,38,2,38,0C38,-2,37,-3,37,-5L48,-13C49,-14,49,-15,48,-16L38,-34C38,-35,36,-35,35,-35L23,-30C20,-32,18,-33,14,-35L13,-48C12,-49,11,-50,10,-50H-10C-11,-50,-12,-49,-12,-48L-14,-35C-17,-33,-20,-32,-23,-30L-35,-35C-36,-35,-38,-35,-38,-34L-48,-16C-49,-15,-49,-14,-48,-13L-37,-5C-37,-3,-37,-2,-37,0C-37,2,-37,3,-37,5L-48,13C-49,14,-49,15,-48,16L-38,34C-38,35,-36,35,-35,35L-23,30C-20,32,-17,33,-14,35L-12,48C-12,49,-11,50,-10,50H10C11,50,12,49,13,48L14,35C18,33,20,32,23,30L35,35C36,35,38,35,38,34L48,16C49,15,49,14,48,13L37,5Z'),
     hand: path2("M-10,-50A10,10,0,0,1,0,-40V-17C0,-17,10,-19,10,-14C10,-14,20,-15,20,-10C20,-10,30,-11,30,-6C30,-6,40,-7,40,-2V15C40,20,25,45,25,50H-15C-15,50,-25,15,-40,5C-40,5,-45,-25,-20,0V-40A10,10,0,0,1,-10,-50Z"),
     heart: ["g", [
         ["path", {
@@ -254,6 +282,7 @@ Icon.Icons = {
         }]
     ]],
     logout: path2("M25,26V10H-10V-10H25V-26L51,0L25,26M5,-50A10,10,0,0,1,15,-40V-20H5V-40H-40V40H5V20H15V40A10,10,0,0,1,5,50H-40A10,10,0,0,1,-50,40V-40A10,10,0,0,1,-40,-50H5Z"),
+    "map-layer": path2('M0,20L37,-9L45,-15L0,-50L-45,-15L-37,-9M0,33L-37,4L-45,10L0,45L45,10L37,4L0,33Z'),
     menu: draw('M-40,-34h80M-40,0h80M-40,34h80'),
     minus: draw("M-45,0H45"),
     "minus-o": ["g", [
@@ -282,6 +311,7 @@ Icon.Icons = {
     question: path2("M-10,35H5V50H-10V35M0,-50C27,-49,38,-22,23,-2C18,3,12,7,8,11C5,15,5,20,5,25H-10C-10,17,-10,10,-7,5C-3,0,3,-3,8,-7C20,-18,17,-34,0,-35A15,15,0,0,0,-15,-20H-30A30,30,0,0,1,0,-50Z"),
     right: draw('M-30,-30L30,0,-30,30'),
     'right-double': draw('M10,-30L40,0,10,30M-40,-30L-10,0,-40,30'),
+    search: path2('M-12,-45A33,33,0,0,1,20,-12C20,-4,17,3,12,9L14,10H18L43,35L35,43L10,18V14L9,12C3,17,-4,20,-12,20A33,33,0,0,1,-45,-12A33,33,0,0,1,-12,-45M-12,-35C-25,-35,-35,-25,-35,-12C-35,0,-25,10,-12,10C0,10,10,0,10,-12C10,-25,0,-35,-12,-35Z'),
     star: ["g", [
         ["path", {
             "d": "M0,-60L18,-24L57,-19L29,9L35,49L0,30L-35,49L-29,9L-57,-19L-18,-24Z",
@@ -314,14 +344,8 @@ Icon.Icons = {
     ]],
     up: draw('M-30,30L0,-30,30,30'),
     'up-double': draw('M-30,40L0,10,30,40M-30,-10L0,-40,30,-10'),
-    user: ["g", [
-        ["path", {
-            "d": "M-50,0l30,50h40l30,-50c0,-30,-100,-30,-100,0",
-            "fill": 1, "stroke": 0, "stroke-width":8
-        }],
-        ["circle", { "r": 27, "cy": -30, "fill": 1, "stroke": 0, "stroke-width":8 }]
-    ]],
-    wait: ['g', {transform: "rotate(0)"}, [
+    user: path2('M0,-40A20,20,0,0,1,20,-20A20,20,0,0,1,0,0A20,20,0,0,1,-20,-20A20,20,0,0,1,0,-40M0,10C22,10,40,19,40,30V40H-40V30C-40,19,-22,10,0,10Z'),
+    wait: ['g', [
         ['path', {
             d: "M0,40 A40,40,0,1,1,40,0",
             stroke: 0, 'stroke-width': 40
@@ -330,28 +354,32 @@ Icon.Icons = {
             d: "M0,40 A40,40,0,1,1,40,0",
             stroke: 1, 'stroke-width': 24
         }]
+    ]],
+    "zoom-in": ["g", [
+        path2('M-12,-45A33,33,0,0,1,20,-12C20,-4,17,3,12,9L14,10H18L43,35L35,43L10,18V14L9,12C3,17,-4,20,-12,20A33,33,0,0,1,-45,-12A33,33,0,0,1,-12,-45M-12,-35C-25,-35,-35,-25,-35,-12C-35,0,-25,10,-12,10C0,10,10,0,10,-12C10,-25,0,-35,-12,-35Z'),
+        path2('M-50,42h10v-10h4v10h10v4h-10v10h-4v-10h-10Z')
+    ]],
+    "zoom-out": ["g", [
+        path2('M-12,-45A33,33,0,0,1,20,-12C20,-4,17,3,12,9L14,10H18L43,35L35,43L10,18V14L9,12C3,17,-4,20,-12,20A33,33,0,0,1,-45,-12A33,33,0,0,1,-12,-45M-12,-35C-25,-35,-35,-25,-35,-12C-35,0,-25,10,-12,10C0,10,10,0,10,-12C10,-25,0,-35,-12,-35Z'),
+        path2('M-50,42h24v4h-32Z')
     ]]
 };
 
+
+Icon.draw = draw;
+Icon.path2 = path2;
+
+/**
+ * You can register more icons with this function.
+ */
+Icon.register = function( icons ) {
+    var key, val;
+    for( key in icons ) {
+        val = icons[key];
+        Icon.Icons[key] = val;
+    }
+
+};
+
+
 module.exports = Icon;
-
-
-var x =
-        ["g", [
-            ["path", {
-                "d": "M-50,50h60v-90h-60Z",
-                "fill": 1, "stroke": 0, "stroke-width":8
-            }],
-            ["path", {
-                "d": "M50,-50L-20,20",
-                "fill": "none", "stroke": 0, "stroke-width": 28
-            }],
-
-            ["path", {
-                "stroke-linecap": "miter", "fill": "none",
-                "d": "M50,-50L-20,20",
-                "stroke": 0, "stroke-width": 12
-            }]
-
-        ]]
-;
