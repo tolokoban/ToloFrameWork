@@ -1,0 +1,14 @@
+body {
+    background: #eee;
+}
+
+canvas {
+    background: #fff;
+    box-shadow: 0 0 8px #000;
+}
+
+canvas.absolute {
+    position: absolute;
+    left: 16px;
+    top: 64px;
+}

@@ -8,6 +8,9 @@
  * var mod = require('tfw.pointer-events');
  */
 
+// Webkit and Opera still use 'mousewheel' event type.
+var WHEEL_EVENT = 'onmousewheel' in document? 'mousewheel': 'wheel';
+
 
 var G = {
     // As soon as a touch occurs, no more mouse events can be handled.
@@ -17,7 +20,9 @@ var G = {
     // Coords of _down_ on body.
     downX: 0, downY: 0,
     // Current mouse position on body.
-    x: 0, y: 0,
+    x: -1, y: -1,
+    // Last mouse position on body.
+    lastX: -1, lastY: -1,
     // drag event.
     onDrag: null,
     // Last time tap for double tap detection.
@@ -28,13 +33,21 @@ document.body.addEventListener( 'mousedown', function(evt) {
     if (G.touchDevice) return;
     G.downX = evt.clientX;
     G.downY = evt.clientY;
+    G.x = evt.clientX;
+    G.y = evt.clientY;
+    G.lastX = evt.clientX;
+    G.lastY = evt.clientY;
 }, true );
 
 document.body.addEventListener( 'mousemove', function(evt) {
     if (G.touchDevice) return;
-    G.x = evt.clientX;
-    G.y = evt.clientY;
-    if (G.onDrag) G.onDrag();
+    G.lastX = G.x;
+    G.lastY = G.y;
+    G.x = evt.offsetX;
+    G.y = evt.offsetY;
+    if (G.onDrag) {
+        G.onDrag();
+    }
 }, true );
 
 
@@ -47,28 +60,119 @@ function PointerEvents( element ) {
     Object.defineProperty( PointerEvents.prototype, 'element', {
         value: element, writable: false, configurable: true, enumerable: true
     });
+
+    //===============
+    // Toush events.
     element.addEventListener( 'touchstart', function(evt) {
         G.touchDevice = true;
-        console.log('TOUCH START');
+        var slots = that._slots;
+        if (evt.touches.length == 1) {
+            G.rect = element.getBoundingClientRect();
+            G.x = evt.touches[0].clientX;
+            G.y = evt.touches[0].clientY;
+            G.downX = evt.touches[0].clientX;
+            G.downY = evt.touches[0].clientY;
+            G.targetX = evt.touches[0].clientX - G.rect.left;
+            G.targetY = evt.touches[0].clientY - G.rect.top;
+            G.time = Date.now();
+            if (slots.down) {
+                slots.down({
+                    action: 'down',
+                    target: element,
+                    x: G.targetX,
+                    y: G.targetY
+                });
+            }
+        }
+    });
+    element.addEventListener( 'touchmove', function(evt) {
+        var lastX = G.x;
+        var lastY = G.y;
+        G.x = evt.touches[0].clientX;
+        G.y = evt.touches[0].clientY;
+        var slots = that._slots;
+        if (slots.drag) {
+            slots.drag({
+                action: 'drag',
+                target: element,
+                x0: G.targetX,
+                y0: G.targetY,
+                x: G.x - G.rect.left,
+                y: G.y - G.rect.top,
+                dx: G.x - G.downX,
+                dy: G.y - G.downY,
+                vx: G.x - lastX,
+                vy: G.y - lastY
+            });
+        }
     });
     element.addEventListener( 'touchend', function(evt) {
-        console.log('TOUCH END');
+        var slots = that._slots;
+        var dx = G.x - G.downX;
+        var dy = G.y - G.downY;
+        if (slots.up) {
+            slots.up({
+                action: 'up',
+                target: that.element,
+                x: G.x - G.rect.left,
+                y: G.y - G.rect.top,
+                dx: dx,
+                dy: dy
+            });
+        }
+        // Tap or doubletap.
+        if (dx * dx + dy * dy < 256) {
+            var time = Date.now();
+            if (G.lastTapTime > 0) {
+                if (slots.doubletap && time - G.lastTapTime < 400) {
+                    slots.doubletap({
+                        action: 'doubletap',
+                        target: that.element,
+                        x: G.x - G.rect.left,
+                        y: G.y - G.rect.top
+                    });
+                } else {
+                    G.lastTapTime = 0;
+                }
+            }
+            if (slots.tap && G.lastTapTime == 0) {
+                evt.stopPropagation();
+                evt.preventDefault();
+                slots.tap({
+                    action: 'tap',
+                    target: that.element,
+                    x: G.x - G.rect.left,
+                    y: G.y - G.rect.top
+                });
+            }
+            G.lastTapTime = time;
+        }
     });
 
+    //===============
+    // Mouse events.
     element.addEventListener( 'mousedown', function(evt) {
         if (G.touchDevice) return;
+        console.log("MOUSE DOWN");
         evt.stopPropagation();
         evt.preventDefault();
         var slots = that._slots;
-        G.targetX = evt.clientX;
-        G.targetY = evt.clientY;
+        var rect = element.getBoundingClientRect();
+        G.targetX = evt.clientX - rect.left;
+        G.targetY = evt.clientY - rect.top;
         if (slots.drag) {
             G.onDrag = function() {
                 slots.drag({
                     action: 'drag',
                     target: element,
+                    x0: G.targetX,
+                    y0: G.targetY,
+                    x: G.targetX + G.x - G.downX,
+                    y: G.targetY + G.y - G.downY,
                     dx: G.x - G.downX,
-                    dy: G.y - G.downY
+                    dy: G.y - G.downY,
+                    vx: G.x - G.lastX,
+                    vy: G.y - G.lastY
                 });
             };
         }
@@ -76,8 +180,8 @@ function PointerEvents( element ) {
             slots.down({
                 action: 'down',
                 target: element,
-                x: evt.clientX,
-                y: evt.clientY
+                x: G.targetX,
+                y: G.targetY
             });
         }
 
@@ -100,8 +204,8 @@ function PointerEvents( element ) {
                 slots.up({
                     action: 'up',
                     target: that.element,
-                    x: evt.clientX,
-                    y: evt.clientY,
+                    x: G.targetX + dx,
+                    y: G.targetY + dy,
                     dx: dx,
                     dy: dy
                 });
@@ -113,8 +217,8 @@ function PointerEvents( element ) {
                         slots.doubletap({
                             action: 'doubletap',
                             target: that.element,
-                            x: evt.clientX,
-                            y: evt.clientY
+                            x: G.targetX + dx,
+                            y: G.targetY + dy
                         });
                     } else {
                         G.lastTapTime = 0;
@@ -126,14 +230,28 @@ function PointerEvents( element ) {
                     slots.tap({
                         action: 'tap',
                         target: that.element,
-                        x: evt.clientX,
-                        y: evt.clientY
+                        x: G.targetX + dx,
+                        y: G.targetY + dy
                     });
                 }
                 G.lastTapTime = time;
             }
         }, false);
+    });
+    element.addEventListener( 'mousemove', function(evt) {
+        var slots = that._slots;
+        if (slots.move) {
+            slots.move({
+                target: element,
+                action: 'move',
+                x: evt.offsetX,
+                y: evt.offsetY
+            });
+        }
+    });
 
+    Object.defineProperty( this, 'element', {
+        value: element, writable: true, configurable: true, enumerable: true
     });
 }
 
@@ -142,8 +260,24 @@ function PointerEvents( element ) {
  * @return void
  */
 PointerEvents.prototype.on = function(action, event) {
+    var that = this;
+
+    var slots = this._slots;
     if (typeof event === 'function') {
-        this._slots[action] = event;
+        slots[action] = event;
+    }
+    if (action == 'wheel') {
+        this.element.addEventListener(WHEEL_EVENT, function(evt) {
+            console.info("[tfw.pointer-events] evt=...", evt);
+            var rect = that.element.getBoundingClientRect();
+            slots.wheel({
+                target: that.element,
+                action: 'wheel',
+                delta: evt.deltaY,
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            });
+        });
     }
     return this;
 };
