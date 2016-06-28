@@ -25,7 +25,7 @@ function UserGravatar(opts) {
     var img = $.tag('img', {
         src: ""
     });
-    var elem = $.elem( this, 'wdg-user-gravatar', [icon, img] );
+    var elem = $.elem( this, 'div', 'wdg-user-gravatar', [icon, img] );
     img.onload = function() {
         if (typeof that.md5 === 'string' && MD5.isValid( that.md5 ) ) {
             // Show only if the md5 is valid.

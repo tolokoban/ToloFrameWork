@@ -1,0 +1,26 @@
+div.wdg-user-gravatar {
+    display: inline-block;
+    position: relative;
+}
+
+.wdg-user-gravatar > svg,
+.wdg-user-gravatar.show > img {
+    margin: 0;
+}
+
+.wdg-user-gravatar > img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    margin: 0;
+}
+
+.wdg-user-gravatar.show > img {
+    opacity: 1;
+    transition: opacity .3s;
+}
