@@ -55,7 +55,7 @@ module.exports = function(opts) {
         var hint = $.tag('p', 'hint');
         hint.innerHTML = _('hint');
 
-        var box = $.div( 'elevation-24', [inpLogin, inpPassword, row, hint] );
+        var box = $.div( 'theme-elevation-24', [inpLogin, inpPassword, row, hint] );
         root.appendChild( box );
         document.body.appendChild( root );
         inpLogin.focus();

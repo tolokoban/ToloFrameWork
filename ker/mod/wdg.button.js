@@ -30,7 +30,7 @@ var Button = function(opts) {
 
     var elem = $.elem(
         this, 
-        typeof opts.href === 'string' ? 'a' : 'button', 'wdg-button', 'elevation-2'
+        typeof opts.href === 'string' ? 'a' : 'button', 'wdg-button', 'theme-elevation-2'
     );
     if (typeof opts.href === 'string' && opts.href.length > 0) {
         $.att( elem, 'href', opts.href );
@@ -85,6 +85,8 @@ var Button = function(opts) {
 
     opts = DB.extend({
         text: "OK",
+        href: null,
+        target: null,
         value: "action",
         action: 0,
         icon: "",
@@ -99,13 +101,11 @@ var Button = function(opts) {
     $.on(this.element, {
         down: function() {
             if (that.enabled) {
-                //$.removeClass(elem, 'elevation-2');
-                $.addClass(elem, 'elevation-8');
+                $.addClass(elem, 'theme-elevation-8');
             }
         },
         up: function() {
-            //$.addClass(elem, 'elevation-2');
-            $.removeClass(elem, 'elevation-8');
+            $.removeClass(elem, 'theme-elevation-8');
         },
         tap: that.fire.bind( that ),
         keydown: function(evt) {
@@ -122,7 +122,19 @@ var Button = function(opts) {
  * Simulate a click on the button if it is enabled.
  */
 Button.prototype.fire = function() {
-    if (this.enabled) DB.fire( this, 'action', this.value );
+    if (this.enabled) {
+        var href = this.href;
+        if (typeof href === 'string' && href.trim().length > 0) {
+            var target = this.target;
+            if (typeof target === 'string' && target.trim().length > 0) {
+                window.open( href, target );
+            } else {
+                window.location = href;
+            }
+        } else {
+            DB.fire( this, 'action', this.value );
+        }
+    }
 };
 
 /**

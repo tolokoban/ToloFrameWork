@@ -14,7 +14,7 @@ var Icon = function(opts) {
     var svg = $.svgRoot({
         width: '100%',
         height: '100%',
-        viewBox: '-63.5 -63.5 128 128',
+        viewBox: '-65 -65 130 130',
         preserveAspectRatio: "xMidYMid meet"
     });
     var root = $.div('wdg-icon', [svg]);
@@ -31,13 +31,13 @@ var Icon = function(opts) {
     });
     DB.propBoolean(this, 'button')(function(v) {
         if (v) {
-            $.addClass( elem, 'button', 'elevation-8');
+            $.addClass( elem, 'button', 'theme-elevation-8');
             $.css( elem, {
                 padding: ".5rem" //(that.size * (Math.sqrt(2) - 1)) + 'px'
             });
             that.size = '2rem';
         } else {
-            $.removeClass( elem, 'button', 'elevation-8');
+            $.removeClass( elem, 'button', 'theme-elevation-8');
             $.css( elem, {
                 padding: 0
             });
@@ -54,11 +54,11 @@ var Icon = function(opts) {
     $.on( elem, {
         down: function() {
             if (that.button) {
-                $.addClass(elem, 'elevation-12');
+                $.addClass(elem, 'theme-elevation-12');
             }
         },
         up: function() {
-            $.removeClass(elem, 'elevation-12');
+            $.removeClass(elem, 'theme-elevation-12');
         },
         tap: function() {
             DB.fire( that, 'action', that.value );
@@ -110,6 +110,7 @@ Icon.prototype.fire = function() {
 
 
 function setContent(mapColors, svg, v) {
+    $.clear( svg );
     if (typeof v === 'string') {
         var def = Icon.Icons[v.trim().toLowerCase()];
         if( typeof def !== 'undefined' ) v = def;
@@ -120,6 +121,7 @@ function setContent(mapColors, svg, v) {
             catch (ex) {
                 console.error("[wdg.icon:content] Bad value: ", v);
                 console.error(ex);
+                return;
             }
         }
     }
@@ -128,7 +130,6 @@ function setContent(mapColors, svg, v) {
         return;
     }
 
-    $.clear( svg );
     try {
         addChild.call( this, mapColors, svg, v );
     }
@@ -140,6 +141,11 @@ function setContent(mapColors, svg, v) {
 
 
 function addChild( mapColors, parent, child ) {
+    if (typeof child === 'string') {
+        var textNode = window.document.createTextNode( child );
+        parent.appendChild( textNode );
+        return;
+    }
     if (!Array.isArray( child ) || child.length == 0) {
         console.error("[wdg.icon:content] `child` must be an array: ", child);
         console.error("parent = ", parent);
@@ -312,6 +318,7 @@ Icon.Icons = {
     right: draw('M-30,-30L30,0,-30,30'),
     'right-double': draw('M10,-30L40,0,10,30M-40,-30L-10,0,-40,30'),
     search: path2('M-12,-45A33,33,0,0,1,20,-12C20,-4,17,3,12,9L14,10H18L43,35L35,43L10,18V14L9,12C3,17,-4,20,-12,20A33,33,0,0,1,-45,-12A33,33,0,0,1,-12,-45M-12,-35C-25,-35,-35,-25,-35,-12C-35,0,-25,10,-12,10C0,10,10,0,10,-12C10,-25,0,-35,-12,-35Z'),
+    share: path2('M30,20C26,20,23,22,20,24L-15,3C-15,2,-15,1,-15,0C-15,-1,-15,-2,-15,-3L20,-24C23,-22,26,-20,30,-20A15,15,0,0,0,45,-35A15,15,0,0,0,30,-50A15,15,0,0,0,15,-35C15,-34,15,-33,15,-31L-20,-11C-22,-13,-26,-15,-30,-15A15,15,0,0,0,-45,0A15,15,0,0,0,-30,15C-26,15,-22,13,-20,11L16,32C16,33,15,34,15,35C15,43,22,50,30,50C38,50,45,43,45,35A15,15,0,0,0,30,20Z'),
     star: ["g", [
         ["path", {
             "d": "M0,-60L18,-24L57,-19L29,9L35,49L0,30L-35,49L-29,9L-57,-19L-18,-24Z",

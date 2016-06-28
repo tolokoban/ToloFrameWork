@@ -37,7 +37,7 @@ var WysiwygEditor = function( opts ) {
     var postponedHTML = null;
     var iframeIsLoaded = false;
 
-    var elem = $.elem(this, 'div', 'wdg-wysiwyg', 'elevation-2');
+    var elem = $.elem(this, 'div', 'wdg-wysiwyg', 'theme-elevation-2');
     var iconFullscreen = new Icon({ content: Icon.Icons.fullscreen });
     var label = $.tag('span', 'label');
     var header = $.div('header', [iconFullscreen, label]);

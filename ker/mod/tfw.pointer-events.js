@@ -9,7 +9,9 @@
  */
 
 // Webkit and Opera still use 'mousewheel' event type.
-var WHEEL_EVENT = 'onmousewheel' in document? 'mousewheel': 'wheel';
+var WHEEL_EVENT = "onwheel" in document.createElement("div") ? "wheel" : // Modern browsers support "wheel"
+        document.onmousewheel !== undefined ? "mousewheel" : // Webkit and IE support at least "mousewheel"
+        "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
 
 
 var G = {

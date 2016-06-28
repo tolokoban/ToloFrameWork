@@ -20,7 +20,7 @@ function Showhide( opts ) {
     var label = $.tag('span', 'label');
     var head = $.div('head', [icon, label]);
     var body = $.div('body');
-    var elem = $.elem( this, 'div', 'wdg-showhide', 'elevation-2', [head, body] );
+    var elem = $.elem( this, 'div', 'wdg-showhide', 'theme-elevation-2', [head, body] );
     DB.propBoolean(this, 'value')(function(v) {
         if (v) $.addClass( elem, 'show' );
         else $.removeClass( elem, 'show' );
