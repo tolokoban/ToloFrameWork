@@ -17,7 +17,7 @@ var $ = require("dom");
 
 function show( className, text, delay ) {
     if( typeof delay !== 'number' ) delay = 5000;
-    var div = $.div( 'tfw-message', className, 'elevation-24', ["" + text] );
+    var div = $.div( 'tfw-message', className, 'theme-elevation-24', ["" + text] );
     document.body.appendChild( div );
     function hide() {
         $.removeClass( div, 'show' );

@@ -27,9 +27,9 @@ var Text = function(opts) {
     this.focus = function() {
         window.setTimeout( input.focus.bind( input ) );
     };
-    var datalist = $.div( 'datalist', 'elevation-12' );
+    var datalist = $.div( 'datalist', 'theme-elevation-12' );
     this._input = input;
-    var elem = $.elem( this, 'div', 'wdg-text', 'elevation-2', [label, input, datalist] );
+    var elem = $.elem( this, 'div', 'wdg-text', 'theme-elevation-2', [label, input, datalist] );
 
     DB.propString(this, 'value')(function(v) {
         input.value = v;
@@ -228,13 +228,13 @@ var Text = function(opts) {
         if (!dataListHasFocus) {
             $.removeClass( elem, "list" );
         }
-        $.addClass( elem, "elevation-2" );
-        $.removeClass( elem, "elevation-8" );
+        $.addClass( elem, "theme-elevation-2" );
+        $.removeClass( elem, "theme-elevation-8" );
     });
     input.addEventListener('focus', function() {
         that.selectAll();
-        $.removeClass( elem, "elevation-2" );
-        $.addClass( elem, "elevation-8" );
+        $.removeClass( elem, "theme-elevation-2" );
+        $.addClass( elem, "theme-elevation-8" );
     });
     input.addEventListener('keydown', function(evt) {
     });
