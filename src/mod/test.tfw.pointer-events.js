@@ -52,6 +52,10 @@ exports.start = function() {
             ctx.moveTo( evt.x0, evt.y0 );
             ctx.lineTo( evt.x, evt.y );
             ctx.stroke();
+        },
+        move: function(evt) {
+            ctx.fillStyle = 'rgba(0,0,0,0.2)';
+            ctx.fillRect( evt.x - 1, evt.y - 1, 3, 3 );
         }
     });
 
