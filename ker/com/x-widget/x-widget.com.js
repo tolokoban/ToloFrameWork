@@ -1,4 +1,11 @@
 /**********************************************************************
+ Trois syntaxes possibles :
+ * `<wdg:label ...>` : instancie la classe `wdg.label`.
+ * `<x-widget name="label" ...>` : instancie la classe `label`.
+ * `<x-wdg name="label" ...>` : instancie la classe `label` (juste un alias de la syntaxe précédente).
+
+
+
  @example
  <x-widget name="tfw.input" $value="Email" $validator="[^@]+@[^@]\\.[^@.]+"/>
  <x-widget name="tfw.input" $validator="[^@]+@[^@]\\.[^@.]+">Email</x-widget>
@@ -6,7 +13,7 @@
  <wdg:label intl:value="title-text" $wide="true" />
  **********************************************************************/
 
-exports.tags = ["x-widget", "wdg:.+"];
+exports.tags = ["x-widget", "x-wdg", "wdg:.+"];
 exports.priority = 0;
 
 String.trim = function(x) { return x.trim(); };
@@ -206,19 +213,32 @@ function getPropertiesAndBindings(root, libs, com, indent) {
             com.prop[key.substr( 5 )] = "APP._(" + JSON.stringify(val) + ")";
         }
         else if (key.substr( 0, 5 ) == 'bind:') {
+            // Syntaxe :
+            // <bind> := <bind-item> <bind-next>*
+            // <bind-next> := "," <bind-item>
+            // <bind-item> := <widget-name> <attribute>? <value>?
+            // <widget-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/
+            // <attribute> := ":" <attrib-name>
+            // <attrib-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/
+            // <value> := "=" <data>
+            // <data> := "true" | "false" | "null" | <number> | <string>
+            //
             // @example
             // <wdg:checkbox bind:value="btn1:action" />
             // <wdg:checkbox bind:value="btn1:action, btn2, action" />
-            values = root.attribs[key].split(",");
-            key = key.substr( 5 );
-            if( typeof postInit[key] === 'undefined' ) postInit[key] = {};
-            bindings = [];
-            values.forEach(function (val) {
-                val = val.split( ':' );
-                if (val.length < 2) val.push('value');
-                bindings.push.apply( bindings, val );
-            });
-            postInit[key].B = bindings.map(String.trim);
+            /*
+             values = root.attribs[key].split(",");
+             key = key.substr( 5 );
+             if( typeof postInit[key] === 'undefined' ) postInit[key] = {};
+             bindings = [];
+             values.forEach(function (val) {
+             val = val.split( ':' );
+             if (val.length < 2) val.push('value');
+             bindings.push.apply( bindings, val );
+             });
+             postInit[key].B = bindings.map(String.trim);
+             */
+            postInit[key].B = parseBinding(root.attribs[key]);
             hasPostInit = true;
         }
         else if (key.substr( 0, 5 ) == 'slot:') {
@@ -386,3 +406,80 @@ function isWidget( root ) {
     }
     return false;
 }
+
+
+var parseBinding = (
+    function() {
+        var Lexer = require('tlk-lexer');
+
+        var lexer = new Lexer({
+            value: "(-?(\.[0-9]+|[0-9]+(\.[0-9]+)?))|true|false|null|('(\\.|[^\\']+)*')",
+            comma: "[ \t\n\r]*,[ \t\n\r]*",
+            colon: "[ \t\n\r]*:[ \t\n\r]*",
+            equal: "[ \t\n\r]*=[ \t\n\r]*",
+            name: "[$a-zA-Z_-][$a-zA-Z_0-9-]+"
+        });
+
+        /**
+         * Syntaxe :
+         * <bind> := <bind-item> <bind-next>*
+         * <bind-next> := "," <bind-item>
+         * <bind-item> := <widget-name> <attribute>? <value>?
+         * <widget-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/
+         * <attribute> := ":" <attrib-name>
+         * <attrib-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/
+         * <value> := "=" <data>
+         * <data> := "true" | "false" | "null" | <number> | <string>
+         */
+        return function( code ) {
+            code = code.trim();
+            lexer.loadText( code );
+            var tkn, widget, attribute = 'action', value, bindings = [];
+
+            function addBinding() {
+                if (typeof widget === 'string') {
+                    var binding = [widget, attribute];
+                    if (typeof value !== 'undefined') {
+                        binding.push( value );
+                    }
+                    bindings.push( binding );
+                    widget = undefined;
+                    attribute = 'action';
+                    value = undefined;
+                }
+            }
+
+            while (true) {
+                tkn = lexer.next();
+                if (null === tkn) break;
+                if (tkn.id != 'name') throw Error("Expected `name`, but found `" + tkn.id + "`!`");
+                widget = lexer.text( tkn );
+
+                tkn = lexer.next();
+                if (null === tkn) break;
+                if (tkn.id == 'colon') {
+                    tkn = lexer.next();
+                    if (null === tkn) throw Error("Missing `name` after `:`!`");
+                    if (tkn.id != 'name') throw Error(
+                        "Expected `name` after `:`, but found `" + tkn.id + "`!`");
+                    attribute = lexer.text( tkn );
+                    tkn = lexer.next();
+                    if (null === tkn) break;
+                }
+                if (tkn.id == 'equal') {
+                    tkn = lexer.next();
+                    if (null === tkn) throw Error("Missing `value` after `=`!`");
+                    if (tkn.id != 'value') throw Error(
+                        "Expected `value` after `=`, but found `" + tkn.id + "`!`");
+                    value = lexer.text( tkn );
+                    tkn = lexer.next();
+                    if (null === tkn) break;
+                }
+                if (tkn.id != 'comma')throw Error("Expected `comma`, but found `" + tkn.id + "`!`");
+                addBinding();
+            }
+            addBinding();
+            return bindings;
+        };
+    }
+)();
