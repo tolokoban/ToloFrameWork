@@ -411,7 +411,7 @@ function isWidget( root ) {
 var parseBinding = (
     function() {
         var Lexer = require('tlk-lexer');
-
+console.info("[x-widget.com] Lexer=...", Lexer);
         var lexer = new Lexer({
             value: "(-?(\.[0-9]+|[0-9]+(\.[0-9]+)?))|true|false|null|('(\\.|[^\\']+)*')",
             comma: "[ \t\n\r]*,[ \t\n\r]*",
