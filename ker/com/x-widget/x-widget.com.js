@@ -225,20 +225,9 @@ function getPropertiesAndBindings(root, libs, com, indent) {
             //
             // @example
             // <wdg:checkbox bind:value="btn1:action" />
-            // <wdg:checkbox bind:value="btn1:action, btn2, action" />
-            /*
-             values = root.attribs[key].split(",");
-             key = key.substr( 5 );
-             if( typeof postInit[key] === 'undefined' ) postInit[key] = {};
-             bindings = [];
-             values.forEach(function (val) {
-             val = val.split( ':' );
-             if (val.length < 2) val.push('value');
-             bindings.push.apply( bindings, val );
-             });
-             postInit[key].B = bindings.map(String.trim);
-             */
-            postInit[key].B = parseBinding(root.attribs[key]);
+            // <wdg:checkbox bind:value="btn1:action, btn2, action=false" />
+            if( typeof postInit[key.substr(5)] === 'undefined' ) postInit[key.substr(5)] = {};
+            postInit[key.substr(5)].B = parseBinding(root.attribs[key]);
             hasPostInit = true;
         }
         else if (key.substr( 0, 5 ) == 'slot:') {
@@ -401,7 +390,6 @@ function parseWidget(root, libs, parent, indent) {
 function isWidget( root ) {
     var name = root.name;
     if (name.substr(0, 4) == 'wdg:' || name == 'x-widget') {
-        console.log(name + " is a WIDGET!");
         return true;
     }
     return false;
@@ -411,7 +399,7 @@ function isWidget( root ) {
 var parseBinding = (
     function() {
         var Lexer = require('tlk-lexer');
-console.info("[x-widget.com] Lexer=...", Lexer);
+
         var lexer = new Lexer({
             value: "(-?(\.[0-9]+|[0-9]+(\.[0-9]+)?))|true|false|null|('(\\.|[^\\']+)*')",
             comma: "[ \t\n\r]*,[ \t\n\r]*",
@@ -432,6 +420,7 @@ console.info("[x-widget.com] Lexer=...", Lexer);
          * <data> := "true" | "false" | "null" | <number> | <string>
          */
         return function( code ) {
+            console.info("[x-widget.com] code=...", code);
             code = code.trim();
             lexer.loadText( code );
             var tkn, widget, attribute = 'action', value, bindings = [];
@@ -460,8 +449,8 @@ console.info("[x-widget.com] Lexer=...", Lexer);
                 if (tkn.id == 'colon') {
                     tkn = lexer.next();
                     if (null === tkn) throw Error("Missing `name` after `:`!`");
-                    if (tkn.id != 'name') throw Error(
-                        "Expected `name` after `:`, but found `" + tkn.id + "`!`");
+                    if (tkn.id != 'name') throw Error("Expected `name` after `:`, but found `"
+                                                      + tkn.id + "`!`");
                     attribute = lexer.text( tkn );
                     tkn = lexer.next();
                     if (null === tkn) break;
@@ -469,8 +458,8 @@ console.info("[x-widget.com] Lexer=...", Lexer);
                 if (tkn.id == 'equal') {
                     tkn = lexer.next();
                     if (null === tkn) throw Error("Missing `value` after `=`!`");
-                    if (tkn.id != 'value') throw Error(
-                        "Expected `value` after `=`, but found `" + tkn.id + "`!`");
+                    if (tkn.id != 'value') throw Error("Expected `value` after `=`, but found `"
+                                                       + tkn.id + "`!`");
                     value = lexer.text( tkn );
                     tkn = lexer.next();
                     if (null === tkn) break;
@@ -479,6 +468,7 @@ console.info("[x-widget.com] Lexer=...", Lexer);
                 addBinding();
             }
             addBinding();
+console.info("[x-widget.com] bindings=...", bindings);            
             return bindings;
         };
     }

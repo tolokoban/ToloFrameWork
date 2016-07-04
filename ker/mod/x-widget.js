@@ -148,7 +148,7 @@ Widget.onWidgetCreation = function( id, slot ) {
 /**
  * @example
  * var W = require("x-widget");
- * W.bind('wdg.layout-stack0',{"value":{"B":["btnNewTask","action","btnCancel","action"]}});
+ * W.bind('wdg.layout-stack0',{"value":{"B":[["btnNewTask","action"],["btnCancel","action"]]}});
  */
 Widget.bind = function( id, attribs ) {
     // Destination object: the one on the attributes of which we want to bind.
@@ -166,20 +166,31 @@ Widget.bind = function( id, attribs ) {
     for( dstAtt in attribs ) {
         bindings = attribs[dstAtt].B;
         if (Array.isArray( bindings )) {
-            // `binding` is an array with an even number of elements.
-            // In each couple, the first is the ID if the source object,
-            // and the second is the attribute to bind on.
-            for (idx = 0; idx < bindings.length; idx += 2) {
-                srcObj = widgets[bindings[idx + 0]];
+            // `binding` is an array of arrays.
+            // Subarrays have 2 or 3 elements.
+            // * ID if the source object
+            // * attribute to bind on
+            // * [optional] value  to use as  a constant. This  is the
+            // * case where  we just want  to set a constant  value as
+            // * soon as the source's attribute has changed.
+            bindings.forEach(function (binding) {
+                srcObj = widgets[binding[0]];
                 if( typeof srcObj === 'undefined' ) {
                     console.error( "[x-widget:bind] Trying to bind attribute \"" + dstAtt
                                    + "\" of widget \"" + id + "\" to the unexisting widget \""
-                                   + bindings[idx + 0] + "\"!");
+                                   + binding[0] + "\"!");
                     return;
                 }
-                srcAtt = bindings[idx + 1];
-                DB.bind( srcObj, srcAtt, dstObj, dstAtt );
-            }
+                srcAtt = binding[1];
+                if (binding.length == 2) {
+                    DB.bind( srcObj, srcAtt, dstObj, dstAtt );
+                } else {
+                    var value = binding[2];
+                    DB.bind( srcObj, srcAtt, function() {
+                        dstObj[dstAtt] = value;
+                    });
+                }
+            });
         }
 
         slots = attribs[dstAtt].S;
