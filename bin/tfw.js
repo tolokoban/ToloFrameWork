@@ -187,11 +187,13 @@ if (tasks.length == 0) {
     var watchedDirectories = [];
 
     function watch(path) {
-        console.log("Watching ".cyan + path);
-        watchedDirectories.push(path);
-        var watcher = FS.watch(path);
-        watcher.path = path;
-        watcher.on('change', processLater);
+        if (watchedDirectories.indexOf(path) == -1) {
+            console.log("Watching ".cyan + path);
+            watchedDirectories.push(path);
+            var watcher = FS.watch(path);
+            watcher.path = path;
+            watcher.on('change', processLater);
+        }
     }
 
     var prj = process();
@@ -205,7 +207,7 @@ if (tasks.length == 0) {
             if (filename.substr(0, 2) == '.#') return;
             if (filename.charAt(filename.length - 1) == '~') return;
             var path = Path.join(this.path, filename);
-            if (PathUtils.isDirectory(path)) {                
+            if (PathUtils.isDirectory(path)) {
                 if (!FS.existsSync(path)) return;
                 if (watchedDirectories.indexOf(filename) == -1) {
                     watch(path);
@@ -227,6 +229,7 @@ if (tasks.length == 0) {
         if (!prj) return;
         console.log();
         var fringe = [Path.join(__dirname, "../ker"), prj.srcPath()];
+        fringe.push.apply( fringe, prj.getExtraModulesPath() );
         var path;
         while (fringe.length > 0) {
             path = fringe.pop();

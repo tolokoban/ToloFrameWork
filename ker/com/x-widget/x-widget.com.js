@@ -283,7 +283,8 @@ function parseChildrenProperties(root, libs, com, indent) {
         libs.compileChildren( child );
 
         if (child.attribs.json === null) parsePropertyJSON(child, libs, com);
-        else if (child.attribs.list === null) parsePropertyList(child, libs, com, indent + "  ");
+        // By default, this is a list.
+        else parsePropertyList(child, libs, com, indent + "  ");
     });
 }
 
@@ -318,7 +319,9 @@ function parsePropertyList(root, libs, com, indent) {
     var out = '[';
     libs.compileChildren( root );
     root.children.forEach(function (child) {
-        if (child.type != libs.Tree.TAG) return;
+        if (child.type != libs.Tree.TAG) {
+            return;
+        }
         if (first) {
             first = false;
         } else {
