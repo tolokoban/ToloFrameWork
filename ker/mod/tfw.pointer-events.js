@@ -17,14 +17,17 @@ var WHEEL_EVENT = "onwheel" in document.createElement("div") ? "wheel" : // Mode
 var G = {
     // As soon as a touch occurs, no more mouse events can be handled.
     touchDevice: false,
+    // When a DOM element is touched, `target` holds it.
+    // Then we can track mouse events on __body__ using capture.
+    target: null,
     // Coords of _down_ on target.
     targetX: 0, targetY: 0,
     // Coords of _down_ on body.
-    downX: 0, downY: 0,
+    bodyDownX: 0, bodyDownY: 0,
     // Current mouse position on body.
-    x: -1, y: -1,
+    bodyMoveX: -1, bodyMoveY: -1,
     // Last mouse position on body.
-    lastX: -1, lastY: -1,
+    bodyMoveLastX: -1, bodyMoveLastY: -1,
     // drag event.
     onDrag: null,
     // Last time tap for double tap detection.
@@ -33,47 +36,110 @@ var G = {
 
 document.body.addEventListener( 'mousedown', function(evt) {
     if (G.touchDevice) return;
-    G.downX = evt.clientX;
-    G.downY = evt.clientY;
-    G.x = evt.clientX;
-    G.y = evt.clientY;
-    G.lastX = evt.clientX;
-    G.lastY = evt.clientY;
+    G.bodyDownX = evt.clientX;
+    G.bodyDownY = evt.clientY;
+    G.bodyMoveX = evt.clientX;
+    G.bodyMoveY = evt.clientY;
+    G.bodyMoveLastX = evt.clientX;
+    G.bodyMoveLastY = evt.clientY;
 }, true );
 
 document.body.addEventListener( 'mousemove', function(evt) {
     if (G.touchDevice) return;
-    G.lastX = G.x;
-    G.lastY = G.y;
-    G.x = evt.offsetX;
-    G.y = evt.offsetY;
-    if (G.onDrag) {
-        G.onDrag();
-    }
+    G.bodyMoveLastX = G.bodyMoveX;
+    G.bodyMoveLastY = G.bodyMoveY;
+    var rectB = evt.target.getBoundingClientRect();
+    G.bodyMoveX = evt.offsetX + rectB.left;
+    G.bodyMoveY = evt.offsetY + rectB.top;
+
+    if (!G.target) return;
+
+    var slots = G.target._slots;
+    if (typeof slots.drag !== 'function') return;
+
+    slots.drag({
+        action: 'drag',
+        target: G.target.element,
+        x0: G.targetX,
+        y0: G.targetY,
+        x: G.targetX + G.bodyMoveX - G.bodyDownX,
+        y: G.targetY + G.bodyMoveY - G.bodyDownY,
+        dx: G.bodyMoveX - G.bodyDownX,
+        dy: G.bodyMoveY - G.bodyDownY,
+        vx: G.bodyMoveX - G.bodyMoveLastX,
+        vy: G.bodyMoveY - G.bodyMoveLastY
+    });
 }, true );
 
+document.body.addEventListener( 'mouseup', function(evt) {
+    if (G.touchDevice) return;
+    if (!G.target) return;
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    var time = Date.now();
+    var slots = G.target._slots;
+    var dx = G.bodyMoveX - G.bodyDownX;
+    var dy = G.bodyMoveY - G.bodyDownY;
+    if (slots.up) {
+        slots.up({
+            action: 'up',
+            target: G.target.element,
+            x: G.targetX + dx,
+            y: G.targetY + dy,
+            dx: dx,
+            dy: dy
+        });
+    }
+    // Tap or doubletap.
+    if (dx * dx + dy * dy < 256) {
+        if (G.lastTapTime > 0) {
+            if (slots.doubletap && time - G.lastTapTime < 400) {
+                slots.doubletap({
+                    action: 'doubletap',
+                    target: G.target.element,
+                    x: G.targetX + dx,
+                    y: G.targetY + dy
+                });
+            } else {
+                G.lastTapTime = 0;
+            }
+        }
+        if (slots.tap && G.lastTapTime == 0) {
+            slots.tap({
+                action: 'tap',
+                target: G.target.element,
+                x: G.targetX + dx,
+                y: G.targetY + dy
+            });
+        }
+        G.lastTapTime = time;
+    }
+    delete G.target;
+}, true);
 
 
 function PointerEvents( element ) {
     var that = this;
 
     this._slots = {};
+    this._eventListeners = [];
 
     Object.defineProperty( PointerEvents.prototype, 'element', {
         value: element, writable: false, configurable: true, enumerable: true
     });
 
     //===============
-    // Toush events.
-    element.addEventListener( 'touchstart', function(evt) {
+    // Touch events.
+    addEvent.call(that, element, 'touchstart', function(evt) {
         G.touchDevice = true;
         var slots = that._slots;
         if (evt.touches.length == 1) {
             G.rect = element.getBoundingClientRect();
-            G.x = evt.touches[0].clientX;
-            G.y = evt.touches[0].clientY;
-            G.downX = evt.touches[0].clientX;
-            G.downY = evt.touches[0].clientY;
+            G.bodyMoveX = evt.touches[0].clientX;
+            G.bodyMoveY = evt.touches[0].clientY;
+            G.bodyDownX = evt.touches[0].clientX;
+            G.bodyDownY = evt.touches[0].clientY;
             G.targetX = evt.touches[0].clientX - G.rect.left;
             G.targetY = evt.touches[0].clientY - G.rect.top;
             G.time = Date.now();
@@ -82,16 +148,18 @@ function PointerEvents( element ) {
                     action: 'down',
                     target: element,
                     x: G.targetX,
-                    y: G.targetY
+                    y: G.targetY,
+                    stopPropagation: evt.stopPropagation.bind( evt ),
+                    preventDefault: evt.preventDefault.bind( evt )
                 });
             }
         }
     });
-    element.addEventListener( 'touchmove', function(evt) {
-        var lastX = G.x;
-        var lastY = G.y;
-        G.x = evt.touches[0].clientX;
-        G.y = evt.touches[0].clientY;
+    addEvent.call(that, element, 'touchmove', function(evt) {
+        var lastX = G.bodyMoveX;
+        var lastY = G.bodyMoveY;
+        G.bodyMoveX = evt.touches[0].clientX;
+        G.bodyMoveY = evt.touches[0].clientY;
         var slots = that._slots;
         if (slots.drag) {
             slots.drag({
@@ -99,27 +167,31 @@ function PointerEvents( element ) {
                 target: element,
                 x0: G.targetX,
                 y0: G.targetY,
-                x: G.x - G.rect.left,
-                y: G.y - G.rect.top,
-                dx: G.x - G.downX,
-                dy: G.y - G.downY,
-                vx: G.x - lastX,
-                vy: G.y - lastY
+                x: G.bodyMoveX - G.rect.left,
+                y: G.bodyMoveY - G.rect.top,
+                dx: G.bodyMoveX - G.bodyDownX,
+                dy: G.bodyMoveY - G.bodyDownY,
+                vx: G.bodyMoveX - lastX,
+                vy: G.bodyMoveY - lastY,
+                stopPropagation: evt.stopPropagation.bind( evt ),
+                preventDefault: evt.preventDefault.bind( evt )
             });
         }
     });
-    element.addEventListener( 'touchend', function(evt) {
+    addEvent.call(that, element, 'touchend', function(evt) {
         var slots = that._slots;
-        var dx = G.x - G.downX;
-        var dy = G.y - G.downY;
+        var dx = G.bodyMoveX - G.bodyDownX;
+        var dy = G.bodyMoveY - G.bodyDownY;
         if (slots.up) {
             slots.up({
                 action: 'up',
                 target: that.element,
-                x: G.x - G.rect.left,
-                y: G.y - G.rect.top,
+                x: G.bodyMoveX - G.rect.left,
+                y: G.bodyMoveY - G.rect.top,
                 dx: dx,
-                dy: dy
+                dy: dy,
+                stopPropagation: evt.stopPropagation.bind( evt ),
+                preventDefault: evt.preventDefault.bind( evt )
             });
         }
         // Tap or doubletap.
@@ -130,8 +202,10 @@ function PointerEvents( element ) {
                     slots.doubletap({
                         action: 'doubletap',
                         target: that.element,
-                        x: G.x - G.rect.left,
-                        y: G.y - G.rect.top
+                        x: G.bodyMoveX - G.rect.left,
+                        y: G.bodyMoveY - G.rect.top,
+                        stopPropagation: evt.stopPropagation.bind( evt ),
+                        preventDefault: evt.preventDefault.bind( evt )
                     });
                 } else {
                     G.lastTapTime = 0;
@@ -143,8 +217,10 @@ function PointerEvents( element ) {
                 slots.tap({
                     action: 'tap',
                     target: that.element,
-                    x: G.x - G.rect.left,
-                    y: G.y - G.rect.top
+                    x: G.bodyMoveX - G.rect.left,
+                    y: G.bodyMoveY - G.rect.top,
+                    stopPropagation: evt.stopPropagation.bind( evt ),
+                    preventDefault: evt.preventDefault.bind( evt )
                 });
             }
             G.lastTapTime = time;
@@ -153,101 +229,34 @@ function PointerEvents( element ) {
 
     //===============
     // Mouse events.
-    element.addEventListener( 'mousedown', function(evt) {
+    addEvent.call(that, element, 'mousedown', function(evt) {
         if (G.touchDevice) return;
-        console.log("MOUSE DOWN");
-        evt.stopPropagation();
-        evt.preventDefault();
         var slots = that._slots;
         var rect = element.getBoundingClientRect();
+        G.target = that;
         G.targetX = evt.clientX - rect.left;
         G.targetY = evt.clientY - rect.top;
-        if (slots.drag) {
-            G.onDrag = function() {
-                slots.drag({
-                    action: 'drag',
-                    target: element,
-                    x0: G.targetX,
-                    y0: G.targetY,
-                    x: G.targetX + G.x - G.downX,
-                    y: G.targetY + G.y - G.downY,
-                    dx: G.x - G.downX,
-                    dy: G.y - G.downY,
-                    vx: G.x - G.lastX,
-                    vy: G.y - G.lastY
-                });
-            };
-        }
         if (slots.down) {
             slots.down({
                 action: 'down',
                 target: element,
                 x: G.targetX,
-                y: G.targetY
+                y: G.targetY,
+                stopPropagation: evt.stopPropagation.bind( evt ),
+                preventDefault: evt.preventDefault.bind( evt )
             });
         }
-
-        var screen = document.createElement( 'div' );
-        if (slots.drag) {
-            // If the slot `drag` has been defined, we change the cursor.
-            screen.style.cursor = element.style.cursor || 'move';
-        }
-        screen.className = "tfw-pointer-events";
-        document.body.appendChild( screen );
-
-        screen.addEventListener( 'mouseup', function(evt) {
-            var time = Date.now();
-            G.onDrag = null;
-            document.body.removeChild( screen );
-            var slots = that._slots;
-            var dx = G.x - G.downX;
-            var dy = G.y - G.downY;
-            if (slots.up) {
-                slots.up({
-                    action: 'up',
-                    target: that.element,
-                    x: G.targetX + dx,
-                    y: G.targetY + dy,
-                    dx: dx,
-                    dy: dy
-                });
-            }
-            // Tap or doubletap.
-            if (dx * dx + dy * dy < 256) {
-                if (G.lastTapTime > 0) {
-                    if (slots.doubletap && time - G.lastTapTime < 400) {
-                        slots.doubletap({
-                            action: 'doubletap',
-                            target: that.element,
-                            x: G.targetX + dx,
-                            y: G.targetY + dy
-                        });
-                    } else {
-                        G.lastTapTime = 0;
-                    }
-                }
-                if (slots.tap && G.lastTapTime == 0) {
-                    evt.stopPropagation();
-                    evt.preventDefault();
-                    slots.tap({
-                        action: 'tap',
-                        target: that.element,
-                        x: G.targetX + dx,
-                        y: G.targetY + dy
-                    });
-                }
-                G.lastTapTime = time;
-            }
-        }, false);
     });
-    element.addEventListener( 'mousemove', function(evt) {
+    addEvent.call(that, element, 'mousemove', function(evt) {
         var slots = that._slots;
         if (slots.move) {
+            var rectA = element.getBoundingClientRect();
+            var rectB = evt.target.getBoundingClientRect();
             slots.move({
                 target: element,
                 action: 'move',
-                x: evt.offsetX,
-                y: evt.offsetY
+                x: evt.offsetX + rectB.left - rectA.left,
+                y: evt.offsetY + rectB.top - rectA.top
             });
         }
     });
@@ -269,20 +278,40 @@ PointerEvents.prototype.on = function(action, event) {
         slots[action] = event;
     }
     if (action == 'wheel') {
-        this.element.addEventListener(WHEEL_EVENT, function(evt) {
-            console.info("[tfw.pointer-events] evt=...", evt);
+        addEvent.call(that, this.element, WHEEL_EVENT, function(evt) {
             var rect = that.element.getBoundingClientRect();
             slots.wheel({
                 target: that.element,
                 action: 'wheel',
                 delta: evt.deltaY,
                 x: evt.clientX - rect.left,
-                y: evt.clientY - rect.top
+                y: evt.clientY - rect.top,
+                stopPropagation: evt.stopPropagation.bind( evt ),
+                preventDefault: evt.preventDefault.bind( evt )
             });
         });
     }
     return this;
 };
 
+
+/**
+ * @return void
+ */
+PointerEvents.prototype.off = function() {
+    this._eventListeners.forEach(function (itm) {
+        var element = itm[0];
+        var event = itm[1];
+        var listener = itm[2];
+        var capture = itm[3];
+        element.removeEventListener( event, listener, capture );
+    });
+};
+
+
+function addEvent(element, event, listener, capture) {
+    element.addEventListener( event, listener, capture );
+    this._eventListeners.push([element, event, listener, capture]);
+}
 
 module.exports = PointerEvents;
