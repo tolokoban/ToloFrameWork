@@ -26,6 +26,4 @@ exports.compile = function(root, libs) {
     };
     libs.addInitJS("I(" + ID + "," + JSON.stringify(textId) + ")");
     ID++;
-
-    console.log(">>> ".yellow + libs.Tree.toString( root ));
 };

@@ -21,9 +21,6 @@ module.exports = function( elemId, textId ) {
         return false;
     }
     var text = APP._(textId) || textId;
-console.info("[x-intl] elem=...", elem);
-console.info("[x-intl] textId=...", textId);
-console.info("[x-intl] text=...", text);    
     if (text.substr(0, 6).toLowerCase() == '<html>') {
         // This is an HTML content.
         elem.innerHTML = text.substr(6);
