@@ -26,7 +26,7 @@ exports.compile = function(root, libs) {
         }
     );
 
-    var src = root.attribs.src,
+    var src = (root.attribs || {}).src,
         node,
         content,
         out;
