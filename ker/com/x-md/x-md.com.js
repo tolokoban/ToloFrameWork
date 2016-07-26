@@ -51,10 +51,19 @@ exports.compile = function(root, libs) {
         content = libs.Tree.toString(root);
     }
 
-    out = Marked(content);
-    var tree = libs.parseHTML(out);
+    var tree = libs.parseHTML( content );
+    var newChildren = [];
+    tree.children.forEach(function (child) {
+        if (child.type != libs.Tree.TEXT) {
+            newChildren.push( child );
+            return;  
+        } else {
+            out = Marked( child.text );
+            newChildren.push( libs.parseHTML(out) );
+        }
+    });
 
     root.name = "div";
     root.attribs = {"class": "x-md custom"};
-    root.children = tree.children;
+    root.children = newChildren;
 };

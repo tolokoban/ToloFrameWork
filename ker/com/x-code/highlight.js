@@ -53,9 +53,9 @@ function h(code, lang, libs) {
     catch (ex) {
         libs.fatal("Unexpected error while highlighting '" + lang + "' code!\n" + ex);
     }
-
-    return "<pre class='custom highlight " + lang + "'>"
-        + buff + "</pre>";
+    buff = "<pre class='custom highlight " + lang + "'>\n    "
+        + buff.split('\n').join('\n    ') + "</pre>";
+    return buff;
 }
 
 h.cssFile = Path.join(__dirname, "highlight.css");

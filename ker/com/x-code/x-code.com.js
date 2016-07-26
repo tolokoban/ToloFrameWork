@@ -62,7 +62,7 @@ exports.compile = function(root, libs) {
     root.type = libs.Tree.VOID;
     delete root.attribs;
     delete root.name;
-    libs.Tree.text(root, highlightedCode.trim());
+    libs.Tree.text(root, highlightedCode);
 };
 
 
