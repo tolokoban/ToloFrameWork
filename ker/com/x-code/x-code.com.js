@@ -1,5 +1,10 @@
 /**
  * Component x-code
+ *
+ * @example
+ * <x-code>var toto = 'Hello World!';</x-code>
+ * <x-code src="file.cpp" />
+ * <x-code src="file.cpp" section="initialize-webgl" />
  */
 var Highlight = require("./highlight");
 
@@ -35,6 +40,8 @@ exports.close = function(file, libs) {};
  * Compile a node of the HTML tree.
  */
 exports.compile = function(root, libs) {
+    if( typeof root.attribs === 'undefined' ) root.attribs = {};
+
     var src = root.attribs.src;
     var code = '';
 
@@ -50,10 +57,49 @@ exports.compile = function(root, libs) {
     } else {
         code = libs.Tree.text(root);
     }
-    code = code.trim();
+    if (root.attribs.section) code = restrictToSection( code, root.attribs.section );
     var highlightedCode = Highlight.parseCode(code, 'js', libs);
     root.type = libs.Tree.VOID;
     delete root.attribs;
     delete root.name;
-    libs.Tree.text(root, highlightedCode.trim());
+    libs.Tree.text(root, highlightedCode);
 };
+
+
+/**
+ * it can be useful to restrict the display to just a section of the entire file.
+ * Such sections must start with the following line where we find it's name.
+ * Look at the definition of the section `init` in the following example.
+ * 
+ * @example
+ *   var canvas = $.elem( this, 'div' );
+ *   // #(init)
+ *   var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+ *   gl.clearColor(0.0, 0.3, 1.0, 1.0);
+ *   gl.enable(gl.DEPTH_TEST);
+ *   gl.depthFunc(gl.LEQUAL);
+ *   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+ *   // #(init)
+ * 
+ */
+function restrictToSection( code, section ) {
+    var linesToKeep = [];
+    var outOfSection = true;
+    var lookFor = '#(' + section + ')';
+    
+    code.split('\n').forEach(function( line ) {
+        if (outOfSection) {
+            if (line.indexOf( lookFor ) > -1) {
+                outOfSection = false;
+            }
+        } else {
+            if (line.indexOf( lookFor ) > -1) {
+                outOfSection = true;
+            } else {
+                linesToKeep.push( line );
+            }
+        }
+    });
+    
+    return linesToKeep.join('\n');
+}
