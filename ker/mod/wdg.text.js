@@ -22,11 +22,8 @@ var Text = function(opts) {
     var autocompleteProposals = [];
     var autocompleteShift = 0;
 
-    var label = $.div( 'label' );
+    var label = $.div( 'theme-label', 'theme-color-bg-1' );
     var input = $.tag( 'input' );
-    this.focus = function() {
-        window.setTimeout( input.focus.bind( input ) );
-    };
     var datalist = $.div( 'datalist', 'theme-elevation-12' );
     this._input = input;
     var elem = $.elem( this, 'div', 'wdg-text', 'theme-elevation-2', [label, input, datalist] );
@@ -99,7 +96,13 @@ var Text = function(opts) {
     DB.propString(this, 'width')(function(v) {
         elem.style.width = v;
     });
+    DB.propBoolean(this, 'focus')(function(v) {
+        if (v) input.focus();
+        else input.blur();
+    });
     DB.propInteger(this, 'action', '');
+    DB.propAddClass(this, 'wide');
+    DB.propRemoveClass(this, 'visible', 'hide');
 
     opts = DB.extend({
         value: '',
@@ -113,6 +116,7 @@ var Text = function(opts) {
         placeholder: '',
         size: 10,
         width: 'auto',
+        focus: false,
         wide: false,
         visible: true
     }, opts, this);
@@ -166,7 +170,7 @@ var Text = function(opts) {
                 },
                 up: function() {
                     dataListHasFocus = false;
-                    input.focus();
+                    that.focus = true;
                 },
                 tap: function() {
                     that.value = div.textContent.trim();
@@ -230,11 +234,13 @@ var Text = function(opts) {
         }
         $.addClass( elem, "theme-elevation-2" );
         $.removeClass( elem, "theme-elevation-8" );
+        $.removeClass(input, 'theme-color-bg-A1');
     });
     input.addEventListener('focus', function() {
         that.selectAll();
         $.removeClass( elem, "theme-elevation-2" );
         $.addClass( elem, "theme-elevation-8" );
+        $.addClass(input, 'theme-color-bg-A1');
     });
     input.addEventListener('keydown', function(evt) {
     });

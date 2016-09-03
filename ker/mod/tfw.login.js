@@ -58,11 +58,11 @@ module.exports = function(opts) {
         var box = $.div( 'theme-elevation-24', [inpLogin, inpPassword, row, hint] );
         root.appendChild( box );
         document.body.appendChild( root );
-        inpLogin.focus();
+        inpLogin.focus = true;
 
         var onLogin = function() {
             if (!inpLogin.valid) {
-                inpLogin.focus();
+                inpLogin.focus = true;
                 return;
             }
             $.addClass( root, "fade-out" );
@@ -82,7 +82,7 @@ module.exports = function(opts) {
                     function( user ) {
                         resolve( user );
                         $.detach( root );
-                    },
+                    },                    
                     function( errCode ) {
                         Msg.error( _('error' + errCode.id) );
                         $.removeClass( root, 'fade-out' );
@@ -92,6 +92,6 @@ module.exports = function(opts) {
         };
         DB.bind( btnOK, 'action', onLogin );
         DB.bind( inpPassword, 'action', onLogin );
-        DB.bind( inpLogin, 'action', inpPassword.focus.bind( inpPassword ) );
+        DB.bind( inpLogin, 'action', function() { inpPassword.focus = true; } );
     });
 };

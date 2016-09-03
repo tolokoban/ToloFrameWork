@@ -1,56 +1,62 @@
 div.wdg-combo {
     position: relative;
     display: inline-block;
+    border: 0;
     width: auto;
-    height: 3em;
+    min-height: 2rem;
     padding: 0;
-    margin: .25em;
-    font-size: 1em;
+    margin: .5rem;
+    font-size: 1rem;
+    text-align: left;
     vertical-align: middle;
+    background-color: #fff;
+    cursor: pointer;    
 }
 
-div.wdg-combo > div.datalist {
-    position: absolute;
-    width: 100%;
-    display: none;
-    background: #fff;
-    padding: 0;
-    margin: 0;
-    border: 1px solid #000;
-    max-height: 9em;
-    overflow: auto;
-    z-index: 999;
+div.wdg-combo.disabled {
+    cursor: normal;
 }
 
-div.wdg-combo.list > div.datalist {
-    display: inline-block;
-}
-
-div.wdg-combo > div.datalist > div:hover {
-    background-color: orange;
-}
-
-div.wdg-combo > div.datalist > div {
+div.wdg-combo > div.table button.body {
+    position: relative;
     display: block;
+    width: 100%;
+    height: 100%;
     margin: 0;
-    font-size: 1em;
-    line-height: 1.5em;
-    height: 1.5em;
+    padding: .2rem;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
     white-space: nowrap;
-    padding: 0 1em;
-    color: #444;
-    cursor: pointer;
-    box-shadow: 0 1px 0 #ddd;
+    overflow-x: hidden;
 }
 
-div.wdg-combo > div.datalist > div b {
-    color: #000;
-    font-weight: bold;
+div.wdg-combo > div.table div.button {
+    width: 1rem;
 }
 
+div.wdg-combo.disabled > div.table button.body {
+    opacity: .5;
+}
+
+div.wdg-combo > div.table {
+    pointer-events: none;
+    display: table;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+div.wdg-combo > div.table > div {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: left;
+}
 
 div.wdg-combo.no-label {
-    height: 2em;
+    height: 2rem;
 }
 
 div.wdg-combo.wide {
@@ -62,37 +68,7 @@ div.wdg-combo > * {
     display: block;
     margin: 0;
     width: 100%;
-    font-size: 1em;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-div.wdg-combo > input {
-    height: 2em;
-    box-shadow: 0 0 1px 1px #ddd;
-    padding: 0 .5em;
-    background-color: #fff;
-    border: 1px solid #000;
-    border-bottom: 3px solid #000;
-    color: #000;
-}
-
-div.wdg-combo > input[disabled] {
-    background-color: #aaa;
-}
-
-div.wdg-combo.valid > input {
-    border-bottom: 3px solid #3d3;
-}
-
-div.wdg-combo.not-valid > input {
-    border-bottom: 3px solid #d33;
-    color: #d33;
-}
-
-div.wdg-combo > input:focus {
-    box-shadow: 0 0 1px 1px #ff8;
+    font-size: 1rem;
 }
 
 div.wdg-combo.no-label > div.label {
@@ -100,14 +76,29 @@ div.wdg-combo.no-label > div.label {
 }
 
 div.wdg-combo > div.label {
-    background-color: #468;
-    border-radius: 1em 1em 0 0;
-    color: #fff;
-    font-family: sans-serif;
-    font-size: 75%;
-    line-height: 1.5em;
-    height: 1.5em;
-    padding: 0 1em;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    vertical-align: bottom;
+    line-height: 1rem;
+    height: 1rem;
+    padding: 0 .75rem;
+}
+
+ul.wdg-combo-modal {
+    max-height: 240px;
+    overflow: auto;
+    margin: 0;
+    padding: 0 .2rem;
+    border-top: 1px solid rgba(0,0,0,.3);
+}
+
+ul.wdg-combo-modal > li {
+    list-style: none;
+    margin: 0;
+    padding: .25rem .5rem;
+    border-bottom: 1px solid rgba(0,0,0,.3);
+    cursor: pointer;
+    transition: all .3s;
+}
+
+ul.wdg-combo-modal > li > * {
+    pointer-events: none;
 }

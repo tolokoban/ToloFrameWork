@@ -8,12 +8,17 @@
  * var mod = require('tfw.data-binding');
  */
 require("polyfill.string");
+var $ = require("dom");
 var Listeners = require("tfw.listeners");
 
 
 var ID = '_tfw.data-binding_';
 
 var converters = {
+    castArray: function(v) {
+        if (Array.isArray( v )) return v;
+        return [v];
+    },
     castBoolean: function(v) {
         if (typeof v === 'boolean') return v;
         if (typeof v === 'string') {
@@ -131,15 +136,26 @@ function propCast( caster, obj, att, val ) {
     return exports.bind.bind(exports, obj, att);
 };
 
+/**
+ * @export @function fire
+ *
+ * Set a new value and fire the event even if the value has not changed.
+ */
 exports.fire = function( obj, att, val ) {
     var currentValue = obj[att];
     if( typeof val === 'undefined' ) val = currentValue;
 
-    obj[att] = val;
-    if ( val === currentValue ) {
-        // If the value is the same, we must force the event firing.
-        obj[ID][att].event.fire( obj[att], obj, att );
-    }
+    obj[ID][att].value = val;
+    obj[ID][att].event.fire( obj[att], obj, att );
+};
+
+/**
+ * @export @function set
+ *
+ * Set a new value without firing any event.
+ */
+exports.set = function( obj, att, val ) {
+    obj[ID][att].value = val;
 };
 
 /**
@@ -147,7 +163,70 @@ exports.fire = function( obj, att, val ) {
  * @param {string} att - Name of the attribute of `obj`.
  */
 exports.prop = propCast.bind( null, null );
-
+/**
+ * @export @function propToggleClass
+ * Create an enum attribute which toggles a CSS class when assigned.
+ *
+ * @param {array|object} values - If this is an array, we will convert
+ * it  into an  object.  For instance `["show",  "hide"]` will  become
+ * `{show: "show", hide: "hide"}`.
+ */
+exports.propToggleClass = function( target, attribute, values, prefix ) {
+    if( typeof prefix !== 'string' ) prefix = '';
+    var convertedValues = {};
+    if (typeof values === 'string') {
+        convertedValues[values] = values;
+    }
+    else if (Array.isArray(values)) {
+        values.forEach(function (itm) {
+            convertedValues[itm] = itm;
+        });
+    }
+    else {
+        convertedValues = values;
+    }
+    propCast( null, target, attribute )(function(v) {
+        var key, val;
+        for( key in convertedValues ) {
+            val = convertedValues[key];
+            if (key == v) {
+                $.addClass( target.element, prefix + val);
+            } else {
+                $.removeClass( target.element, prefix + val);
+            }
+        }
+    });
+};
+/**
+ * @export @function propAddClass
+ * Create a boolean attribute that toggle a CSS class on the `element` attribute of `target`.
+ * If the value id `true`, `className` is added.
+ * @example
+ * DB.propAddClass( this, 'wide', 'fullscreen' );
+ * DB.propAddClass( this, 'wide' );
+ */
+exports.propAddClass = function( target, attribute, className ) {
+    if( typeof className === 'undefined' ) className = attribute;
+    propCast( converters.castBoolean, target, attribute )(function(v) {
+        if (v) $.addClass( target.element, className );
+        else $.removeClass( target.element, className );
+    });
+};
+/**
+ * @export @function propAddClass
+ * Create a boolean attribute that toggle a CSS class on the `element` attribute of `target`.
+ * If the value id `true`, `className` is removed.
+ * @example
+ * DB.propRemoveClass( this, 'visible', 'hide' );
+ */
+exports.propRemoveClass = function( target, attribute, className ) {
+    if( typeof className === 'undefined' ) className = attribute;
+    propCast( converters.castBoolean, target, attribute )(function(v) {
+        if (v) $.removeClass( target.element, className );
+        else $.addClass( target.element, className );
+    });
+};
+exports.propArray = propCast.bind( null, converters.castArray );
 exports.propBoolean = propCast.bind( null, converters.castBoolean );
 exports.propColor = propCast.bind( null, converters.castColor );
 exports.propEnum = function( enumeration ) {
@@ -193,12 +272,12 @@ exports.extend = function( def, ext, obj ) {
     if (typeof obj !== 'undefined') {
         for( key in ext ) {
             if (key.charAt(0) != '$') continue;
-                Object.defineProperty( obj, key, {
-                    value: ext[key],
-                    writable: false,
-                    configurable: false,
-                    enumerable: false
-                });
+            Object.defineProperty( obj, key, {
+                value: ext[key],
+                writable: false,
+                configurable: false,
+                enumerable: false
+            });
         }
         // Setting values.
         for( key in out ) {

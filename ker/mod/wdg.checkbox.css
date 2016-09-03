@@ -9,12 +9,18 @@
     font-size: 1em;
     text-height: 2em;
     cursor: pointer;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
 }
 
 .wdg-checkbox > * {
     display: inline-block;
     vertical-align: middle;
     text-height: 2em;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
 }
 
 .wdg-checkbox > *.wdg-icon {
@@ -40,4 +46,12 @@
 
 .wdg-checkbox.align-right {
     text-align: right;
+}
+
+.wdg-checkbox div.label {
+    opacity: .5;
+}
+
+.wdg-checkbox.checked div.label {
+    opacity: 1;
 }

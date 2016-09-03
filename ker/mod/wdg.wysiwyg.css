@@ -23,17 +23,30 @@
 }
 
 .wdg-wysiwyg > .header {
+    display: block;
     height: 2em;
     line-height: 2em;
-    padding: 0 
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
+    text-align: left;
 }
 
 .wdg-wysiwyg > div.header > * {
     margin: 0;
+    vertical-align: middle;
+    display: inline-block;
 }
 
-.wdg-wysiwyg > div.header > span {
+.wdg-wysiwyg > div.header > div:first-child {
+    position: relative;
+    left: -.5rem;
+    top: -.75rem;
+}
+
+.wdg-wysiwyg > div.header > div.theme-label {
     padding-left: 1rem;
+    margin: 0;
 }
 
 
@@ -51,6 +64,7 @@
     background-color: #9cd;
     margin: 0;
     padding: .25rem;
+    text-align: left;
 }
 
 .wdg-wysiwyg > .menu > * {

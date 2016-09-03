@@ -14,14 +14,26 @@
 var $ = require("dom");
 
 
+var G = {
+    lastMsg: null
+};
 
 function show( className, text, delay ) {
+    if (G.lastMsg) {
+        // Remove an already displayed message because a new one must take its place.
+        $.detach( G.lastMsg );
+        G.lastMsg = null;
+    }
+    
     if( typeof delay !== 'number' ) delay = 5000;
-    var div = $.div( 'tfw-message', className, 'theme-elevation-24', ["" + text] );
+    var div = $.div( 'tfw-message', className, 'theme-elevation-24' );
+    $.textOrHtml( div, text );
+    G.lastMsg = div;
     document.body.appendChild( div );
     function hide() {
         $.removeClass( div, 'show' );
         window.setTimeout( $.detach.bind( $, div ), 300 );
+        G.lastMsg = null;
     }
     var id = window.setTimeout(hide, delay);
     window.setTimeout(function() {
@@ -29,6 +41,7 @@ function show( className, text, delay ) {
         $.on( div, function() {
             hide();
             window.clearTimeout( id );
+            G.lastMsg = null;
         });
     });
 }

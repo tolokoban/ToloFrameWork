@@ -4,7 +4,7 @@
     display: inline-block;
     line-height: 2rem;
     min-height: 2rem;
-    padding: 0 1rem;
+    padding: 0 .5rem;
     background: #9cd;
     color: #000;
     text-decoration: none;
@@ -18,18 +18,9 @@
     font-size: 1rem;
     min-width: 64px;
     transition: all .2s;
-    text-align: center;
+    text-align: left;
     border: none;
 }
-
-/*
-.wdg-button:hover {
-    -o-filter: saturate(200%);
-    -ms-filter: saturate(200%);
-    -webkit-filter: saturate(200%);
-    filter: saturate(200%);
-}
-*/
 
 .wdg-button > * {
     vertical-align: middle;
@@ -38,8 +29,8 @@
 }
 
 
-.wdg-button > .wdg-icon {
-    margin: 0 .5rem 0 -.5rem;
+.wdg-button > div.wdg-icon.flat {
+    margin: 0 .4rem 0 0;
 }
 
 a.wdg-button.wide, button.wdg-button.wide {
@@ -59,12 +50,13 @@ a.wdg-button.wide, button.wdg-button.wide {
     min-width: 2rem;
 }
 
-.wdg-button[disabled=yes]:hover,
-.wdg-button[disabled=yes] {
+.wdg-button.dom[disabled=yes]:hover,
+.wdg-button.dom[disabled=yes] {
+    pointer-event: none;
     text-decoration: none;
     cursor: default;
     background: #888;
-    color: #ccc;
+    color: rgba(0,0,0,.4);
     text-shadow: none;
     box-shadow: none;
     font-style: italic;
@@ -81,6 +73,10 @@ a.wdg-button.wide, button.wdg-button.wide {
 
 .wdg-button.special {
     background-color: #9d7;
+}
+
+.wdg-button.simple[disabled=yes] {
+    background: none;
 }
 
 .wdg-button.simple {

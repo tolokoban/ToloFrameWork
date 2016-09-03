@@ -73,6 +73,8 @@ var LayoutStack = function(opts) {
         children = v;
         DB.fire( that, 'value' );
     });
+    DB.propAddClass(this, 'wide');
+    DB.propRemoveClass(this, 'visible', 'hide');
 
     opts = DB.extend({
         value: '',

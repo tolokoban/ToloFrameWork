@@ -249,7 +249,7 @@ function PointerEvents( element ) {
     });
     addEvent.call(that, element, 'mousemove', function(evt) {
         var slots = that._slots;
-        if (slots.move) {
+        if (slots.move) {            
             var rectA = element.getBoundingClientRect();
             var rectB = evt.target.getBoundingClientRect();
             slots.move({

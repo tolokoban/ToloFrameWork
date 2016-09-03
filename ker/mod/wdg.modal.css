@@ -1,0 +1,41 @@
+div.wdg-modal {
+    margin: 0;
+    padding: 0;
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 999999;
+}
+
+div.wdg-modal > div {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+div.wdg-modal > div > div {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    max-height: 90vh;
+    min-width: 240px;
+    overflow: hidden;
+    text-align: left;
+}
+
+div.wdg-modal.padding > div > div {
+    padding: 1rem;
+}
+
+div.wdg-modal.scroll > div > div {
+    overflow-y: auto;
+}

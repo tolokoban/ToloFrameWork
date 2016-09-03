@@ -3,6 +3,13 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     margin: .5em;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+a, b, i, em, code, span {
+    display: inline;
+    margin: 0;
+    padding: 0;
 }
 
 .dom.wide {
@@ -34,19 +41,32 @@ html, body {
 
 body {
     font-size: 16px;
-    font-family: sans-serif;
-    background-color: #eee;
+    font-family: 'Josefin Sans', sans-serif;
+    color: #000;
 }
 
-.label {
-    color: #468;
+.theme-label {
+    color: rgba(0,0,0,.8);
     font-family: sans-serif;
     white-space: nowrap;
     text-overflow: ellipsis;
     font-variant: small-caps;
+    line-height: 1rem;
+    font-size: .8rem;
+    padding: 0 .5rem;
+    margin: 0;
+    text-align: left;
+    vertical-align: middle;
 }
 
-
+.theme-info {
+    color: #000;
+    background: #fff;
+    margin: .5rem;
+    padding: 1rem;
+    text-align: justify;
+    box-shadow: 0 0 1px rgba(0,0,0,.4);
+}
 
 /* Elevations: https://material.google.com/what-is-material/elevation-shadows.html#elevation-shadows-elevation-android- */
 
@@ -109,81 +129,84 @@ body {
     z-index: 16;
 }
 
+.theme-elevation-18 {
+    box-shadow: 0 9px 18px rgba(0,0,0,.4);
+    transform: translateY(-9px);
+    z-index: 18;
+}
+
 .theme-elevation-24 {
     box-shadow: 0 12px 24px rgba(0,0,0,.4);
     transform: translateY(-12px);
     z-index: 24;
 }
 
-.theme-color-bg-0{background-color: #fff}
-.theme-color-bg-1{background-color: #EBF5F8}
-.theme-color-bg-2{background-color: #D6EBF1}
-.theme-color-bg-3{background-color: #C2E0EB}
-.theme-color-bg-4{background-color: #ADD6E4}
+/* main */
+.theme-color-bg-0{background-color: #EEFFFF}
+.theme-color-0{color: #EEFFFF}
+.theme-color-bg-1{background-color: #DDF5F8}
+.theme-color-1{color: #DDF5F8}
+.theme-color-bg-2{background-color: #CCEBF1}
+.theme-color-2{color: #CCEBF1}
+.theme-color-bg-3{background-color: #BBE0EB}
+.theme-color-3{color: #BBE0EB}
+.theme-color-bg-4{background-color: #AAD6E4}
+.theme-color-4{color: #AAD6E4}
 .theme-color-bg-5{background-color: #99ccdd}
-.theme-color-bg-6{background-color: #7AA3B1}
-.theme-color-bg-7{background-color: #5C7A85}
-.theme-color-bg-8{background-color: #3D5258}
-.theme-color-bg-9{background-color: #1F292C}
-.theme-color-bg-10{background-color: #000}
-
-.theme-color-bg-A0{background-color: #fff}
-.theme-color-bg-A1{background-color: #FFEBCC}
-.theme-color-bg-A2{background-color: #FFD699}
-.theme-color-bg-A3{background-color: #FFC266}
-.theme-color-bg-A4{background-color: #FFAD33}
-.theme-color-bg-A5{background-color: #ff9900}
-.theme-color-bg-A6{background-color: #CC7A00}
-.theme-color-bg-A7{background-color: #995C00}
-.theme-color-bg-A8{background-color: #663D00}
-.theme-color-bg-A9{background-color: #331F00}
-.theme-color-bg-A10{background-color: #000}
-
-.theme-color-bg-B0{background-color: #fff}
-.theme-color-bg-B1{background-color: #F5F5F5}
-.theme-color-bg-B2{background-color: #EBEBEB}
-.theme-color-bg-B3{background-color: #E0E0E0}
-.theme-color-bg-B4{background-color: #D6D6D6}
-.theme-color-bg-B5{background-color: #cccccc}
-.theme-color-bg-B6{background-color: #A3A3A3}
-.theme-color-bg-B7{background-color: #7A7A7A}
-.theme-color-bg-B8{background-color: #525252}
-.theme-color-bg-B9{background-color: #292929}
-.theme-color-bg-B10{background-color: #000}
-
-.theme-color-fg-0{color: #fff}
-.theme-color-fg-1{color: #EBF5F8}
-.theme-color-fg-2{color: #D6EBF1}
-.theme-color-fg-3{color: #C2E0EB}
-.theme-color-fg-4{color: #ADD6E4}
-.theme-color-fg-5{color: #99ccdd}
-.theme-color-fg-6{color: #7AA3B1}
-.theme-color-fg-7{color: #5C7A85}
-.theme-color-fg-8{color: #3D5258}
-.theme-color-fg-9{color: #1F292C}
-.theme-color-fg-10{color: #000}
-
-.theme-color-fg-A0{color: #fff}
-.theme-color-fg-A1{color: #FFEBCC}
-.theme-color-fg-A2{color: #FFD699}
-.theme-color-fg-A3{color: #FFC266}
-.theme-color-fg-A4{color: #FFAD33}
-.theme-color-fg-A5{color: #ff9900}
-.theme-color-fg-A6{color: #CC7A00}
-.theme-color-fg-A7{color: #995C00}
-.theme-color-fg-A8{color: #663D00}
-.theme-color-fg-A9{color: #331F00}
-.theme-color-fg-A10{color: #000}
-
-.theme-color-fg-B0{color: #fff}
-.theme-color-fg-B1{color: #F5F5F5}
-.theme-color-fg-B2{color: #EBEBEB}
-.theme-color-fg-B3{color: #E0E0E0}
-.theme-color-fg-B4{color: #D6D6D6}
-.theme-color-fg-B5{color: #cccccc}
-.theme-color-fg-B6{color: #A3A3A3}
-.theme-color-fg-B7{color: #7A7A7A}
-.theme-color-fg-B8{color: #525252}
-.theme-color-fg-B9{color: #292929}
-.theme-color-fg-B10{color: #000}
-
+.theme-color-5{color: #99ccdd}
+.theme-color-bg-6{background-color: #7AB8CC}
+.theme-color-6{color: #7AB8CC}
+.theme-color-bg-7{background-color: #5CA3BB}
+.theme-color-7{color: #5CA3BB}
+.theme-color-bg-8{background-color: #3D8FAA}
+.theme-color-8{color: #3D8FAA}
+.theme-color-bg-9{background-color: #1F7A99}
+.theme-color-9{color: #1F7A99}
+.theme-color-bg-10{background-color: #006688}
+.theme-color-10{color: #006688}
+/* accent */
+.theme-color-bg-A0{background-color: #FFFFCC}
+.theme-color-A0{color: #FFFFCC}
+.theme-color-bg-A1{background-color: #FFE7A3}
+.theme-color-A1{color: #FFE7A3}
+.theme-color-bg-A2{background-color: #FFCF7A}
+.theme-color-A2{color: #FFCF7A}
+.theme-color-bg-A3{background-color: #FFB852}
+.theme-color-A3{color: #FFB852}
+.theme-color-bg-A4{background-color: #FFA029}
+.theme-color-A4{color: #FFA029}
+.theme-color-bg-A5{background-color: #ff8800}
+.theme-color-A5{color: #ff8800}
+.theme-color-bg-A6{background-color: #F07C00}
+.theme-color-A6{color: #F07C00}
+.theme-color-bg-A7{background-color: #E16F00}
+.theme-color-A7{color: #E16F00}
+.theme-color-bg-A8{background-color: #D16300}
+.theme-color-A8{color: #D16300}
+.theme-color-bg-A9{background-color: #C25600}
+.theme-color-A9{color: #C25600}
+.theme-color-bg-A10{background-color: #B34A00}
+.theme-color-A10{color: #B34A00}
+/* back */
+.theme-color-bg-B0{background-color: #FFFFFF}
+.theme-color-B0{color: #FFFFFF}
+.theme-color-bg-B1{background-color: #F5F7F8}
+.theme-color-B1{color: #F5F7F8}
+.theme-color-bg-B2{background-color: #ECEFF1}
+.theme-color-B2{color: #ECEFF1}
+.theme-color-bg-B3{background-color: #E2E8EA}
+.theme-color-B3{color: #E2E8EA}
+.theme-color-bg-B4{background-color: #D9E0E3}
+.theme-color-B4{color: #D9E0E3}
+.theme-color-bg-B5{background-color: #cfd8dc}
+.theme-color-B5{color: #cfd8dc}
+.theme-color-bg-B6{background-color: #BECACF}
+.theme-color-B6{color: #BECACF}
+.theme-color-bg-B7{background-color: #ACBBC2}
+.theme-color-B7{color: #ACBBC2}
+.theme-color-bg-B8{background-color: #9BADB6}
+.theme-color-B8{color: #9BADB6}
+.theme-color-bg-B9{background-color: #899EA9}
+.theme-color-B9{color: #899EA9}
+.theme-color-bg-B10{background-color: #78909C}
+.theme-color-B10{color: #78909C}

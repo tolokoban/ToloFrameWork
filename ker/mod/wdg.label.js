@@ -17,6 +17,9 @@ function Label( opts ) {
     DB.prop(this, 'value')(function(v) {
         $.textOrHtml(elem, v);
     });
+    DB.propAddClass(this, 'wide');
+    DB.propRemoveClass(this, 'visible', 'hide');
+
     opts = DB.extend( { value: '', visible: true, wide: false }, opts, this );
 }
 

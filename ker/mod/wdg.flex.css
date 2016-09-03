@@ -1,0 +1,19 @@
+div.wdg-flex {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: stretch;
+    width: 100%;
+}
+
+div.wdg-flex.wide {
+    display: flex;
+}
+
+div.wdg-flex.default > * {
+    flex: 0 1 auto;
+}
+
+div.wdg-flex.fill > * {
+    flex: 1 1 auto;
+}

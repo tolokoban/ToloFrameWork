@@ -18,12 +18,25 @@ function Showhide( opts ) {
 
     var icon = new Icon({content: "tri-right", size: "1.5em"});
     var label = $.tag('span', 'label');
-    var head = $.div('head', [icon, label]);
-    var body = $.div('body');
+    var head = $.div('head', 'theme-label', 'theme-color-bg-1', [icon, label]);
+    var body = $.div('body', 'theme-color-bg-B1');
     var elem = $.elem( this, 'div', 'wdg-showhide', 'theme-elevation-2', [head, body] );
     DB.propBoolean(this, 'value')(function(v) {
         if (v) $.addClass( elem, 'show' );
         else $.removeClass( elem, 'show' );
+    });
+    DB.propBoolean(this, 'simple')(function(v) {
+        if (v) {
+            $.addClass( elem, 'simple' );
+            $.removeClass( elem, 'theme-elevation-2' );
+            $.removeClass( head, 'theme-label', 'theme-color-bg-1' );
+            $.addClass( head, 'theme-color-7' );
+        } else {
+            $.removeClass( elem, 'simple' );
+            $.addClass( elem, 'theme-elevation-2' );
+            $.addClass( head, 'theme-label', 'theme-color-bg-1' );
+            $.removeClass( head, 'theme-color-7' );
+        }
     });
     DB.propString(this, 'label')(function(v) {
         label.textContent = v;
@@ -47,14 +60,18 @@ function Showhide( opts ) {
             $.add( body, v );
         }
     });
+    DB.propRemoveClass(this, 'wide', 'inline');
+    DB.propRemoveClass(this, 'visible', 'hide');
+
     opts = DB.extend({
         value: true, label: '', content: null, maxHeight: null,
-        visible: true, wide: true
+        visible: true, wide: true, simple: false
     }, opts, this );
 
-    $.on( head, function() {
-        that.value = !that.value;
-    });
+    // Toggle display on Tap.
+    function reverseValue() { that.value = !that.value;}
+    $.on( head, reverseValue);
+    DB.bind(icon, 'action', reverseValue);
 
     this.append = function( item ) {
         if (!Array.isArray(that.content)) that.content = [];

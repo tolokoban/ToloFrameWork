@@ -1,3 +1,5 @@
+"use strict";
+
 var $ = require("dom");
 var DB = require("tfw.data-binding");
 var Icon = require("wdg.icon");
@@ -29,11 +31,14 @@ var Button = function(opts) {
     var that = this;
 
     var elem = $.elem(
-        this, 
+        this,
         typeof opts.href === 'string' ? 'a' : 'button', 'wdg-button', 'theme-elevation-2'
     );
     if (typeof opts.href === 'string' && opts.href.length > 0) {
         $.att( elem, 'href', opts.href );
+    }
+    if (typeof opts.target === 'string' && opts.target.length > 0) {
+        $.att( elem, 'target', opts.target );
     }
 
     var icon = null;
@@ -42,11 +47,13 @@ var Button = function(opts) {
         $.clear( elem );
         if (icon) {
             $.add( elem, icon.element, that.text );
+            that._icon = icon;
         } else {
             elem.textContent = that.text;
-        }        
+            delete that._icon;
+        }
     };
-    
+
     DB.prop(this, 'value');
     DB.propEnum( TYPES )(this, 'type')(function(v) {
         TYPES.forEach(function (type) {
@@ -82,6 +89,8 @@ var Button = function(opts) {
         }
     });
     DB.prop(this, 'action', 0);
+    DB.propAddClass(this, 'wide');
+    DB.propRemoveClass(this, 'visible', 'hide');
 
     opts = DB.extend({
         text: "OK",
@@ -99,9 +108,11 @@ var Button = function(opts) {
 
     // Animate the pressing.
     $.on(this.element, {
-        down: function() {
+        down: function(evt) {
             if (that.enabled) {
                 $.addClass(elem, 'theme-elevation-8');
+                evt.stopPropagation();
+                evt.preventDefault();
             }
         },
         up: function() {
@@ -119,19 +130,21 @@ var Button = function(opts) {
 };
 
 /**
+ * @class Button
+ * @function on
+ * @param {function} slot - Function to call when `action` has changed.
+ */
+Button.prototype.on = function(slot) {
+    return DB.bind( this, 'action', slot );
+};
+
+/**
  * Simulate a click on the button if it is enabled.
  */
 Button.prototype.fire = function() {
     if (this.enabled) {
         var href = this.href;
-        if (typeof href === 'string' && href.trim().length > 0) {
-            var target = this.target;
-            if (typeof target === 'string' && target.trim().length > 0) {
-                window.open( href, target );
-            } else {
-                window.location = href;
-            }
-        } else {
+        if (typeof href !== 'string' || href.trim().length == 0) {
             DB.fire( this, 'action', this.value );
         }
     }
@@ -141,17 +154,28 @@ Button.prototype.fire = function() {
  * Disable the button and start a wait animation.
  */
 Button.prototype.waitOn = function(text) {
-    if (typeof text === 'undefined') text = this.caption();
-    this.enabled(false);
-    this.clear(W({size: '1em', caption: text}));
+    if( typeof this._backup === 'undefined' ) {
+        this._backup = {
+            text: this.text,
+            icon: this.icon,
+            enabled: this.enabled
+        };
+    }
+    if (typeof text === 'string') this.text = text;
+    this.enabled = false;
+    this.icon = "wait";
+    if (this._icon) this._icon.rotate = true;
 };
 
 /**
  * Stop the wait animation and enable the button again.
  */
 Button.prototype.waitOff = function() {
-    this.caption(this.caption());
-    this.enabled(true);
+    this.text = this._backup.text;
+    this.icon = this._backup.icon;
+    this.enabled = this._backup.enabled;
+    if (this._icon) this._icon.rotate = false;
+    delete this._backup;
 };
 
 
@@ -159,20 +183,20 @@ function genericButton( id, type ) {
     if( typeof type === 'undefined' ) type = 'standard';
     var iconName = id;
     var intl = id;
-    if( intl == 'yes' ) intl = 'ok';
-    if( intl == 'no' ) intl = 'cancel';
-    var btn = new Button({ text: _(intl), icon: id, value: id, type: type });
+    if( intl == 'yes' ) iconName = 'ok';
+    if( intl == 'no' ) iconName = 'cancel';
+    var btn = new Button({ text: _(intl), icon: iconName, value: id, type: type });
     return btn;
 }
 
-Button.Cancel = function() { return genericButton('cancel', 'shadow'); };
+Button.Cancel = function(type) { return genericButton('cancel', type || 'simple'); };
 Button.Close = function() { return genericButton('close', 'simple'); };
 Button.Delete = function() { return genericButton('delete', 'warning'); };
 Button.No = function() { return genericButton('no'); };
-Button.Ok = function() { return genericButton('ok'); };
+Button.Ok = function(type) { return genericButton('ok', type || 'default'); };
 Button.Edit = function() { return genericButton('edit'); };
 Button.Save = function() { return genericButton('save', 'special'); };
-Button.Yes = function() { return genericButton('yes'); };
+Button.Yes = function(type) { return genericButton('yes', type || 'default'); };
 
 Button.default = {
     caption: "OK",

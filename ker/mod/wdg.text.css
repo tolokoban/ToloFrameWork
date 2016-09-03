@@ -12,6 +12,7 @@ div.wdg-text {
 
 div.wdg-text > div.datalist {
     position: absolute;
+    left: 0;
     width: 100%;
     display: none;
     background: #fff;
@@ -21,10 +22,11 @@ div.wdg-text > div.datalist {
     overflow: auto;
     z-index: 999;
     top: 4rem;
+    text-align: left;
 }
 
 div.wdg-text.no-label > div.datalist {
-    top: 3rem;
+    top: 2.5rem;
 }
 
 
@@ -77,20 +79,15 @@ div.wdg-text > * {
     display: block;
     margin: 0;
     width: 100%;
-    font-size: 1rem;
 }
 
 div.wdg-text > input {
     height: 2rem;
     box-shadow: none;
     padding: 0 .5rem;
-    background-color: #fff;
     border: none;
     color: #000;
-}
-
-div.wdg-text > input:focus {
-    background-color: #ffc;
+    font-size: 1rem;
 }
 
 div.wdg-text.no-valid > input,
@@ -109,13 +106,6 @@ div.wdg-text.not-valid > input {
     color: #900;
 }
 
-div.wdg-text.no-label > div.label {
+div.wdg-text.no-label > div.theme-label {
     display: none;
-}
-
-div.wdg-text > div.label {
-    vertical-align: bottom;
-    line-height: 1rem;
-    height: 1rem;
-    padding: 0 .75rem;
 }

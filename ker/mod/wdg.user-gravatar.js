@@ -1,13 +1,3 @@
-/**
- * @module wdg.user-gravatar
- *
- * @description
- *
- *
- * @example
- * var UserGravatar = require('wdg.user-gravatar');
- * var g = new UserGravatar({ size: 32, md5: '...' });
- */
 
 
 var $ = require("dom");
@@ -15,6 +5,14 @@ var DB = require("tfw.data-binding");
 var MD5 = require("md5");
 var Icon = require("wdg.icon");
 
+/**
+ * @export @class UserGravatar
+ *
+ *
+ * @example
+ * var UserGravatar = require('wdg.user-gravatar');
+ * var g = new UserGravatar({ size: 32, md5: '...' });
+ */
 function UserGravatar(opts) {
     var that = this;
 
@@ -27,10 +25,7 @@ function UserGravatar(opts) {
     });
     var elem = $.elem( this, 'div', 'wdg-user-gravatar', [icon, img] );
     img.onload = function() {
-        if (typeof that.md5 === 'string' && MD5.isValid( that.md5 ) ) {
-            // Show only if the md5 is valid.
-            $.addClass( elem, 'show' );
-        }
+        $.addClass( elem, 'show' );
     };
 
     DB.propInteger( this, 'size' )(function(v) {
@@ -38,12 +33,15 @@ function UserGravatar(opts) {
         icon.size = v + "px";
     });
     DB.propString( this, 'md5' )(function(v) {
+        if (!MD5.isValid( v )) v = MD5(v);
         $.removeClass( elem, 'show' );
         $.att(img, {
             src: "https://secure.gravatar.com/avatar/"
                 + v + "?s=" + that.size + "&r=pg&d=retro"
         });
     });
+    DB.propAddClass(this, 'wide');
+    DB.propRemoveClass(this, 'visible', 'hide');
 
     opts = DB.extend({
         size: 32,

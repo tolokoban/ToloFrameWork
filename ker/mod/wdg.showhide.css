@@ -1,8 +1,14 @@
 .wdg-showhide {
+    display: block;
     position: static;
     padding: 0;
     margin: .5rem;
     background: #fff;
+}
+
+.wdg-showhide.inline {
+    display: inline-block;
+    vertical-align: top;
 }
 
 .wdg-showhide > .head {
@@ -30,6 +36,20 @@
     margin: 0;
     padding: .5rem;
     overflow-y: auto;
+}
+
+.wdg-showhide.simple {
+    background: transparent;
+}
+
+.wdg-showhide.simple > .body {
+    padding: 0 0 1rem 0;
+    background: transparent;
+    overflow: visible;
+}
+
+.wdg-showhide.simple span.label {
+    font-weight: bold;
 }
 
 .wdg-showhide.show > .head > *:first-child {

@@ -1,39 +1,45 @@
 var $ = require("dom");
 var DB = require("tfw.data-binding");
-var LaterAction = require("tfw.timer").laterAction;
+var Icon = require("wdg.icon");
+var Modal = require("wdg.modal");
+var Button = require("wdg.button");
+
 
 /**
- * @class tfw.edit.text
- * @description  HTML5 text input with many options.
+ * @export @class
+ *
  *
  * __Attributes__:
+ * * {string} `label`:
  * * {string} `value`:
- * * {string} `value`:
- * * {string} `value`:
- * * {string} `value`:
- * * {string} `value`:
- * * {string} `value`:
- * * {string} `value`:
+ * * {array|object} `content`:
+ * * {boolean} `enabled`:
+ * * {boolean} `focus`:
+ * * {boolean} `wide`:
+ * * {boolean} `visible`:
  */
-var Text = function(opts) {
+var Combo = function(opts) {
     var that = this;
 
-    var dataListHasFocus = false;
-
-    var label = $.div( 'label' );
-    var button = $.tag( 'button' );
+    this._children = {};
+    var label = $.div( 'theme-label', 'theme-color-bg-1' );
+    var button = $.div( 'button', 'theme-color-bg-1', [new Icon({content: 'tri-down', size: '1.5rem'})] );
+    var body = $.tag( 'button', 'body' );
     var datalist = $.div( 'datalist' );
     this._button = button;
-    var elem = $.elem( this, 'div', 'wdg-combo', [label, button, datalist] );
+    var elem = $.elem( this, 'div', 'wdg-combo', 'theme-elevation-2',
+                       [label, $.div('table', [body, button]), datalist] );
 
-    DB.propString(this, 'value')(function(v) {
+    body.addEventListener('focus', function() {
+        $.addClass( elem, 'theme-elevation-8' );
     });
-    DB.propBoolean(this, 'enabled')(function(v) {
-        if (v) {
-            $.removeClass(elem, 'disabled');
-        } else {
-            $.addClass(elem, 'disabled');
-        }
+    body.addEventListener('blur', function() {
+        $.removeClass( elem, 'theme-elevation-8' );
+    });
+    DB.propRemoveClass(this, 'enabled', 'disabled');
+    DB.propBoolean(this, 'focus')(function(v) {
+        if (v) body.focus();
+        else body.blur();
     });
     DB.propString(this, 'label')(function(v) {
         if (v === null || (typeof v === 'string' && v.trim() == '')) {
@@ -48,83 +54,130 @@ var Text = function(opts) {
             }
         }
     });
+    DB.prop(this, 'content')(function(v) {
+        if (Array.isArray( v )) {
+            // Convert array into map.
+            // Each item must have the `$key` property.
+            // If not, the element is ignored.
+            var obj = {};
+            v.forEach(function (itm, idx) {
+                if( typeof itm.$key === 'undefined' ) return;
+                obj[itm.$key] = itm;
+            });
+            v = obj;
+        }
+        that._children = v;
+        DB.fire( that, 'value' );
+    });
+    DB.propString(this, 'value')(function(v) {
+        var selectedItem = that._children[v];
+        if( typeof selectedItem === 'undefined' ) {
+            for( v in that._children ) break;
+            selectedItem = that._children[v];
+        }
+        $.clear( body );
+        if (!selectedItem) return;
+        $.add( body, selectedItem );
+    });
+    DB.propAddClass(this, 'wide');
+    DB.propRemoveClass(this, 'visible', 'hide');
 
     opts = DB.extend({
         value: '',
-        enabled: true,
-        content: {},
+        content: [],
         label: null,
+        enabled: true,
         wide: false,
         visible: true
     }, opts, this);
 
-    var tap = function(evt) {
-        var key = evt.target.getAttribute("data-key");
-        $.removeClass( elem, 'list' );
-    };
-    var complete = function() {
-        $.removeClass( elem, "list" );
-        if (!that.list || that.list.length == 0) return;
+    $.on( elem, that.fire.bind( that ) );
+};
 
-        $.clear( datalist );
-        var key, val, item;
-        for( key in that.content ) {
-            if (key == that.value) continue;
-            val = that.content[key];
-            item = $.div({"data-key": key}, [ val ]);
-            $.add( datalist, item );
-            $.on( item, {
-                down: function() {
-                    dataListHasFocus = true;
-                },
-                up: function() {
-                    dataListHasFocus = false;
-                    button.focus();
-                },
-                tap: tap
-            });
+/**
+ * @return void
+ */
+Combo.prototype.fire = function() {
+    var modalChildren = [];
+    if (typeof this.label === 'string') {
+        // If there is a label for this combo, we have to repeat it in the modal.
+        var label = $.div('theme-label', 'theme-color-bg-1');
+        $.textOrHtml( label, this.label );
+        modalChildren.push( label );
+    }
+    
+    var ul = $.tag('ul', 'wdg-combo-modal', 'theme-color-bg-B0');
+    modalChildren.push( ul );
+
+    var btnCancel = new Button({icon: 'cancel', text: _('cancel'), type: 'simple'});
+    modalChildren.push( btnCancel );
+    
+    var modal = new Modal({content: modalChildren, wide: false});
+    document.body.appendChild( modal.element );
+    modal.visible = true;
+
+    function close() {
+        modal.visible = false;
+        document.body.removeChild( modal.element );
+    }
+    DB.bind(btnCancel, 'action', close);
+
+    var key, val, container;
+    for( key in this._children ) {
+        if (key == this.value) continue;
+        val = this._children[key];
+        if (typeof val.element === 'function') {
+            val = val.element();
         }
-        
-        $.addClass( elem, "list" );
-    };
+        else if (typeof val.element !== 'undefined') {
+            val = val.element;
+        }
+        container = $.tag('li', 'theme-elevation-0', [val]);
+        $.add( ul, container );
+        attachEvent.call( this, key, container, close );
+    }
+};
 
-    input.addEventListener('keydown', function(evt) {
-        if (evt.keyCode == 13) {
-            evt.preventDefault();
-            evt.stopPropagation();
-            if (that.valid !== false) {
-                DB.fire( that, 'value', input.value );
-                DB.fire( that, 'action', input.value );
-            }
+/**
+ * @export toArray @function
+ * Arrays are useful for HTML content. But, for code, it is easier to write objects.
+ * This function will create an array while assigning `$key` attribute to each element.
+ */
+Combo.toArray = function( obj ) {
+    var key, val, div, output = [];
+    for( key in obj ) {
+        val = obj[key];
+        if (typeof val === 'string') {
+            div = document.createElement( 'div' );
+            div.textContent = val;
+            val = div;
+        }
+        val.$key = key;
+        output.push( val );
+    }
+
+    return output;
+};
+
+
+function attachEvent( key, elem, close ) {
+    var that = this;
+
+    $.on(elem, {
+        down: function() {
+            window.setTimeout(function() {
+                $.addClass(elem, 'theme-elevation-4');
+            });
+        },
+        up: function() {
+            $.removeClass(elem, 'theme-elevation-4');
+        },
+        tap: function() {
+            console.log("Select: ", key);
+            close();
+            that.value = key;
         }
     });
+}
 
-    this.validate();
-};
-
-/**
- * Force value validation.
- */
-Text.prototype.validate = function() {
-    var validator = this.validator;
-    if (!validator) return;
-    try {
-        this.valid = validator( this.value );
-    }
-    catch (ex) {
-        console.error("[wdg.text:validate] Exception = ", ex);
-        console.error("[wdg.text:validate] Validator = ", validator);
-    }
-};
-
-/**
- * Select whole text.
- * @return {this}
- */
-Text.prototype.selectAll = function() {
-    var e = this._input;
-    e.setSelectionRange(0, e.value.length);
-    return true;
-};
-
-module.exports = Text;
+module.exports = Combo;

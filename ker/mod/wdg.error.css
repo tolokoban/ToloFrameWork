@@ -1,0 +1,7 @@
+div.wdg-error {
+    padding: 1rem;
+    margin: 1rem;
+    background: red;
+    color: #fff;
+    font-weight: bold;
+}

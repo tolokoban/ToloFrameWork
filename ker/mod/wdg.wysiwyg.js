@@ -5,6 +5,7 @@
  **********************************************************************/
 "use strict";
 var $ = require("dom");
+var Fx = require("dom.fx");
 var DB = require("tfw.data-binding");
 var Icon = require("wdg.icon");
 
@@ -17,8 +18,7 @@ var DEFAULT_MENU = [
     'format-align-left',
     'format-align-center',
     'format-align-right',
-    'format-align-justify',
-    '-'
+    'format-align-justify'
 ];
 
 
@@ -33,14 +33,14 @@ var WysiwygEditor = function( opts ) {
 
     // Real focus function will be set when iframe will be loaded.
     var postponedFocus = false;
-    this.focus = function() { postponedFocus = true; };
     var postponedHTML = null;
     var iframeIsLoaded = false;
+    var iframeHasChanged = false;
 
     var elem = $.elem(this, 'div', 'wdg-wysiwyg', 'theme-elevation-2');
-    var iconFullscreen = new Icon({ content: Icon.Icons.fullscreen });
-    var label = $.tag('span', 'label');
-    var header = $.div('header', [iconFullscreen, label]);
+    var iconFullscreen = new Icon({ content: Icon.Icons.fullscreen, size: '1.5rem', button: true });
+    var label = $.div('theme-label');
+    var header = $.div('header', 'theme-color-bg-1', [iconFullscreen, label]);
     var slider = $.div('slider');
     var menu = $.div('menu');
     var iframe = $.tag( 'iframe', { src: 'squire2/squire.html' } );
@@ -48,9 +48,8 @@ var WysiwygEditor = function( opts ) {
         iframeIsLoaded = true;
         // Storing a reference to the wysiwyg editor.
         var squire = iframe.contentWindow.editor;
-        that.focus = squire.focus.bind( squire );
         if( postponedFocus ) {
-            that.focus();
+            that.focus = true;
         }
         // Adding editor buttons.
         //initHeader.call( that, header );
@@ -59,21 +58,11 @@ var WysiwygEditor = function( opts ) {
             postponedHTML = null;
         }
         // Adding onChange event when focus is lost.
-        var lastContent = '';
-        squire.addEventListener( 'focus', function() {
-            lastContent = squire.getHTML();
+        squire.addEventListener( 'input', function() {
+            // Prevent from update looping.
+            iframeHasChanged = true;
+            that.value = squire.getHTML();
         });
-        squire.addEventListener( 'blur', function() {
-            if( lastContent !== squire.getHTML() ) {
-                that.value = squire.getHTML();
-            }
-        });
-/*
-        squire.addEventListener( 'pathChange', function( path ) {
-            console.info("[tp4.wysiwyg-editor] path=...", path);
-            console.info("[tp4.wysiwyg-editor] squire.getSelection()=...", squire.getSelection());
-        });
-*/
         Object.defineProperty( that, 'squire', {
             value: squire, writable: false, configurable: true, enumerable: true
         });
@@ -81,6 +70,17 @@ var WysiwygEditor = function( opts ) {
     var body = $.div('body', [iframe]);
     $.add( elem, header, menu, body, slider);
 
+    DB.propBoolean(this, 'focus')(function(v) {
+        if (iframeIsLoaded) {
+            if (v) {
+                that.squire.focus();
+            } else {
+                that.squire.blur();
+            }
+        } else {
+            postponedFocus = v;
+        }
+    });
     DB.propString(this, 'label')(function(v) {
         if (typeof v === 'number') v = '' + v;
         if (typeof v !== 'string') v = '';
@@ -107,12 +107,18 @@ var WysiwygEditor = function( opts ) {
         });
 
     });
-    DB.propString(this, 'value', function() {
-        return iframeIsLoaded ? that.squire.getHTML() : '';
-    })(function(v) {
-        if (iframeIsLoaded) that.squire.setHTML( v );
+    DB.propString(this, 'value')(function(v) {
+        if (iframeIsLoaded) {
+            if (iframeHasChanged) {
+                iframeHasChanged = false;
+            } else {
+                that.squire.setHTML( v );
+            }
+        }
         else postponedHTML = v;
     });
+    DB.propAddClass(this, 'wide');
+    DB.propRemoveClass(this, 'visible', 'hide');
 
     DB.extend({
         label: "",
@@ -127,21 +133,33 @@ var WysiwygEditor = function( opts ) {
     $.on( slider, {
         down: function() {
             initialHeight = that.height;
-console.info("[wdg.wysiwyg] initialHeight=...", initialHeight);
         },
         drag: function(evt) {
             that.height = Math.max( 180, initialHeight + evt.dy );
         }
     });
-/*
-    interact( slider ).draggable({
-        axis: 'y'
-    }).on('dragend', function (event) {
-        that.height += event.pageY - event.y0;
-    }).on('dragmove', function (event) {
-        $.css( elem, {height: (that.height + event.pageY - event.y0) + "px"});
+
+    // Managing fullscreen display.
+    var fullscreen = new Fx.Fullscreen({
+        target: elem,
+        // When the component is put fullscreen, it is temporarly removed from the DOM.
+        // This causes the IFrame to be reloaded, and the result is that we lost content.
+        // That's why we use `postponedHTML`.
+        onBeforeReplace: function() {
+            postponedHTML = that.squire.getHTML();
+        }
     });
-*/
+    DB.bind(iconFullscreen, 'action', function() {
+        fullscreen.value = !fullscreen.value;
+    });
+};
+
+
+/**
+ * @return void
+ */
+WysiwygEditor.prototype.processButton = function(id) {
+    console.error("Button \"" + id + "\" has no code to process it!");
 };
 
 
@@ -309,11 +327,17 @@ function onMenu( id ) {
         squire.setTextAlignment( 'justify' );
         break;
     default:
-        alert( id );
+        this.processButton( id );
     }
 
-    this.focus();
+    this.focus = true;
 }
 
 
+Object.defineProperty(WysiwygEditor, 'DEFAULT_MENU', {
+    value: DEFAULT_MENU,
+    writable: false,
+    configurable: false,
+    enumerable: true
+});
 module.exports = WysiwygEditor;

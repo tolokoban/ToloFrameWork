@@ -49,7 +49,7 @@ function svc(name, args, url) {
                         reject(
                             {
                                 id: exports.BAD_ROLE,
-                err: Error("Service \"" + name + "\" needs role \""
+                                err: Error("Service \"" + name + "\" needs role \""
                                            + value.substr(1) + "\"!")
                             }
                         );
@@ -63,7 +63,7 @@ function svc(name, args, url) {
                         reject(
                             {
                                 id: exports.BAD_TYPE,
-                err: Error("Service \"" + name
+                                err: Error("Service \"" + name
                                            + "\" should return a valid JSON!\n" + ex)
                             }
                         );
@@ -73,7 +73,7 @@ function svc(name, args, url) {
                     reject(
                         {
                             id: exports.BAD_TYPE,
-              err: Error("Service \"" + name + "\" should return a string!")
+                            err: Error("Service \"" + name + "\" should return a string!")
                         }
                     );
                 }
@@ -88,7 +88,7 @@ function svc(name, args, url) {
                 );
             };
             var params = "s=" + encodeURIComponent(name)
-                + "&i=" + encodeURIComponent(JSON.stringify(args));
+                    + "&i=" + encodeURIComponent(JSON.stringify(args));
             xhr.setRequestHeader(
                 "Content-type",
                 "application/x-www-form-urlencoded");
@@ -102,24 +102,24 @@ function svc(name, args, url) {
  * @param {string} path Local path relative to the current HTML page.
  */
 exports.loadJSON = function(path) {
-  return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest({mozSystem: true});
-      xhr.onload = function() {
-        var text = xhr.responseText;
-          try {
-              resolve(JSON.parse(text));
-          }
-          catch (ex) {
-              reject(Error("Bad JSON format for \"" + path + "\"!\n" + ex + "\n" + text));
-          }
-      };
-      xhr.onerror = function() {
-        reject(Error("Unable to load file \"" + path + "\"!\n" + xhr.statusText));
-      };
-      xhr.open("GET", path, true);
-      xhr.withCredentials = true;  // Indispensable pour le CORS.
-      xhr.send();
-  });
+    return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest({mozSystem: true});
+        xhr.onload = function() {
+            var text = xhr.responseText;
+            try {
+                resolve(JSON.parse(text));
+            }
+            catch (ex) {
+                reject(Error("Bad JSON format for \"" + path + "\"!\n" + ex + "\n" + text));
+            }
+        };
+        xhr.onerror = function() {
+            reject(Error("Unable to load file \"" + path + "\"!\n" + xhr.statusText));
+        };
+        xhr.open("GET", path, true);
+        xhr.withCredentials = true;  // Indispensable pour le CORS.
+        xhr.send();
+    });
 };
 
 /**
@@ -127,6 +127,8 @@ exports.loadJSON = function(path) {
  * @type {tfw.listeners}
  */
 exports.changeEvent = changeEvent;
+exports.eventChange = changeEvent;
+
 /**
  * @return If there is a user connected or not.
  */
@@ -141,6 +143,8 @@ exports.isLogged = function(){
  */
 exports.logout = function() {
     currentUser = null;
+    delete config.usr;
+    delete config.pwd;
     changeEvent.fire();
     Storage.local.set("nigolotua", null);
     return svc("tfw.login.Logout");
@@ -174,9 +178,9 @@ exports.login = function(usr, pwd) {
                                       0, 0, 0, 0,
                                       0, 0, 0, 0,
                                       0, 0, 0, 0],
-                        i, j = 0,
-                        pass = [],
-                        k1, k2, k3;
+                            i, j = 0,
+                            pass = [],
+                            k1, k2, k3;
                         for (i=0 ; i<pwd.length ; i++) {
                             pass.push(pwd.charCodeAt(i));
                         }
@@ -192,7 +196,7 @@ exports.login = function(usr, pwd) {
                             output[k3] ^= (output[k3] + 16*k2 + k3)%256;
                             output[k2] ^= (output[k1] + output[k3])%256;
                         }
-                        return svc("tfw.login.Response", output); //.then(resolve, reject);
+                        return svc("tfw.login.Response", output);
                     },
                     reject
                 )
@@ -237,7 +241,7 @@ exports.get = function(name, args, url) {
                         exports.login().then(
                             function() {
                                 svc(name, args, url).then(resolve, reject);
-                            },                            
+                            },
                             reject
                         );
                     } else {
@@ -249,13 +253,26 @@ exports.get = function(name, args, url) {
     );
 };
 
+exports.isAdmin = function(role) {
+    return exports.hasRole('ADMIN');
+};
+
 exports.hasRole = function(role) {
-  if (!currentUser) return false;
-  return currentUser.hasRole(role);
+    if (!currentUser) return false;
+    return currentUser.hasRole(role);
 };
 exports.user = function() {
     return currentUser;
 };
+Object.defineProperty( exports, 'userData', {
+    get: function() {
+        if (currentUser) return currentUser.data || {};
+        return {};
+    },
+    set: function() {},
+    configurable: true,
+    enumerable: true
+});
 
 exports.config = function(key, val) {
     if (typeof val === 'undefined') {
@@ -286,7 +303,7 @@ if (window.$$) {
     };
 }
 /**
- * 
+ *
  */
 Object.defineProperty( exports, 'userID', {
     get: function() {

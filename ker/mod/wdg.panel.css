@@ -1,0 +1,14 @@
+div.wdg-panel {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+div.wdg-panel.hide.wide,
+div.wdg-panel.hide {
+    display: none;
+}
+
+div.wdg-panel.wide {
+    display: block;
+}

@@ -16,33 +16,42 @@
 }
 
 
-div.wdg-icon {
-    display: inline-block;
+div.wdg-icon.flat {
     margin: 0;
     padding: 0;
-    background: none;
     border: none;
     outline: none;
     vertical-align: middle;
+    background: none;
+    text-align: center;
+    overflow: visible;
 }
 
-div.wdg-icon.button {
-    background: #fff;
+div.wdg-icon {
+    display: inline-block;
     border-radius: 100%;
     margin: .25rem;
     cursor: pointer;
     vertical-align: middle;
     transition: all .2s;
+    text-align: center;
+    overflow: hidden;
 }
 
 
 .wdg-icon > svg {
     margin: 0;
     vertical-align: middle;
+    transform: translate(0, 0);
+    display: inline-block;
 }
 
 
 .wdg-icon > svg.rotate {
     animation: wdg-icon-rotation 1.5s linear infinite;
     -webkit-animation: wdg-icon-rotation 1.5s linear infinite;
+}
+
+div.wdg-icon.flat.hide {
+    display: none;
 }

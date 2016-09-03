@@ -10,7 +10,6 @@
  * var mod = require('dom');
  */
 require("polyfill.classList");
-var DB = require("tfw.data-binding");
 var PointerEvents = require("tfw.pointer-events");
 
 
@@ -86,6 +85,7 @@ exports.detach = detach;
  *    DOM.on( element, { tap: function() {...} } );
  */
 exports.on = on;
+exports.off = off;
 /**
  * Append all the `children` to `element`.
  * @param element
@@ -124,11 +124,14 @@ function wrap( obj, element, nomethods ) {
 }
 
 function replace( newElem, oldElem ) {
+    newElem = extract(newElem);
+    oldElem = extract(oldElem);
     oldElem.parentNode.replaceChild( newElem, oldElem );
     return newElem;
 }
 
 function css( element, styles ) {
+    element = extract(element);
     var key, val;
     for( key in styles ) {
         val = styles[key];
@@ -138,6 +141,7 @@ function css( element, styles ) {
 }
 
 function att( element, attribs, value ) {
+    element = extract(element);
     var key, val;
     if (typeof attribs === 'string') {
         key = attribs;
@@ -152,11 +156,13 @@ function att( element, attribs, value ) {
 }
 
 function removeAtt( element, attrib ) {
+    element = extract(element);
     element.removeAttribute( attrib );
     return element;
 }
 
 function add( element ) {
+    element = extract(element);
     try {
         var i, child;
         for (i = 1 ; i < arguments.length ; i++) {
@@ -181,7 +187,21 @@ function add( element ) {
     }
 }
 
-function on( element, slots, capture ) {
+function off( element ) {
+    if( Array.isArray( element ) ) {
+        element.forEach(function ( elem ) {
+            off( elem );
+        });
+        return element;
+    }
+
+    var pe = element[SYMBOL];
+    if( typeof pe  === 'undefined' ) return element;
+    pe.off();
+    delete element[SYMBOL];
+}
+
+function on( element, slots ) {
     // If only a function is passed, we consider this is a Tap event.
     if( typeof slots === 'function' || slots === null ) slots = { tap: slots };
 
@@ -273,6 +293,7 @@ function addClass(elem) {
         });
         return elem;
     }
+    elem = extract( elem );
     args.forEach(function (className) {
         if (typeof className !== 'string') return;
         className = className.trim();
@@ -290,6 +311,7 @@ function addClass(elem) {
 
 
 function hasClass( elem, className ) {
+    elem = extract( elem );
     return elem.classList.contains( className );
 }
 
@@ -305,6 +327,7 @@ function removeClass(elem) {
         });
         return elem;
     }
+    elem = extract( elem );
     args.forEach(function (className) {
         if (typeof className !== 'string') return;
         try {
@@ -338,6 +361,7 @@ function clear( element ) {
     // En effet, le code simplifié a des conséquences inattendues dans IE9 et IE10 au moins.
     // Le bug des markers qui disparaissaients sur les cartes de Trail-Passion 4 a été corrigé
     // avec cette modification.
+    element = extract(element);
     var e = element;
     while(e.firstChild){
         e.removeChild(e.firstChild);
@@ -350,6 +374,7 @@ function clear( element ) {
 }
 
 function get( element, query ) {
+    element = extract(element);
     if( typeof query === 'undefined' ) {
         query = element;
         element = window.document;
@@ -358,6 +383,7 @@ function get( element, query ) {
 }
 
 function detach( element ) {
+    element = extract(element);
     var parent = element.parentElement;
     if( !parent ) return parent;
     parent.removeChild( element );
@@ -382,24 +408,12 @@ function elem( target ) {
     Object.defineProperty( target, 'element', {
         value: e, writable: false, configurable: false, enumerable: true
     });
-    DB.propBoolean(target, 'wide')(function(v) {
-        if (v) {
-            addClass(e, 'wide');
-        } else {
-            removeClass(e, 'wide');
-        }
-    });
-    DB.propBoolean(target, 'visible')(function(v) {
-        if (v) {
-            removeClass(e, 'hide');
-        } else {
-            addClass(e, 'hide');
-        }
-    });
     return e;
 }
 
 function textOrHtml( element, content ) {
+    if( typeof content === 'undefined' ) content = '';
+    if (content === null) content = '';
     if (typeof content !== 'string') content = JSON.stringify( content );
     if (content.substr(0, 6) == '<html>') {
         element.innerHTML = content.substr(6);
@@ -407,4 +421,10 @@ function textOrHtml( element, content ) {
         element.textContent = content;
     }
     return element;
+}
+
+function extract(dom) {
+    if (typeof dom.element === 'function') return dom.element();
+    if (dom.element) return dom.element;
+    return dom;
 }
