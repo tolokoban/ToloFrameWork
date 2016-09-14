@@ -188,7 +188,7 @@ if (tasks.length == 0) {
 
     function watch(path) {
         if (watchedDirectories.indexOf(path) == -1) {
-            console.log("Watching ".cyan + path);
+            //console.log("Watching ".cyan + path);
             watchedDirectories.push(path);
             var watcher = FS.watch(path);
             watcher.path = path;
