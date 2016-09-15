@@ -79,7 +79,7 @@ if (args.indexOf('clean') > -1) {
     });
 }
 if (args.indexOf('github') > -1) {
-    GitHub.start();
+    GitHub.start( cfg );
     return;
 }
 if (args.indexOf('version') > -1) {
