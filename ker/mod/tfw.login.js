@@ -30,9 +30,9 @@ module.exports = function(opts) {
             validator: "admin|test|[^ \t@]+@[^ \t@]+",
             wide: true
         });
-        var lastPassword = WS.config('pwd');
+        //var lastPassword = WS.config('pwd');
         var inpPassword = new T({
-            value: lastPassword || '',
+            //value: lastPassword || '',
             type: "password",
             label: _('password'),
             placeholder: _('password'),

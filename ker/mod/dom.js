@@ -424,6 +424,10 @@ function textOrHtml( element, content ) {
 }
 
 function extract(dom) {
+    if (!dom) {
+        debugger;
+        throw Error("`dom` is not a valid element!", dom);
+    }
     if (typeof dom.element === 'function') return dom.element();
     if (dom.element) return dom.element;
     return dom;

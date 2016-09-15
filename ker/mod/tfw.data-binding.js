@@ -59,6 +59,19 @@ var converters = {
         }
         return Number.NaN;
     },
+    castRegexp: function(v) {
+        if (v instanceof RegExp) return v;
+        if (typeof v === 'string' && v.trim().length != 0 ) {
+            try {
+                return new RegExp( v );
+            }
+            // Ignore Regular Expression errors.
+            catch (ex) {
+                console.error("[castRegexp] /" + v + "/ ", ex);
+            }
+        };
+        return null;
+    },
     castString: function(v) {
         if (typeof v === 'string') return v;
         if (v === undefined || v === null) return '';
@@ -233,6 +246,7 @@ exports.propEnum = function( enumeration ) {
     return propCast.bind( null, converters.castEnum( enumeration ) );
 };
 exports.propInteger = propCast.bind( null, converters.castInteger );
+exports.propRegexp = propCast.bind( null, converters.castRegexp );
 exports.propString = propCast.bind( null, converters.castString );
 exports.propStringArray = propCast.bind( null, converters.castStringArray );
 exports.propUnit = propCast.bind( null, converters.castUnit );

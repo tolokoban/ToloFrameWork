@@ -1,0 +1,15 @@
+div.wdg-box-button {
+    display: inline-block;
+    vertical-align: middle;
+    padding: .5rem;
+    cursor: auto;
+    transition: all .2s;
+}
+
+div.wdg-box-button.pointer {
+    cursor: pointer;
+}
+
+div.wdg-box-button.wide {
+    display: block;
+}

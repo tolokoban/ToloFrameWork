@@ -37,15 +37,22 @@ Renderer.prototype.start = function(renderingFunction) {
     }
 };
 
-Webgl.prototype.stop = function() {
+Renderer.prototype.stop = function() {
     this._animationIsOn = false;
 };
 
 
 function Program(gl, codes) {
+    if (!typeof codes.vert === 'string') {
+        throw Error('[tfw.webgl.Program] Missing attribute `vert` in argument `codes`!');
+    }
+    if (!typeof codes.frag === 'string') {
+        throw Error('[tfw.webgl.Program] Missing attribute `frag` in argument `codes`!');
+    }
+    
     var shaderProgram = gl.createProgram();
-    gl.attachShader(shaderProgram, getVertexShader(gl, codes.vertex || '//No Vertex Shader'));
-    gl.attachShader(shaderProgram, getFragmentShader(gl, codes.fragment || '//No Fragment Shader'));
+    gl.attachShader(shaderProgram, getVertexShader(gl, codes.vert || '//No Vertex Shader'));
+    gl.attachShader(shaderProgram, getFragmentShader(gl, codes.frag || '//No Fragment Shader'));
     gl.linkProgram(shaderProgram);
 
     this.program = shaderProgram;
@@ -190,4 +197,4 @@ var getDataFromImage = function( img ) {
 exports.Renderer = Renderer;
 exports.Program = Program;
 exports.createTextureForFB = createTextureForFB;
-exprots.getDataFromImage = getDataFromImage;
+exports.getDataFromImage = getDataFromImage;

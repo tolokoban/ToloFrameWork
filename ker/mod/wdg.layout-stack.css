@@ -15,8 +15,21 @@ div.wdg-layout-stack > div {
     height: 100%;
     margin: 0;
     padding: 0;
+    background: #fff;
 }
 
 div.wdg-layout-stack > div.scroll {
     overflow: auto;
+}
+
+div.wdg-layout-stack > div.fade-in {
+    z-order: 1;
+    opacity: 1;
+    transition: opacity .3s;
+}
+
+div.wdg-layout-stack > div.fade-out {
+    z-order: 0;
+    opacity: 0;
+    transition: opacity .3s;
 }

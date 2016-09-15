@@ -55,10 +55,6 @@ div.wdg-combo > div.table > div {
     text-align: left;
 }
 
-div.wdg-combo.no-label {
-    height: 2rem;
-}
-
 div.wdg-combo.wide {
     display: block;
     width: auto;

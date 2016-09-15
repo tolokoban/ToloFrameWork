@@ -13,6 +13,7 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         // The order is very important. `@require.js` must be loaded before jasmin specs.
         files: [
+            'spec/mod/@require.js',
             'spec/mod/*.js',
             'spec/inc/*.js',
             'spec/*.spec.js'
@@ -20,7 +21,7 @@ module.exports = function(config) {
 
         // For Trail-Passion services.
         proxies: {
-            '/tfw': 'http://localhost/TP3/tfw'
+            '/tfw': 'http://localhost/TP/tfw'
         },
 
         // test results reporter to use

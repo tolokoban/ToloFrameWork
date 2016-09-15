@@ -1,16 +1,47 @@
 /**********************************************************************
- Trois syntaxes possibles :
- * `<wdg:label ...>` : instancie la classe `wdg.label`.
- * `<x-widget name="label" ...>` : instancie la classe `label`.
- * `<x-wdg name="label" ...>` : instancie la classe `label` (juste un alias de la syntaxe précédente).
-
-
-
- @example
- <x-widget name="tfw.input" $value="Email" $validator="[^@]+@[^@]\\.[^@.]+"/>
- <x-widget name="tfw.input" $validator="[^@]+@[^@]\\.[^@.]+">Email</x-widget>
- <wdg:checkbox $value="false" $wide="true" />
- <wdg:label intl:value="title-text" $wide="true" />
+ *  Trois syntaxes possibles :
+ *  * `<wdg:label ...>` : instancie la classe `wdg.label`.
+ *  * `<x-widget name="label" ...>` : instancie la classe `label`.
+ *  * `<x-wdg name="label" ...>` : instancie la classe `label` (juste un alias de la syntaxe précédente).
+ * 
+ * Pour spécifier les propriétés d'un objet, il existe deux possibilités.
+ * 
+ * * Forme __inline__ : `<wdg:button $text="Cancel"/>`.
+ *   * Il est possible d'utiliser l'internationalisation :
+ *     `<wdg:button intl:text="cancel-caption"/>`
+ *   * On peut lier la valeur à celle de la propriété d'un autre objet :
+ *     * Lier à l'attribut 'bar' de l'objet dont l'ID est 'foo' :
+ *       `<wdg:button bind:text="foo:bar"/>`
+ *     * Quand on ne spécifie pas le nom de la propriété, c'est `value` qui est utilisée :
+ *       `<wdg:button bind:text="foo"/>`
+ *     * Pour lier à plusieurs sources, on utilise la virgule :
+ *       `<wdg:button bind:text="foo1, foo2, foo3"/>`
+ *     * Pour spécifier une valeur, on utilise le `=` :
+ *       `<wdg:button bind:text="action='ok'"/>`
+ * * Forme __expanded__ : `<wdg:button><text>Cancel</text></wdg:button>`.
+ *   Il arrive qu'on doive utiliser des valeurs dont le type n'est pas une string.
+ *   Dans ce cas, on met dans le body des tags dont le nom est celui de la propriété.
+ *   Ces tags peuvent avoir des attributs qui spécifient le type.
+ *   Par exemple :
+ *   ```
+ *   <wdg:combo $key="fr">
+ *     <content json>
+ *       {
+ *         "en": "English",
+ *         "fr": "Français",
+ *         "it": "Italiano"
+ *       }
+ *     </content>
+ *   </wdg:combo>
+ *   ```
+ *    * __json__ : le contenu textuel doit être parsé comme du JSON.
+ * 
+ * 
+ *  @example
+ *  <x-widget name="tfw.input" $value="Email" $validator="[^@]+@[^@]\\.[^@.]+"/>
+ *  <x-widget name="tfw.input" $validator="[^@]+@[^@]\\.[^@.]+">Email</x-widget>
+ *  <wdg:checkbox $value="false" $wide="true" />
+ *  <wdg:label intl:value="title-text" $wide="true" />
  **********************************************************************/
 
 exports.tags = ["x-widget", "x-wdg", "wdg:.+"];
@@ -302,17 +333,17 @@ function parsePropertyJSON(root, libs, com) {
 
 
 /**
- @example
-
- <wdg:layout-line>
- <content list>
- <div>
- J'aime bien les <b>crevettes</b>. Pas vous ?
- </div>
- <wdg:button $text="Yes" />
- <wdg:button $text="Nein !" />
- </content>
- </wdg:layout-line>
+ *  @example
+ * 
+ *  <wdg:layout-line>
+ *    <content list>
+ *      <div>
+ *        J'aime bien les <b>crevettes</b>. Pas vous ?
+ *      </div>
+ *      <wdg:button $text="Yes" />
+ *      <wdg:button $text="Nein !" />
+ *    </content>
+ *  </wdg:layout-line>
  */
 function parsePropertyList(root, libs, com, indent) {
     var first = true;
@@ -471,7 +502,7 @@ var parseBinding = (
                 addBinding();
             }
             addBinding();
-console.info("[x-widget.com] bindings=...", bindings);            
+//console.info("[x-widget.com] bindings=...", bindings);            
             return bindings;
         };
     }

@@ -75,6 +75,12 @@ Modal.confirm = function( content, onYes, onNo ) {
     var btnNo = Button.No();
     var btnYes = Button.Yes('warning');
     var buttons = $.div([$.tag('hr'), new Flex({ content: [btnNo, btnYes] })]);
+    if (typeof content === 'string' && content.substr(0, 6) == '<html>') {
+        // This is HTML code.
+        var html = content.substr(6);
+        content = $.div();
+        content.innerHTML = html;
+    }
     var modal = new Modal({ content: $.div([content, buttons]) });
     modal.attach();
 
