@@ -24,6 +24,6 @@ exports.compile = function(root, libs) {
         id: "_I" + ID,
         style: "display:none"
     };
-    libs.addInitJS("I(" + ID + "," + JSON.stringify(textId) + ")");
+    libs.addPostInitJS("I(" + ID + "," + JSON.stringify(textId) + ")");
     ID++;
 };
