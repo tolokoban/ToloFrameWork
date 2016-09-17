@@ -259,7 +259,11 @@ exports.bind = function( srcObj, srcAtt, dstObj, dstAtt, options ) {
     }
 
     if( typeof options === 'undefined' ) options = {};
-
+    if (options.value) {
+        options.converter = function() {
+            return options.value;
+        };
+    }
     var lambda = typeof dstObj === 'function' ? dstObj : function(v, obj, att) {
         dstObj[dstAtt] = typeof options.converter === 'function' ? options.converter(v) : v;
     };

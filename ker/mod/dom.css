@@ -44,6 +44,14 @@ body {
     color: #000;
 }
 
+hr {
+    border: none;
+    height: 1px;
+    background-image: -webkit-linear-gradient(to right, transparent, rgba(0,0,0,.5) 50%, transparent);
+    background-image: linear-gradient(to right, transparent, rgba(0,0,0,.5) 50%, transparent);
+}
+
+
 .theme-label {
     color: rgba(0,0,0,.8);
     font-family: sans-serif;
