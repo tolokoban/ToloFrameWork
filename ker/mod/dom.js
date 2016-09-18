@@ -424,6 +424,13 @@ function textOrHtml( element, content ) {
 }
 
 function extract(dom) {
+    if (typeof dom === 'string') {
+        var elem = document.getElementById( dom );
+        if (!elem) {
+            throw Error("There is no DOM element with this ID: `" + dom + "`");
+        }
+        return elem;
+    }
     if (!dom) {
         debugger;
         throw Error("`dom` is not a valid element!", dom);
