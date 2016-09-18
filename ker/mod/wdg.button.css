@@ -28,6 +28,9 @@
     float: left;
 }
 
+.wdg-button[disabled=yes] > div.wdg-icon {
+    opacity: .25;
+}
 
 .wdg-button > div.wdg-icon.flat {
     margin: 0 .4rem 0 0;
