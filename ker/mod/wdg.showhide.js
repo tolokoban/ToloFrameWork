@@ -2,10 +2,12 @@
  * @module tfw.view.label
  *
  * @description
- * A simple label with a bindable property `label`.
+ * * __label__: Text to display as title.
+ * * __value__: If true, the content is visible.
+ * * __content__: Array of the embeded elements.
  *
  * @example
- * var mod = require('tfw.view.label');
+ * var mod = require('wdg.showhide');
  */
 
 var $ = require("dom");
