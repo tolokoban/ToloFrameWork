@@ -23,13 +23,13 @@ div.wdg-layout-stack > div.scroll {
 }
 
 div.wdg-layout-stack > div.fade-in {
-    z-order: 1;
+    z-index: 1;
     opacity: 1;
     transition: opacity .3s;
 }
 
 div.wdg-layout-stack > div.fade-out {
-    z-order: 0;
+    z-index: 0;
     opacity: 0;
     transition: opacity .3s;
 }
