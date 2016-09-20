@@ -24,7 +24,13 @@ function Showhide( opts ) {
     var body = $.div('body', 'theme-color-bg-B1');
     var elem = $.elem( this, 'div', 'wdg-showhide', 'theme-elevation-2', [head, body] );
     DB.propBoolean(this, 'value')(function(v) {
-        if (v) $.addClass( elem, 'show' );
+        if (v) {
+            $.addClass( elem, 'show' );
+            $.removeClass( elem, 'fade-in' );
+            window.setTimeout(function() {
+                $.addClass( elem, 'fade-in' );
+            });
+        }
         else $.removeClass( elem, 'show' );
     });
     DB.propBoolean(this, 'simple')(function(v) {
