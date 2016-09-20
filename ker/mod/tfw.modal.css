@@ -126,7 +126,7 @@ div.tfw-modal-confirm > div {
     height: 100%;
     text-align: center;
     vertical-align: middle;
-    padding: 0;
+    padding: 1rem;
 }
 
 div.tfw-modal-confirm > div > div {

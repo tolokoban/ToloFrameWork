@@ -81,7 +81,7 @@ Modal.confirm = function( content, onYes, onNo ) {
         content = $.div();
         content.innerHTML = html;
     }
-    var modal = new Modal({ content: $.div([content, buttons]) });
+    var modal = new Modal({ content: $.div([content, buttons]), padding: true });
     modal.attach();
 
     btnNo.on(function() {

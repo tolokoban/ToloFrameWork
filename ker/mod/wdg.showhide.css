@@ -59,6 +59,13 @@
 
 .wdg-showhide.show > .body {
     display: block;
+    opacity: 0;
+    transform: translateX(48px);
+    transition: none;
 }
 
-
+.wdg-showhide.show.fade-in > .body {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all .3s;
+}
