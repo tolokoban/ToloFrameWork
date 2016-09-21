@@ -235,12 +235,14 @@ var Text = function(opts) {
         $.addClass( elem, "theme-elevation-2" );
         $.removeClass( elem, "theme-elevation-8" );
         $.removeClass(input, 'theme-color-bg-A1');
+        that.focus = false;
     });
     input.addEventListener('focus', function() {
         that.selectAll();
         $.removeClass( elem, "theme-elevation-2" );
         $.addClass( elem, "theme-elevation-8" );
         $.addClass(input, 'theme-color-bg-A1');
+        that.focus = true;
     });
     input.addEventListener('keydown', function(evt) {
     });
