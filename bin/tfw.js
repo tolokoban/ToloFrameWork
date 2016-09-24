@@ -1,8 +1,6 @@
 #! /usr/bin/env node
 // -*- js -*-
 
-"use strict";
-
 /**
  *
  * @module tfw
