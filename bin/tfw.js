@@ -144,7 +144,7 @@ if (tasks.length == 0) {
     console.log("  tfw build clean");
     console.log();
 } else {
-    function process() {
+    function start() {
         try {
             console.log();
             console.log(("" + (new Date())).green);
@@ -196,7 +196,7 @@ if (tasks.length == 0) {
         }
     }
 
-    var prj = process();
+    var prj = start();
     firstProcess = false;
 
     function processLater(eventName, filename) {
@@ -221,7 +221,7 @@ if (tasks.length == 0) {
         if (timer) {
             clearTimeout(timer);
         }
-        timer = setTimeout(process, 50);
+        timer = setTimeout(start, 50);
     }
 
     // Watch files?
