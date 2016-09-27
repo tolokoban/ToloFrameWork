@@ -9,6 +9,7 @@ require("colors");
 var FS = require("fs");
 var Path = require("path");
 var Util = require("../lib/util.js");
+var Init = require("../lib/init.js");
 var GitHub = require("../lib/github.js");
 var Project = require("../lib/project");
 var PathUtils = require("../lib/pathutils");
@@ -70,6 +71,10 @@ var options = {};
 var args = process.argv;
 args.shift();
 args.shift();
+if (args.indexOf('init') > -1) {
+    Init.start( cfg );
+    return;
+}
 if (args.indexOf('clean') > -1) {
     tasks.push(function(prj) {
         console.log("Cleaning...".green);
@@ -127,6 +132,7 @@ if (args.indexOf('test') > -1) {
 if (tasks.length == 0) {
     console.log();
     console.log("Accepted arguments:");
+    console.log("  init".yellow + ":    start a fresh new project.");
     console.log("  github".yellow + ":  create a new empty project based on Github.");
     console.log("  clean".yellow + ":   remove all temporary files.");
     console.log("  build".yellow + ":   compile project in the www/ folder.");
