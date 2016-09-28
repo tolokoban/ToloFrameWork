@@ -1,0 +1,9 @@
+div.wdg-wait {
+    display: table;
+}
+
+div.wdg-wait > div {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: left;
+}
