@@ -11,7 +11,7 @@
     "scripts": {
         "test": "node node_modules/karma/bin/karma start karma.conf.js",
         "test:dbg": "node --debug-brk node_modules/karma/bin/karma start karma.conf.js",
-        "debug": "node node_modules/toloframework/bin/tfw.js build dev test php watch",
+        "debug": "node node_modules/toloframework/bin/tfw.js build debug test php watch",
         "clean": "node node_modules/toloframework/bin/tfw.js clean",
         "release": "node node_modules/toloframework/bin/tfw.js build version php clean"
     },
@@ -19,9 +19,10 @@
         "url": "{{bugs}}"
     },
     "tfw": {
+        "resources": [],
         "modules": [],
         "compile": {
-            "type": "firefoxos",
+            "type": "{{type}}",
             "files": [ "\\.html$" ]
         },
         "output": "www"
@@ -29,10 +30,10 @@
     "version": "0.0.1",
     "reservedModules": [],
     "dependencies": {
-        "jasmine-core": "^2.4.1",
-        "karma": "^0.13.19",
-        "karma-chrome-launcher": "^0.2.2",
-        "karma-firefox-launcher": "^0.1.7",
+        "jasmine-core": "^2.4",
+        "karma": "^0.13",
+        "karma-chrome-launcher": "^0.2",
+        "karma-firefox-launcher": "^0.1",
         "karma-jasmine": "^0.3.6",
         "toloframework": "^{{version}}"
     }

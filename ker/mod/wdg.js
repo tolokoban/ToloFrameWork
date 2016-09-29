@@ -470,7 +470,13 @@ Widget.prototype = {
     rect: function() {
         var e = this._element;
         if (!e) return null;
-        return e.getBoundingClientRect();
+        if (typeof e.getBoundingClientRect !== 'function') {
+            console.error("[wdg.rect] This element has non `getBoundingClientRect` function:", e);
+        }
+        var r = e.getBoundingClientRect();
+        if( typeof r.width === 'undefined' ) r.width = r.right - r.left;
+        if( typeof r.height === 'undefined' ) r.height = r.bottom - r.top;
+        return r;
     },
 
     /**

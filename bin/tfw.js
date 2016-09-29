@@ -9,17 +9,13 @@ require("colors");
 var FS = require("fs");
 var Path = require("path");
 var Util = require("../lib/util.js");
-var GitHub = require("../lib/github.js");
+var Init = require("../lib/init.js");
 var Project = require("../lib/project");
+var Package = require("../lib/package");
 var PathUtils = require("../lib/pathutils");
 
 // Read the version in the package file.
-var packageFile = Path.join(__dirname, "../package.json");
-var cfg = {};
-console.log( packageFile );
-if( FS.existsSync( packageFile ) ) {
-    cfg = JSON.parse( FS.readFileSync( packageFile ) );
-}
+var cfg = Package;
 var txt = " ToloFrameWork " + cfg.version + " ";
 var sep = "";
 for (var i = 0 ; i < txt.length ; i++) {
@@ -70,15 +66,15 @@ var options = {};
 var args = process.argv;
 args.shift();
 args.shift();
+if (args.indexOf('init') > -1) {
+    Init.start( cfg );
+    return;
+}
 if (args.indexOf('clean') > -1) {
     tasks.push(function(prj) {
         console.log("Cleaning...".green);
         Util.cleanDir("./tmp");
     });
-}
-if (args.indexOf('github') > -1) {
-    GitHub.start( cfg );
-    return;
 }
 if (args.indexOf('version') > -1) {
     tasks.push(function(prj) {
@@ -88,7 +84,7 @@ if (args.indexOf('version') > -1) {
         }
     });
 }
-if (args.indexOf('dev') > -1) {
+if (args.indexOf('debug') > -1 || args.indexOf('dev') > -1) {
     tasks.push(function(prj) {
         console.log("Build for DEVELOPMENT. Don't minify, don't combine.".green);
         options.dev = true;
@@ -127,16 +123,17 @@ if (args.indexOf('test') > -1) {
 if (tasks.length == 0) {
     console.log();
     console.log("Accepted arguments:");
-    console.log("  github".yellow + ":  create a new empty project based on Github.");
-    console.log("  clean".yellow + ":   remove all temporary files.");
-    console.log("  build".yellow + ":   compile project in the www/ folder.");
-    console.log("  dev".yellow + ":     JS and CSS files won't be minified.");
-    console.log("  php".yellow + ":     add PHP services.");
-    console.log("  test".yellow + ":    prepare Karma tests.");
-    console.log("  doc".yellow + ":     create documentation.");
-    console.log("  jsdoc".yellow + ":   create JSDoc documentation.");
-    console.log("  watch".yellow + ":   watch for files change.");
-    console.log("  version".yellow + ": increment version number.");
+    console.log("  init".yellow.bold + ":    start a fresh new project.");
+    console.log("  clean".yellow.bold + ":   remove all temporary files.");
+    console.log("  build".yellow.bold + ":   compile project in the www/ folder.");
+    console.log("  debug".yellow.bold + ":   JS and CSS files won't be minified.");
+    console.log("  dev".yellow      + ":     same as <debug>.");
+    console.log("  php".yellow.bold + ":     add PHP services.");
+    console.log("  test".yellow.bold + ":    prepare Karma tests.");
+    console.log("  doc".yellow.bold + ":     create documentation.");
+    console.log("  jsdoc".yellow.bold + ":   create JSDoc documentation.");
+    console.log("  watch".yellow.bold + ":   watch for files change.");
+    console.log("  version".yellow.bold + ": increment version number.");
     console.log();
     console.log("Example:");
     console.log("  tfw build clean");
