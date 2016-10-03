@@ -1,0 +1,15 @@
+<<<<<<< HEAD
+=======
+spec/mod/
+lab/navigation/data/
+>>>>>>> 668f775ea728c147f183dd16ffef63133858638c
+*~
+*#
+tmp/
+www/
+<<<<<<< HEAD
+spec/mod/
+node_modules/
+=======
+>>>>>>> 668f775ea728c147f183dd16ffef63133858638c
+
