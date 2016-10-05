@@ -38,14 +38,14 @@ exports.formatSmart = function(dat) {
     var mm = dat.getMinutes();
     var txt = dat.getHours() + ":" + (mm < 10 ? '0' : '') + mm;
     if (Y != Y0) {
-        txt = D + " " + _("month" + M + "-short") + " " + Y + " " + txt;
+        txt += " " + D + " " + _("month" + M + "-short") + " " + Y;
     } else if (M != M0) {
-        txt = D + " " + _("month" + M + "-short") + " " + txt;
+        txt += " " + D + " " + _("month" + M + "-short");
     } else if (D != D0) {
         if (D == D0 - 1) {
-            txt = _("yesterday") + " " + txt;
+            txt += " " + _("yesterday");
         } else {
-            txt = D + " " + _("month" + M + "-short") + " " + txt;
+            txt += " " + D + " " + _("month" + M + "-short");
         }
     }
     return txt;

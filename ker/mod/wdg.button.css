@@ -90,6 +90,8 @@ a.wdg-button.wide, button.wdg-button.wide {
     box-shadow: none;
     font-size: 100%;
     font-weight: bold;
+    line-height: 1rem;
+    min-height: 1rem;
 }
 
 .wdg-button.simple:hover {
