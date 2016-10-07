@@ -1,5 +1,6 @@
 div.wdg-flex {
     display: inline-flex;
+    align-items: center;
     flex-direction: row;
     justify-content: space-around;
     align-items: stretch;
