@@ -3,7 +3,6 @@ div.wdg-flex {
     align-items: center;
     flex-direction: row;
     justify-content: space-around;
-    align-items: stretch;
     width: 100%;
 }
 
