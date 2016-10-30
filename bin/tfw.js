@@ -74,6 +74,10 @@ if (args.indexOf('clean') > -1) {
     tasks.push(function(prj) {
         console.log("Cleaning...".green);
         Util.cleanDir("./tmp");
+        var cfgFile = prj.srcPath('$.js');
+        if (FS.existsSync(cfgFile)) {
+            FS.unlinkSync(filepath);
+        }
     });
 }
 if (args.indexOf('version') > -1) {
