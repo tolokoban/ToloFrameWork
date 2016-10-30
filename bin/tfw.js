@@ -227,20 +227,22 @@ if (tasks.length == 0) {
     if (args.indexOf("watch") > -1) {
         if (!prj) return;
         console.log();
-        var fringe = [Path.join(__dirname, "../ker"), prj.srcPath()];
+        var fringe = [Path.join(__dirname, "../ker"), prj.srcPath(), prj.srcPath("../package.json")];
         fringe.push.apply( fringe, prj.getExtraModulesPath() );
         var path;
         while (fringe.length > 0) {
             path = fringe.pop();
             watch(path);
-            FS.readdirSync(path).forEach(
-                function(filename) {
-                    var subpath = Path.join(path, filename);
-                    if (PathUtils.isDirectory(subpath)) {
-                        fringe.push(subpath);
+            if (PathUtils.isDirectory(path)) {
+                FS.readdirSync(path).forEach(
+                    function(filename) {
+                        var subpath = Path.join(path, filename);
+                        if (PathUtils.isDirectory(subpath)) {
+                            fringe.push(subpath);
+                        }
                     }
-                }
-            );
+                );
+            }
         }
         console.log();
     }
