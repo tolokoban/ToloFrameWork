@@ -1,3 +1,3 @@
-/** @module {{name}} */require( '{{name}}', function(exports, module) { {{intl}} {{head}} {{code}}
+/** @module {{name}} */require( '{{name}}', function(require, module, exports) { {{intl}} {{head}} {{code}}
 
 {{foot}}
