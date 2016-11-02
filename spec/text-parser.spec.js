@@ -3,45 +3,57 @@
 var Parser = require("../lib/text-parser");
 
 describe('Module "Parser"', function() {
-    it('should "eat" text', function() {
+    function chk( text, func, expected ) {
         expect(Parser({
-            text: "I say YesNo, but also No ... and maybe Yes again!",
-            grammar: {
-                a: function( stream, state ) {
-                    var res = stream.eat("Yes", "No");
-                    if (res) state.out += res;
-                    else stream.next();
-                    return undefined;
-                }
-            },
+            text: text,
+            grammar: {start: func},
             state: { out: '' }
-        }).out).toBe("YesNoNoYes");
+        }).out).toBe(expected);
+    }
+
+    it('should "eatRegex"', function() {
+        chk("Hello world! We are 666 people here.",
+           function( stream, state ) {
+               if (stream.eatRegex(/[a-z]+/gi)) {
+                   state.out += 'T';
+                   return;
+               }
+               if (stream.eatRegex(/[0-9]+/g)) {
+                   state.out += 'N';
+                   return;
+               }
+               state.out += stream.next();
+           },
+           "T T! T T N T T.");
+    });
+
+
+    it('should "eat" text', function() {
+        chk("I say YesNo, but also No ... and maybe Yes again!",
+            function( stream, state ) {
+                var res = stream.eat("Yes", "No");
+                if (res) state.out += res;
+                else stream.next();
+                return undefined;
+            },
+            "YesNoNoYes");
     });
 
     it('should "eatUntilChar', function() {
-        expect(Parser({
-            text: "I say YesNo, but also No ... and maybe Yes again!",
-            grammar: {
-                a: function( stream, state ) {
-                    state.out = stream.eatUntilChar(",");
-                    return null;
-                }
+        chk("I say YesNo, but also No ... and maybe Yes again!",
+            function( stream, state ) {
+                state.out = stream.eatUntilChar(",");
+                return null;
             },
-            state: { out: '' }
-        }).out).toBe("I say YesNo");        
+            "I say YesNo");
     });
 
     it('should "eatUntilText', function() {
-        expect(Parser({
-            text: "I say YesNo, but also No ... and maybe Yes again!",
-            grammar: {
-                a: function( stream, state ) {
-                    state.out = stream.eatUntilText(", ");
-                    return null;
-                }
+        chk("I say YesNo, but also No ... and maybe Yes again!",
+            function( stream, state ) {
+                state.out = stream.eatUntilText(", ");
+                return null;
             },
-            state: { out: '' }
-        }).out).toBe("I say YesNo");        
+            "I say YesNo");
     });
-
 });
