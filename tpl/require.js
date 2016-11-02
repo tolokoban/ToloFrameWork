@@ -37,7 +37,7 @@ window.require = function() {
         if (typeof mod === 'undefined') {
             mod = {exports: {}};
             var exports = mod.exports;
-            body(this, mod, exports);
+            body(f, mod, exports);
             modules[id] = mod.exports;
             mod = mod.exports;
             //console.log("Module initialized: " + id);
