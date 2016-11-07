@@ -309,6 +309,7 @@ function getPropertiesAndBindings(root, libs, com, indent) {
  </wdg:combo>
  */
 function parseChildrenProperties(root, libs, com, indent) {
+    if (!Array.isArray( root.children )) root.children = [];
     root.children.forEach(function (child) {
         if (child.type != libs.Tree.TAG) return;
         libs.compileChildren( child );

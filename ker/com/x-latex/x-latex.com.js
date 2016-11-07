@@ -88,7 +88,7 @@ exports.compile = function(root, libs) {
     try {
         root.type = libs.Tree.VERBATIM;
         var mrow = parseGroup(new Tokenizer(libs.Tree.text(root)));
-        root.text = '<math>' + tagToString(mrow) + '</math>';
+        root.text = '<math display="inline">' + tagToString(mrow) + '</math>';
         libs.require("polyfill.mathml");
         libs.addInitJS( "require('polyfill.mathml');" );
     }
