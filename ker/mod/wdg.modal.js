@@ -98,4 +98,26 @@ Modal.confirm = function( content, onYes, onNo ) {
     });
 };
 
+/**
+ * Display a message with an OK button.
+ */
+Modal.alert = function(content, onOK) {
+    var btnOK = Button.Ok('simple');
+    var buttons = $.div([$.tag('hr'), new Flex({ content: [btnOK] })]);
+    if (typeof content === 'string' && content.substr(0, 6) == '<html>') {
+        // This is HTML code.
+        var html = content.substr(6);
+        content = $.div();
+        content.innerHTML = html;
+    }
+    var modal = new Modal({ content: $.div([content, buttons]), padding: true });
+    modal.attach();
+
+    btnOK.on(function() {
+        modal.detach();
+        if (typeof onOK === 'function') onOK();
+    });
+};
+
+
 module.exports = Modal;
