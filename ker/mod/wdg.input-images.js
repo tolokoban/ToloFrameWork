@@ -1,4 +1,4 @@
-require("tfw.promise");
+require("polyfill.promise");
 var $ = require("dom");
 var DB = require("tfw.data-binding");
 

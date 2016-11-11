@@ -1,4 +1,4 @@
-/**
+/**!
  * @module tfw.login
  *
  * @description
@@ -7,7 +7,7 @@
  * @example
  * var mod = require('tfw.login');
  */
-require("tfw.promise");
+require("polyfill.promise");
 var $ = require("dom");
 var T = require("wdg.text");
 var B = require("wdg.button");

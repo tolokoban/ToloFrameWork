@@ -1,4 +1,4 @@
-require("tfw.promise");
+require("polyfill.promise");
 var Storage = require("tfw.storage");
 var Listeners = require("tfw.listeners");
 

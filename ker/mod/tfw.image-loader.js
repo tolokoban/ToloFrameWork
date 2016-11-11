@@ -2,7 +2,7 @@
  * @module
  * Charger des images de façon asynchrone.
  */
-require("tfw.promise");
+require("polyfill.promise");
 
 /**
  * Retourne  un  promise dont  la  data  est  un dictionnaire  avec  les
