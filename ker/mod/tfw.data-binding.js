@@ -168,7 +168,20 @@ exports.fire = function( obj, att, val ) {
  * Set a new value without firing any event.
  */
 exports.set = function( obj, att, val ) {
+    if( typeof obj[ID] === 'undefined' ) obj[ID] = {};
+    if( typeof obj[ID][att] === 'undefined' ) obj[ID][att] = {};
     obj[ID][att].value = val;
+};
+
+/**
+ * @export @function get
+ *
+ * Get a value without firing any event.
+ */
+exports.get = function( obj, att ) {
+    if( typeof obj[ID] === 'undefined' ) return undefined;
+    if( typeof obj[ID][att] === 'undefined' ) return undefined;
+    return obj[ID][att].value;
 };
 
 /**

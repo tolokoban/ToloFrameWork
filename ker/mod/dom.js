@@ -299,7 +299,8 @@ function addClass(elem) {
         className = className.trim();
         if( className.length == 0 ) return;
         try {
-            elem.classList.add( className );
+            if( elem.classList )
+                elem.classList.add( className );
         }
         catch( ex ) {
             console.error( "[dom.addClass] Invalid class name: ", className );
@@ -312,6 +313,7 @@ function addClass(elem) {
 
 function hasClass( elem, className ) {
     elem = extract( elem );
+    if( !elem.classList ) return false;
     return elem.classList.contains( className );
 }
 
@@ -331,7 +333,8 @@ function removeClass(elem) {
     args.forEach(function (className) {
         if (typeof className !== 'string') return;
         try {
-            elem.classList.remove( className );
+            if( elem.classList )
+                elem.classList.remove( className );
         }
         catch( ex ) {
             console.error( "[dom.removeClass] Invalid class name: ", className );
