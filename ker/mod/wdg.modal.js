@@ -63,7 +63,11 @@ Modal.prototype.refresh = function() {
  */
 Modal.prototype.attach = function() {
     var that = this;
-
+    
+    if( this._timeoutDetach ) {
+        window.clearTimeout( this._timeoutDetach );
+        delete this._timeoutDetach;
+    }
     document.body.appendChild( this.element );
     DB.set( this, 'visible', true );
     $.addClass( this, 'fadeout' );
@@ -82,10 +86,11 @@ Modal.prototype.detach = function() {
     window.setTimeout(function() {
         $.addClass( that, 'fadeout' );
     });
-    window.setTimeout(function() {
+    this._timeoutDetach = window.setTimeout(function() {
+        delete this._timeoutDetach;
         DB.set( that, 'visible', false );
         $.detach( that.element );
-    }, 200);
+    }, 250);
 };
 
 /**
