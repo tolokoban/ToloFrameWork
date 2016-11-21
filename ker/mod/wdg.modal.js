@@ -33,7 +33,14 @@ function Modal( opts ) {
     DB.propAddClass(this, 'padding');
     DB.propAddClass(this, 'scroll');
     DB.propAddClass(this, 'wide');
-    DB.propRemoveClass(this, 'visible', 'hide');
+    DB.propBoolean(this, 'visible')(function(v) {
+        if( v ) {
+            that.attach();
+        }
+        else {
+            that.detach();
+        }
+    });
 
     opts = DB.extend({
         visible: false, content: [], padding: false, scroll: true
@@ -55,8 +62,14 @@ Modal.prototype.refresh = function() {
  * Append element to body.
  */
 Modal.prototype.attach = function() {
+    var that = this;
+
     document.body.appendChild( this.element );
-    this.visible = true;
+    DB.set( this, 'visible', true );
+    $.addClass( this, 'fadeout' );
+    window.setTimeout(function() {
+        $.removeClass( that, 'fadeout' );
+    });
 };
 
 /**
@@ -64,8 +77,15 @@ Modal.prototype.attach = function() {
  * Remove element from body.
  */
 Modal.prototype.detach = function() {
-    this.visible = false;
-    document.body.removeChild( this.element );
+    var that = this;
+
+    window.setTimeout(function() {
+        $.addClass( that, 'fadeout' );
+    });
+    window.setTimeout(function() {
+        DB.set( that, 'visible', false );
+        $.detach( that.element );
+    }, 200);
 };
 
 /**
@@ -91,9 +111,15 @@ Modal.confirm = function( content, onYes, onNo ) {
         }
     });
     btnYes.on(function() {
-        modal.detach();
         if (typeof onYes === 'function') {
-            onYes();
+            var caption = onYes();
+            if( typeof caption !== 'string' ) modal.detach();
+            else {
+                btnNo.visible = false;
+                btnYes.waitOn( caption );
+            }
+        } else {
+            modal.detach();
         }
     });
 };
