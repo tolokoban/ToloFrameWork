@@ -127,6 +127,7 @@ Modal.confirm = function( content, onYes, onNo ) {
             modal.detach();
         }
     });
+    return modal;
 };
 
 /**
@@ -148,6 +149,7 @@ Modal.alert = function(content, onOK) {
         modal.detach();
         if (typeof onOK === 'function') onOK();
     });
+    return modal;
 };
 
 

@@ -12,8 +12,8 @@
 
 
 exports.formatShortDate = function(d) {
-    var weekday = _('day' + d.getDay() + 'short');
-    var month = _('month' + d.getMonth() + 'short');
+    var weekday = _('day' + d.getDay() + '-short');
+    var month = _('month' + d.getMonth() + '-short');
     return weekday + " " + d.getDate() + " " + month;
 };
 
