@@ -2,7 +2,7 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Josefin Sans', josefin-sans, sans-serif;
 }
 
 a, b, i, em, code, span {
@@ -44,7 +44,7 @@ html, body {
 }
 
 body {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Josefin Sans', josefin-sans, sans-serif;
     color: #000;
 }
 

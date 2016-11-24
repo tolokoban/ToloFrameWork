@@ -1,4 +1,4 @@
-require("polyfill!.promise");
+require("polyfill.promise");
 
 exports.later = function(delay) {
     if (typeof delay === 'undefined') delay = 1;

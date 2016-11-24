@@ -1,6 +1,6 @@
 /* latin-ext */
 @font-face {
-  font-family: 'Josefin Sans';
+  font-family: josefin-sans;
   font-style: normal;
   font-weight: 400;
   src: local('Josefin Sans'), local('JosefinSans'), url(font.josefin/josefin.woff2) format('woff2');
@@ -8,7 +8,7 @@
 }
 /* latin */
 @font-face {
-  font-family: 'Josefin Sans';
+  font-family: josefin-sans;
   font-style: normal;
   font-weight: 400;
   src: local('Josefin Sans'), local('JosefinSans'), url(font.josefin/josefin.woff2) format('woff2');
