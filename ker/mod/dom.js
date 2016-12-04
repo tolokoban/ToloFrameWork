@@ -212,6 +212,7 @@ function on( element, slots ) {
         return element;
     }
 
+    element = extract(element);
     if( typeof element[SYMBOL] === 'undefined' ) {
         element[SYMBOL] = new PointerEvents( element );
     }

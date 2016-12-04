@@ -97,8 +97,8 @@ var Text = function(opts) {
         elem.style.width = v;
     });
     DB.propBoolean(this, 'focus')(function(v) {
-        if (v) input.focus();
-        else input.blur();
+        if (v) window.setTimeout( input.focus.bind( input ) );
+        else window.setTimeout( input.blur.bind( input ) );
     });
     DB.propInteger(this, 'action', '');
     DB.propAddClass(this, 'wide');

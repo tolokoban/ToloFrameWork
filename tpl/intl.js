@@ -1,1 +1,1 @@
-var _intl_={{dico}},_$=require("$").intl;function _(){return _$(_intl_, arguments);}
+var _=function(){var D={{dico}},X=require("$").intl;function _(){return X(D,arguments);}_.all=D;return _}();

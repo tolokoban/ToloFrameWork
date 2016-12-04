@@ -23,17 +23,23 @@ exports.lang = function(lang) {
 };
 exports.intl = function(words, params) {
     var dic = words[exports.lang()],
-    k = params[0],
-    txt, newTxt, i, c, lastIdx, pos;
+        k = params[0],
+        txt, newTxt, i, c, lastIdx, pos;
+    var defLang;
+    for( defLang in words ) break;
+    if( !defLang ) return k;
     if (!dic) {
-        //console.error("Missing internationalization for language : \"" + exports.lang() + "\"!");
-        return k;
+        dic = words[defLang];
+        if( !dic ) {
+            return k;
+        }
     }
     txt = dic[k];
-    if (!txt) {
-        //console.error("Missing internationalization [" + exports.lang() + "]: \"" + k + "\"!");
-        return k;
+    if( !txt ) {
+        dic = words[defLang];
+        txt = dic[k];
     }
+    if (!txt) return k;
     if (params.length > 1) {
         newTxt = "";
         lastIdx = 0;
