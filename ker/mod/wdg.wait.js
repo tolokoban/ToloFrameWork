@@ -2,7 +2,6 @@
 
 var $ = require("dom");
 var DB = require("tfw.data-binding");
-var Css = require("tfw.css");
 var Icon = require("wdg.icon");
 
 
@@ -22,10 +21,9 @@ var Wait = function(opts) {
     var elem = $.elem( this, 'div', 'wdg-wait', [icon, caption] );
     
     DB.propRemoveClass( this, 'visible', 'hide' );
-    DB.propString( this, 'size' )(function(v) {
-        icon.size = v;
-        // We parse the CSS size because we want to text to be 75% of the icon.
-        var unit = Css.parseUnit(v);
+    DB.propUnit( this, 'size' )(function(unit) {
+        icon.size = unit.v + unit.u;
+        // We want to text to be 75% of the icon.
         $.css( caption, {
             'font-size': (unit.v * .75) + unit.u,
             'padding-left': (unit.v * .5) + unit.u

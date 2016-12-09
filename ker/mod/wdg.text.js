@@ -77,6 +77,13 @@ var Text = function(opts) {
             $.att(input, {size: v});
         }
     });
+    DB.propUnit(this, 'width')(function(v) {
+        if( v.v <= 0 ) {
+            elem.style.width = 'auto';
+        } else {
+            elem.style.width = v.v + v.u;
+        }
+    });
     DB.propString(this, 'label')(function(v) {
         if (v === null || (typeof v === 'string' && v.trim() == '')) {
             $.addClass(elem, 'no-label');
@@ -92,9 +99,6 @@ var Text = function(opts) {
     });
     DB.propString(this, 'placeholder')(function(v) {
         $.att(input, {placeholder: v});
-    });
-    DB.propString(this, 'width')(function(v) {
-        elem.style.width = v;
     });
     DB.propBoolean(this, 'focus')(function(v) {
         if (v) window.setTimeout( input.focus.bind( input ) );
