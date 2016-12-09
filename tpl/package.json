@@ -11,7 +11,8 @@
     "scripts": {
         "test": "node node_modules/karma/bin/karma start karma.conf.js",
         "test:dbg": "node --debug-brk node_modules/karma/bin/karma start karma.conf.js",
-        "debug": "node node_modules/toloframework/bin/tfw.js build debug test php watch",
+        "debug": "node node_modules/toloframework/bin/tfw.js build debug test php",
+        "watch": "node node_modules/toloframework/bin/tfw.js build debug test php watch",
         "clean": "node node_modules/toloframework/bin/tfw.js clean",
         "release": "node node_modules/toloframework/bin/tfw.js build version php clean"
     },

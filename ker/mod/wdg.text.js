@@ -33,7 +33,7 @@ var Text = function(opts) {
         that.validate();
     });
     DB.propEnum(['text', 'button', 'checkbox', 'color', 'date', 'datetime', 'email', 'file',
-                 'hidden', 'image', 'month', 'password', 'radio', 'range', 'reset',
+                 'hidden', 'image', 'month', 'password', 'radio', 'range', 'reset', 'number',
                  'search', 'submit', 'tel', 'time', 'url', 'week'])(this, 'type')
     (function(v) {
         $.att(input, {type: v});
