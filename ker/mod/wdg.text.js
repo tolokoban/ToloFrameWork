@@ -33,7 +33,7 @@ var Text = function(opts) {
         that.validate();
     });
     DB.propEnum(['text', 'button', 'checkbox', 'color', 'date', 'datetime', 'email', 'file',
-                 'hidden', 'image', 'month', 'password', 'radio', 'range', 'reset',
+                 'hidden', 'image', 'month', 'password', 'radio', 'range', 'reset', 'number',
                  'search', 'submit', 'tel', 'time', 'url', 'week'])(this, 'type')
     (function(v) {
         $.att(input, {type: v});
@@ -77,6 +77,13 @@ var Text = function(opts) {
             $.att(input, {size: v});
         }
     });
+    DB.propUnit(this, 'width')(function(v) {
+        if( v.v <= 0 ) {
+            elem.style.width = 'auto';
+        } else {
+            elem.style.width = v.v + v.u;
+        }
+    });
     DB.propString(this, 'label')(function(v) {
         if (v === null || (typeof v === 'string' && v.trim() == '')) {
             $.addClass(elem, 'no-label');
@@ -92,9 +99,6 @@ var Text = function(opts) {
     });
     DB.propString(this, 'placeholder')(function(v) {
         $.att(input, {placeholder: v});
-    });
-    DB.propString(this, 'width')(function(v) {
-        elem.style.width = v;
     });
     DB.propBoolean(this, 'focus')(function(v) {
         if (v) window.setTimeout( input.focus.bind( input ) );

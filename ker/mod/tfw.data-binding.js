@@ -9,6 +9,7 @@
  */
 require("polyfill.string");
 var $ = require("dom");
+var ParseUnit = require("tfw.css").parseUnit;
 var Listeners = require("tfw.listeners");
 
 
@@ -85,7 +86,16 @@ var converters = {
         return [JSON.stringify( v )];
     },
     castUnit: function(v) {
-        return "" + v;
+        if( !v ) return { v: 0, u: 'px' };
+        if( typeof v.v !== 'undefined' ) {
+            v.v = parseFloat( v.v );
+            if( isNaN( v.v ) ) return { v: 0, u: 'px' };
+            if( typeof v.u !== 'string' ) v.u = 'px';
+            return { v: v.v, u: v.u };
+        }
+        if( typeof v === 'number' ) return { v: v, u: 'px' };
+        if( typeof v !== 'string' ) return { v: 0, u: 'px' };
+        return ParseUnit( '' + v );
     },
     castValidator: function(v) {
         if (typeof v === 'function') return v;

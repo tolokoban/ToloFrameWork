@@ -49,13 +49,13 @@ function Showhide( opts ) {
     DB.propString(this, 'label')(function(v) {
         label.textContent = v;
     });
-    DB.propUnit(this, 'maxHeight')(function(v) {
-        if (typeof v !== 'string') {
+    DB.propUnit(this, 'maxHeight')(function(unit) {
+        if( unit.v <= 0 ) {
             // The size of the widget is determined by the size of its content.
             body.style.maxHeight = 'none';
         } else {
             // Set a max-height and activate scrolling.
-            body.style.maxHeight = v;
+            body.style.maxHeight = unit.v + unit.u;
         }
     });
     DB.prop(this, 'content')(function(v) {
