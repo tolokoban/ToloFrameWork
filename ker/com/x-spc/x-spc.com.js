@@ -34,6 +34,6 @@ exports.compile = function(root, libs) {
         if (!att.h) att.h = "1em";
         // Vertical space.
         root.attribs.class += " H";
-        root.attribs.style = "height:" + att.w;
+        root.attribs.style = "height:" + att.h;
     }
 };

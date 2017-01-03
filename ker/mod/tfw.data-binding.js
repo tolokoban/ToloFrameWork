@@ -1,11 +1,11 @@
 /**
- * @module tfw.data-binding
+ * @module
  *
- * @description
  * Provide all the functions needed for data-binding.
  *
  * @example
- * var mod = require('tfw.data-binding');
+ * var DB = require('tfw.data-binding');
+ * DB.propAddClass( widget, 'visible', 'show' );
  */
 require("polyfill.string");
 var $ = require("dom");
@@ -160,7 +160,7 @@ function propCast( caster, obj, att, val ) {
 };
 
 /**
- * @export @function fire
+ * @export function fire
  *
  * Set a new value and fire the event even if the value has not changed.
  */
@@ -173,7 +173,7 @@ exports.fire = function( obj, att, val ) {
 };
 
 /**
- * @export @function set
+ * @export function set
  *
  * Set a new value without firing any event.
  */
@@ -184,7 +184,7 @@ exports.set = function( obj, att, val ) {
 };
 
 /**
- * @export @function get
+ * @export function get
  *
  * Get a value without firing any event.
  */
@@ -195,8 +195,11 @@ exports.get = function( obj, att ) {
 };
 
 /**
+ * Create a property on which we can bind another property.
+ * 
  * @param {object} obj - Object to which we want to add a property.
  * @param {string} att - Name of the attribute of `obj`.
+ * 
  */
 exports.prop = propCast.bind( null, null );
 /**
