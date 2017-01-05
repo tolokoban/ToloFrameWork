@@ -1,10 +1,16 @@
 require("polyfill.promise");
+var Cfg = require("$").config;
+
 var Storage = require("tfw.storage");
 var Listeners = require("tfw.listeners");
 
 var currentUser = null;
 var changeEvent = new Listeners();
-var config = {url: "tfw"};
+var config = {
+    // In `package.json`, you can override the services URL.
+    // { "tfw": { "consts": { "debug": "tfw", "release": "http://tolokoban.org/tfw" } } }
+    url: typeof Cfg.consts.tfw === 'string' ? Cfg.consts.tfw : "tfw"
+};
 var saved = Storage.local.get("nigolotua");
 if (Array.isArray(saved)) {
     config.usr = saved[0];
@@ -82,13 +88,15 @@ function svc(name, args, url) {
                 reject(
                     {
                         id: exports.HTTP_ERROR,
-                        err: "(" + xhr.status + ") " + xhr.statusText,
+                        err: "HTTP_ERROR (" + xhr.status + ") " + xhr.statusText,
                         status: xhr.status
                     }
                 );
             };
-            var params = "s=" + encodeURIComponent(name)
-                    + "&i=" + encodeURIComponent(JSON.stringify(args));
+            var params = "s=" + encodeURIComponent(name);
+            if( typeof args !== 'undefined' ) {
+                params += "&i=" + encodeURIComponent(JSON.stringify(args));
+            }
             xhr.setRequestHeader(
                 "Content-type",
                 "application/x-www-form-urlencoded");
