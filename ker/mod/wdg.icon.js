@@ -33,14 +33,15 @@ var Icon = function(opts) {
         if (v) {
             $.addClass( elem, 'theme-elevation-8');
             $.removeClass( elem, 'flat');
+            var s = that.size;
             $.css( elem, {
-                padding: 'calc(0.25 * ' + that.size + ') 0 0 0',
-                width: "calc(1.5 * " + that.size + ")",
-                height: "calc(1.5 * " + that.size + ")",
-                'line-height': that.size
+                padding: 'calc(0.25 * ' + s.v + s.u + ') 0 0 0',
+                width: "calc(1.5 * " + s.v + s.u + ")",
+                height: "calc(1.5 * " + s.v + s.u + ")",
+                'line-height': s.v + s.u
             });
             $.css(svg, {
-                'line-height': v
+                'line-height': s.v + s.u
             });
             //that.size = '2rem';
             $.on( elem, {
@@ -68,10 +69,11 @@ var Icon = function(opts) {
         }
     });
     DB.propUnit(this, 'size')(function(v) {
+        var s = v.v + v.u;
         $.css(svg, {
-            width: v,
-            height: v,
-            'line-height': v
+            width: s,
+            height: s,
+            'line-height': s
         });
     });
     DB.prop(this, 'action');
