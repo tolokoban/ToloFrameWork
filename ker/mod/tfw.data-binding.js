@@ -38,6 +38,12 @@ var converters = {
     castColor: function(v) {
         return "" + v;
     },
+    castDate: function(v) {
+        if( typeof v === 'number' || typeof v === 'string' )
+            return new Date(v);
+        if( v instanceof Date ) return v;
+        return new Date();
+    },
     castEnum: function( enumeration ) {
         var lowerCaseEnum = enumeration.map(String.toLowerCase);
         return function(v) {
@@ -268,6 +274,7 @@ exports.propRemoveClass = function( target, attribute, className ) {
 exports.propArray = propCast.bind( null, converters.castArray );
 exports.propBoolean = propCast.bind( null, converters.castBoolean );
 exports.propColor = propCast.bind( null, converters.castColor );
+exports.propDate = propCast.bind( null, converters.castDate );
 exports.propEnum = function( enumeration ) {
     return propCast.bind( null, converters.castEnum( enumeration ) );
 };
