@@ -2,6 +2,12 @@ var $ = require("dom");
 var DB = require("tfw.data-binding");
 var Icon = require("wdg.icon");
 
+/**
+ * @param opts.value {boolean} - `true` if checked, `false` otherwise.
+ * @param opts.text {string} - Text to display.
+ * @param opts.wide {boolean} - If `true`, expand on whole line.
+ * @param opts.visible {boolean} - Show/hide this widget.
+ */
 var Checkbox = function(opts) {
     var that = this;
 
