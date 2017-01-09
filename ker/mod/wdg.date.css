@@ -1,0 +1,40 @@
+div.wdg-date {
+    display: inline-block;
+    line-height: 2rem;
+    padding: 0 1rem;
+    transition: all .2s;
+}
+
+div.wdg-date.invalid.custom {
+    background: pink;
+}
+
+
+div.wdg-date > * {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+div.wdg-date > input {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    border: none;
+    box-shadow: none;
+    outline: none;
+    background: transparent;
+}
+
+div.wdg-date > input::-webkit-inner-spin-button, 
+div.wdg-date > input::-webkit-outer-spin-button,
+div.wdg-date > input::-moz-inner-spin-button, 
+div.wdg-date > input::-moz-outer-spin-button,
+div.wdg-date > input::inner-spin-button, 
+div.wdg-date > input::outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+    width: 0;
+    display: none;
+}

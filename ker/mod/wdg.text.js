@@ -1,3 +1,5 @@
+"use strict";
+
 var $ = require("dom");
 var DB = require("tfw.data-binding");
 var LaterAction = require("tfw.timer").laterAction;
