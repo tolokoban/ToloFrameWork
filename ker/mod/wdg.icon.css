@@ -33,9 +33,9 @@ div.wdg-icon {
     margin: .25rem;
     cursor: pointer;
     vertical-align: middle;
-    transition: all .2s;
+    transition: all .3s;
     text-align: center;
-    overflow: hidden;
+    overflow: hidden;    
 }
 
 

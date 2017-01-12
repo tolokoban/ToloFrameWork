@@ -1,6 +1,6 @@
 var $ = require("dom");
 var DB = require("tfw.data-binding");
-var Icon = require("wdg.icon");
+var Touchable = require("tfw.touchable");
 
 /**
  * @param opts.value {boolean} - `true` if checked, `false` otherwise.
@@ -11,22 +11,12 @@ var Icon = require("wdg.icon");
 var Checkbox = function(opts) {
     var that = this;
 
-    var yes = new Icon({content: "ok", size: "1.1em"});
-    var no = new Icon({content: "cancel", size: "1.1em"});
+    var spinner = $.div('wdg-checkbox-spin',
+                        [$.div([$.div('theme-elevation-4'), $.div('theme-elevation-4')])]);
     var text = $.div('label');
-    var elem = $.elem( this, 'button', 'wdg-checkbox', [yes, no, text] );
+    var elem = $.elem( this, 'button', 'wdg-checkbox', [spinner, text] );
 
-    DB.propBoolean(this, 'value')(function(v) {
-        if (v) {
-            $.addClass( elem, 'checked' );
-            yes.visible = true;
-            no.visible = false;
-        } else {
-            $.removeClass( elem, 'checked' );
-            yes.visible = false;
-            no.visible = true;
-        }
-    });
+    DB.propAddClass(this, 'value', 'checked' );
     DB.propString(this, 'text')(function(v) {
         text.textContent = v;
     });
@@ -41,8 +31,9 @@ var Checkbox = function(opts) {
         visible: true
     }, opts, this);
 
+    var touchable = new Touchable( elem );
+    touchable.tap.add( this.fire.bind( this ) );
     $.on( elem, {
-        tap: this.fire.bind( this ),
         keydown: function( evt ) {
             if (evt.keyCode == 13 || evt.keyCode == 32) {
                 evt.preventDefault();

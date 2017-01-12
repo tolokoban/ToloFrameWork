@@ -10,6 +10,10 @@ div.wdg-text {
     background-color: #fff;
 }
 
+div.wdg-text div.nowrap {
+    white-space: nowrap;
+}
+
 div.wdg-text > div.datalist {
     position: absolute;
     left: 0;
@@ -75,13 +79,18 @@ div.wdg-text.wide {
     width: auto;
 }
 
+div.wdg-text.wide input {
+    width: calc(100% - 2rem);
+}
+
+
 div.wdg-text > * {
     display: block;
     margin: 0;
     width: 100%;
 }
 
-div.wdg-text > input {
+div.wdg-text input {
     height: 2rem;
     box-shadow: none;
     padding: 0 .5rem;
@@ -90,18 +99,18 @@ div.wdg-text > input {
     font-size: 1rem;
 }
 
-div.wdg-text.no-valid > input,
-div.wdg-text.no-valid > input:focus {
+div.wdg-text.no-valid input,
+div.wdg-text.no-valid input:focus {
     background-color: #fdd;
     box-shadow: none;
     color: red;
 }
 
-div.wdg-text > input[disabled] {
+div.wdg-text input[disabled] {
     background-color: #aaa;
 }
 
-div.wdg-text.not-valid > input {
+div.wdg-text.not-valid input {
     background-color: #fee;
     color: #900;
 }

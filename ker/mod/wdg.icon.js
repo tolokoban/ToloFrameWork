@@ -1,5 +1,6 @@
 var $ = require("dom");
 var DB = require("tfw.data-binding");
+var Touchable = require("tfw.touchable");
 
 var Icon = function(opts) {
     var that = this;
@@ -44,21 +45,10 @@ var Icon = function(opts) {
                 'line-height': s.v + s.u
             });
             //that.size = '2rem';
-            $.on( elem, {
-                down: function(evt) {
-                    if (that.button) {
-                        $.addClass(elem, 'theme-elevation-12');
-                        evt.stopPropagation();
-                        evt.preventDefault();
-                    }
-                },
-                up: function() {
-                    $.removeClass(elem, 'theme-elevation-12');
-                },
-                tap: function() {
-                    DB.fire( that, 'action', that.value );
-                }
+            var touchable = new Touchable( elem, {
+                classToAdd: 'theme-elevation-16'
             });
+            touchable.tap.add( DB.fire.bind( DB, that, 'action', that.value ) );
         } else {
             $.removeClass( elem, 'theme-elevation-8');
             $.addClass( elem, 'flat');

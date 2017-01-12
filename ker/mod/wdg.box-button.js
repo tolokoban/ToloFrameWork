@@ -12,6 +12,7 @@
 
 var $ = require("dom");
 var DB = require("tfw.data-binding");
+var Touchable = require("tfw.touchable");
 
 /**
  * @param {object} opts
@@ -30,18 +31,28 @@ var BoxButton = function(opts) {
 
     var elem = $.elem( this, 'div', 'wdg-box-button', 'theme-elevation-2' );
 
+    // Animate the pressing.
+    var touchable = new Touchable( elem, {
+        classToAdd: 'theme-elevation-8',
+        color: "#777"
+    });
+    touchable.tap.add( this.fire.bind( this ) );
+    
     var refresh = function() {
         $.removeClass( 
-            elem, 'theme-color-bg-4', 'theme-color-bg-B0', 'theme-color-bg-B5', 'pointer'
+            elem, 'theme-color-bg-4', 'theme-color-bg-B0', 'theme-color-bg-B5'
         );
+        touchable.enabled = that.enabled;
         if (!that.enabled) {
             $.addClass( elem, 'theme-color-bg-B5' );
         }
         else if (that.selected) {
-            $.addClass( elem, 'pointer', 'theme-color-bg-4' );
+            $.addClass( elem, 'theme-color-bg-4' );
+            touchable.color = "#fff";
         }
         else {
             $.addClass( elem, 'pointer', 'theme-color-bg-B0' );
+            touchable.color = "#9cd";
         }
     };
 
@@ -64,25 +75,10 @@ var BoxButton = function(opts) {
         value: "action",
         action: 0,
         enabled: true,
-        selected: true,
+        selected: false,
         wide: false,
         visible: true
     }, opts, this);
-
-    // Animate the pressing.
-    $.on(this.element, {
-        down: function(evt) {
-            if (that.enabled) {
-                $.addClass(elem, 'theme-elevation-8');
-                evt.stopPropagation();
-                evt.preventDefault();
-            }
-        },
-        up: function() {
-            $.removeClass(elem, 'theme-elevation-8');
-        },
-        tap: that.fire.bind( that )
-    });
 };
 
 /**

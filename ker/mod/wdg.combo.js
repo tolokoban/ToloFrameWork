@@ -3,6 +3,7 @@ var DB = require("tfw.data-binding");
 var Icon = require("wdg.icon");
 var Modal = require("wdg.modal");
 var Button = require("wdg.button");
+var Touchable = require("tfw.touchable");
 
 
 /**
@@ -29,6 +30,7 @@ var Combo = function(opts) {
     this._button = button;
     var elem = $.elem( this, 'div', 'wdg-combo', 'theme-elevation-2',
                        [label, $.div('table', [body, button]), datalist] );
+    var touchable = new Touchable( elem );
 
     body.addEventListener('focus', function() {
         $.addClass( elem, 'theme-elevation-8' );
@@ -91,7 +93,7 @@ var Combo = function(opts) {
         visible: true
     }, opts, this);
 
-    $.on( elem, that.fire.bind( that ) );
+    touchable.tap.add( that.fire.bind( that ) );
 };
 
 /**
@@ -101,18 +103,18 @@ Combo.prototype.fire = function() {
     var modalChildren = [];
     if (typeof this.label === 'string') {
         // If there is a label for this combo, we have to repeat it in the modal.
-        var label = $.div('theme-label', 'theme-color-bg-1');
+        var label = $.div('theme-label', 'theme-color-bg-1', 'theme-elevation-2');
         $.textOrHtml( label, this.label );
         modalChildren.push( label );
     }
-    
-    var ul = $.tag('ul', 'wdg-combo-modal', 'theme-color-bg-B0');
+
+    var ul = $.tag('ul', 'wdg-combo-modal');
     modalChildren.push( ul );
 
     var btnCancel = new Button({icon: 'cancel', text: _('cancel'), type: 'simple'});
-    modalChildren.push( btnCancel );
-    
-    var modal = new Modal({content: modalChildren, wide: false});
+    modalChildren.push( $.tag('hr'), $.tag('center', [btnCancel]) );
+
+    var modal = new Modal({content: modalChildren, padding: "true", wide: false});
     document.body.appendChild( modal.element );
     modal.visible = true;
 
@@ -132,7 +134,7 @@ Combo.prototype.fire = function() {
         else if (typeof val.element !== 'undefined') {
             val = val.element;
         }
-        container = $.tag('li', 'theme-elevation-0', [val]);
+        container = $.tag('li', 'theme-elevation-2', 'theme-color-bg-B0', [val]);
         $.add( ul, container );
         attachEvent.call( this, key, container, close );
     }
@@ -163,20 +165,10 @@ Combo.toArray = function( obj ) {
 function attachEvent( key, elem, close ) {
     var that = this;
 
-    $.on(elem, {
-        down: function() {
-            window.setTimeout(function() {
-                $.addClass(elem, 'theme-elevation-4');
-            });
-        },
-        up: function() {
-            $.removeClass(elem, 'theme-elevation-4');
-        },
-        tap: function() {
-            console.log("Select: ", key);
-            close();
-            that.value = key;
-        }
+    var touchable = new Touchable( elem );
+    touchable.tap.add(function() {
+        close();
+        that.value = key;
     });
 }
 

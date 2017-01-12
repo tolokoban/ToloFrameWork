@@ -1,18 +1,22 @@
 .tfw-touchable {
     cursor: pointer;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
-.tfw-touchable
-
 .tfw-touchable > div.tfw-touchable-shadow {
-  content: '.';
-  color: transparent;
-  position: absolute;
-  border-radius: 100%;
-  width: 256px;
-  height: 256px;
-  margin: -128px;
-  background: rgba(128,128,128,.5);
-  transform: scale(0);
-  transition: transform .6s;
+    content: '.';
+    font-size: 0;
+    color: transparent;
+    position: absolute;
+    border-radius: 100%;
+    transform: scale(0);
+    transition: none;
+}
+
+.tfw-touchable > div.tfw-touchable-shadow.grow {
+    transition: transform .5s cubic-bezier(.47,1.08,.84,.51);
+    transform: scale(1);
 }

@@ -3,6 +3,7 @@
 var $ = require("dom");
 var DB = require("tfw.data-binding");
 var Icon = require("wdg.icon");
+var Touchable = require("tfw.touchable");
 
 var TYPES = ['standard', 'simple', 'warning', 'shadow', 'special'];
 
@@ -74,7 +75,11 @@ var Button = function(opts) {
     DB.propString(this, 'text')(function(v) {
         refresh();
     });
+    var touchable = new Touchable( elem, {
+        classToAdd: 'theme-elevation-8'        
+    });
     DB.propBoolean(this, 'enabled')(function(v) {
+        touchable.enabled = touchable;
         if (v) {
             $.removeAtt(elem, 'disabled');
         } else {
@@ -108,17 +113,6 @@ var Button = function(opts) {
 
     // Animate the pressing.
     $.on(this.element, {
-        down: function(evt) {
-            if (that.enabled) {
-                $.addClass(elem, 'theme-elevation-8');
-                evt.stopPropagation();
-                evt.preventDefault();
-            }
-        },
-        up: function() {
-            $.removeClass(elem, 'theme-elevation-8');
-        },
-        tap: that.fire.bind( that ),
         keydown: function(evt) {
             if (evt.keyCode == 13 || evt.keyCode == 32) {
                 evt.preventDefault();
@@ -127,6 +121,7 @@ var Button = function(opts) {
             }
         }
     });
+    touchable.tap.add( that.fire.bind( that ) );
 };
 
 /**

@@ -34,7 +34,7 @@ module.exports = $;
 
 
 // Used to store data on the DOM element without colliding with existing attributes.
-var SYMBOL = 'dom' + Date.now();
+var SYMBOL = '@dom' + Date.now();
 
 
 $.tagNS = tagNS;
@@ -70,6 +70,8 @@ $.addClass = addClass;
 $.hasClass = hasClass;
 $.removeClass = removeClass;
 $.toggleClass = toggleClass;
+$.pushStyle = pushStyle;
+$.popStyle = popStyle;
 /**
  * @param newElem {Element} - Replacement element.
  * @param oldElem {Element} - Element to replace.
@@ -215,10 +217,11 @@ function off( element ) {
         return element;
     }
 
-    var pe = element[SYMBOL];
+    if( typeof element[SYMBOL] === 'undefined' ) return element;
+    var pe = element[SYMBOL].events;
     if( typeof pe  === 'undefined' ) return element;
     pe.off();
-    delete element[SYMBOL];
+    delete element[SYMBOL].events;
 }
 
 function on( element, slots ) {
@@ -233,8 +236,9 @@ function on( element, slots ) {
     }
 
     element = $(element);
-    if( typeof element[SYMBOL] === 'undefined' ) {
-        element[SYMBOL] = new PointerEvents( element );
+    if( typeof element[SYMBOL] === 'undefined' ) element[SYMBOL] = {};
+    if( typeof element[SYMBOL].events === 'undefined' ) {
+        element[SYMBOL].events = new PointerEvents( element );
     }
 
     var key, val, preview;
@@ -249,7 +253,7 @@ function on( element, slots ) {
         if (key == 'keydown' || key == 'keyup') {
             element.addEventListener( key, val, preview );
         } else {
-            element[SYMBOL].on( key, val, preview );
+            element[SYMBOL].events.on( key, val, preview );
         }
     }
 
@@ -447,3 +451,21 @@ function textOrHtml( element, content ) {
     return element;
 }
 
+function pushStyle( elem, name, value ) {
+    elem = $( elem );
+    if( typeof elem[SYMBOL] === 'undefined' ) elem[SYMBOL] = {};
+    if( typeof elem[SYMBOL].style === 'undefined' ) elem[SYMBOL].style = {};
+    if( typeof elem[SYMBOL].style[name] === 'undefined' ) elem[SYMBOL].style[name] = [];
+    elem[SYMBOL].style[name].push( elem.style[name] );
+    elem.style[name] = value;
+    return elem;
+}
+
+function popStyle( elem, name ) {
+    elem = $( elem );
+    if( typeof elem[SYMBOL] === 'undefined' ) return elem;
+    if( typeof elem[SYMBOL].style === 'undefined' ) return elem;
+    if( typeof elem[SYMBOL].style[name] === 'undefined' ) return elem;
+    elem.style[name] = elem[SYMBOL].style[name].pop();
+    return elem;
+}

@@ -1,21 +1,26 @@
-"use strict";
-
 var $ = require("dom");
 var DB = require("tfw.data-binding");
+var Lang = require("wdg.lang");
 var LaterAction = require("tfw.timer").laterAction;
 
 /**
- * @class tfw.edit.text
+ * @class Text
  * @description  HTML5 text input with many options.
  *
- * __Attributes__:
- * * {string} `value`:
- * * {string} `value`:
- * * {string} `value`:
- * * {string} `value`:
- * * {string} `value`:
- * * {string} `value`:
- * * {string} `value`:
+ * @param opts.value {string} - .
+ * @param opts.type {string} - One of the following strings: 'text', 'button', 'checkbox', 'color', 'date', 'datetime', 'email', 'file', 'hidden', 'image', 'month', 'password', 'radio', 'range', 'reset', 'number', 'search', 'submit', 'tel', 'time', 'url', 'week'.
+ * @param opts.placeholder {string} - .
+ * @param opts.enabled {boolean} - .
+ * @param opts.validator {} - .
+ * @param opts.valid {} - .
+ * @param opts.list {} - .
+ * @param opts.label {string} - .
+ * @param opts.placeholder {string} - .
+ * @param opts.size {} - .
+ * @param opts.width {} - .
+ * @param opts.focus {} - .
+ * @param opts.wide {boolean} - .
+ * @param opts.visible {boolean} - .
  */
 var Text = function(opts) {
     var that = this;
@@ -26,16 +31,40 @@ var Text = function(opts) {
 
     var label = $.div( 'theme-label', 'theme-color-bg-1' );
     var input = $.tag( 'input' );
+    var lang = new Lang({ small: true, visible: true });
+    var body = $.div('nowrap', [input, lang]);
     var datalist = $.div( 'datalist', 'theme-elevation-12' );
     this._input = input;
-    var elem = $.elem( this, 'div', 'wdg-text', 'theme-elevation-2', [label, input, datalist] );
+    var elem = $.elem( this, 'div', 'wdg-text', 'theme-elevation-2', [label, body, datalist] );
 
-    DB.propString(this, 'value')(function(v) {
-        input.value = v;
+    DB.bind( lang, 'value', function(v) {
+        input.value = that.value[v] || '';
+        input.focus();
+    });
+
+    DB.prop(this, 'value')(function(v) {
+        if( v === null || typeof v === 'undefined') v = '';
+        if( typeof v === 'number' || typeof v === 'boolean') v = '' + v;
+        if( typeof v !== 'string' ) {
+            input.value = v[lang.value];
+            var subset = [];
+            var isoLang;
+            for( isoLang in v ) {
+                subset.push( isoLang );
+            }
+            lang.subset = subset;
+            that.intl = true;
+        } else {
+            input.value = v;
+            that.intl = false;
+        }
         that.validate();
     });
+    DB.propBoolean(this, 'intl')(function(v) {
+        lang.visible = v;
+    });
     DB.propEnum(['text', 'button', 'checkbox', 'color', 'date', 'datetime', 'email', 'file',
-                 'hidden', 'image', 'month', 'password', 'radio', 'range', 'reset', 'number',
+                 'hidden', 'image', 'month', 'password', 'radio', 'range', 'reset',
                  'search', 'submit', 'tel', 'time', 'url', 'week'])(this, 'type')
     (function(v) {
         $.att(input, {type: v});
@@ -79,13 +108,6 @@ var Text = function(opts) {
             $.att(input, {size: v});
         }
     });
-    DB.propUnit(this, 'width')(function(v) {
-        if( v.v <= 0 ) {
-            elem.style.width = 'auto';
-        } else {
-            elem.style.width = v.v + v.u;
-        }
-    });
     DB.propString(this, 'label')(function(v) {
         if (v === null || (typeof v === 'string' && v.trim() == '')) {
             $.addClass(elem, 'no-label');
@@ -102,15 +124,19 @@ var Text = function(opts) {
     DB.propString(this, 'placeholder')(function(v) {
         $.att(input, {placeholder: v});
     });
+    DB.propString(this, 'width')(function(v) {
+        elem.style.width = v;
+    });
     DB.propBoolean(this, 'focus')(function(v) {
-        if (v) window.setTimeout( input.focus.bind( input ) );
-        else window.setTimeout( input.blur.bind( input ) );
+        if (v) input.focus();
+        else input.blur();
     });
     DB.propInteger(this, 'action', '');
     DB.propAddClass(this, 'wide');
     DB.propRemoveClass(this, 'visible', 'hide');
 
     opts = DB.extend({
+        intl: false,
         value: '',
         type: 'text',
         placeholder: '',
@@ -193,7 +219,12 @@ var Text = function(opts) {
     };
 
     var actionUpdateValue = LaterAction(function() {
-        that.value = input.value;
+        if( !that.intl ) {
+            that.value = input.value;
+        } else {
+            that.value[lang.value] = input.value;
+            DB.fire( that, 'value', that.value );
+        }
     }, 300);
     input.addEventListener('keyup', function(evt) {
         if (evt.keyCode == 13) {
@@ -234,7 +265,12 @@ var Text = function(opts) {
         }
     });
     input.addEventListener('blur', function() {
-        that.value = input.value;
+        if( !that.intl ) {
+            that.value = input.value;
+        } else {
+            that.value[lang.value] = input.value;
+            DB.fire( that, 'value', that.value );
+        }
         if (!dataListHasFocus) {
             $.removeClass( elem, "list" );
         }
