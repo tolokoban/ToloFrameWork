@@ -32,7 +32,6 @@ var $ = function(dom) {
 module.exports = $;
 
 
-
 // Used to store data on the DOM element without colliding with existing attributes.
 var SYMBOL = '@dom' + Date.now();
 

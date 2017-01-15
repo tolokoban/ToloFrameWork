@@ -1,6 +1,80 @@
+"use strict";
+
+require("polyfill.promise");
 var $ = require("dom");
 var DB = require("tfw.data-binding");
 
+var delay = window.setTimeout;
+
+var Fx = function() {
+    this._tasks = [];
+    this._index = 0;
+};
+
+/**
+ * @member Fx.go
+ * @param
+ */
+Fx.prototype.go = function( onEnd ) {
+    var that = this;
+    if( this._index >= this._tasks.length ) {
+        this._index = 0;
+        if( typeof onEnd === 'function' ) onEnd( this );
+        return;
+    }
+    var tsk = this._tasks[this._index++];
+    tsk(function(){
+        delay(function() {
+            that.go( onEnd );
+        });
+    });
+};
+
+/**
+ * @member Fx.vanish
+ * @param elem, ms
+ */
+Fx.prototype.vanish = function(elem, ms) {
+    if( typeof ms !== 'number' ) ms = 300;
+    this._tasks.push(function(next) {
+        $.css( elem, {
+            transition: "opacity " + ms + "ms",
+            opacity: 1
+        });
+        delay(function() {
+            $.css( elem, { opacity: 0 } );
+            delay( next, ms );
+        });
+    });
+    return this;
+};
+
+
+/**
+ * @member Fx.detach
+ * @param elem
+ */
+Fx.prototype.detach = function( elem ) {
+    this._tasks.push(function(next) {
+        $.detach( elem );
+        next();
+    });
+    return this;
+};
+
+/**
+ * @member Fx.wait
+ * @param ms
+ */
+Fx.prototype.wait = function(ms) {
+    if( typeof ms !== 'number' ) ms = 0;
+    this._tasks.push(function(next) {
+        delay(next, ms);
+    });
+    return this;
+};
+
+module.exports = new Fx();
 
 /**
  * @module dom.fx
@@ -48,7 +122,7 @@ exports.Fullscreen = function( opts ) {
 
 function fullscreenOn( target, tools ) {
     if (tools.terminate) tools.terminate();
-    
+
     var rect = target.getBoundingClientRect();
     console.info("[dom.fx] rect=...", rect);
     var substitute = $.div();
@@ -57,11 +131,11 @@ function fullscreenOn( target, tools ) {
         width: rect.width + "px",
         height: rect.height + "px"
     });
-    
+
     tools.onBeforeReplace( target );
     $.replace( substitute, target );
     tools.onAfterReplace( target );
-    
+
     tools.substitute = substitute;
     tools.styles = saveStyles( target );
     tools.overlay = $.div('dom-fx-fullscreen');
@@ -75,7 +149,7 @@ function fullscreenOn( target, tools ) {
     });
     $.addClass(target, 'dom-fx-fullscreen-target');
 
-    window.setTimeout(function() {
+    delay(function() {
         var r2 = tools.overlay.getBoundingClientRect();
         $.css(target, {
             left: '20px',
@@ -96,7 +170,7 @@ function fullscreenOff( target, tools ) {
     });
     tools.terminate = function() {
         $.detach( tools.overlay );
-        
+
         tools.onBeforeReplace( target );
         $.replace( target, tools.substitute );
         tools.onAfterReplace( target );
@@ -105,7 +179,7 @@ function fullscreenOff( target, tools ) {
         delete tools.terminate;
     };
 
-    window.setTimeout(tools.terminate, 200);
+    delay(tools.terminate, 200);
 }
 
 function saveStyles( element ) {

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @module tfw.touchable
  *
@@ -15,8 +17,6 @@
  * touchable.tap.add(function() { ... });
  * touchable.press.add(function() { ... });
  */
-
-"use strict";
 
 var $ = require("dom");
 var Listeners = require("tfw.listeners");
