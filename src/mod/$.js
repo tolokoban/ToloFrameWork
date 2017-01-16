@@ -1,13 +1,4 @@
-exports.config={
-    name:"toloframework",
-    description:"Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
-    author:"Tolokoban",
-    version:"0.38.4",
-    major:0,
-    minor:38,
-    revision:4,
-    date:new Date(2016,8,20,8,37,39)
-};
+exports.config={"name":"\"toloframework\"","description":"\"Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.\"","author":"\"Tolokoban\"","version":"\"0.39.41\"","major":"0","minor":"39","revision":"41","date":"2017-01-16T08:56:45.000Z","consts":{}};
 var currentLang = null;
 exports.lang = function(lang) {
     if (lang === undefined) {
@@ -33,17 +24,23 @@ exports.lang = function(lang) {
 };
 exports.intl = function(words, params) {
     var dic = words[exports.lang()],
-    k = params[0],
-    txt, newTxt, i, c, lastIdx, pos;
+        k = params[0],
+        txt, newTxt, i, c, lastIdx, pos;
+    var defLang;
+    for( defLang in words ) break;
+    if( !defLang ) return k;
     if (!dic) {
-        //console.error("Missing internationalization for language : \"" + exports.lang() + "\"!");
-        return k;
+        dic = words[defLang];
+        if( !dic ) {
+            return k;
+        }
     }
     txt = dic[k];
-    if (!txt) {
-        //console.error("Missing internationalization [" + exports.lang() + "]: \"" + k + "\"!");
-        return k;
+    if( !txt ) {
+        dic = words[defLang];
+        txt = dic[k];
     }
+    if (!txt) return k;
     if (params.length > 1) {
         newTxt = "";
         lastIdx = 0;

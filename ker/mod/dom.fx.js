@@ -6,75 +6,159 @@ var DB = require("tfw.data-binding");
 
 var delay = window.setTimeout;
 
+var EMPTY_FUNC = function() {};
+
 var Fx = function() {
     this._tasks = [];
     this._index = 0;
+    this._flush = false;
+    this._started = false;
+    this._onEnd = EMPTY_FUNC;
 };
 
 /**
  * @member Fx.go
  * @param
  */
-Fx.prototype.go = function( onEnd ) {
+Fx.prototype.start = function(onEnd) {
+    if( this._started ) this.end();
+    if (typeof onEnd !== 'function' ) onEnd = EMPTY_FUNC;
+    this._onEnd = onEnd;
     var that = this;
+    this._flush = false;
+    this._started = true;
+    this._index = 0;
+    next.call( this );
+};
+
+function next() {
+    if( !this._started || this._flush ) return;
     if( this._index >= this._tasks.length ) {
         this._index = 0;
-        if( typeof onEnd === 'function' ) onEnd( this );
+        this._started = false;
+        console.log("[dom.fix] TERMINATED");
+        this._onEnd( this );
         return;
     }
+
+    var that = this;
     var tsk = this._tasks[this._index++];
+    console.info("[dom.fx] tsk[" + (this._index - 1) + "]=...", tsk);
     tsk(function(){
-        delay(function() {
-            that.go( onEnd );
-        });
+        delay( next.bind( that ) );
     });
 };
+
+Fx.prototype.end = function() {
+    if( !this._started ) return this;
+    this._flush = true;
+    while( this._index < this._tasks.length ) {
+        var tsk = this._tasks[this._index++];
+        tsk(EMPTY_FUNC);
+    }
+    this._onEnd( this );
+    return this;
+};
+
+/**
+ * @return void
+ */
+Fx.prototype.log = function(msg) {
+    this._tasks.push(function(next) {
+        console.log( "[dom.fx]", msg );
+        next();
+    });
+    return this;
+};
+
+[
+    'css', 'addClass', 'removeClass', 'toggleClass', 'detach',
+    'popStyle', 'pushStyle'
+].forEach(function (methodname) {
+    var slot = $[methodname];
+    Fx.prototype[methodname] = function() {
+        var args = Array.prototype.slice.call(arguments);
+        this._tasks.push(function(next) {
+            slot.apply( $, args );
+            next();
+        });
+        return this;
+    };
+});
+
 
 /**
  * @member Fx.vanish
  * @param elem, ms
  */
 Fx.prototype.vanish = function(elem, ms) {
+    var that = this;
+
     if( typeof ms !== 'number' ) ms = 300;
     this._tasks.push(function(next) {
         $.css( elem, {
             transition: "opacity " + ms + "ms",
             opacity: 1
         });
-        delay(function() {
+        if( that._flush ) {
             $.css( elem, { opacity: 0 } );
-            delay( next, ms );
-        });
+            next();
+        } else {
+            this.wait(function() {
+                $.css( elem, { opacity: 0 } );
+                this.wait( next, ms );
+            });
+        }
     });
     return this;
 };
 
-
-/**
- * @member Fx.detach
- * @param elem
- */
-Fx.prototype.detach = function( elem ) {
-    this._tasks.push(function(next) {
-        $.detach( elem );
-        next();
-    });
-    return this;
-};
 
 /**
  * @member Fx.wait
  * @param ms
  */
-Fx.prototype.wait = function(ms) {
-    if( typeof ms !== 'number' ) ms = 0;
-    this._tasks.push(function(next) {
-        delay(next, ms);
-    });
+Fx.prototype.wait = function(msOrElem) {
+    var that = this;
+
+    if( typeof msOrElem === 'undefined' ) msOrElem = 0;
+    if( typeof msOrElem === 'number' ) {
+        this._tasks.push(function(next) {
+            if( that._flush) next();
+            else {
+                that._delaySlot = next;
+                that._delayId = delay(next, msOrElem);
+            }
+        });
+    } else {
+        this._tasks.push(function(next) {
+            if( !that._flush ) {
+                var e = $(msOrElem);
+                var slot = function(evt) {
+                    console.info("[dom.fx] (transitionend) evt=...", evt);
+                    ['transitionend', 'oTransitionEnd', 'webkitTransitionEnd'].forEach(function (itm) {
+                        e.removeEventListener( itm, slot );
+                    });
+console.log("NEXT!!!!!");
+                    next();
+                };
+                ['transitionend', 'oTransitionEnd', 'webkitTransitionEnd'].forEach(function (itm) {
+                    e.addEventListener( itm, slot );
+                });
+            }
+        });
+    }
     return this;
 };
 
-module.exports = new Fx();
+/**
+ *
+ */
+Object.defineProperty( module, 'exports', {
+    get: function() { return new Fx(); },
+    set: function() {}
+});
+
 
 /**
  * @module dom.fx

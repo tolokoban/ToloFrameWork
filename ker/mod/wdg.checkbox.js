@@ -1,5 +1,6 @@
 var $ = require("dom");
 var DB = require("tfw.data-binding");
+var Icon = require("wdg.icon");
 var Touchable = require("tfw.touchable");
 
 /**
@@ -11,8 +12,14 @@ var Touchable = require("tfw.touchable");
 var Checkbox = function(opts) {
     var that = this;
 
-    var spinner = $.div('wdg-checkbox-spin',
-                        [$.div([$.div('theme-elevation-4'), $.div('theme-elevation-4')])]);
+    var spinner = $.div('wdg-checkbox-spin', [
+        $.div([
+            new Icon({ content: 'ok', button: "true",
+                       size: ".7em", color0: "transparent", color4: "#000" }),
+            new Icon({ content: 'cancel', button: "true",
+                       size: ".7em", color0: "transparent", color3: "#fff" }),
+        ])
+    ]);
     var text = $.div('label');
     var elem = $.elem( this, 'button', 'wdg-checkbox', [spinner, text] );
 
