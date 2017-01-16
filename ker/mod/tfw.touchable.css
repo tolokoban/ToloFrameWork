@@ -1,4 +1,5 @@
 .tfw-touchable {
+    position: relative;
     cursor: pointer;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -12,11 +13,17 @@
     color: transparent;
     position: absolute;
     border-radius: 100%;
+    opacity: 1;
     transform: scale(0);
     transition: none;
 }
 
 .tfw-touchable > div.tfw-touchable-shadow.grow {
-    transition: transform .5s cubic-bezier(.47,1.08,.84,.51);
+    transition: transform .3s ease;  /*cubic-bezier(.47,1.08,.84,.51);*/
     transform: scale(1);
+}
+
+.tfw-touchable > div.tfw-touchable-shadow.fade {
+    transition: opacity 3s ease;  /*cubic-bezier(.47,1.08,.84,.51);*/
+    opacity: 0;
 }
