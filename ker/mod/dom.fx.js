@@ -7,12 +7,32 @@ var DB = require("tfw.data-binding");
 var delay = window.setTimeout;
 
 var EMPTY_FUNC = function() {};
+var ID = 1;
 
-var Fx = function() {
+var Fx = function( name ) {
+    // Because it is  possible to call `end()` before  the sequence is
+    // over, we need  to know in what  session we are. This  way, if a
+    // callback is called after the end,  it can know that it must not
+    // be execute the next task.
+    this._session = {};
+    // A name can be defined for debug purpose, but it is not used right now.
+    Object.defineProperty( Fx.prototype, 'name', {
+        value: name,
+        writable: false,
+        configurable: true,
+        enumerable: true
+    });
+    this._name = name;
+    // Sequence of  tasks. A task  is a function with  two parameters:
+    // the `next()` function and a  boolean `async` which tells you if
+    // your are allowed to call async functions.
+    // When  a task  is  called in  the `end()`  function,  it is  not
+    // allowed to call async functions.
     this._tasks = [];
+    // Index of the current task.
     this._index = 0;
-    this._flush = false;
     this._started = false;
+    this._startTime = 0;
     this._onEnd = EMPTY_FUNC;
 };
 
@@ -24,37 +44,40 @@ Fx.prototype.start = function(onEnd) {
     if( this._started ) this.end();
     if (typeof onEnd !== 'function' ) onEnd = EMPTY_FUNC;
     this._onEnd = onEnd;
-    var that = this;
-    this._flush = false;
     this._started = true;
     this._index = 0;
-    next.call( this );
+    this._session = { $id: ID++ };
+    this._startTime = Date.now();
+    next.call( this, this._session );
 };
 
-function next() {
-    if( !this._started || this._flush ) return;
+function next( session ) {
+    if( session != this._session ) return;
     if( this._index >= this._tasks.length ) {
         this._index = 0;
         this._started = false;
-        console.log("[dom.fix] TERMINATED");
+        delete this._session;
         this._onEnd( this );
         return;
     }
 
     var that = this;
     var tsk = this._tasks[this._index++];
-    console.info("[dom.fx] tsk[" + (this._index - 1) + "]=...", tsk);
+    console.info( "[dom.fx] tsk[" + (this._index - 1) + "]: ", tsk.label,
+                  "(" + (Date.now() - this._startTime) + " ms)", tsk.args, session );
     tsk(function(){
-        delay( next.bind( that ) );
-    });
+        delay( next.bind( that, session ) );
+    }, true);
 };
 
 Fx.prototype.end = function() {
     if( !this._started ) return this;
-    this._flush = true;
+    this._started = false;
+    delete this._session;
     while( this._index < this._tasks.length ) {
         var tsk = this._tasks[this._index++];
-        tsk(EMPTY_FUNC);
+        console.info( "[dom.fx.end] tsk[" + (this._index - 1) + "]: ", tsk.label, tsk.args );
+        tsk( EMPTY_FUNC, false );
     }
     this._onEnd( this );
     return this;
@@ -63,25 +86,60 @@ Fx.prototype.end = function() {
 /**
  * @return void
  */
+Fx.prototype.addTask = function( task, label, args ) {
+    task.label = label;
+    task.args = args;
+    this._tasks.push( task );
+    return this;
+};
+
+/**
+ * @return void
+ */
 Fx.prototype.log = function(msg) {
-    this._tasks.push(function(next) {
+    this.addTask(function(next) {
         console.log( "[dom.fx]", msg );
         next();
-    });
+    }, 'log');
+    return this;
+};
+
+/**
+ * Stop execution of the animation until end() has been called.
+ */
+Fx.prototype.pause = function() {
+    this.addTask( EMPTY_FUNC, 'pause' );
+    return this;
+};
+
+Fx.prototype.exec = function(msg) {
+    var args = Array.prototype.slice.call( arguments );
+    this.addTask(function(next, session) {
+        args.forEach(function (arg) {
+            try {
+                if( typeof arg === 'function' ) arg( session );
+                else console.log( '[dom.fx]', arg );
+            }
+            catch( ex ) {
+                console.error( ex );
+            }
+        });
+        next();
+    }, 'exec', args );
     return this;
 };
 
 [
     'css', 'addClass', 'removeClass', 'toggleClass', 'detach',
-    'popStyle', 'pushStyle'
+    'saveStyle', 'restoreStyle', 'add', 'removeAtt', 'replace'
 ].forEach(function (methodname) {
     var slot = $[methodname];
     Fx.prototype[methodname] = function() {
         var args = Array.prototype.slice.call(arguments);
-        this._tasks.push(function(next) {
+        this.addTask(function(next) {
             slot.apply( $, args );
             next();
-        });
+        }, methodname, args );
         return this;
     };
 });
@@ -92,25 +150,11 @@ Fx.prototype.log = function(msg) {
  * @param elem, ms
  */
 Fx.prototype.vanish = function(elem, ms) {
-    var that = this;
-
-    if( typeof ms !== 'number' ) ms = 300;
-    this._tasks.push(function(next) {
-        $.css( elem, {
-            transition: "opacity " + ms + "ms",
-            opacity: 1
-        });
-        if( that._flush ) {
-            $.css( elem, { opacity: 0 } );
-            next();
-        } else {
-            this.wait(function() {
-                $.css( elem, { opacity: 0 } );
-                this.wait( next, ms );
-            });
-        }
-    });
-    return this;
+    ms = parseInt( ms );
+    if( isNaN( ms ) ) ms = 300;
+    return this.css( elem, { transition: "none" } )
+        .css(elem, { transition: "opacity " + ms + "ms", opacity: 0 } )
+        .wait( ms );
 };
 
 
@@ -120,44 +164,38 @@ Fx.prototype.vanish = function(elem, ms) {
  */
 Fx.prototype.wait = function(msOrElem) {
     var that = this;
+    var args = Array.prototype.slice.call( arguments );
 
     if( typeof msOrElem === 'undefined' ) msOrElem = 0;
     if( typeof msOrElem === 'number' ) {
-        this._tasks.push(function(next) {
-            if( that._flush) next();
-            else {
-                that._delaySlot = next;
-                that._delayId = delay(next, msOrElem);
+        this.addTask(function(next, async) {
+            if( async ) {
+                delay(next, msOrElem);
             }
-        });
+        }, 'wait', args );
     } else {
-        this._tasks.push(function(next) {
-            if( !that._flush ) {
+        this.addTask(function(next, async) {
+            if( async ) {
                 var e = $(msOrElem);
                 var slot = function(evt) {
-                    console.info("[dom.fx] (transitionend) evt=...", evt);
                     ['transitionend', 'oTransitionEnd', 'webkitTransitionEnd'].forEach(function (itm) {
                         e.removeEventListener( itm, slot );
                     });
-console.log("NEXT!!!!!");
                     next();
                 };
                 ['transitionend', 'oTransitionEnd', 'webkitTransitionEnd'].forEach(function (itm) {
                     e.addEventListener( itm, slot );
                 });
             }
-        });
+        }, 'wait', args );
     }
     return this;
 };
 
-/**
- *
- */
-Object.defineProperty( module, 'exports', {
-    get: function() { return new Fx(); },
-    set: function() {}
-});
+
+module.exports = function( name ) {
+    return new Fx( name );
+};
 
 
 /**

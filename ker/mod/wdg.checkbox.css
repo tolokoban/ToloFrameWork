@@ -72,7 +72,7 @@
     height: 1.1em;
     transform-style: preserve-3d;
     transition: transform .5s;
-    transform: rotateY(180deg);
+    transform: perspective(200px) rotateY(180deg);
     line-height: 1.1em;
     padding: 0;
     text-align: center;
@@ -85,7 +85,7 @@
 }
 
 .wdg-checkbox.checked > .wdg-checkbox-spin > div {
-    transform: rotateY(0);
+    transform: perspective(200px) rotateY(0);
 }
 
 .wdg-checkbox > .wdg-checkbox-spin > div > div {
@@ -96,13 +96,14 @@
     height: 100%;
     border-radius: 100%;
     border: none;
+    perspective: 200px;
     backface-visibility: hidden;
     background: #0f0;
 }
 
 .wdg-checkbox > .wdg-checkbox-spin > div > div:last-child {
     background: #d00;
-    transform: rotateY(180deg);
+    transform: perspective(200px) rotateY(180deg);
 }
 
 
