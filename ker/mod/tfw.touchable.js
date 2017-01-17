@@ -29,7 +29,7 @@ var Touchable = function(elem, opts) {
     if( typeof opts.enabled === 'undefined' ) opts.enabled = true;
     elem = $( elem );
     this.enabled = opts.enabled;
-    this.color = opts.color || "#888";
+    this.color = opts.color || "#fd8";
     this.classToAdd = opts.classToAdd;
     this.opacity = opts.opacity || .3;
     this.element = $(elem);
@@ -38,65 +38,56 @@ var Touchable = function(elem, opts) {
 
     $.addClass( elem, 'tfw-touchable' );
     var shadow = $.div( 'tfw-touchable-shadow' );
+    var fxDown = Fx().css( shadow, { transition: "none" })
+            .exec(function( session ) {
+                var cls = that.classToAdd;
+                if( typeof cls === 'string' ) {
+                    $.addClass( elem, cls );
+                }
+                // Position must not be `static`.
+                var position = getComputedStyle(elem).position;
+                if( ['relative', 'absolute', 'fixed'].indexOf( position ) == -1 ) {
+                    elem.style.position = 'relative';
+                }
+                elem.style.overflow = 'hidden';
+                var rect = elem.getBoundingClientRect();
+                var w = rect.width;
+                var h = rect.height;
+                w = Math.max( lastX, w - lastX );
+                h = Math.max( lastY, h - lastY );
+                var radius = Math.ceil( Math.sqrt( w*w + h*h ) );
+                $.css( shadow, {
+                    left: lastX + "px",
+                    top: lastY + "px",
+                    margin: "-" + radius + "px",
+                    width: 2*radius + "px",
+                    height: 2*radius + "px",
+                    opacity: that.opacity,
+                    background: that.color,
+                    transform: "scale(0)"
+                });
+                $.add( elem, shadow );
+            })
+            .css( shadow, { transition: "all 3s ease" } )
+            .css( shadow, { transform: "scale(1)" } )
+            .wait( 3000 )
+            .css( shadow, { opacity: 0 } )
+            .wait( 2000 )
+            .detach( shadow );
     var time = 0;
     var lastX, lastY;
     var removeShadow = 0;
 
     $.on(elem, {
         down: function(evt) {
-            console.log("DOWN");
             if( !that.enabled ) return;
-            if( removeShadow ) {
-                window.clearTimeout( removeShadow );
-                removeShadow = 0;
-            }
-            var position = getComputedStyle(elem).position;
-            if( ['relative', 'absolute', 'fixed'].indexOf( position ) == -1 ) {
-                elem.style.position = 'relative';
-            }
-            $.pushStyle( elem, 'overflow', 'hidden' );
-            var cls = that.classToAdd;
-            if( typeof cls === 'string' ) {
-                $.addClass( elem, cls );
-            }
             lastX = evt.x;
             lastY = evt.y;
-            var rect = elem.getBoundingClientRect();
-            var w = rect.width;
-            var h = rect.height;
-            w = Math.max( lastX, w - lastX );
-            h = Math.max( lastY, h - lastY );
-            var radius = Math.ceil( Math.sqrt( w*w + h*h ) );
-            $.css( shadow, {
-                left: lastX + "px",
-                top: lastY + "px",
-                margin: "-" + radius + "px",
-                width: 2*radius + "px",
-                height: 2*radius + "px",
-                opacity: that.opacity,
-                background: that.color
-            });
-            $.removeClass( shadow, "fade" );
-            window.setTimeout( $.addClass.bind( $, shadow, "grow" ) );
-            $.add( elem, shadow );
-            removeShadow = window.setTimeout(function() {
-                $.removeClass( shadow, "grow" );
-                $.addClass( shadow, "fade" );
-                removeShadow = window.setTimeout(function() {
-                    $.detach( shadow );
-                    $.popStyle( elem, 'overflow' );
-                    $.removeClass( shadow, "fade" );
-                }, 3000);
-            }, 300);
+            fxDown.start();
             time = Date.now();
         },
         up: function(evt) {
-            console.log("UP");
             if( !that.enabled ) return;
-            var cls = that.classToAdd;
-            if( typeof cls === 'string' ) {
-                $.removeClass( elem, cls );
-            }
             var x = evt.x - lastX;
             var y = evt.y - lastY;
             if( x*x + y*y > 1000 ) return;

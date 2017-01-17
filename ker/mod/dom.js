@@ -69,8 +69,8 @@ $.addClass = addClass;
 $.hasClass = hasClass;
 $.removeClass = removeClass;
 $.toggleClass = toggleClass;
-$.pushStyle = pushStyle;
-$.popStyle = popStyle;
+$.saveStyle = saveStyle;
+$.restoreStyle = restoreStyle;
 /**
  * @param newElem {Element} - Replacement element.
  * @param oldElem {Element} - Element to replace.
@@ -450,21 +450,31 @@ function textOrHtml( element, content ) {
     return element;
 }
 
-function pushStyle( elem, name, value ) {
-    elem = $( elem );
-    if( typeof elem[SYMBOL] === 'undefined' ) elem[SYMBOL] = {};
-    if( typeof elem[SYMBOL].style === 'undefined' ) elem[SYMBOL].style = {};
-    if( typeof elem[SYMBOL].style[name] === 'undefined' ) elem[SYMBOL].style[name] = [];
-    elem[SYMBOL].style[name].push( elem.style[name] );
-    elem.style[name] = value;
-    return elem;
+function saveStyle( elements ) {
+    if( !Array.isArray( elements ) ) return saveStyle( Array.prototype.slice.call( arguments ) );
+    elements.forEach(function (elem) {
+        elem = $( elem );
+        if( typeof elem[SYMBOL] === 'undefined' ) elem[SYMBOL] = {};
+        if( !Array.isArray( elem[SYMBOL].style ) ) elem[SYMBOL].style = [];
+        elem[SYMBOL].style.push( JSON.stringify( elem.style ) );
+    });
 }
 
-function popStyle( elem, name ) {
-    elem = $( elem );
-    if( typeof elem[SYMBOL] === 'undefined' ) return elem;
-    if( typeof elem[SYMBOL].style === 'undefined' ) return elem;
-    if( typeof elem[SYMBOL].style[name] === 'undefined' ) return elem;
-    elem.style[name] = elem[SYMBOL].style[name].pop();
-    return elem;
+function restoreStyle( elements ) {
+    if( !Array.isArray( elements ) ) return restoreStyle( Array.prototype.slice.call( arguments ) );
+    elements.forEach(function (elem) {
+        elem = $( elem );
+        if( typeof elem[SYMBOL] === 'undefined' || !Array.isArray( elem[SYMBOL].style ) ) throw Error(
+            "[dom.restoreStyle] `saveStyle()` has never been used on this element!");
+        if( elem[SYMBOL].style.length == 0 ) throw Error(
+            "[dom.restoreStyle] more `restore` than `save`!");
+        var styles = JSON.parse( elem[SYMBOL].style.pop() );
+        var k, v;
+        for( k in styles ) {
+            v = styles[k];
+            if( typeof v !== 'undefined' ) {
+                elem.style[k] = v;
+            }
+        }
+    });
 }
