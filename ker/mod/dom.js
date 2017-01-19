@@ -16,7 +16,7 @@ var $ = function(dom) {
     if (typeof dom === 'string') {
         var elem = document.getElementById( dom );
         if (!elem) {
-            throw Error("There is no DOM element with this ID: `" + dom + "`");
+            console.error( "[dom] There is no DOM element with this ID: `" + dom + "`" );
         }
         return elem;
     }

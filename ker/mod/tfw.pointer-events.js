@@ -2,7 +2,9 @@
  * @module tfw.pointer-events
  *
  * @description
- *
+ * Available actions are:
+ * down, up, tap, doubletap,
+ * drag, move, wheel.
  *
  * @example
  * var mod = require('tfw.pointer-events');

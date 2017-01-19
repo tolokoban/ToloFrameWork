@@ -187,12 +187,12 @@ function genericButton( id, type ) {
 }
 
 Button.Cancel = function(type) { return genericButton('cancel', type || 'simple'); };
-Button.Close = function() { return genericButton('close', 'simple'); };
-Button.Delete = function() { return genericButton('delete', 'warning'); };
-Button.No = function() { return genericButton('no'); };
+Button.Close = function(type) { return genericButton('close', type || 'simple'); };
+Button.Delete = function(type) { return genericButton('delete', type || 'warning'); };
+Button.No = function(type) { return genericButton('no'); };
 Button.Ok = function(type) { return genericButton('ok', type || 'default'); };
-Button.Edit = function() { return genericButton('edit'); };
-Button.Save = function() { return genericButton('save', 'special'); };
+Button.Edit = function(type) { return genericButton('edit'); };
+Button.Save = function(type) { return genericButton('save', type || 'special'); };
 Button.Yes = function(type) { return genericButton('yes', type || 'default'); };
 
 Button.default = {
