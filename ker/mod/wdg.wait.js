@@ -16,26 +16,26 @@ var Icon = require("wdg.icon");
  * var instance = new Wait({visible: false});
  */
 var Wait = function(opts) {
-    var caption = $.div();
+    var text = $.div();
     var icon = new Icon({ content: 'wait', rotate: true });
-    var elem = $.elem( this, 'div', 'wdg-wait', [icon, caption] );
+    var elem = $.elem( this, 'div', 'wdg-wait', [icon, text] );
     
     DB.propRemoveClass( this, 'visible', 'hide' );
     DB.propUnit( this, 'size' )(function(unit) {
         icon.size = unit.v + unit.u;
         // We want to text to be 75% of the icon.
-        $.css( caption, {
+        $.css( text, {
             'font-size': (unit.v * .75) + unit.u,
             'padding-left': (unit.v * .5) + unit.u
         });
     });
-    DB.propString( this, 'caption' )(function(v) {
-        caption.textContent = v;
+    DB.propString( this, 'text' )(function(v) {
+        text.textContent = v;
     });
     
     opts = DB.extend({
         size: '24px',
-        caption: '',
+        text: '',
         visible: true
     }, opts, this);
 };
