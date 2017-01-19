@@ -31,7 +31,7 @@ var Touchable = function(elem, opts) {
     this.enabled = opts.enabled;
     this.color = opts.color || "#fd8";
     this.classToAdd = opts.classToAdd;
-    this.opacity = opts.opacity || .3;
+    this.opacity = opts.opacity || .4;
     this.element = $(elem);
     this.tap = new Listeners();
     this.press = new Listeners();
@@ -68,11 +68,12 @@ var Touchable = function(elem, opts) {
                 });
                 $.add( elem, shadow );
             })
-            .css( shadow, { transition: "all 3s ease" } )
+            .css( shadow, { transition: "all .3s ease" } )
             .css( shadow, { transform: "scale(1)" } )
-            .wait( 3000 )
+            .wait( 300 )
+            .css( shadow, { transition: "all .2s ease" } )
             .css( shadow, { opacity: 0 } )
-            .wait( 2000 )
+            .wait( 200 )
             .detach( shadow );
     var time = 0;
     var lastX, lastY;
@@ -81,16 +82,15 @@ var Touchable = function(elem, opts) {
     $.on(elem, {
         down: function(evt) {
             if( !that.enabled ) return;
-            lastX = evt.x;
-            lastY = evt.y;
+            evt.stopPropagation();
+            evt.preventDefault();
+            lastX = Math.floor( evt.x );
+            lastY = Math.floor( evt.y );
             fxDown.start();
             time = Date.now();
         },
-        up: function(evt) {
+        tap: function(evt) {
             if( !that.enabled ) return;
-            var x = evt.x - lastX;
-            var y = evt.y - lastY;
-            if( x*x + y*y > 1000 ) return;
             console.log('TAP', evt);
             that.tap.fire( evt );
         }

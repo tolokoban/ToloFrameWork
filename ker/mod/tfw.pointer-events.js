@@ -9,8 +9,10 @@
  */
 
 // Webkit and Opera still use 'mousewheel' event type.
-var WHEEL_EVENT = "onwheel" in document.createElement("div") ? "wheel" : // Modern browsers support "wheel"
-        document.onmousewheel !== undefined ? "mousewheel" : // Webkit and IE support at least "mousewheel"
+var WHEEL_EVENT = "onwheel" in document.createElement("div") ? "wheel" :
+        // Modern browsers support "wheel"
+        document.onmousewheel !== undefined ? "mousewheel" :
+        // Webkit and IE support at least "mousewheel"
         "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
 
 
@@ -34,23 +36,30 @@ var G = {
     lastTapTime: 0
 };
 
-document.body.addEventListener( 'mousedown', function(evt) {
+var onDocumentMouseDown = function(evt) {
     if (G.touchDevice) return;
-    G.bodyDownX = evt.clientX;
-    G.bodyDownY = evt.clientY;
-    G.bodyMoveX = evt.clientX;
-    G.bodyMoveY = evt.clientY;
-    G.bodyMoveLastX = evt.clientX;
-    G.bodyMoveLastY = evt.clientY;
-}, true );
+    G.bodyDownX = evt.pageX;
+    G.bodyDownY = evt.pageY;
+    G.bodyMoveX = evt.pageX;
+    G.bodyMoveY = evt.pageY;
+    G.bodyMoveLastX = evt.pageX;
+    G.bodyMoveLastY = evt.pageY;
+    console.log("MouseDown: ", evt.pageX, evt.pageY);
+};
 
-document.body.addEventListener( 'mousemove', function(evt) {
+var onDocumentMouseMove = function(evt) {
     if (G.touchDevice) return;
+    if( !G.target ) return;
+    evt.stopPropagation();
+    evt.preventDefault();
+
     G.bodyMoveLastX = G.bodyMoveX;
     G.bodyMoveLastY = G.bodyMoveY;
-    var rectB = evt.target.getBoundingClientRect();
-    G.bodyMoveX = evt.offsetX + rectB.left;
-    G.bodyMoveY = evt.offsetY + rectB.top;
+    console.log("MouseMove: ", evt.pageX, evt.pageY);
+    //var rectB = evt.target.getBoundingClientRect();
+    //console.info("[tfw.pointer-events] rectB=", rectB.left, rectB.top);
+    G.bodyMoveX = evt.pageX; // + rectB.left;
+    G.bodyMoveY = evt.pageY; // + rectB.top;
 
     if (!G.target) return;
 
@@ -69,18 +78,18 @@ document.body.addEventListener( 'mousemove', function(evt) {
         vx: G.bodyMoveX - G.bodyMoveLastX,
         vy: G.bodyMoveY - G.bodyMoveLastY
     });
-}, true );
+};
 
-document.body.addEventListener( 'mouseup', function(evt) {
-    if (G.touchDevice) return;
-    if (!G.target) return;
+var onDocumentMouseUp = function(evt) {
+    if( G.touchDevice ) return;
+    if( !G.target ) return;
     evt.stopPropagation();
     evt.preventDefault();
 
     var time = Date.now();
     var slots = G.target._slots;
-    var dx = G.bodyMoveX - G.bodyDownX;
-    var dy = G.bodyMoveY - G.bodyDownY;
+    var dx = evt.pageX - G.bodyDownX;
+    var dy = evt.pageY - G.bodyDownY;
     if (slots.up) {
         slots.up({
             action: 'up',
@@ -91,8 +100,9 @@ document.body.addEventListener( 'mouseup', function(evt) {
             dy: dy
         });
     }
+console.log( "MouseUp: ", evt.pageX, evt.pageY, dx * dx + dy * dy );
     // Tap or doubletap.
-    if (dx * dx + dy * dy < 256) {
+    if (dx * dx + dy * dy < 1024) {
         if (G.lastTapTime > 0) {
             if (slots.doubletap && time - G.lastTapTime < 400) {
                 slots.doubletap({
@@ -116,7 +126,12 @@ document.body.addEventListener( 'mouseup', function(evt) {
         G.lastTapTime = time;
     }
     delete G.target;
-}, true);
+};
+
+
+document.body.addEventListener( 'mousedown', onDocumentMouseDown, true );
+document.body.addEventListener( 'mousemove', onDocumentMouseMove, true );
+document.body.addEventListener( 'mouseup', onDocumentMouseUp, true );
 
 
 function PointerEvents( element ) {
@@ -132,7 +147,12 @@ function PointerEvents( element ) {
     //===============
     // Touch events.
     addEvent.call(that, element, 'touchstart', function(evt) {
-        G.touchDevice = true;
+        if( !G.touchDevice ) {
+            G.touchDevice = true;
+            document.body.removeEventListener( 'mousedown', onDocumentMouseDown, true );
+            document.body.removeEventListener( 'mousemove', onDocumentMouseMove, true );
+            document.body.removeEventListener( 'mouseup', onDocumentMouseUp, true );
+        }
         var slots = that._slots;
         if (evt.touches.length == 1) {
             G.rect = element.getBoundingClientRect();
@@ -249,7 +269,7 @@ function PointerEvents( element ) {
     });
     addEvent.call(that, element, 'mousemove', function(evt) {
         var slots = that._slots;
-        if (slots.move) {            
+        if (slots.move) {
             var rectA = element.getBoundingClientRect();
             var rectB = evt.target.getBoundingClientRect();
             slots.move({

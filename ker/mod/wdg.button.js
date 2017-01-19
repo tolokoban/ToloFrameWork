@@ -33,7 +33,7 @@ var Button = function(opts) {
 
     var elem = $.elem(
         this,
-        typeof opts.href === 'string' ? 'a' : 'button', 'wdg-button', 'theme-elevation-2'
+        'button', 'wdg-button', 'theme-elevation-2'
     );
     if (typeof opts.href === 'string' && opts.href.length > 0) {
         $.att( elem, 'href', opts.href );
@@ -141,6 +141,8 @@ Button.prototype.fire = function() {
         var href = this.href;
         if (typeof href !== 'string' || href.trim().length == 0) {
             DB.fire( this, 'action', this.value );
+        } else {
+            window.location = href;
         }
     }
 };

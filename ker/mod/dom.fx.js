@@ -63,8 +63,10 @@ function next( session ) {
 
     var that = this;
     var tsk = this._tasks[this._index++];
-    console.info( "[dom.fx] tsk[" + (this._index - 1) + "]: ", tsk.label,
-                  "(" + (Date.now() - this._startTime) + " ms)", tsk.args, session );
+    if( this._debug ) {
+        console.info( "[dom.fx] tsk[" + (this._index - 1) + "]: ", tsk.label,
+                      "(" + (Date.now() - this._startTime) + " ms)", tsk.args, session );
+    }
     tsk(function(){
         delay( next.bind( that, session ) );
     }, true);
@@ -72,14 +74,29 @@ function next( session ) {
 
 Fx.prototype.end = function() {
     if( !this._started ) return this;
+    var that = this;
     this._started = false;
     delete this._session;
     while( this._index < this._tasks.length ) {
         var tsk = this._tasks[this._index++];
-        console.info( "[dom.fx.end] tsk[" + (this._index - 1) + "]: ", tsk.label, tsk.args );
+        if( that._debug ) {
+            console.info( "[dom.fx.end] tsk[" + (this._index - 1) + "]: ", tsk.label, tsk.args );
+        }
         tsk( EMPTY_FUNC, false );
     }
     this._onEnd( this );
+    return this;
+};
+
+/**
+ * @member Fx.debug
+ * @param value
+ */
+Fx.prototype.debug = function(value) {
+    this.addTask( function( next ) {
+        this._debug = value ? true : false;
+        next();
+    });
     return this;
 };
 
