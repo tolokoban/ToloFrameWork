@@ -43,7 +43,7 @@ function Modal( opts ) {
     });
 
     opts = DB.extend({
-        visible: false, content: [], padding: false, scroll: true
+        visible: false, content: [], padding: false, scroll: true, wide: false
     }, opts, this );
 }
 
