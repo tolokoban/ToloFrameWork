@@ -41,7 +41,7 @@ function svc(name, args, url) {
             }
             xhr.onload = function() {
                 if (xhr.status != 200) {
-                    reject(
+                    return reject(
                         {
                             id: exports.HTTP_ERROR,
                             msg: "(" + xhr.status + ") " + xhr.statusText,

@@ -68,7 +68,7 @@ var Area = function( opts ) {
         fullscreen.value = !fullscreen.value;
     });
 
-    area.addEventListener('blur', function() {
+    area.addEventListener('keyup', function() {
         that.value = area.value;
     }, false);
 };

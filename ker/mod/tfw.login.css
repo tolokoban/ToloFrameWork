@@ -47,7 +47,8 @@
 }
 
 .tfw-login > div > .hint {
-    font-size: 70%;
+    font-size: 100%;
+    color: rgba(0,0,0,.8);
 }
 
 .tfw-login > div > .row > * {

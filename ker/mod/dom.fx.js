@@ -235,7 +235,7 @@ module.exports = function( name ) {
  * * __value__    {boolean}:    If    `true`    the    element    goes
  fullscreen. Otherwise, it returns to its initial position.
  */
-exports.Fullscreen = function( opts ) {
+module.exports.Fullscreen = function( opts ) {
     if( typeof opts === 'undefined' ) {
         throw Error("[dom.fx:fullscreen] Missing argument!");
     }
