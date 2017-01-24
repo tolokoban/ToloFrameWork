@@ -38,7 +38,7 @@ div.wdg-modal > div > div {
     margin: 0;
     padding: 0;
     display: inline-block;
-    max-height: 90vh;
+    max-height: 95vh;
     min-width: 240px;
     overflow: hidden;
     text-align: left;
@@ -53,3 +53,25 @@ div.wdg-modal.padding > div > div {
 div.wdg-modal.scroll > div > div {
     overflow-y: auto;
 }
+
+div.wdg-modal div.scrollable {
+    max-height: 80vh;
+    max-height: calc(95vh - 80px);
+    overflow: auto;
+    padding: 0;
+    margin: 0;
+}
+
+@media (max-width: 490px) {
+    div.wdg-modal > div > div {
+        max-height: 100vh;
+        height: 100%;
+        width: 100%;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        top: 0;
+        position: fixed;
+    }
+}
+

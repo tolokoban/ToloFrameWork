@@ -189,7 +189,14 @@ function add( element ) {
         for (i = 1 ; i < arguments.length ; i++) {
             child = arguments[i];
             if( typeof child === 'string' || typeof child === 'number' ) {
-                child = document.createTextNode( child );
+                child = '' + child;
+                if( child.substr( 0, 6 ) == '<html>' ) {
+                    var html = child.substr( 6 );
+                    child = $.tag('span');
+                    child.innerHTML = html;
+                } else {
+                    child = document.createTextNode( child );
+                }
             }
             else if( typeof child.element === 'function' ) {
                 // Backward compatibility with Widgets.
@@ -266,13 +273,20 @@ function tagNS( ns, name ) {
         for (i = 2 ; i < arguments.length ; i++) {
             arg = arguments[i];
             if( Array.isArray(arg) ) {
-                // Array are for children.
+                // Arrays are for children.
                 arg.forEach(function (child) {
                     switch( typeof child ) {
                     case 'string':
                     case 'number':
                     case 'boolean':
-                        child = document.createTextNode( "" + child );
+                        child = '' + child;
+                        if( child.substr( 0, 6 ) == '<html>' ) {
+                            var html = child.substr( 6 );
+                            child = $.tag('span');
+                            child.innerHTML = html;
+                        } else {
+                            child = document.createTextNode( child );
+                        }
                         break;
                     }
                     add( e, child );

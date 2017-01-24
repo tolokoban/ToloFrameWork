@@ -46,7 +46,6 @@ var onDocumentMouseDown = function(evt) {
     G.bodyMoveY = evt.pageY;
     G.bodyMoveLastX = evt.pageX;
     G.bodyMoveLastY = evt.pageY;
-    console.log("MouseDown: ", evt.pageX, evt.pageY);
 };
 
 var onDocumentMouseMove = function(evt) {
@@ -57,9 +56,6 @@ var onDocumentMouseMove = function(evt) {
 
     G.bodyMoveLastX = G.bodyMoveX;
     G.bodyMoveLastY = G.bodyMoveY;
-    console.log("MouseMove: ", evt.pageX, evt.pageY);
-    //var rectB = evt.target.getBoundingClientRect();
-    //console.info("[tfw.pointer-events] rectB=", rectB.left, rectB.top);
     G.bodyMoveX = evt.pageX; // + rectB.left;
     G.bodyMoveY = evt.pageY; // + rectB.top;
 
@@ -102,7 +98,6 @@ var onDocumentMouseUp = function(evt) {
             dy: dy
         });
     }
-console.log( "MouseUp: ", evt.pageX, evt.pageY, dx * dx + dy * dy );
     // Tap or doubletap.
     if (dx * dx + dy * dy < 1024) {
         if (G.lastTapTime > 0) {
