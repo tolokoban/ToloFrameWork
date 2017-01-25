@@ -130,7 +130,8 @@ var Button = function(opts) {
  * @param {function} slot - Function to call when `action` has changed.
  */
 Button.prototype.on = function(slot) {
-    return DB.bind( this, 'action', slot );
+    DB.bind( this, 'action', slot );
+    return this;
 };
 
 /**

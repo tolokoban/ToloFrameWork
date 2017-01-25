@@ -405,6 +405,7 @@ Icon.Icons = {
 Icon.Icons.add = Icon.Icons.plus;
 Icon.Icons.back = Icon.Icons.left;
 Icon.Icons.help = Icon.Icons.question;
+Icon.Icons.save = Icon.Icons.export;
 
 
 Icon.draw = draw;
