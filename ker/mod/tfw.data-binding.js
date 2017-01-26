@@ -18,6 +18,7 @@ var ID = '_tfw.data-binding_';
 var converters = {
     castArray: function(v) {
         if (Array.isArray( v )) return v;
+        if( v === null || v === undefined ) return [];
         return [v];
     },
     castBoolean: function(v) {
@@ -85,8 +86,9 @@ var converters = {
         return JSON.stringify( v );
     },
     castStringArray: function(v) {
-        if (Array.isArray( v )) return v;
-        if (typeof v === 'string') {
+        if( Array.isArray( v ) ) return v;
+        if( v === null || v === undefined ) return [];
+        if( typeof v === 'string' ) {
             return v.split( ',' ).map(String.trim);
         }
         return [JSON.stringify( v )];

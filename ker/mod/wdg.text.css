@@ -79,8 +79,8 @@ div.wdg-text.wide {
     width: auto;
 }
 
-div.wdg-text.wide input {
-    width: calc(100% - 2rem);
+div.wdg-text input {
+    width: 100%;
 }
 
 

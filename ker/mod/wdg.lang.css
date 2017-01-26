@@ -27,6 +27,9 @@ div.wdg-lang {
 }
 
 div.wdg-lang.small {
+    position: absolute;
+    right: 0;
+    top: 0;
     width: 1.2rem;
     height: 1.2rem;
     border-radius: .6rem;
