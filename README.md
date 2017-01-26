@@ -83,6 +83,11 @@ var A = require('A');
 A( 'Huston! We got a problem.' );
 ```
 
+#### NodeWebkit
+In NW,js you can require _node.js_ modules. To do this, you have to use the following syntax:
+```js
+var FS = require('node://fs');
+```
 
 ### src/mod/org.home.module.css
 If this module is used, the CSS is added to `css/@index.css` file.
