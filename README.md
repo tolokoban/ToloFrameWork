@@ -21,7 +21,7 @@ Javascript/HTML/CSS compiler for web or nodewebkit apps using modules in the nod
 * `src/mod/org.home.module/`: CSS resources.
 
 ### package.json
-Toloframework uses the standard `package.json` file defined by [NPM](https://docs.npmjs.com/getting-started/using-a-package.json), plus the extra section `tfw`.
+[package.json]Toloframework uses the standard `package.json` file defined by [NPM](https://docs.npmjs.com/getting-started/using-a-package.json), plus the extra section `tfw`.
 
 * `resources` {array}: list of folders to copy verbatim to the output. Default: `[]`.
 * `modules` {array}: list of folders containing other modules (must point on `src/`). Default: `[]`.
@@ -34,6 +34,7 @@ Toloframework uses the standard `package.json` file defined by [NPM](https://doc
   * `release` {object}: same thing but for _release_ mode only.
 
 ### src/index.html
+[index.html]
 
 ### src/mod/org.home.module.js
 
