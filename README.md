@@ -23,13 +23,12 @@ Javascript/HTML/CSS compiler for web or nodewebkit apps using modules in the nod
 ### package.json
 Toloframework uses the standard `package.json` file defined by [NPM](https://docs.npmjs.com/getting-started/using-a-package.json), plus the extra section `tfw`.
 
-* `resources` {array}: list of folders to copy verbatim to the output.
-* `modules` {array}: list of folders containing other modules.
+* `resources` {array}: list of folders to copy verbatim to the output. Default: `[]`.
+* `modules` {array}: list of folders containing other modules (must point on `src/`). Default: `[]`.
 * `compile`
-  * `type` {"fxos"|"nw"}: _firefox OS_ or _NW.js_.
-  * `files` {array}: list of regular expressions for HTML file to compile.
-* `output` {string}: folder where to put the compilation result.
-* `consts`
+  * `type` {"fxos"|"nw"}: _firefox OS_ or _[NW.js](https://nwjs.io/)_. Default `"fxos"`.
+* `output` {string}: folder where to put the compilation result. Default `"./www"`.
+* `consts`. Default `{}`.
   * `all` {object}: attributes to put in the `$` module.
   * `debug` {object}: same thing but for _debug_ mode only.
   * `release` {object}: same thing but for _release_ mode only.
