@@ -1,17 +1,33 @@
-ToloFrameWork
-=============
+# ToloFrameWork
 
-Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.
+Javascript/HTML/CSS compiler for web or nodewebkit apps using modules in the nodejs style.
 
-Installation
-============
+> Convention over configuration.
 
+## Installation
 ```
     npm install -g toloframework
 ```
 
-Configuration file
-==================
+## Files structure convention
+
+* `package.json`: 
+* `src/index.html`: 
+* `src/mod/org.home.module.js`: 
+* `src/mod/org.home.module.css`: 
+* `src/mod/org.home.module.ini`: 
+* `src/mod/org.home.module.dep`: 
+* `src/mod/org.home.module.wrk`: 
+* `src/mod/org.home.module/`: 
+* `package.json`: 
+* `package.json`: 
+* `package.json`: 
+
+
+
+
+
+## Configuration file
 
 Toloframework uses the standard `package.json` file by adding a section `tfw`.
 
