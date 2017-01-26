@@ -11,14 +11,14 @@ Javascript/HTML/CSS compiler for web or nodewebkit apps using modules in the nod
 
 ## Files structure convention
 
-* `package.json`: 
-* `src/index.html`: 
-* `src/mod/org.home.module.js`: Module javascript code.
-* `src/mod/org.home.module.css`: Cascading style sheet.
-* `src/mod/org.home.module.ini`: Internationalization.
-* `src/mod/org.home.module.dep`: Dependencies.
-* `src/mod/org.home.module.wrk`: WebWorker.
-* `src/mod/org.home.module/`: CSS resources.
+* `[package.json](package.json)`: 
+* `src/[index.html](index.html)`: 
+* `src/mod/[org.home.module.js](module.js)`: Module javascript code.
+* `src/mod/[org.home.module.css](module.css)`: Cascading style sheet.
+* `src/mod/[org.home.module.ini](module.ini)`: Internationalization.
+* `src/mod/[org.home.module.dep](module.dep)`: Dependencies.
+* `src/mod/[org.home.module.wrk](module.wrk)`: WebWorker.
+* `src/mod/[org.home.module](module)/`: CSS resources.
 
 ### package.json
 [package.json]Toloframework uses the standard `package.json` file defined by [NPM](https://docs.npmjs.com/getting-started/using-a-package.json), plus the extra section `tfw`.
@@ -37,16 +37,22 @@ Javascript/HTML/CSS compiler for web or nodewebkit apps using modules in the nod
 [index.html]
 
 ### src/mod/org.home.module.js
+[module.js]
 
 ### src/mod/org.home.module.css
+[module.css]
 
 ### src/mod/org.home.module.ini
+[module.ini]
 
 ### src/mod/org.home.module.dep
+[module.dep]
 
 ### src/mod/org.home.module.wrk
+[module.wrk]
 
 ### src/mod/org.home.module/
+[module]
 
 
 
