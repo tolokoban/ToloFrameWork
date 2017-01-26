@@ -19,6 +19,7 @@ Javascript/HTML/CSS compiler for web or nodewebkit apps using modules in the nod
 * __src/mod/org.home.module.dep__: Dependencies.
 * __src/mod/org.home.module.wrk__: WebWorker.
 * __src/mod/org.home.module/__: CSS resources.
+
 ### package.json
 Toloframework uses the standard `package.json` file defined by [NPM](https://docs.npmjs.com/getting-started/using-a-package.json), plus the extra section `tfw`.
 
@@ -41,8 +42,22 @@ Toloframework uses the standard `package.json` file defined by [NPM](https://doc
 
 
 ### src/mod/org.home.module.css
+If this module is used, the CSS is added to `css/@index.css` file.
 
 ### src/mod/org.home.module.ini
+Example:
+```
+[en]
+hi: Good morning $1!
+
+[fr]
+hi: Bien le bonjour $1 !
+```
+
+In your module, you have can use the `_()` function like in the following example:
+```js
+document.body.textContent = _('hi', 'Boss');
+```
 
 ### src/mod/org.home.module.dep
 
