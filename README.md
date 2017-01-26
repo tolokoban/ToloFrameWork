@@ -39,6 +39,49 @@ Toloframework uses the standard `package.json` file defined by [NPM](https://doc
 ```
 
 ### src/mod/org.home.module.js
+A module is an object that can exports its public interface.
+
+See this example.
+
+```js
+// File: src/mod/A.js
+
+function tag( name, content ) {
+    var e = document.createElement( name );
+    e.innerHTML = content;
+    return e;
+}
+
+exports.div = function( content ) {
+  return tag( 'div', content );
+};
+exports.p = tag.bind( null, 'p' );
+```
+
+In __A.js__, `tag()` is private, but `div()` and `p()` are public.
+You can use this like in the file `b.js`:
+```js
+// File: src/mod/A.js
+
+var A = require('A');
+document.body.appendChild( A.div( 'Hello world!' );
+```
+
+Modules __are singletons__. You can require them as much as you want, they are executed only at first call.
+
+A module can also return a function if you want to:
+```js
+// File: A.js
+module.exports = function( msg  {
+  alert( 'ERROR: ' + msg );
+};
+```
+
+```js
+// File: B.js
+var A = require('A');
+A( 'Huston! We got a problem.' );
+```
 
 
 ### src/mod/org.home.module.css
@@ -57,6 +100,12 @@ hi: Bien le bonjour $1 !
 In your module, you have can use the `_()` function like in the following example:
 ```js
 document.body.textContent = _('hi', 'Boss');
+```
+
+The `_()` function is also exported, hence you can use it like this:
+```js
+var Intl = require('org.home.intl');
+document.body.textContent = Intl._('hi', 'Boss');
 ```
 
 ### src/mod/org.home.module.dep
