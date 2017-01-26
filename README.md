@@ -13,15 +13,28 @@ Javascript/HTML/CSS compiler for web or nodewebkit apps using modules in the nod
 
 * `package.json`: 
 * `src/index.html`: 
-* `src/mod/org.home.module.js`: 
-* `src/mod/org.home.module.css`: 
-* `src/mod/org.home.module.ini`: 
-* `src/mod/org.home.module.dep`: 
-* `src/mod/org.home.module.wrk`: 
-* `src/mod/org.home.module/`: 
-* `package.json`: 
-* `package.json`: 
-* `package.json`: 
+* `src/mod/org.home.module.js`: Module javascript code.
+* `src/mod/org.home.module.css`: Cascading style sheet.
+* `src/mod/org.home.module.ini`: Internationalization.
+* `src/mod/org.home.module.dep`: Dependencies.
+* `src/mod/org.home.module.wrk`: WebWorker.
+* `src/mod/org.home.module/`: CSS resources.
+
+### package.json
+
+### src/index.html
+
+### src/mod/org.home.module.js
+
+### src/mod/org.home.module.css
+
+### src/mod/org.home.module.ini
+
+### src/mod/org.home.module.dep
+
+### src/mod/org.home.module.wrk
+
+### src/mod/org.home.module/
 
 
 
