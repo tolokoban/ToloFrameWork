@@ -114,8 +114,15 @@ document.body.textContent = Intl._('hi', 'Boss');
 ```
 
 ### src/mod/org.home.module.dep
+Special dependencies in JSON format:
+* __js__ {array|string}: Javascript files that will be added verbatim to `@org.home.module.js`.
+* __res__ {object}: Files to add verbatim to the output folder. The _key_ is the destination filename and the _value_ is the source filename. If the _value_ is an empty string, that means that both files have the same name. I.e. `{ "a.txt": "" }` is the same as `{ "a.txt": "a.txt" }`.
+* __var__ {object}: Converted into the `GLOBAL` variable in your module. Each _value_ is the name of a text file. The content will be the _value_ in `GLOBAL`. This can be usefull for WebGL shaders codes.
 
 ### src/mod/org.home.module.wrk
+__TODO__
+
+A [WebWorker](https://developer.mozilla.org/en-US/docs/Web/API/Worker) is independent from the rest of the code. It must lie in its own file and not be included in `@org.home.module.js`.
 
 ### src/mod/org.home.module/
 
