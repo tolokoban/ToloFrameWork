@@ -41,7 +41,7 @@ a.wdg-button.wide, button.wdg-button.wide {
     width: 100%;
 }
 
-.wdg-button.hide {
+a.wdg-button.hide, button.wdg-button.hide {
     display: none;
 }
 
