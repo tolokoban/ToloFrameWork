@@ -19,6 +19,14 @@ function save(storage) {
 }
 
 
+if( !window.localStorage ) {
+    window.localStorage = new DBStorage();
+    window.sessionStorage = new DBStorage();
+}
+else if( !window.sessionStorage ) {
+    window.sessionStorage = window.localStorage;
+}
+
 exports.local = {
     get: load(window.localStorage),
     set: save(window.localStorage)
@@ -27,4 +35,23 @@ exports.local = {
 exports.session = {
     get: load(window.sessionStorage),
     set: save(window.sessionStorage)
+};
+
+
+function DBStorage() {
+    this._data = {};
+}
+
+
+/**
+ * @member DBStorage.getItem
+ * @param key
+ */
+DBStorage.prototype.getItem = function(key, def) {
+    var val = this._data[key];
+    return typeof val === 'undefined' ? def : val;
+};
+
+DBStorage.prototype.setItem = function(key, val) {
+    this._data[key] = val;
 };
