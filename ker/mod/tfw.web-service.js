@@ -210,6 +210,7 @@ exports.login = function(usr, pwd) {
                 )
                 .then(
                     function(user) {
+console.info("[tfw.web-service] user=...", user);
                         if (typeof user === 'object') {
                             currentUser = {
                                 data: user,

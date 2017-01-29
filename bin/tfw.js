@@ -92,6 +92,7 @@ if (args.indexOf('debug') > -1 || args.indexOf('dev') > -1) {
     tasks.push(function(prj) {
         console.log("Build for DEVELOPMENT. Don't minify, don't combine.".green);
         options.dev = true;
+        options.debug = true;
         console.log("options: ", options);
     });
 }
