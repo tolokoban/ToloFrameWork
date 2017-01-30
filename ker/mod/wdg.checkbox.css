@@ -98,6 +98,10 @@
     border: none;
     perspective: 200px;
     backface-visibility: hidden;
+    background: #d00;
+}
+
+.wdg-checkbox.checked > .wdg-checkbox-spin > div > div {
     background: #0f0;
 }
 

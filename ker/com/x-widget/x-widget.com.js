@@ -3,9 +3,9 @@
  *  * `<wdg:label ...>` : instancie la classe `wdg.label`.
  *  * `<x-widget name="label" ...>` : instancie la classe `label`.
  *  * `<x-wdg name="label" ...>` : instancie la classe `label` (juste un alias de la syntaxe précédente).
- * 
+ *
  * Pour spécifier les propriétés d'un objet, il existe deux possibilités.
- * 
+ *
  * * Forme __inline__ : `<wdg:button $text="Cancel"/>`.
  *   * Il est possible d'utiliser l'internationalisation :
  *     `<wdg:button intl:text="cancel-caption"/>`
@@ -35,8 +35,8 @@
  *   </wdg:combo>
  *   ```
  *    * __json__ : le contenu textuel doit être parsé comme du JSON.
- * 
- * 
+ *
+ *
  *  @example
  *  <x-widget name="tfw.input" $value="Email" $validator="[^@]+@[^@]\\.[^@.]+"/>
  *  <x-widget name="tfw.input" $validator="[^@]+@[^@]\\.[^@.]+">Email</x-widget>
@@ -335,7 +335,7 @@ function parsePropertyJSON(root, libs, com) {
 
 /**
  *  @example
- * 
+ *
  *  <wdg:layout-line>
  *    <content list>
  *      <div>
@@ -352,6 +352,15 @@ function parsePropertyList(root, libs, com, indent) {
     libs.compileChildren( root );
     root.children.forEach(function (child) {
         if (child.type != libs.Tree.TAG) {
+            if( child.type == libs.Tree.TEXT ) {
+                if( child.text.trim().length == 0 ) return;
+                if (first) {
+                    first = false;
+                } else {
+                    out += ",";
+                }
+                out += "\n" + indent + JSON.stringify( child.text );
+            }
             return;
         }
         if (first) {
@@ -503,7 +512,7 @@ var parseBinding = (
                 addBinding();
             }
             addBinding();
-//console.info("[x-widget.com] bindings=...", bindings);            
+            //console.info("[x-widget.com] bindings=...", bindings);
             return bindings;
         };
     }
