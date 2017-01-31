@@ -1,7 +1,8 @@
-
+"use strict";
 
 
 var Renderer = function(canvas) {
+    if( typeof canvas === 'string' ) canvas = document.getElementById( canvas );
     Object.defineProperty( this, 'canvas', {
         value: canvas,
         writable: false,
