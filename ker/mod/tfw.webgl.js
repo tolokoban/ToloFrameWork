@@ -43,13 +43,23 @@ Renderer.prototype.stop = function() {
 };
 
 
-function Program(gl, codes) {
+/**
+ * @param gl - WebGL context.
+ * @param codes  - Object  with two  mandatory attributes:  `vert` for
+ * vertex shader and `frag` for fragment shader.
+ * @param  includes  -  (optional)  If  defined,  the  `#include  foo`
+ * directives  of  shaders   will  be  replaced  by   the  content  of
+ * `includes.foo`.
+ */
+function Program(gl, codes, includes) {
     if (!typeof codes.vert === 'string') {
         throw Error('[tfw.webgl.Program] Missing attribute `vert` in argument `codes`!');
     }
     if (!typeof codes.frag === 'string') {
         throw Error('[tfw.webgl.Program] Missing attribute `frag` in argument `codes`!');
     }
+
+    codes = parseIncludes( codes, includes );
     
     var shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, getVertexShader(gl, codes.vert || '//No Vertex Shader'));
@@ -90,6 +100,40 @@ function Program(gl, codes) {
     Object.freeze(uniforms);
     this.uniforms = uniforms;
 }
+
+/**
+ * This is a preprocessor for shaders.
+ * Directives  `#include`  will be  replaced  by  the content  of  the
+ * correspondent attribute in `includes`.
+ */
+function parseIncludes( codes, includes ) {
+    var result = {};
+    var id, code;
+    for( id in codes ) {
+        code = codes[id];
+        result[id] = code.split('\n').map(function(line) {
+            if( line.trim().substr(0, 8) != '#include' ) return line;
+            var pos = line.indexOf( '#include' ) + 8;
+            var includeName = line.substr( pos ).trim();
+            // We accept all this systaxes:
+            // #include foo
+            // #include 'foo'
+            // #include <foo>
+            // #include "foo"
+            if( "'<\"".indexOf( includeName.charAt(0) ) > -1 ) {
+                includeName = includeName.substr( 1, includeName.length - 2 );
+            }
+            var snippet = includes[includeName];
+            if( typeof snippet !== 'string' ) {
+                console.error( "Include <" + includeName + "> not found in ", includes );
+                throw Error( "Include not found in shader: " + includeName );
+            }
+            return snippet;
+        }).join("\n");
+    }
+    return result;
+}
+
 
 function createUniformSetter(gl, item, nameGL) {
     var nameJS = '_$' + item.name;
