@@ -39,7 +39,7 @@ var Text = function(opts) {
 
     DB.bind( lang, 'value', function(v) {
         input.value = that.value[v] || '';
-        input.focus();
+        if( !that.value ) input.focus();
     });
 
     DB.prop(this, 'value')(function(v) {
@@ -281,13 +281,14 @@ console.info("[wdg.text] that.list=...", that.list);
         $.addClass( elem, "theme-elevation-2" );
         $.removeClass( elem, "theme-elevation-8" );
         $.removeClass(input, 'theme-color-bg-A1');
-        that.focus = false;
+        DB.set( that, 'focus', false );
     });
     input.addEventListener('focus', function() {
+        that.selectAll();
         $.removeClass( elem, "theme-elevation-2" );
         $.addClass( elem, "theme-elevation-8" );
         $.addClass(input, 'theme-color-bg-A1');
-        that.focus = true;
+        DB.set( that, 'focus', true );
     });
     input.addEventListener('keydown', function(evt) {
     });
