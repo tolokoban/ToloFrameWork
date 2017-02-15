@@ -45,7 +45,6 @@ var Text = function(opts) {
     });
 
     DB.prop(this, 'value')(function(v) {
-        console.log("new value=", v);
         if( v === null || typeof v === 'undefined') v = '';
         if( typeof v === 'number' || typeof v === 'boolean') v = '' + v;
         if( typeof v !== 'string' ) {
@@ -80,7 +79,6 @@ var Text = function(opts) {
         $.att(input, {type: v});
     });
     DB.propStringArray(this, 'list')(function(v) {
-        console.info("[wdg.text] v=...", v);
         $.clear( datalist );
         $.removeClass( elem, "list" );
         if (!Array.isArray( v )) return;
@@ -164,12 +162,9 @@ var Text = function(opts) {
         visible: true
     }, opts, this);
 
-    console.info("[wdg.text] that.list=...", that.list);
-
     var complete = function() {
         $.removeClass( elem, "list" );
         if (!that.list || that.list.length == 0) return;
-        console.info("[wdg.text] complete: that.list=", that.list);
 
         $.clear( datalist );
         var list = that.list.map(String.toLowerCase);
@@ -220,7 +215,6 @@ var Text = function(opts) {
                 },
                 tap: function() {
                     that.value = div.textContent.trim();
-                    console.info("[wdg.text] div=...", div);
                     $.removeClass( elem, 'list' );
                 }
             });
@@ -233,7 +227,6 @@ var Text = function(opts) {
     };
 
     var actionUpdateValue = LaterAction(function() {
-        console.log("LaterAction...");
         if( !that.intl ) {
             that.value = input.value;
         } else {
