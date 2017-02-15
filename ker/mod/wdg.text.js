@@ -39,14 +39,19 @@ var Text = function(opts) {
 
     DB.bind( lang, 'value', function(v) {
         input.value = that.value[v] || '';
-        if( !that.value ) input.focus();
+        if( !that.focus ) {
+            input.focus();
+        }
     });
 
     DB.prop(this, 'value')(function(v) {
+        console.log("new value=", v);
         if( v === null || typeof v === 'undefined') v = '';
         if( typeof v === 'number' || typeof v === 'boolean') v = '' + v;
         if( typeof v !== 'string' ) {
-            input.value = v[lang.value];
+            if( input.value != v[lang.value] ) {
+                input.value = v[lang.value];
+            }
             var subset = [];
             var isoLang;
             for( isoLang in v ) {
@@ -55,7 +60,12 @@ var Text = function(opts) {
             lang.subset = subset;
             that.intl = true;
         } else {
-            input.value = v;
+            // Very important!
+            // In Google Chrome, when you set a value to an input,
+            // the cursor is sent to the end.
+            if( input.value != v ) {
+                input.value = v;
+            }
             that.intl = false;
         }
         that.validate();
@@ -70,7 +80,7 @@ var Text = function(opts) {
         $.att(input, {type: v});
     });
     DB.propStringArray(this, 'list')(function(v) {
-console.info("[wdg.text] v=...", v);
+        console.info("[wdg.text] v=...", v);
         $.clear( datalist );
         $.removeClass( elem, "list" );
         if (!Array.isArray( v )) return;
@@ -154,12 +164,12 @@ console.info("[wdg.text] v=...", v);
         visible: true
     }, opts, this);
 
-console.info("[wdg.text] that.list=...", that.list);
+    console.info("[wdg.text] that.list=...", that.list);
 
     var complete = function() {
         $.removeClass( elem, "list" );
         if (!that.list || that.list.length == 0) return;
-console.info("[wdg.text] that.list=...", that.list);
+        console.info("[wdg.text] complete: that.list=", that.list);
 
         $.clear( datalist );
         var list = that.list.map(String.toLowerCase);
@@ -223,6 +233,7 @@ console.info("[wdg.text] that.list=...", that.list);
     };
 
     var actionUpdateValue = LaterAction(function() {
+        console.log("LaterAction...");
         if( !that.intl ) {
             that.value = input.value;
         } else {
