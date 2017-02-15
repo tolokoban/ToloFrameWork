@@ -284,7 +284,6 @@ console.info("[wdg.text] that.list=...", that.list);
         that.focus = false;
     });
     input.addEventListener('focus', function() {
-        that.selectAll();
         $.removeClass( elem, "theme-elevation-2" );
         $.addClass( elem, "theme-elevation-8" );
         $.addClass(input, 'theme-color-bg-A1');
