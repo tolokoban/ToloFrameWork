@@ -36,6 +36,7 @@
     "url": "https://github.com/tolokoban/ToloFrameWork/issues"
   },
   "dependencies": {
+    "clean-css": "^4.0.7",
     "colors": "^1.1.2",
     "jaguar": "^1.1.10",
     "jsdoc": "^3.4.0",
