@@ -1,3 +1,8 @@
+/**
+ * @module webgl
+ *
+ * Useful functions to help avoiding use of syntaxical complexity of WebGL.
+ */
 "use strict";
 
 
@@ -9,41 +14,28 @@ var Renderer = function(canvas) {
         configurable: false,
         enumerable: true
     });
+    // Get WebGL 1.0 context.
     Object.defineProperty( this, 'gl', {
         value: canvas.getContext('webgl') || canvas.getContext('experimental-webgl'),
         writable: false,
         configurable: false,
         enumerable: true
     });
-
-    this.render = function() {};
-    
 };
 
+// Start the animation loop.
 Renderer.prototype.start = function(renderingFunction) {
-    if (typeof renderingFunction === 'function') {
-        this.render = renderingFunction;
-    }
-
-    if (!this._animationIsOn) {
-        var that = this;
-        var rendering = function(time) {
-            if (that._animationIsOn) {
-                window.requestAnimationFrame( rendering );
-            }
-            that.render( time );
-        };
+    var rendering = function(time) {
         window.requestAnimationFrame( rendering );
-        this._animationIsOn = true;
-    }
+        renderingFunction( time );
+    };
+    window.requestAnimationFrame( rendering );
 };
-
-Renderer.prototype.stop = function() {
-    this._animationIsOn = false;
-};
-
 
 /**
+ * Creating  a  WebGL  program  for shaders  is  painful.  This  class
+ * simplifies the process.
+ * 
  * @param gl - WebGL context.
  * @param codes  - Object  with two  mandatory attributes:  `vert` for
  * vertex shader and `frag` for fragment shader.
@@ -60,7 +52,7 @@ function Program(gl, codes, includes) {
     }
 
     codes = parseIncludes( codes, includes );
-    
+
     var shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, getVertexShader(gl, codes.vert || '//No Vertex Shader'));
     gl.attachShader(shaderProgram, getFragmentShader(gl, codes.frag || '//No Fragment Shader'));
@@ -68,7 +60,7 @@ function Program(gl, codes, includes) {
 
     this.program = shaderProgram;
     Object.freeze( this.program );
-    
+
     this.use = function() {
         gl.useProgram(shaderProgram);
     };
