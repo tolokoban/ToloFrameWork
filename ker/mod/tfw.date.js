@@ -11,10 +11,12 @@
 
 
 
-exports.formatShortDate = function(d) {
+exports.formatShortDate = function(d, sep) {
+    if( typeof sep === 'undefined' ) sep = ' ';
+
     var weekday = _('day' + d.getDay() + '-short');
     var month = _('month' + d.getMonth() + '-short');
-    return weekday + " " + d.getDate() + " " + month;
+    return weekday + sep + d.getDate() + sep + month;
 };
 
 exports.formatLongTime = function(d) {
@@ -24,6 +26,20 @@ exports.formatLongTime = function(d) {
     if (m.length < 2) m = "0" + m;
     if (s.length < 2) s = "0" + s;
     return h + ":" + m + ":" + s;
+};
+
+exports.formatDateTime = function(d) {
+    var Y = "" + d.getFullYear();
+    var M = "" + (1 + d.getMonth());
+    var D = "" + d.getDate();
+    var h = "" + d.getHours();
+    var m = "" + d.getMinutes();
+    var s = "" + d.getSeconds();
+    if (M.length < 2) M = "0" + M;
+    if (D.length < 2) D = "0" + D;
+    if (m.length < 2) m = "0" + m;
+    if (s.length < 2) s = "0" + s;
+    return Y + "-" + M + "-" + D + " " + h + ":" + m + ":" + s;
 };
 
 exports.formatSmart = function(dat) {

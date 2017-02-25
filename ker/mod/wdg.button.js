@@ -14,14 +14,13 @@ var TYPES = ['standard', 'simple', 'warning', 'shadow', 'special'];
  * * __warning__ : Bouton orangé pour indiquer une action potentiellement dangereuse.
  * * __small__ : Bouton de petite taille (environ 70%).
  *
- * @param {object} opts
- * * {string} `value`: Text à afficher dans le bouton.
- * * {string} `href`: Si défini, lien vers lequel dirigier la page en cas de click.
- * * {boolean} `enabled`: Mettre `false` pour désactiver le bouton.
- * * {object} `email`: Associe le _Tap_ à l'envoi d'un mail.
- *   * {string} `to`: destinataire.
- *   * {string} `subject`: sujet du mail.
- *   * {string} `body`: corps du mail.
+ * @param {string} opts.text - Texte à afficher dans le bouton.
+ * @param {boolean} opts.enabled - Mettre `false` pour désactiver le bouton.
+ * @param {string} opts.href - Si défini, lien vers lequel dirigier la page en cas de click.
+ * @param {object} opts.email - Associe le _Tap_ à l'envoi d'un mail.
+ * @param {string} opts.email.to - destinataire.
+ * @param {string} opts.email.subject - sujet du mail.
+ * @param {string} opts.email.body - corps du mail.
  *
  * @example
  * var Button = require("tp4.button");
@@ -72,6 +71,24 @@ var Button = function(opts) {
         }
         refresh();
     });
+    DB.propBoolean(this, 'anim')(function(v) {
+        if( icon ) icon.rotate = v;
+    });
+    var waitBackup = {};
+    DB.propBoolean(this, 'wait')(function(v) {
+        if( v ) {
+            waitBackup.enabled = that.enabled;
+            waitBackup.icon = that.icon;
+            waitBackup.anim = that.anim;
+            that.enabled = false;
+            that.icon = 'wait';
+            that.anim = true;
+        } else {
+            that.enabled = waitBackup.enabled;
+            that.icon = waitBackup.icon;            
+            that.anim = waitBackup.anim;            
+        }
+    });
     DB.propString(this, 'text')(function(v) {
         refresh();
     });
@@ -103,6 +120,8 @@ var Button = function(opts) {
         target: null,
         value: "action",
         action: 0,
+        wait: false,
+        anim: false,
         icon: "",
         small: false,
         enabled: true,

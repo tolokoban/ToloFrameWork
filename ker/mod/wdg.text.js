@@ -11,7 +11,7 @@ var LaterAction = require("tfw.timer").laterAction;
  * @param opts.type {string} - One of the following strings: 'text', 'button', 'checkbox', 'color', 'date', 'datetime', 'email', 'file', 'hidden', 'image', 'month', 'password', 'radio', 'range', 'reset', 'number', 'search', 'submit', 'tel', 'time', 'url', 'week'.
  * @param opts.placeholder {string} - .
  * @param opts.enabled {boolean} - .
- * @param opts.validator {} - .
+ * @param opts.validator {string|function} - .
  * @param opts.valid {} - .
  * @param opts.list {} - .
  * @param opts.label {string} - .
