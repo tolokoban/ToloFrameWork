@@ -51,20 +51,25 @@ exports.formatSmart = function(dat) {
     var Y = dat.getYear();
     var M = dat.getMonth();
     var D = dat.getDate();
+    var suffix = "";
     var mm = dat.getMinutes();
     var txt = dat.getHours() + ":" + (mm < 10 ? '0' : '') + mm;
     if (Y != Y0) {
-        txt += ", " + D + " " + _("month" + M + "-short") + " " + Y;
+        suffix = ", " + D + " " + _("month" + M + "-short") + " " + Y;
     } else if (M != M0) {
-        txt += ", " + D + " " + _("month" + M + "-short");
+        suffix = ", " + D + " " + _("month" + M + "-short");
     } else if (D != D0) {
         if (D == D0 - 1) {
-            txt += " " + _("yesterday");
+            suffix = " " + _("yesterday");
         } else {
-            txt += ", " + D + " " + _("month" + M + "-short");
+            suffix = ", " + D + " " + _("month" + M + "-short");
         }
     }
-    return txt;
+    if( suffix == '' ) {
+        var ss = dat.getSeconds();
+        return txt + ":" + (ss < 10 ? '0' : '') + ss;
+    }
+    return txt + suffix;
 };
 
 /**
