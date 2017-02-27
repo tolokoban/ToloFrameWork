@@ -26,6 +26,7 @@ module.exports = function(opts) {
         var inpLogin = new T({
             value: lastLogin || '',
             label: _('login'),
+            type: 'email',
             placeholder: _('login'),
             validator: "admin|test|[^ \t@]+@[^ \t@]+",
             wide: true

@@ -25,14 +25,13 @@ var converters = {
         if (typeof v === 'boolean') return v;
         if (typeof v === 'string') {
             v = v.trim().toLowerCase();
-            if (v == '1' || v == 'true' || v == 'yes') {
-                return true;
-            } else if (v == '0' || v == 'false' || v == 'no') {
+            if (v == '0' || v == 'false' || v == 'no' || v == 'null' || v == 'undefined') {
                 return false;
             }
+            return true;
         }
         if (typeof v === 'number') {
-            return v ? true : false;
+            return v != 0 ? true : false;
         }
         return null;
     },

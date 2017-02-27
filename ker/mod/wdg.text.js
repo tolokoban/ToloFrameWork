@@ -77,6 +77,9 @@ var Text = function(opts) {
                  'search', 'submit', 'tel', 'time', 'url', 'week'])(this, 'type')
     (function(v) {
         $.att(input, {type: v});
+        if( v == 'password' ) {
+            $.att(input, {autocomplete: 'off'});
+        }
     });
     DB.propStringArray(this, 'list')(function(v) {
         $.clear( datalist );
@@ -140,11 +143,12 @@ var Text = function(opts) {
         if (v) input.focus();
         else input.blur();
     });
-    DB.propInteger(this, 'action', '');
+    DB.prop(this, 'action');
     DB.propAddClass(this, 'wide');
     DB.propRemoveClass(this, 'visible', 'hide');
 
     opts = DB.extend({
+        action: true,
         intl: false,
         value: '',
         type: 'text',
