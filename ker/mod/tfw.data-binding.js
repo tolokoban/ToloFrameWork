@@ -288,8 +288,14 @@ exports.propValidator = propCast.bind( null, converters.castValidator );
 
 exports.bind = function( srcObj, srcAtt, dstObj, dstAtt, options ) {
     if( typeof srcObj[ID] === 'undefined' || typeof srcObj[ID][srcAtt] === 'undefined' ) {
-        console.error( srcAtt + " is not a bindable property of ", srcObj );
-        throw Error( srcAtt + " is not a bindable property!" );
+        console.error( JSON.stringify( srcAtt ) + " is not a bindable property!", {
+            srcObj: srcObj,
+            srcAtt: srcAtt,
+            dstObj: dstObj,
+            dstAtt: dstAtt,
+            options: options
+        });
+        throw Error( JSON.stringify( srcAtt ) + " is not a bindable property!" );
     }
 
     if( typeof options === 'undefined' ) options = {};

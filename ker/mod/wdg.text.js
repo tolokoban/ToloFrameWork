@@ -171,12 +171,12 @@ var Text = function(opts) {
         if (!that.list || that.list.length == 0) return;
 
         $.clear( datalist );
-        var list = that.list.map(String.toLowerCase);
+        var list = that.list; //.map(String.toLowerCase);
         var needle = input.value.trim().toLowerCase();
 
         if (needle.length > 0) {
             list = list.map(function(itm, idx) {
-                return [idx, itm.indexOf( needle )];
+                return [idx, itm.toLowerCase().indexOf( needle )];
             }).filter(function(itm) {
                 return itm[1] > -1;
             }).sort(function(a, b) {
@@ -289,14 +289,14 @@ var Text = function(opts) {
         $.addClass( elem, "theme-elevation-2" );
         $.removeClass( elem, "theme-elevation-8" );
         $.removeClass(input, 'theme-color-bg-A1');
-        DB.set( that, 'focus', false );
+        DB.fire( that, 'focus', false );
     });
     input.addEventListener('focus', function() {
         that.selectAll();
         $.removeClass( elem, "theme-elevation-2" );
         $.addClass( elem, "theme-elevation-8" );
         $.addClass(input, 'theme-color-bg-A1');
-        DB.set( that, 'focus', true );
+        DB.fire( that, 'focus', true );
     });
     input.addEventListener('keydown', function(evt) {
     });

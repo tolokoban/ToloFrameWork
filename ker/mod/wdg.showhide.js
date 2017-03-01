@@ -13,6 +13,7 @@
 var $ = require("dom");
 var DB = require("tfw.data-binding");
 var Icon = require("wdg.icon");
+var Focusable = require("tfw.focusable");
 
 
 function Showhide( opts ) {
@@ -23,6 +24,17 @@ function Showhide( opts ) {
     var head = $.div('head', 'theme-label', 'theme-color-bg-1', [icon, label]);
     var body = $.div('body', 'theme-color-bg-B1');
     var elem = $.elem( this, 'div', 'wdg-showhide', 'theme-elevation-2', [head, body] );
+
+    Focusable( this, function(evt) {
+        switch( evt.keyCode ) {
+        case 13:
+        case 32:
+            that.value = !that.value;
+            break;
+        }
+        console.info("[wdg.showhide] evt=", evt);
+    });
+
     DB.propBoolean(this, 'value')(function(v) {
         if (v) {
             $.addClass( elem, 'show' );
@@ -73,11 +85,14 @@ function Showhide( opts ) {
 
     opts = DB.extend({
         value: true, label: '', content: null, maxHeight: null,
-        visible: true, wide: true, simple: false
+        visible: true, wide: true, simple: false, focus: false
     }, opts, this );
 
     // Toggle display on Tap.
-    function reverseValue() { that.value = !that.value;}
+    function reverseValue() { 
+        that.value = !that.value;
+        that.focus = true;
+    }
     $.on( head, reverseValue);
     DB.bind(icon, 'action', reverseValue);
 

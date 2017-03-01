@@ -175,18 +175,26 @@ Widget.bind = function( id, attribs ) {
             bindings.forEach(function (binding) {
                 srcObj = widgets[binding[0]];
                 if( typeof srcObj === 'undefined' ) {
-                    console.error( "[x-widget:bind] Trying to bind attribute \"" + dstAtt
+                    console.error( "[x-widget:bind(" + id + ")] Trying to bind attribute \""
+                                   + dstAtt
                                    + "\" of widget \"" + id + "\" to the unexisting widget \""
                                    + binding[0] + "\"!");
                     return;
                 }
                 srcAtt = binding[1];
-                if (binding.length == 2) {
-                    DB.bind( srcObj, srcAtt, dstObj, dstAtt );
-                } else {
-                    var value = binding[2];
-                    DB.bind( srcObj, srcAtt, function() {
-                        dstObj[dstAtt] = value;
+                try {
+                    if (binding.length == 2) {
+                        DB.bind( srcObj, srcAtt, dstObj, dstAtt );
+                    } else {
+                        var value = binding[2];
+                        DB.bind( srcObj, srcAtt, function() {
+                            dstObj[dstAtt] = value;
+                        });
+                    }
+                } catch( ex ) {
+                    console.error("Binding error for widget `" + id + "`!", {
+                        ex: ex,
+                        binding: binding
                     });
                 }
             });
@@ -206,14 +214,31 @@ Widget.bind = function( id, attribs ) {
                 var mod = APP;
                 var fct = slot;
                 if (Array.isArray( slot )) {
-                    mod = require(slot[0]);
+                    try {
+                        mod = require(slot[0]);
+                    } catch( ex ) {
+                        console.error("[x-widget:bind] Widget `" + id + "` can't require `"
+                                      + slot[0] + "`: ", ex);
+                        throw( ex );
+                    }
                     fct = slot[1];
                 }
                 fct = mod[fct];
                 if (typeof fct !== 'function') {
-                    console.error("[x-widget:bind] slot not found: ", slot);
+                    throw(Error("[x-widget:bind]  Widget `" + id + "` use unexisting slot `"
+                                + slot[1] + "` of module `" + slot[0] + "`!"));
                 } else {
-                    DB.bind( dstObj, dstAtt, fct );
+                    try {
+                        DB.bind( dstObj, dstAtt, fct );
+                    } catch( ex ) {
+                        console.error("Binding error for widget `" + id + "`!", {
+                            ex: ex,
+                            dstObj: dstObj,
+                            dstAtt: dstAtt,
+                            fct: fct,
+                            slot: slot
+                        });
+                    }
                 }
             });
 
