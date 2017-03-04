@@ -66,6 +66,16 @@ var converters = {
         }
         return Number.NaN;
     },
+    castFloat: function(v) {
+        if (typeof v === 'number') {
+            return v;
+        }
+        if (typeof v === 'boolean') return v ? 1 : 0;
+        if (typeof v === 'string') {
+            return parseFloat( v );
+        }
+        return Number.NaN;
+    },
     castRegexp: function(v) {
         if (v instanceof RegExp) return v;
         if (typeof v === 'string' && v.trim().length != 0 ) {
@@ -280,6 +290,7 @@ exports.propEnum = function( enumeration ) {
     return propCast.bind( null, converters.castEnum( enumeration ) );
 };
 exports.propInteger = propCast.bind( null, converters.castInteger );
+exports.propFloat = propCast.bind( null, converters.castFloat );
 exports.propRegexp = propCast.bind( null, converters.castRegexp );
 exports.propString = propCast.bind( null, converters.castString );
 exports.propStringArray = propCast.bind( null, converters.castStringArray );
