@@ -212,11 +212,36 @@ exports.get = function( obj, att ) {
 };
 
 /**
+ * @export function readOnly
+ * @param {object} obj - Object to which we want to add a read only attribute.
+ * @param {string} name - Attribute's name.
+ * @param {function} value - Function to execute anytime someone gets the value of this attribute.
+ * @param {any} value - Constatn value of this attribute.
+ */
+exports.readOnly = function( obj, name, value ) {
+    if( typeof att === 'function' ) {
+        Object.defineProperty( obj, name, {
+            get: value,
+            set: function() {},
+            configurable: false,
+            enumerable: true
+        });
+    } else {
+        Object.defineProperty( obj, name, {
+            value: value,
+            writtable: false,
+            configurable: false,
+            enumerable: true
+        });
+    }
+};
+
+/**
  * Create a property on which we can bind another property.
- * 
+ *
  * @param {object} obj - Object to which we want to add a property.
  * @param {string} att - Name of the attribute of `obj`.
- * 
+ *
  */
 exports.prop = propCast.bind( null, null );
 /**
