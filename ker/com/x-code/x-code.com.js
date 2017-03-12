@@ -15,28 +15,6 @@ exports.tags = ["x-code"];
 exports.priority = 0;
 
 /**
- * Called the  first time the  component is  used in the  complete build
- * process.
- */
-exports.initialize = function(libs) {};
-
-/**
- * Called after the complete build process is over (success or failure).
- */
-exports.terminate = function(libs) {};
-
-/**
- * Called the first time the component is used in a specific HTML file.
- */
-exports.open = function(file, libs) {};
-
-/**
- * Called after a specific HTML file  as been processed. And called only
- * if the component has been used in this HTML file.
- */
-exports.close = function(file, libs) {};
-
-/**
  * Compile a node of the HTML tree.
  */
 exports.compile = function(root, libs) {
@@ -44,7 +22,6 @@ exports.compile = function(root, libs) {
 
     var src = root.attribs.src;
     var code = '';
-
     if (src) {
         if (!libs.fileExists(src)) {
             src += '.js';
@@ -57,7 +34,13 @@ exports.compile = function(root, libs) {
     } else {
         code = libs.Tree.text(root);
     }
-    if (root.attribs.section) code = restrictToSection( code, root.attribs.section );
+    if (root.attribs.section) {
+      code = restrictToSection( code, root.attribs.section );
+      if( code.length == 0 ) {
+        libs.fatal("Unable to find section #(" + root.attribs.section + ")");
+      }
+    }
+    code = removeLeftMargin( code );
     var highlightedCode = Highlight.parseCode(code, 'js', libs);
     root.type = libs.Tree.VOID;
     delete root.attribs;
@@ -65,12 +48,28 @@ exports.compile = function(root, libs) {
     libs.Tree.text(root, highlightedCode);
 };
 
+/**
+ * Remove common indentation.
+ */
+function removeLeftMargin( code ) {
+  var margin = 999;
+  var lines = code.split("\n");
+  lines.forEach(function (line) {
+    var s = line.length;
+    var m = 0;
+    while( m < s && line.charAt(m) == ' ' ) m++;
+    margin = Math.min( m, margin );
+  });
+  return lines.map(function(line) {
+    return line.substr( margin );
+  }).join("\n");
+}
 
 /**
  * it can be useful to restrict the display to just a section of the entire file.
  * Such sections must start with the following line where we find it's name.
  * Look at the definition of the section `init` in the following example.
- * 
+ *
  * @example
  *   var canvas = $.elem( this, 'div' );
  *   // #(init)
@@ -80,13 +79,13 @@ exports.compile = function(root, libs) {
  *   gl.depthFunc(gl.LEQUAL);
  *   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
  *   // #(init)
- * 
+ *
  */
 function restrictToSection( code, section ) {
     var linesToKeep = [];
     var outOfSection = true;
     var lookFor = '#(' + section + ')';
-    
+
     code.split('\n').forEach(function( line ) {
         if (outOfSection) {
             if (line.indexOf( lookFor ) > -1) {
@@ -100,6 +99,6 @@ function restrictToSection( code, section ) {
             }
         }
     });
-    
+
     return linesToKeep.join('\n');
 }

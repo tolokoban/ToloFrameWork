@@ -1,5 +1,8 @@
 /**
  * Component x-latex
+ *
+ * @example
+ * <x-latex>X_n = \sum_{i=0}^{n-1}g(i^2)</x-latex>
  */
 
 exports.tags = ["x-latex"];
@@ -10,7 +13,8 @@ exports.priority = 0;
 var SYMBOLS = {
     cdots: 'ctdot',
     neq: 'NotEqual',
-    iif: 'hArr'
+    iif: 'hArr',
+    '%': '#37'
 };
 
 // Symbols with superscript and subscripts on top and bottom.
@@ -21,7 +25,7 @@ var UNDEROVER = {
 };
 
 // Functions `f` must be converted in `<mo>f</mo>`.
-var FUNCTIONS = ['cos', 'sin', 'tan'];
+var FUNCTIONS = ['cos', 'sin', 'tan', 'lim', 'sup', 'inf'];
 
 function style(css) {
     return function(tokenizer, parent) {
