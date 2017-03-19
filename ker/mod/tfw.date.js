@@ -1,4 +1,5 @@
 "use strict";
+
 /**
  * @module tfw.date
  *
@@ -44,11 +45,11 @@ exports.formatDateTime = function(d) {
 
 exports.formatSmart = function(dat) {
     var today = new Date();
-    var Y0 = today.getYear();
+    var Y0 = today.getFullYear();
     var M0 = today.getMonth();
     var D0 = today.getDate();
 
-    var Y = dat.getYear();
+    var Y = dat.getFullYear();
     var M = dat.getMonth();
     var D = dat.getDate();
     var suffix = "";
@@ -84,3 +85,14 @@ exports.diff = function(a, b) {
     b = Math.floor(.5 + b.getTime() / 1000);
     return a - b;
 };
+
+
+exports.parseYMD = function(text) {
+  var YY = parseInt(text.substr(0, 4));
+  var MM = text.length > 5 ? parseInt(text.substr(4, 2)) - 1 : 0;
+  var DD = text.length > 7 ? parseInt(text.substr(6, 2)) : 0;
+  var hh = text.length > 9 ? parseInt(text.substr(8, 2)) : 0;
+  var mm = text.length > 11 ? parseInt(text.substr(10, 2)) : 0;
+  var ss = text.length > 13 ? parseInt(text.substr(12, 2)) : 0;
+  return new Date( YY, MM, DD, hh, mm, ss );
+}

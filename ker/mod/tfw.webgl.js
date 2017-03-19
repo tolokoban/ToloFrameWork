@@ -6,21 +6,23 @@
 "use strict";
 
 
-var Renderer = function(canvas) {
-    if( typeof canvas === 'string' ) canvas = document.getElementById( canvas );
-    Object.defineProperty( this, 'canvas', {
-        value: canvas,
-        writable: false,
-        configurable: false,
-        enumerable: true
-    });
-    // Get WebGL 1.0 context.
-    Object.defineProperty( this, 'gl', {
-        value: canvas.getContext('webgl') || canvas.getContext('experimental-webgl'),
-        writable: false,
-        configurable: false,
-        enumerable: true
-    });
+var Renderer = function(canvas, options) {
+  if( typeof options === 'undefined' ) options = {};
+  if( typeof canvas === 'string' ) canvas = document.getElementById( canvas );
+  Object.defineProperty( this, 'canvas', {
+      value: canvas,
+      writable: false,
+      configurable: false,
+      enumerable: true
+  });
+  // Get WebGL 1.0 context.
+  Object.defineProperty( this, 'gl', {
+      value: canvas.getContext('webgl', options) ||
+        canvas.getContext('experimental-webgl', options),
+      writable: false,
+      configurable: false,
+      enumerable: true
+  });
 };
 
 // Start the animation loop.
@@ -35,7 +37,7 @@ Renderer.prototype.start = function(renderingFunction) {
 /**
  * Creating  a  WebGL  program  for shaders  is  painful.  This  class
  * simplifies the process.
- * 
+ *
  * @param gl - WebGL context.
  * @param codes  - Object  with two  mandatory attributes:  `vert` for
  * vertex shader and `frag` for fragment shader.
