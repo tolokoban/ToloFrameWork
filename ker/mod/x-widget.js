@@ -217,7 +217,7 @@ Widget.bind = function( id, attribs ) {
                     try {
                         mod = require(slot[0]);
                     } catch( ex ) {
-                        console.error("[x-widget:bind] Widget `" + id + "` can't require `"
+                        console.error("[x-widget:bind] Widget `" + id + "` can't require unexistent `"
                                       + slot[0] + "`: ", ex);
                         throw( ex );
                     }
@@ -225,8 +225,13 @@ Widget.bind = function( id, attribs ) {
                 }
                 fct = mod[fct];
                 if (typeof fct !== 'function') {
-                    throw(Error("[x-widget:bind]  Widget `" + id + "` use unexisting slot `"
-                                + slot[1] + "` of module `" + slot[0] + "`!"));
+                    if( Array.isArray(slot) ) {
+                      throw Error("[x-widget:bind]  Widget `" + id + "` use unexisting slot `"
+                                  + slot[1] + "` of module `" + slot[0] + "`!");
+                    } else {
+                      throw Error("[x-widget:bind]  Widget `" + id + "` use unexisting slot `"
+                                  + slot + "` of main module `APP`!");
+                    }
                 } else {
                     try {
                         DB.bind( dstObj, dstAtt, fct );
