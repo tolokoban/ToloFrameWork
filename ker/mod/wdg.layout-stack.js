@@ -70,10 +70,10 @@ var LayoutStack = function(opts) {
             v.forEach(function (itm, idx) {
                 if( typeof itm.$key === 'undefined' ) itm.$key = idx;
                 obj[itm.$key] = itm;
-                if( typeof firstKey === 'undefined' ) itm.$key = firstKey;
+                if( typeof firstKey === 'undefined' ) firstKey = itm.$key;
             });
             v = obj;
-            DB.fire(that, 'value', firstKey);
+            DB.set(that, 'value', firstKey);
         }
 
         // Clearing current element to add children.
