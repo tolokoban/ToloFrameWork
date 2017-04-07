@@ -1,23 +1,11 @@
 .tfw-message {
     position: fixed;
-    left: 50%;
-    top: 48px;
-    width: 300px;
-    padding: 1rem;
-    margin: 0;
-    margin-left: -150px;
     z-index: 999999;
     cursor: pointer;
-
-    transform: translateY(-100%);
+    padding: 1rem;
+    margin: 0;
     opacity: 0;
-    transition: all .2s;
-}
-
-.tfw-message.show {
-    transform: translateY(0);
-    opacity: 1;
-    transition: all .3s;
+    box-shadow: 0 12px 24px rgba(0,0,0,.5);
 }
 
 .tfw-message.info {
@@ -31,3 +19,38 @@
     color: #fff;
     font-weight: bold;
 }
+
+.tfw-message {
+  transition: all .2s;
+}
+
+.tfw-message.show {
+  transform: translateY(0);
+  opacity: 1;
+  transition: all .3s;
+}
+
+/* Depend on screen size */
+.tfw-message {
+    left: 50%;
+    right: auto;
+    top: 48px;
+    bottom: auto;
+    width: 300px;
+    margin-left: -150px;
+    transform: translateY(-100%);
+}
+
+@media (max-width: 480px) {
+  .tfw-message {
+      left: 0;
+      top: auto;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      margin: 0;
+      transform: translateY(100%);
+      box-shadow: 0 -12px 24px rgba(0,0,0,.5);
+  }
+}
+
