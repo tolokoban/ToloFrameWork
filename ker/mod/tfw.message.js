@@ -19,11 +19,7 @@ var G = {
 };
 
 function show( className, text, delay ) {
-  if ( G.lastMsg ) {
-    // Remove an already displayed message because a new one must take its place.
-    $.detach( G.lastMsg );
-    G.lastMsg = null;
-  }
+  clear();
 
   if ( typeof delay !== 'number' ) delay = 5000;
   var div = $.div( 'tfw-message', className );
@@ -47,6 +43,14 @@ function show( className, text, delay ) {
   } );
 }
 
+function clear() {
+  if ( G.lastMsg ) {
+    // Remove an already displayed message because a new one must take its place.
+    $.detach( G.lastMsg );
+    G.lastMsg = null;
+  }
+}
 
 exports.info = show.bind( null, 'info' );
 exports.error = show.bind( null, 'error' );
+exports.clear = clear;
