@@ -9,7 +9,8 @@ div.wdg-flex.H {
 }
 
 div.wdg-flex.V {
-  flex-direction: column;  
+  flex-direction: column;
+  height: 100%;
 }
 
 @media (orientation: portrait) {
