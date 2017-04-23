@@ -9,6 +9,8 @@
  * * `W`: Wide. In direction of the wider dimension: H in landscape and V in portrait.
  * * `N`: Narrow. Exact opposite of `W`.
  * @param {string} opts.type - One of `default`, `fill`. Default is `default`.
+ * @param {string} opts.justify - One of `center', 'end', 'start', 'between', 'around'. 
+ * Default is 'around'.
  *
  * @description
  * Simple flex alignement of children.
