@@ -144,7 +144,7 @@ function createUniforms( that, gl, shaderProgram ) {
     item = gl.getActiveUniform( shaderProgram, index );
     uniforms[ item.name ] = gl.getUniformLocation( shaderProgram, item.name );
     Object.defineProperty( that, '$' + item.name, {
-      set: createUniformSetter( gl, item, uniforms[ item.name ] ),
+      set: createUniformSetter( gl, item, uniforms[ item.name ], that._typesNamesLookup ),
       get: createUniformGetter( item ),
       enumerable: true,
       configurable: false
@@ -188,7 +188,7 @@ function parseIncludes( codes, includes ) {
 }
 
 
-function createUniformSetter( gl, item, nameGL ) {
+function createUniformSetter( gl, item, nameGL, lookup ) {
   var nameJS = '_$' + item.name;
 
   switch ( item.type ) {
@@ -198,6 +198,7 @@ function createUniformSetter( gl, item, nameGL ) {
   case gl.UNSIGNED_SHORT:
   case gl.INT:
   case gl.UNSIGNED_INT:
+  case gl.SAMPLER_2D: // For textures, we specify the texture unit.
     if ( item.size == 1 ) {
       return function ( v ) {
         gl.uniform1i( nameGL, v );
@@ -223,6 +224,37 @@ function createUniformSetter( gl, item, nameGL ) {
       };
     }
     break;
+  case gl.FLOAT_MAT3:
+    if ( item.size == 1 ) {
+      return function ( v ) {
+        gl.uniformMatrix3fv( nameGL, false, v );
+        this[ nameJS ] = v;
+      };
+    } else {
+      throw Error(
+        "[webgl.program.createWriter] Don't know how to deal arrays of FLOAT_MAT3 in uniform `" +
+        item.name + "'!'"
+      );
+    }
+    break;
+  case gl.FLOAT_MAT4:
+    if ( item.size == 1 ) {
+      return function ( v ) {
+        gl.uniformMatrix4fv( nameGL, false, v );
+        this[ nameJS ] = v;
+      };
+    } else {
+      throw Error(
+        "[webgl.program.createWriter] Don't know how to deal arrays of FLOAT_MAT4 in uniform `" +
+        item.name + "'!'"
+      );
+    }
+    break;
+  default:
+    throw Error(
+      "[webgl.program.createWriter] Don't know how to deal with uniform `" +
+      item.name + "` of type " + lookup[ item.type ] + "!"
+    );
   }
 }
 
