@@ -5,6 +5,10 @@ module.exports = {
   mat3: mat3,
   mat4: mat4,
   mul: mul,
+  cameraPolar: cameraPolar,
+  perspective4: perspective4,
+  identity3: identity3,
+  identity4: identity4,
   projection3: projection3,
   projection4: projection4,
   translation3: translation3,
@@ -14,8 +18,73 @@ module.exports = {
   rotationY4: rotationY4,
   rotationZ4: rotationZ4,
   scaling3: scaling3,
-  scaling4: scaling4
+  scaling4: scaling4,
+  copy: copy,
+  normalize: normalize
 };
+
+function copy( arr ) {
+  var n = new Float32Array( arr );
+  n.$type = arr.$type;
+  return n;
+}
+
+function normalize( arr ) {
+  var n = copy( arr );
+  var len = 0,
+    v, k;
+  for ( k = 0; k < n.length; k++ ) {
+    v = n[ k ];
+    len += v * v;
+  }
+  if ( len > 0 ) {
+    var coeff = 1 / Math.sqrt( len );
+    for ( k = 0; k < n.length; k++ ) {
+      n[ k ] *= coeff;
+    }
+  }
+  return n;
+}
+
+function cameraPolar( targetX, targetY, targetZ, dis, lat, lng ) {
+  var rot = mul(
+    rotationZ4( -lng ),
+    rotationX4( -lat + Math.PI * 0.5 )
+  );
+  var tX = rot[ 8 ] * dis + targetX;
+  var tY = rot[ 9 ] * dis + targetY;
+  var tZ = rot[ 10 ] * dis + targetZ;
+  return mul(
+    translation4( -tX, -tY, -tZ ), rot
+  );
+}
+
+/**
+ * Define the `frustum`.
+ * @param {number} fieldAngle - View angle in radians. Maximum is PI.
+ * @param {number} aspect - (width / height) of the canvas.
+ * @param {number} near - Clip every Z lower than `near`.
+ * @param {number} far - Clip every Z greater than `far`.
+ */
+function perspective4( fieldAngle, aspect, near, far ) {
+  var f = Math.tan( Math.PI * 0.5 - 0.5 * fieldAngle );
+  var rangeInv = 1.0 / ( near - far );
+
+  return mat4(
+    f / aspect, 0, 0, 0,
+    0, f, 0, 0,
+    0, 0, ( near + far ) * rangeInv, -1,
+    0, 0, near * far * rangeInv * 2, 0
+  );
+}
+
+function identity3() {
+  return mat3( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
+}
+
+function identity4() {
+  return mat4( 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
+}
 
 function projection3( width, height ) {
   return mat3( 2 / width, 0, 0, 0, -2 / height, 0, 0, 0, 1 );
