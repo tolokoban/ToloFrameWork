@@ -58,25 +58,25 @@ function cameraPolar4( targetX, targetY, targetZ, dis, lat, lng, result ) {
   var Zx = cosLng * cosLat; // V2/2
   var Zy = sinLng * cosLat; // 0
   var Zz = sinLat; // V2/2
+  // Le vecteur X se déduit par un produit vectoriel de (0,0,1) avec Z.
   var Xx = -Zy;
-  var Xy = -Zx;
+  var Xy = Zx;
   var Xz = 0;
-  var Yx = Zx * Zz;
-  var Yy = Zy * Zz;
-  var Yz = Zx * Zx + Zy * Zy;
-  // Normalize X and Y.
+  // Comme (0,0,1) n'est pas orthogonal à Z, il faut normaliser X.
   var len = Math.sqrt( Xx * Xx + Xy * Xy + Xz * Xz );
   Xx /= len;
   Xy /= len;
   Xz /= len;
-  len = Math.sqrt( Yx * Yx + Yy * Yy + Yz * Yz );
-  Yx /= len;
-  Yy /= len;
-  Yz /= len;
+  // Y peut alors se déduire par le produit vectoriel de Z par X.
+  // Et il n'y aura pas besoin de le normaliser.
+  var Yx = Zy*Xz - Zz*Xy;
+  var Yy = Xx*Zz - Xz*Zx;
+  var Yz = Zx*Xy - Zy*Xx;
   // Translation.
   var Tx = Zx * dis + targetX;
   var Ty = Zy * dis + targetY;
   var Tz = Zz * dis + targetZ;
+debugger;  
   // Le résultat est la multiplication de la projection avec la translation.
   result[ 0 ] = Xx;
   result[ 1 ] = Xy;
