@@ -4,6 +4,7 @@ module.exports = {
   m4: {
     identity: identity4,
     matrix: mat4,
+    vector: vec4,
     projection: projection4,
     translation: translation4,
     rotationX: rotationX4,
@@ -69,33 +70,33 @@ function cameraPolar4( targetX, targetY, targetZ, dis, lat, lng, result ) {
   Xz /= len;
   // Y peut alors se déduire par le produit vectoriel de Z par X.
   // Et il n'y aura pas besoin de le normaliser.
-  var Yx = Zy*Xz - Zz*Xy;
-  var Yy = Xx*Zz - Xz*Zx;
-  var Yz = Zx*Xy - Zy*Xx;
+  var Yx = Zy * Xz - Zz * Xy;
+  var Yy = Xx * Zz - Xz * Zx;
+  var Yz = Zx * Xy - Zy * Xx;
   // Translation.
-  var Tx = Zx * dis + targetX;
-  var Ty = Zy * dis + targetY;
-  var Tz = Zz * dis + targetZ;
-debugger;  
+  var Tx = -( Zx * dis + targetX );
+  var Ty = -( Zy * dis + targetY );
+  var Tz = -( Zz * dis + targetZ );
+
   // Le résultat est la multiplication de la projection avec la translation.
   result[ 0 ] = Xx;
-  result[ 1 ] = Xy;
-  result[ 2 ] = Xz;
-  result[ 3 ] = Tx * Xx + Ty * Xy + Tz * Xz;
+  result[ 4 ] = Xy;
+  result[ 8 ] = Xz;
+  result[ 12 ] = Tx * Xx + Ty * Xy + Tz * Xz;
 
-  result[ 4 ] = Yx;
+  result[ 1 ] = Yx;
   result[ 5 ] = Yy;
-  result[ 6 ] = Yz;
-  result[ 7 ] = Tx * Yx + Ty * Yy + Tz * Yz;
+  result[ 9 ] = Yz;
+  result[ 13 ] = Tx * Yx + Ty * Yy + Tz * Yz;
 
-  result[ 8 ] = Zx;
-  result[ 9 ] = Zy;
+  result[ 2 ] = Zx;
+  result[ 6 ] = Zy;
   result[ 10 ] = Zz;
-  result[ 11 ] = Tx * Zx + Ty * Zy + Tz * Zz;
+  result[ 14 ] = Tx * Zx + Ty * Zy + Tz * Zz;
 
-  result[ 12 ] = 0;
-  result[ 13 ] = 0;
-  result[ 14 ] = 0;
+  result[ 3 ] = 0;
+  result[ 7 ] = 0;
+  result[ 11 ] = 0;
   result[ 15 ] = 1;
 
   return result;
@@ -326,6 +327,14 @@ var MUL = {
     result[ 13 ] = a[ 1 ] * b[ 12 ] + a[ 5 ] * b[ 13 ] + a[ 9 ] * b[ 14 ] + a[ 13 ] * b[ 15 ];
     result[ 14 ] = a[ 2 ] * b[ 12 ] + a[ 6 ] * b[ 13 ] + a[ 10 ] * b[ 14 ] + a[ 14 ] * b[ 15 ];
     result[ 15 ] = a[ 3 ] * b[ 12 ] + a[ 7 ] * b[ 13 ] + a[ 11 ] * b[ 14 ] + a[ 15 ] * b[ 15 ];
+    return result;
+  },
+  m16m4: function ( a, b, result ) {
+    result = result || new Float32Array( 4 );
+    result[ 0 ] = a[ 0 ] * b[ 0 ] + a[ 4 ] * b[ 1 ] + a[ 8 ] * b[ 2 ] + a[ 12 ] * b[ 3 ];
+    result[ 1 ] = a[ 1 ] * b[ 0 ] + a[ 5 ] * b[ 1 ] + a[ 9 ] * b[ 2 ] + a[ 13 ] * b[ 3 ];
+    result[ 2 ] = a[ 2 ] * b[ 0 ] + a[ 6 ] * b[ 1 ] + a[ 10 ] * b[ 2 ] + a[ 14 ] * b[ 3 ];
+    result[ 3 ] = a[ 3 ] * b[ 0 ] + a[ 7 ] * b[ 1 ] + a[ 11 ] * b[ 2 ] + a[ 15 ] * b[ 3 ];
     return result;
   }
 };
