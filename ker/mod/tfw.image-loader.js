@@ -5,30 +5,35 @@
 require("polyfill.promise");
 
 /**
- * Retourne  un  promise dont  la  data  est  un dictionnaire  avec  les
- * messages  d'erreurs associés  à chaque  image chargée.  Bien sûr,  ce
- * dictionnaire est vide si tout s'est bien passé, sinon chaque clef est
- * une URL.
- * Il n'y a donc jamais de `reject` dans le promise retourné.
- * 
+ * Retourne un promise dont le data du _resolve_ est un dictionnaire avec les
+ * l'URL de chaque image en clef et en valeur soit l'image chargée, soit une `string`
+ * décrivant l'erreur.
+ * Il n'y a donc jamais aucun appel
  * @param src URL vers une image ou tableau d'URLs vers des images.
  */
 module.exports = function(src) {
     if (!Array.isArray(src)) src = [src];
+    var urls = [];
+    src.forEach(function(url) {
+      if (urls.indexOf( url ) == -1) {
+        urls.push( url );
+      }
+    });
     return new Promise(
         function(resolve, reject) {
-            var errors = {};
+            var result = {};
             var size = src.length;
             var next = function() {
                 size--;
                 if (size <= 0) resolve(errors);
             };
-            src.forEach(
+            urls.forEach(
                 function(url) {
                     var img = new Image();
+                    result[url] = img;
                     img.onload = next;
                     img.onerror = function(err) {
-                        errors[url] = err;
+                        result[url] = err;
                         next();
                     };
                     img.src = url;
