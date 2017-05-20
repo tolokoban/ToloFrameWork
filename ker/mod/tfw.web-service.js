@@ -182,9 +182,10 @@ exports.login = function ( usr, pwd ) {
           function ( code ) {
             // Hashage du mot de passe à l'aide du code.
             var output = [ 0, 0, 0, 0,
-                                      0, 0, 0, 0,
-                                      0, 0, 0, 0,
-                                      0, 0, 0, 0 ],
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0
+              ],
               i, j = 0,
               pass = [],
               k1, k2, k3;
@@ -312,15 +313,30 @@ if ( window.$$ ) {
     );
   };
 }
-/**
- *
- */
-Object.defineProperty( exports, 'userID', {
-  get: function () {
+
+
+var properties = {
+  userID: function () {
     if ( !currentUser ) return 0;
     return currentUser.data.id;
   },
-  set: function ( v ) {},
-  configurable: true,
-  enumerable: true
-} );
+  userLogin: function () {
+    if ( !currentUser ) return null;
+    return currentUser.data.login;
+  },
+  userName: function () {
+    if ( !currentUser ) return null;
+    return currentUser.data.name;
+  }
+};
+
+for ( var key in properties ) {
+  Object.defineProperty( exports, key, {
+    get: properties[ key ],
+    set: function ( v ) {
+      throw Error( "Property " + key + " is read-only!" );
+    },
+    configurable: true,
+    enumerable: true
+  } );
+}

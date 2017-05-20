@@ -109,16 +109,32 @@ function cameraPolar4( targetX, targetY, targetZ, dis, lat, lng, result ) {
  * @param {number} near - Clip every Z lower than `near`.
  * @param {number} far - Clip every Z greater than `far`.
  */
-function perspective4( fieldAngle, aspect, near, far ) {
+function perspective4( fieldAngle, aspect, near, far, result ) {
+  result = result || new Float32Array( 16 );
   var f = Math.tan( Math.PI * 0.5 - 0.5 * fieldAngle );
   var rangeInv = 1.0 / ( near - far );
 
-  return mat4(
-    f / aspect, 0, 0, 0,
-    0, f, 0, 0,
-    0, 0, ( near + far ) * rangeInv, -1,
-    0, 0, near * far * rangeInv * 2, 0
-  );
+  result[ 0 ] = f / aspect;
+  result[ 1 ] = 0;
+  result[ 2 ] = 0;
+  result[ 3 ] = 0;
+
+  result[ 4 ] = 0;
+  result[ 5 ] = f;
+  result[ 6 ] = 0;
+  result[ 7 ] = 0;
+
+  result[ 8 ] = 0;
+  result[ 9 ] = 0;
+  result[ 10 ] = ( near + far ) * rangeInv;
+  result[ 11 ] = -1;
+
+  result[ 12 ] = 0;
+  result[ 13 ] = 0;
+  result[ 14 ] = near * far * rangeInv * 2;
+  result[ 15 ] = 0;
+
+  return result;
 }
 
 function identity3() {
