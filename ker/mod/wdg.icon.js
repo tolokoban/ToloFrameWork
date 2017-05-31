@@ -4,7 +4,12 @@ var Touchable = require( "tfw.touchable" );
 
 /**
  * @class Icon
- * @param {string} content - Name of the icon.
+ * @param {string} opts.content - Name of the icon.
+ * @param {boolean} opts.rotate - Activer l'auto-rotation.
+ * @param {boolean} opts.button - Show as round button.
+ * @param {string} opts.type - "default" or "accent".
+ * @param {any} opts.value - Value taken by the property `action` when the icon is clicked.
+ * @param {string|number} opts.size - CSS size of the icon.
  */
 var Icon = function ( opts ) {
   var that = this;
