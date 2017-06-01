@@ -37,6 +37,10 @@ pre.highlight .function {
     font-weight: bold;
 }
 
+pre.highlight .number {
+    color: #ff0;
+}
+
 pre.highlight .symbol {
     color: #f08;
 }

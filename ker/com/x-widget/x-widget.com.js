@@ -75,7 +75,9 @@ exports.compile = function( root, libs ) {
   libs.require( "x-widget" );
   libs.require( com.name );
   libs.addInitJS( "var W = require('x-widget');" );
-  libs.addInitJS( "        W('" + com.attr.id + "', '" + com.name + "', " + stringifyProperties( com.prop, '          ' ) + ")" );
+  libs.addInitJS( "        W('" + com.attr.id + 
+    "', '" + com.name + "', " + 
+    stringifyProperties( com.prop, '          ' ) + ")" );
   SKIP = false;
 };
 
@@ -111,11 +113,11 @@ function parseComponent( root, libs, indent ) {
   };
 
   return com;
-};
+}
 
 function camelCase( text ) {
   return text.split( '-' ).map( function( itm, idx ) {
-    if ( idx == 0 ) 
+    if ( idx === 0 ) 
       return itm;
     return itm.charAt( 0 ).toUpperCase( ) + itm.substr( 1 );
   }).join( '' );
@@ -134,7 +136,7 @@ function stringifyProperties( prop, indent ) {
       break;
     }
   
-  if ( count == 0 ) 
+  if ( count === 0 ) 
     return "{}";
   else if ( count == 1 ) {
     for ( key in prop ) {
@@ -172,9 +174,7 @@ function stringifyArray( arr, indent ) {
     });
     return out + "]";
   } else {
-    return "[" + ( arr.length == 1
-      ? arr[0]
-      : '' ) + "]";
+    return "[" + ( arr.length == 1 ? arr[0] : '' ) + "]";
   }
 }
 
@@ -188,7 +188,8 @@ function getModuleName( root, libs, com ) {
   }
   var name = root.name;
   if ( typeof name !== 'string' ) {
-    root.children = root.children.length; // Pour faciliter l'affichage du debug.
+    // On retirer les `children` pour faciliter l'affichage du debug.
+    root.children = root.children.length;
     libs.fatal( "[x-widget] Missing attribute \"name\"!\n" + JSON.stringify( root, null, '  ' ), root );
   }
   if ( root.name.substr( 0, 4 ) == 'wdg:' ) {
@@ -233,7 +234,6 @@ function getPropertiesAndBindings( root, libs, com, indent ) {
   // Attributes can have post initialization, especially for data bindings.
   var postInit = {};
   var hasPostInit = false;
-  // All the attributes that start with a '$' are used as args attributes.
   var key,
     val,
     values;
@@ -241,29 +241,43 @@ function getPropertiesAndBindings( root, libs, com, indent ) {
   var slots;
   for ( key in root.attribs ) {
     if ( key.charAt( 0 ) == '$' ) {
+      // All the attributes that start with a '$' are used as args attributes.
       val = root.attribs[key];
       com.prop[key.substr( 1 )] = JSON.stringify( val );
-    } else if ( key.substr( 0, 5 ) == 'intl:' ) {
+    } 
+    else if ( key.substr( 0, 5 ) == 'intl:' ) {
       // Internationalization.
       val = root.attribs[key];
       com.prop[key.substr( 5 )] = "APP._(" + JSON.stringify( val ) + ")";
-    } else if ( key.substr( 0, 5 ) == 'bind:' ) {
-      // Syntaxe : <bind> := <bind-item> <bind-next>* <bind-next> := "," <bind-item> <bind-item> := <widget-name> <attribute>?
-      // <value>? <widget-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/ <attribute> := ":" <attrib-name> <attrib-name> :=
-      // /[$a-zA-Z_-][$0-9a-zA-Z_-]+/ <value> := "=" <data> <data> := "true" | "false" | "null" | <number> | <string>
+    } 
+    else if ( key.substr( 0, 5 ) == 'bind:' ) {
+      // Syntaxe : 
+      // <bind> := <bind-item> <bind-next>*
+      // <bind-next> := "," <bind-item>
+      // <bind-item> := <widget-name> <attribute>? <value>?
+      // <widget-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/ 
+      // <attribute> := ":" <attrib-name>
+      // <attrib-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/ 
+      // <value> := "=" <data> 
+      // <data> := "true" | "false" | "null" | <number> | <string>
       //
-      // @example <wdg:checkbox bind:value="btn1:action" /> <wdg:checkbox bind:value="btn1:action, btn2, action=false" />
-      if ( typeof postInit[key.substr( 5 )] === 'undefined' ) 
+      // @example
+      // <wdg:checkbox bind:value="btn1:action" />
+      // <wdg:checkbox bind:value="btn1:action, btn2, action=false" />
+      if ( typeof postInit[key.substr( 5 )] === 'undefined' ) {
         postInit[key.substr( 5 )] = {};
+      }
       postInit[key.substr( 5 )].B = parseBinding(root.attribs[key]);
       hasPostInit = true;
-    } else if ( key.substr( 0, 5 ) == 'slot:' ) {
+    } 
+    else if ( key.substr( 0, 5 ) == 'slot:' ) {
       // @example <wdg:button slot:action="removeOrder" /> <wdg:button slot:action="removeOrder, changePage" /> <wdg:button
       // slot:action="my-module:my-function" />
       values = root.attribs[key].split( "," );
       key = key.substr( 5 );
-      if ( typeof postInit[key] === 'undefined' ) 
+      if ( typeof postInit[key] === 'undefined' ) {
         postInit[key] = {};
+      }
       slots = [ ];
       values.forEach( function( val ) {
         // Before the colon (:) there is the module name. After, there is the function name. If there is no colon, `APP` is used
@@ -300,21 +314,26 @@ function getPropertiesAndBindings( root, libs, com, indent ) {
  </wdg:combo>
  */
 function parseChildrenProperties( root, libs, com, indent ) {
-  if (!Array.isArray( root.children )) 
+  if (!Array.isArray( root.children )) {
     root.children = [ ];
+  }
   root.children.forEach( function( child ) {
-    if ( child.type != libs.Tree.TAG ) 
+    if ( child.type != libs.Tree.TAG ) {
       return;
+    }
     libs.compileChildren( child );
 
-    if ( typeof child.attribs === 'undefined' ) 
+    if ( typeof child.attribs === 'undefined' ) {
       child.attribs = {};
-    if ( child.attribs.json === null ) 
-      parsePropertyJSON( child, libs, com ); // By default, this is a list.
-    else 
+    }
+    if ( child.attribs.json === null ) {
+      parsePropertyJSON( child, libs, com );
+    }
+    else {
+      // By default, this is a list.
       parsePropertyList( child, libs, com, indent + "  " );
     }
-  );
+  });
 }
 
 function parsePropertyJSON( root, libs, com ) {
@@ -345,9 +364,10 @@ function parsePropertyList( root, libs, com, indent ) {
   libs.compileChildren( root );
   root.children.forEach( function( child ) {
     if ( child.type != libs.Tree.TAG ) {
-      if ( child.type == libs.Tree.TEXT ) {
-        if ( child.text.trim( ).length == 0 ) 
+      if ( child.type == libs.Tree.TEXT || child.type == libs.Tree.ENTITY ) {
+        if ( child.text.trim( ).length === 0 ) {
           return;
+        }
         if ( first ) {
           first = false;
         } else {
@@ -400,7 +420,7 @@ function parseElement( root, libs, com, indent ) {
   }
   var children = [ ];
   root.children.forEach( function( child ) {
-    if ( child.type == libs.Tree.TEXT ) {
+    if ( child.type == libs.Tree.TEXT || child.type == libs.Tree.ENTITY ) {
       children.push(JSON.stringify( child.text ));
     } else if ( child.type == libs.Tree.TAG ) {
       if (isWidget( child )) {

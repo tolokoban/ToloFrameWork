@@ -5,6 +5,7 @@
  * * __label__: Text to display as title.
  * * __value__: If true, the content is visible.
  * * __content__: Array of the embeded elements.
+ * @param {boolean} opts.simple
  *
  * @example
  * var mod = require('wdg.showhide');

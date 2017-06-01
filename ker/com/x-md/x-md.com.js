@@ -65,8 +65,10 @@ exports.compile = function(root, libs) {
     });
     
     out = Marked( markdown );
-    newChildren.push( libs.parseHTML(restorePreservedTags( out, preservedTags )) );
-
+    var restoredTags = restorePreservedTags( out, preservedTags );
+    var child = libs.parseHTML( restoredTags );
+    newChildren.push( child );
+    
     root.name = "div";
     root.attribs = {"class": "x-md custom"};
     root.children = newChildren;

@@ -59,8 +59,8 @@ function Widget2(args) {
 
     if (Array.isArray( args.children )) {
         // Adding DOM element children.
-        args.children.forEach(function (child) {
-            $.add( elem, child );
+        args.children.forEach(function (child) {          
+          $.add( elem, child );
         });
     }
     // Converting into a widget.

@@ -35,6 +35,7 @@ module.exports = $;
 // Used to store data on the DOM element without colliding with existing attributes.
 var SYMBOL = '@dom' + Date.now();
 
+var RX_ENTITY = /^&(#[0-9]+|[a-zA-Z0-9]+);$/;
 
 $.tagNS = tagNS;
 $.svgRoot = tagNS.bind( undefined, "http://www.w3.org/2000/svg", "svg", {
@@ -194,7 +195,13 @@ function add( element ) {
                     var html = child.substr( 6 );
                     child = $.tag('span');
                     child.innerHTML = html;
-                } else {
+                } 
+                else if( RX_ENTITY.test( child ) ) {
+                  var text = child;
+                  child = $.tag('span');
+                  child.innerHTML = text;
+                }
+                else {
                     child = document.createTextNode( child );
                 }
             }
