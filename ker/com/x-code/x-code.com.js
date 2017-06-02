@@ -8,7 +8,7 @@
  */
 var Highlight = require("./highlight");
 
-var LANGUAGES = ['js', 'css', 'html', 'xml'];
+var LANGUAGES = ['js', 'glsl', 'css', 'html', 'xml'];
 
 
 exports.tags = ["x-code"];
@@ -21,6 +21,10 @@ exports.compile = function(root, libs) {
     if( typeof root.attribs === 'undefined' ) root.attribs = {};
 
     var src = root.attribs.src;
+    var lang = root.attribs.lang || 'js';
+    if (LANGUAGES.indexOf( lang ) === -1) {
+      libs.fatal("Unknown language: " + lang + "!");
+    }
     var code = '';
     if (src) {
         if (!libs.fileExists(src)) {
@@ -36,12 +40,12 @@ exports.compile = function(root, libs) {
     }
     if (root.attribs.section) {
       code = restrictToSection( code, root.attribs.section );
-      if( code.length == 0 ) {
+      if( code.length === 0 ) {
         libs.fatal("Unable to find section #(" + root.attribs.section + ")");
       }
     }
     code = removeLeftMargin( code );
-    var highlightedCode = Highlight.parseCode(code, 'js', libs);
+    var highlightedCode = Highlight.parseCode(code, lang, libs);
     root.type = libs.Tree.VOID;
     delete root.attribs;
     delete root.name;

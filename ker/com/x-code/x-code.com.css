@@ -2,24 +2,29 @@ pre.highlight {
     position: relative;
     margin: 4px;
     padding: 8px;
-    background: #000;
-    border: 2px solid #555;
-    box-shadow: 0 0 5px #fff;
-    color: #ccc;
-    border-radius: .5em;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,.5);
+    color: #333;
+    border-radius: 0;
+    border: none;
     overflow-x: auto;
     font-size: 85%;
 }
 
-pre.highlight.js::after {
+pre.highlight::after {
     content: "Javascript";
     position: absolute;
     top: 0;
     right: 0;
     padding: 4px;
     font-variant: small-fonts;
-    opacity: .3;
-    color: #fff;
+    opacity: .1;
+    font-size: 80%;
+    color: #000;
+}
+
+pre.highlight.glsl::after {
+  content: "GLSL";
 }
 
 pre.highlight .keyword {
@@ -28,33 +33,34 @@ pre.highlight .keyword {
 }
 
 pre.highlight .keyword2 {
-    color: #0ff;
+    color: #0bb;
     font-weight: bold;
 }
 
 pre.highlight .function {
-    color: #fff;
+    color: #000;
     font-weight: bold;
 }
 
 pre.highlight .number {
-    color: #ff0;
+    color: #c80;
+    font-weight: bold;
 }
 
 pre.highlight .symbol {
-    color: #f08;
+    color: #804;
 }
 
 pre.highlight .operator {
-    color: #f80;
+    color: #840;
 }
 
 pre.highlight .comment {
-    color: #777;
+    color: #0005;
 }
 
 pre.highlight .string {
-    color: #0f0;
+    color: #0b0;
 }
 
 pre.highlight .regexp {

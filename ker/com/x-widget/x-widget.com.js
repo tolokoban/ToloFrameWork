@@ -70,6 +70,7 @@ exports.compile = function( root, libs ) {
   }
 
   SKIP = true;
+  debugger;
   var com = parseComponent( root, libs, '        ' );
 
   libs.require( "x-widget" );
@@ -186,12 +187,7 @@ function getModuleName( root, libs, com ) {
   if ( typeof root.attribs === 'undefined' ) {
     root.attribs = {};
   }
-  var name = root.name;
-  if ( typeof name !== 'string' ) {
-    // On retirer les `children` pour faciliter l'affichage du debug.
-    root.children = root.children.length;
-    libs.fatal( "[x-widget] Missing attribute \"name\"!\n" + JSON.stringify( root, null, '  ' ), root );
-  }
+  var name = root.attribs.name;
   if ( root.name.substr( 0, 4 ) == 'wdg:' ) {
     name = "wdg." + root.name.substr( 4 );
   } else {
@@ -445,7 +441,7 @@ function parseWidget( root, libs, parent, indent ) {
 
 function isWidget( root ) {
   var name = root.name;
-  if ( name.substr( 0, 4 ) == 'wdg:' || name == 'x-widget' ) {
+  if ( name.substr( 0, 4 ) == 'wdg:' || name === 'x-widget' || name === 'x-wdg' ) {
     return true;
   }
   return false;
