@@ -51,7 +51,9 @@ var DEFAULT_MENU = [
   }, {
     id: 'format-align-justify',
     key: 'ctrl-J'
-  }
+  },
+  '-',
+  { id: 'font', key: 'ctrl-F' }
 ];
 /*
 ['undo', squire.undo.bind( squire )],
@@ -276,7 +278,7 @@ function setFontFaceSizeColor( ) {
     }, [_( 'sentence' )]);
   });
   var selFontName = S( _( 'font-name' ), optFontName );
-  var selFontSize = S(_( 'font-name' ), {
+  var selFontSize = S(_( 'font-size' ), {
     '70': '70 %',
     '80': '80 %',
     '90': '90 %',
@@ -296,10 +298,6 @@ function setFontFaceSizeColor( ) {
     that.setFontSize( selFontSize.val( ) + "%" );
     that.setTextColour(selFontColor.val( ));
   });
-}
-
-function removeAllFormatting( ) {
-  this.removeAllFormatting( );
 }
 
 function setFloat( float ) {
@@ -373,6 +371,9 @@ function onMenu( id ) {
       break;
     case 'format-align-justify':
       squire.setTextAlignment( 'justify' );
+      break;
+    case 'font':
+      setFontFaceSizeColor.call( squire );
       break;
     default:
       this.processButton( id );
