@@ -172,7 +172,7 @@ var WysiwygEditor = function( opts ) {
           }
           if ( typeof itm.key === 'string' ) {
             loaded.then( function( ) {
-              that.squire.setKeyHandler( itm.key, function( self, event, range ) {
+              that.squire.setKeyHandler( itm.key.toLowerCase(), function( self, event, range ) {
                 onMenu.call( that, itm.id, range );
               });
             });
@@ -320,7 +320,7 @@ function makeLink( ) {
       tag: 'a'
     }, null, true );
   } else {
-    Prompt( _( 'icon-link' ), function( href ) {
+    Prompt( _( 'tip-link' ), function( href ) {
       if ( href && href.trim( ).length > 0 ) {
         that.makeLink(href, { target: '_blank' });
       }

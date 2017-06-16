@@ -57,7 +57,8 @@ module.exports = function( title, content, onValidation ) {
   });
   btnOK.on( validate );
   modal.attach();
+  input.focus = false;
   window.setTimeout(function() {
     input.focus = true;
-  }, 150);
+  }, 300);
 };
