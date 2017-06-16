@@ -13,7 +13,7 @@ var Fx = function( name ) {
     // Because it is  possible to call `end()` before  the sequence is
     // over, we need  to know in what  session we are. This  way, if a
     // callback is called after the end,  it can know that it must not
-    // be execute the next task.
+    // execute the next task.
     this._session = {};
     // A name can be defined for debug purpose, but it is not used right now.
     Object.defineProperty( Fx.prototype, 'name', {

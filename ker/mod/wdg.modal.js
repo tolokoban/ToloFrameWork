@@ -175,5 +175,4 @@ Modal.alert = function ( content, onOK ) {
   return modal;
 };
 
-
 module.exports = Modal;
