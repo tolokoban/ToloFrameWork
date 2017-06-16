@@ -12,7 +12,9 @@ var Fx = require( "dom.fx" );
 var DB = require( "tfw.data-binding" );
 var Icon = require( "wdg.icon" );
 var Modal = require( "wdg.modal" );
+var Combo = require( "wdg.combo" );
 var Prompt = require( "wdg.modal.prompt" );
+var InputColor = require( "tp4.input-color" );
 
 var DEFAULT_MENU = [
   {
@@ -272,13 +274,13 @@ function setFontFaceSizeColor( ) {
   var that = this;
 
   var optFontName = {};
-  [ 'serif', 'sans-serif', 'monospace' ].forEach( function( fontname ) {
+  [ 'josefin-sans', 'serif', 'sans-serif', 'monospace' ].forEach( function( fontname ) {
     optFontName[fontname] = $.div({
       style: 'font-family:' + fontname
     }, [_( 'sentence' )]);
   });
-  var selFontName = S( _( 'font-name' ), optFontName );
-  var selFontSize = S(_( 'font-size' ), {
+  var selFontName = new Combo({ label: _( 'font-name' ), content: optFontName });
+  var selFontSize = new Combo({ label: _( 'font-size' ), content: {
     '70': '70 %',
     '80': '80 %',
     '90': '90 %',
@@ -287,15 +289,14 @@ function setFontFaceSizeColor( ) {
     '130': '130 %',
     '160': '160 %',
     '200': '200 %'
-  });
-  selFontSize.val( '100' );
-  var selFontColor = C(_( 'font-color' ));
+  }});
+  selFontSize.value = '100';
+  var selFontColor = new InputColor(_( 'font-color' ));
   selFontColor.val( 'black' );
 
-  Modal.confirm( $.div([selFontName.element( ), selFontSize.element( ), selFontColor.element( )]), function( confirm ) {
-    confirm.hide( );
-    that.setFontFace(selFontName.val( ));
-    that.setFontSize( selFontSize.val( ) + "%" );
+  Modal.confirm( $.div([selFontName, selFontSize, selFontColor]), function() {
+    that.setFontFace(selFontName.value);
+    that.setFontSize( selFontSize.value + "%" );
     that.setTextColour(selFontColor.val( ));
   });
 }
@@ -329,9 +330,10 @@ function makeLink( ) {
 /**
  * `this` is the squire object.
  */
-function onMenu( id ) {
+function onMenu( item ) {
   var squire = this.squire;
-
+  var id = item.id;
+  
   switch ( id ) {
     case 'eraser':
       squire.removeAllFormatting( );
