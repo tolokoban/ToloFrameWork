@@ -175,9 +175,10 @@ var WysiwygEditor = function( opts ) {
             itm.tip = _( 'tip-' + itm.id );
           }
           if ( typeof itm.key === 'string' ) {
+            itm.tip = (itm.tip || '') + " [" + item.key + "]"
             loaded.then( function( ) {
               that.squire.setKeyHandler( itm.key.toLowerCase(), function( self, event, range ) {
-                onMenu.call( that, itm.id, range );
+                onMenu.call( that, itm, range );
               });
             });
           }
