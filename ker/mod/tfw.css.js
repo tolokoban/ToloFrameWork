@@ -6,7 +6,7 @@ exports.parseUnit = function(txt) {
     var mode = 0;
     for (var i = 0; i < txt.length; i++) {
         c = txt.charAt(i);
-        if (mode == 0) {
+        if (mode === 0) {
             if (c == '-' || c == '+' || (c >= '0' && c <= '9')) mode = 1;
             else if (c == '.') mode = 2;
             else if (c > ' ') break;
@@ -20,8 +20,13 @@ exports.parseUnit = function(txt) {
         }
     }
 
-    return {
+    var unit = {
         v: parseFloat(txt.substr(0, i)),
-        u: txt.substr(i).trim()
+        u: txt.substr(i).trim().toLowerCase()
     };
+    
+    if ( unit.u === '' ) {
+      unit.u = 'px';
+    }
+    return unit;
 };

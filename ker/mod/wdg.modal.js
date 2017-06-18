@@ -13,7 +13,12 @@ var DB = require( "tfw.data-binding" );
 var Flex = require( "wdg.flex" );
 var Button = require( "wdg.button" );
 
+/**
+@exports {class}
+@param {object} opts.content - 
 
+
+*/
 function Modal( opts ) {
   var that = this;
 
@@ -36,6 +41,7 @@ function Modal( opts ) {
       'max-width': v
     } );
   } );
+  DB.propAddClass( this, 'fullscreen' );
   DB.propAddClass( this, 'padding' );
   DB.propAddClass( this, 'scroll' );
   DB.propAddClass( this, 'wide' );
@@ -53,6 +59,7 @@ function Modal( opts ) {
     padding: true,
     scroll: true,
     wide: false,
+    fullscreen: false,
     width: 'auto'
   }, opts, this );
 }
@@ -109,6 +116,10 @@ Modal.prototype.detach = function () {
 Modal.confirm = function ( content, onYes, onNo ) {
   var btnNo = Button.No();
   var btnYes = Button.Yes( 'warning' );
+  if ( Array.isArray(content) ) {
+    // Arrays must be wrapped in a DIV.
+    content = $.div(content);
+  }
   var buttons = $.div( [ $.tag( 'hr' ), new Flex( {
     content: [ btnNo, btnYes ]
   } ) ] );

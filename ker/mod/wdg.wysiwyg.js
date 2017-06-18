@@ -10,6 +10,7 @@ require( "polyfill.promise" );
 var $ = require( "dom" );
 var Fx = require( "dom.fx" );
 var DB = require( "tfw.data-binding" );
+var Flex = require( "wdg.flex" );
 var Icon = require( "wdg.icon" );
 var Modal = require( "wdg.modal" );
 var Combo = require( "wdg.combo" );
@@ -34,12 +35,17 @@ var DEFAULT_MENU = [
     id: 'format-underline',
     key: 'ctrl-U'
   },
+  { id: 'font', key: 'ctrl-F' },
+  { id: 'format-header', key: 'ctrl-H' },
   '-', {
     id: 'eraser',
     key: 'ctrl-E'
   }, {
     id: 'link',
     key: 'ctrl-K'
+  }, {
+    id: 'image',
+    key: 'Ctrl-I'
   },
   '-', {
     id: 'format-align-left',
@@ -55,31 +61,15 @@ var DEFAULT_MENU = [
     key: 'ctrl-J'
   },
   '-',
-  { id: 'font', key: 'ctrl-F' }
+  { id: 'format-float-left' },
+  { id: 'format-float-right' },
+  { id: 'format-float-none' }
 ];
 /*
-['undo', squire.undo.bind( squire )],
-['repeat', squire.redo.bind( squire )],
-"|",
-['ban', removeAllFormatting.bind( squire )],
-['bold', squire.bold.bind( squire )],
-['italic', squire.italic.bind( squire )],
-['underline', squire.underline.bind( squire )],
-['font', setFontFaceSizeColor.bind( squire )],
 ['header', setHeader.bind( squire )],
 "|",
 ['list-ul', squire.makeUnorderedList.bind( squire )],
 ['list-ol', squire.makeOrderedList.bind( squire )],
-"|",
-['align-left', squire.setTextAlignment.bind( squire, 'left' )],
-['align-center', squire.setTextAlignment.bind( squire, 'center' )],
-['align-right', squire.setTextAlignment.bind( squire, 'right' )],
-['align-justify', squire.setTextAlignment.bind( squire, 'justify' )],
-"|",
-['link', makeLink.bind( squire )],
-['arrow-circle-o-left', setFloat.bind( squire, 'left' )],
-['dot-circle-o', setFloat.bind( squire, 'none' )],
-['arrow-circle-o-right', setFloat.bind( squire, 'right' )],
 */
 
 /**
@@ -97,7 +87,9 @@ var WysiwygEditor = function( opts ) {
   var iframeHasChanged = false;
 
   var elem = $.elem( this, 'div', 'wdg-wysiwyg', 'theme-elevation-2' );
-  var iconFullscreen = new Icon({ content: Icon.Icons.fullscreen, size: '1.5rem', button: true });
+  var iconFullscreen = new Icon({ 
+    content: 'fullscreen', size: '1.5rem', button: true 
+  });
   var label = $.div( 'theme-label' );
   var header = $.div('header', 'theme-color-bg-1', [ iconFullscreen, label ]);
   var slider = $.div( 'slider' );
@@ -150,9 +142,16 @@ var WysiwygEditor = function( opts ) {
       v = '';
     label.textContent = v;
   });
-  DB.propInteger( this, 'height' )( function( v ) {
+  DB.propUnit( this, 'height' )( function( v ) {
+    if ( v.u === 'px' ) {
+      // Show the slider only for heights in pixels.
+      $.removeClass( elem, 'absolute' );
+    } else {
+      // Otherwise, put the widget in absolute position.
+      $.addClass( elem, 'absolute' );
+    }
     $.css(elem, {
-      height: v + "px"
+      height: v.v + v.u
     });
   });
   DB.prop( this, 'menu' )( function( v ) {
@@ -214,18 +213,21 @@ var WysiwygEditor = function( opts ) {
     label: "",
     value: "",
     menu: DEFAULT_MENU,
-    height: 180,
+    height: 240,
     visible: true
   }, opts, this );
 
-  var initialHeight = this.height;
+  var initialHeight = this.height.v;
 
   $.on(slider, {
     down: function( ) {
-      initialHeight = that.height;
+      initialHeight = that.height.v;
     },
     drag: function( evt ) {
-      that.height = Math.max( 180, initialHeight + evt.dy );
+      if ( that.height.u === 'px' ) {
+        // Drag only if height is in pixels.
+        that.height = Math.max( 200, initialHeight + evt.dy );
+      }
     }
   });
 
@@ -243,6 +245,27 @@ var WysiwygEditor = function( opts ) {
   });
 };
 
+WysiwygEditor.prototype.insertHTML = function( html ) {
+  this.squire.insertHTML( html );
+  this.squire.focus();
+};
+
+WysiwygEditor.prototype.insertImage = function( url ) {
+  if ( typeof url === 'string' ) {
+    this.squire.insertHTML( "<img src=" + JSON.stringify( url ) + "/>" );
+    this.squire.focus();
+  }
+  else {
+    var that = this;
+    Prompt( _( 'image-url' ), function( href ) {
+      if ( href && href.trim( ).length > 0 ) {
+        that.squire.insertHTML( "<img src=" + JSON.stringify( href ) + "/>" );
+        that.squire.focus();
+      }
+    });
+  }
+};
+
 /**
  * @return void
  */
@@ -257,9 +280,7 @@ function setHeader( ) {
     if ( name.charAt( 0 ).toUpperCase( ) == 'H' && name.length == 2 ) {
       var level = Math.min(3, parseInt(name.charAt( 1 )));
       level = ( level + 1 ) % 4;
-      var header = root.ownerDocument.createElement( level
-        ? 'H' + level
-        : 'DIV' );
+      var header = root.ownerDocument.createElement( level ? 'H' + level : 'DIV' );
       header.innerHTML = e.innerHTML;
       $.replace( header, e );
     } else {
@@ -280,7 +301,7 @@ function setFontFaceSizeColor( ) {
       style: 'font-family:' + fontname
     }, [_( 'sentence' )]);
   });
-  var selFontName = new Combo({ label: _( 'font-name' ), content: optFontName });
+  var selFontName = new Combo({ label: _( 'font-name' ), wide: true, content: optFontName });
   var selFontSize = new Combo({ label: _( 'font-size' ), content: {
     '70': '70 %',
     '80': '80 %',
@@ -295,7 +316,10 @@ function setFontFaceSizeColor( ) {
   var selFontColor = new InputColor(_( 'font-color' ));
   selFontColor.val( 'black' );
 
-  Modal.confirm( $.div([selFontName, selFontSize, selFontColor]), function() {
+  Modal.confirm( $.div([
+    selFontName, 
+    new Flex({ content: [selFontSize, selFontColor] })
+  ]), function() {
     that.setFontFace(selFontName.value);
     that.setFontSize( selFontSize.value + "%" );
     that.setTextColour(selFontColor.val( ));
@@ -342,6 +366,9 @@ function onMenu( item ) {
     case 'link':
       makeLink.call( squire );
       break;
+    case 'image':
+      this.insertImage();
+      break;
     case 'format-bold':
       if (squire.hasFormat( 'b' )) {
         squire.removeBold( );
@@ -378,10 +405,24 @@ function onMenu( item ) {
     case 'font':
       setFontFaceSizeColor.call( squire );
       break;
+    case 'format-float-left':
+      setFloat.call( squire, 'left' );
+      break;
+    case 'format-float-center':
+      setFloat.call( squire, 'center' );
+      break;
+    case 'format-float-right':
+      setFloat.call( squire, 'right' );
+      break;
+    case 'format-float-none':
+      setFloat.call( squire, 'none' );
+      break;
+    case 'format-header':
+      setHeader.call( squire );
+      break;
     default:
       this.processButton( id );
   }
-
   this.focus = true;
 }
 
