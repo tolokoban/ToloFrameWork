@@ -1,3 +1,5 @@
+"use strict";
+
 function load(storage) {
     return function(key, def) {
         var v = storage.getItem(key);

@@ -43,6 +43,7 @@ Object.defineProperty( Model.prototype, 'value', {
 function bind(key, wdg) {
     var that = this;
 
+    console.info("Binding value of", key);
     DB.bind( wdg, 'value', function(v) {
         var obj = that._value;
         if (obj) {
@@ -56,11 +57,14 @@ function bind(key, wdg) {
  * Update widgets values from `value`.
  */
 Model.prototype.updateWidgets = function() {
+  console.log("updateWidgets");
     var obj = this._value;
     if (!obj) return this;
     var opts = this._links;
     var key, wdg;
+    console.info("opts=", opts);
     for( key in opts ) {
+      console.log(key + ".value =", obj[key]);
         wdg = opts[key];
         wdg.value = obj[key];
     }
