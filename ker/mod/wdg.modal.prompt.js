@@ -19,7 +19,7 @@ It must be an array of strings.
 be a potential return value. Each value is displayed has a selectable item.
 */
 module.exports = function( title, content, onValidation ) {
-  var modal = new Modal({ width: "310px" });
+  var modal = new Modal();
   var input;  
   if ( typeof content === 'function' ) {
     onValidation = content;
@@ -36,10 +36,10 @@ module.exports = function( title, content, onValidation ) {
     });
   }
   else if ( typeof content === 'object' ) {
-    input = new Combo({ label: title, content: content, wide: true });
+    input = new Combo({ width: "460px", label: title, content: content, wide: true });
   }
   else {
-    input = new Text({ label: title, wide: true });
+    input = new Text({ width: "460px", label: title, wide: true });
   }
   var validate = function() {
     modal.detach();

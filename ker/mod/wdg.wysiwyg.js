@@ -174,9 +174,10 @@ var WysiwygEditor = function( opts ) {
             itm.tip = _( 'tip-' + itm.id );
           }
           if ( typeof itm.key === 'string' ) {
-            itm.tip = (itm.tip || '') + " [" + itm.key + "]"
+            itm.tip = (itm.tip || '') + " [" + itm.key + "]";
             loaded.then( function( ) {
               that.squire.setKeyHandler( itm.key.toLowerCase(), function( self, event, range ) {
+                event.preventDefault();
                 onMenu.call( that, itm, range );
               });
             });
@@ -252,14 +253,14 @@ WysiwygEditor.prototype.insertHTML = function( html ) {
 
 WysiwygEditor.prototype.insertImage = function( url ) {
   if ( typeof url === 'string' ) {
-    this.squire.insertHTML( "<img src=" + JSON.stringify( url ) + "/>" );
+    this.squire.insertHTML( "<img src=" + JSON.stringify(url) + "/>" );
     this.squire.focus();
   }
   else {
     var that = this;
     Prompt( _( 'image-url' ), function( href ) {
       if ( href && href.trim( ).length > 0 ) {
-        that.squire.insertHTML( "<img src=" + JSON.stringify( href ) + "/>" );
+        this.squire.insertHTML( "<img src=" + JSON.stringify(url) + "/>" );
         that.squire.focus();
       }
     });
@@ -355,7 +356,7 @@ function makeLink( ) {
 /**
  * `this` is the squire object.
  */
-function onMenu( item ) {
+function onMenu( item ) {  
   var squire = this.squire;
   var id = item.id;
   

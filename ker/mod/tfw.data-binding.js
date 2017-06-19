@@ -16,11 +16,15 @@ var Listeners = require("tfw.listeners");
 var ID = '_tfw.data-binding_';
 
 var converters = {
-    castArray: function(v) {
-        if (Array.isArray( v )) return v;
-        if( v === null || v === undefined ) return [];
-        return [v];
-    },
+  castFunction: function(v) {
+      if( typeof v !== 'function' ) return null;
+      return v;
+  },
+  castArray: function(v) {
+      if (Array.isArray( v )) return v;
+      if( v === null || v === undefined ) return [];
+      return [v];
+  },
     castBoolean: function(v) {
         if (typeof v === 'boolean') return v;
         if (typeof v === 'string') {
@@ -31,7 +35,7 @@ var converters = {
             return true;
         }
         if (typeof v === 'number') {
-            return v != 0 ? true : false;
+            return v !== 0 ? true : false;
         }
         return null;
     },
@@ -321,6 +325,7 @@ exports.propDate = propCast.bind( null, converters.castDate );
 exports.propEnum = function( enumeration ) {
     return propCast.bind( null, converters.castEnum( enumeration ) );
 };
+exports.propFunction = propCast.bind( null, converters.castFunction );
 exports.propInteger = propCast.bind( null, converters.castInteger );
 exports.propFloat = propCast.bind( null, converters.castFloat );
 exports.propRegexp = propCast.bind( null, converters.castRegexp );
