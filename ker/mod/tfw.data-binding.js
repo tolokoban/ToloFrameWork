@@ -107,7 +107,14 @@ var converters = {
         if( typeof v.v !== 'undefined' ) {
             v.v = parseFloat( v.v );
             if( isNaN( v.v ) ) return { v: 0, u: 'px' };
-            if( typeof v.u !== 'string' ) v.u = 'px';
+            if( typeof v.u !== 'string' ) {
+              v.u = 'px';
+            } else {
+              v.u = v.u.trim.toLowerCase();
+            }
+            if ( v.u === '' ) {
+              v.u = 'px';
+            }
             return { v: v.v, u: v.u };
         }
         if( typeof v === 'number' ) return { v: v, u: 'px' };

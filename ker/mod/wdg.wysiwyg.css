@@ -5,13 +5,18 @@
     align-items: stretch;
     position: relative;
     border: none;
-    width: auto;
+    width: 100%;
     min-width: 240px;
+    height: 100%;
     min-height: 180px;
     font-size: 1em;
     margin: .5em 0;
     background-color: #fff;
     color: #000;
+}
+
+.wdg-wysiwyg.absolute {
+  position: absolute;  
 }
 
 .wdg-wysiwyg > div {
@@ -50,6 +55,9 @@
 }
 
 
+.wdg-wysiwyg.absolute > .slider {
+  display: none;
+}
 
 .wdg-wysiwyg > .slider {
     height: 4px;

@@ -19,7 +19,7 @@ It must be an array of strings.
 be a potential return value. Each value is displayed has a selectable item.
 */
 module.exports = function( title, content, onValidation ) {
-  var modal = new Modal();
+  var modal = new Modal({ width: "310px" });
   var input;  
   if ( typeof content === 'function' ) {
     onValidation = content;
