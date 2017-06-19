@@ -10,12 +10,12 @@ div.wdg-modal {
     background: rgba(0,0,0,.5);
     z-index: 999999;
     opacity: 1;
-    transition: opacity .25s;
+    transition: opacity .2s;
 }
 
 div.wdg-modal.fadeout {
     opacity: 0;
-    transition: opacity .25s;
+    transition: opacity .2s;
 }
 
 div.wdg-modal > div {
@@ -31,7 +31,7 @@ div.wdg-modal > div {
 
 div.wdg-modal.fadeout > div > div {
     transform: scale(.1);
-    transition: all .25s;
+    transition: all .2s;
 }
 
 div.wdg-modal > div > div {
@@ -43,7 +43,7 @@ div.wdg-modal > div > div {
     overflow: hidden;
     text-align: left;
     transform: scale(1);
-    transition: all .25s;
+    transition: all .2s;
 }
 
 div.wdg-modal.padding > div > div {
