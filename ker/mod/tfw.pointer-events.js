@@ -46,6 +46,7 @@ var onDocumentMouseDown = function(evt) {
     G.bodyMoveY = evt.pageY;
     G.bodyMoveLastX = evt.pageX;
     G.bodyMoveLastY = evt.pageY;
+    G.bodyTarget = evt.target;
 };
 
 var onDocumentMouseMove = function(evt) {
@@ -91,7 +92,8 @@ var onDocumentMouseUp = function(evt) {
     if (slots.up) {
         slots.up({
             action: 'up',
-            target: G.target.element,
+            //target: G.target.element,
+            target: G.bodyTarget,
             x: G.targetX + dx,
             y: G.targetY + dy,
             dx: dx,
@@ -104,7 +106,8 @@ var onDocumentMouseUp = function(evt) {
             if (slots.doubletap && time - G.lastTapTime < 400) {
                 slots.doubletap({
                     action: 'doubletap',
-                    target: G.target.element,
+                    //target: G.target.element,
+                    target: G.bodyTarget,
                     x: G.targetX + dx,
                     y: G.targetY + dy
                 });
@@ -115,7 +118,8 @@ var onDocumentMouseUp = function(evt) {
         if (slots.tap && G.lastTapTime == 0) {
             slots.tap({
                 action: 'tap',
-                target: G.target.element,
+                //target: G.target.element,
+                target: G.bodyTarget,
                 x: G.targetX + dx,
                 y: G.targetY + dy
             });
@@ -218,7 +222,8 @@ function PointerEvents( element ) {
                 if (slots.doubletap && time - G.lastTapTime < 400) {
                     slots.doubletap({
                         action: 'doubletap',
-                        target: that.element,
+                        //target: that.element,
+                        target: G.bodyTarget,
                         x: G.bodyMoveX - G.rect.left,
                         y: G.bodyMoveY - G.rect.top,
                         stopPropagation: evt.stopPropagation.bind( evt ),
@@ -233,7 +238,8 @@ function PointerEvents( element ) {
                 evt.preventDefault();
                 slots.tap({
                     action: 'tap',
-                    target: that.element,
+                    //target: that.element,
+                    target: G.bodyTarget,
                     x: G.bodyMoveX - G.rect.left,
                     y: G.bodyMoveY - G.rect.top,
                     stopPropagation: evt.stopPropagation.bind( evt ),
@@ -256,7 +262,8 @@ function PointerEvents( element ) {
         if (slots.down) {
             slots.down({
                 action: 'down',
-                target: element,
+                //target: element,
+                target: G.bodyTarget,
                 x: G.targetX,
                 y: G.targetY,
                 stopPropagation: evt.stopPropagation.bind( evt ),
@@ -298,7 +305,8 @@ PointerEvents.prototype.on = function(action, event) {
         addEvent.call(that, this.element, WHEEL_EVENT, function(evt) {
             var rect = that.element.getBoundingClientRect();
             slots.wheel({
-                target: that.element,
+                //target: that.element,
+                target: G.bodyTarget,
                 action: 'wheel',
                 delta: evt.deltaY,
                 x: evt.clientX - rect.left,

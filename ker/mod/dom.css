@@ -71,13 +71,12 @@ hr {
 
 .theme-info {
     color: #000;
-    background: #fff;
     margin: .5rem;
     padding: 1rem;
     text-align: justify;
-    box-shadow: 0 0 1px rgba(0,0,0,.4);
+    font-size: 1.2rem;
+    font-style: oblique;
 }
-
 /* Elevations: https://material.google.com/what-is-material/elevation-shadows.html#elevation-shadows-elevation-android- */
 
 .theme-elevation-0 {
