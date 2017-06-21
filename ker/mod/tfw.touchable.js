@@ -39,7 +39,8 @@ var Touchable = function ( elem, opts ) {
   $.addClass( elem, 'tfw-touchable' );
   var shadow = $.div( 'tfw-touchable-shadow' );
   var fxDown = Fx().css( shadow, {
-      transition: "none"
+      transition: "none",
+      transform: "scale(0)"
     } )
     .exec( function ( session ) {
       var cls = that.classToAdd;
