@@ -4,6 +4,7 @@ var Fx = require("dom.fx");
 var DB = require("tfw.data-binding");
 var Icon = require("wdg.icon");
 var Flex = require("wdg.flex");
+var Lang = require( "wdg.lang" );
 var Modal = require("wdg.modal");
 var Button = require("wdg.button");
 
