@@ -3,7 +3,9 @@ var $ = require("dom");
 var Fx = require("dom.fx");
 var DB = require("tfw.data-binding");
 var Icon = require("wdg.icon");
-
+var Flex = require("wdg.flex");
+var Modal = require("wdg.modal");
+var Button = require("wdg.button");
 
 /**
  * @class AreaEditor
@@ -74,3 +76,75 @@ var Area = function( opts ) {
 };
 
 module.exports = Area;
+
+
+Area.promptIntl = function( title, value, onValidate ) {
+  if( typeof onValidate !== 'function' ) {
+    onValidate = function() {};
+  }
+  var description = JSON.parse( JSON.stringify( value || '' ) );
+  var subset = [];
+  if( typeof description === 'string' ) {
+    // Turn it multilang.
+    var text = description;
+    description = {};
+    description[require('$').lang()] = text;
+  }
+  var lang;
+  for( lang in description ) {
+    subset.push( lang );
+  }
+  
+  var btnCancel = Button.Cancel();
+  btnCancel.$grow = 0;
+  var btnOK = Button.Ok();
+  btnOK.$grow = 0;
+  var inpLang = new Lang({ subset: subset, value: subset[0] });
+  var divLang = $.div([ _('lang'), "<html>&nbsp;", inpLang ]);
+  divLang.$grow = 1;
+  var inpCom = new Area({ 
+    label: title,
+    wide: true,
+    height: 'auto',
+    value: description
+  });
+  var body = $.div( 'tp4-edit-markers-button-body', [ inpCom ] );
+  body.$grow = 1;
+  var head = new Flex({ 
+    type: 'fill',
+    justify: 'between',
+    content: [divLang, btnCancel, btnOK] 
+  });
+  head.$grow = 0;
+  
+  var modal = new Modal({
+    fullscreen: true,
+    content: [
+      new Flex({ orientation: 'V', justify: 'between', type: 'fill', content: [
+        head,
+        body
+      ] })
+    ]
+  });
+  
+  btnCancel.on( modal.detach.bind( modal ) );
+  btnOK.on(function() {
+    onValidate( description );
+    modal.detach();
+  });
+  modal.attach();
+  inpCom.value = description[inpLang.value];
+  DB.bind( inpCom, 'value', function( html ) {
+    description[inpLang.value] = html;
+  });
+  DB.bind( inpLang, 'value', function( language ) {
+    inpCom.value = description[language];
+    var lang;
+    subset = [];
+    for( lang in description ) {
+      subset.push( lang );
+    }
+    inpLang.subset = subset;
+  });
+  inpCom.focus = true;  
+};

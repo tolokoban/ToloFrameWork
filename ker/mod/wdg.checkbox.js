@@ -26,7 +26,6 @@ var Checkbox = function(opts) {
     DB.propAddClass(this, 'value', 'checked' );
     DB.propString(this, 'text')(function(v) {
         $.textOrHtml( text, v );
-        //text.textContent = v;
     });
     DB.propInteger(this, 'action', 0);
     DB.propAddClass(this, 'wide');

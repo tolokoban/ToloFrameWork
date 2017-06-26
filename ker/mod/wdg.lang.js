@@ -7,7 +7,15 @@ var Modal = require("wdg.modal");
 var Button = require("wdg.button");
 var BoxButton = require("wdg.box-button");
 
+/**
+@exports {class}
 
+Icon button or language selection.
+
+@param {boolean} args.small - Small buttons can be used on other widgets.
+@param {array} args.subset - List of languages to highlight.
+@param {string} args.value - Language code (2 chars). For instance: fr, en, ...
+*/
 function Lang( args ) {
     var that = this;
 
@@ -27,7 +35,6 @@ function Lang( args ) {
     DB.propStringArray(this, 'subset');
     DB.extend({ 
         subset: [],
-        all: true,
         value: Cfg.lang(), 
         small: false, 
         visible: true 

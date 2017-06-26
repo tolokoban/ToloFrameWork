@@ -135,6 +135,7 @@ var WysiwygEditor = function( opts ) {
       }
     });
   });
+  DB.propAddClass( this, 'showFullscreenButton' );
   DB.propString( this, 'label' )( function( v ) {
     if ( typeof v === 'number' ) 
       v = '' + v;
@@ -215,6 +216,7 @@ var WysiwygEditor = function( opts ) {
     value: "",
     menu: DEFAULT_MENU,
     height: 240,
+    showFullscreenButton: false,
     visible: true
   }, opts, this );
 

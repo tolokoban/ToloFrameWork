@@ -43,10 +43,15 @@
     display: inline-block;
 }
 
+/* Fullscreen icon button */
+.wdg-wysiwyg.showFullscreenButton > div.header > div:first-child {
+  display: block;
+}
 .wdg-wysiwyg > div.header > div:first-child {
-    position: relative;
-    left: -.5rem;
-    top: -.75rem;
+  display: none;
+  position: relative;
+  left: -.5rem;
+  top: -.75rem;
 }
 
 .wdg-wysiwyg > div.header > div.theme-label {
