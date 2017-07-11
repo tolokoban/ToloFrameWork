@@ -150,6 +150,8 @@ function PointerEvents( element ) {
   //===============
   // Touch events.
   addEvent.call(that, element, 'touchstart', function(evt) {
+    evt.preventDefault();
+    
     if( !G.touchDevice ) {
       G.touchDevice = true;
       document.body.removeEventListener( 'mousedown', onDocumentMouseDown, true );
@@ -179,6 +181,8 @@ function PointerEvents( element ) {
     }
   });
   addEvent.call(that, element, 'touchmove', function(evt) {
+    evt.preventDefault();
+    
     var lastX = G.bodyMoveX;
     var lastY = G.bodyMoveY;
     G.bodyMoveX = evt.touches[0].clientX;
@@ -202,6 +206,8 @@ function PointerEvents( element ) {
     }
   });
   addEvent.call(that, element, 'touchend', function(evt) {
+    evt.preventDefault();
+    
     var slots = that._slots;
     var dx = G.bodyMoveX - G.bodyDownX;
     var dy = G.bodyMoveY - G.bodyDownY;

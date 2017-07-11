@@ -112,25 +112,43 @@ Modal.prototype.detach = function () {
 
 /**
  * @function Modal.comfirm
+ * @param {array|object|string} args.content - Content to display.
+ * @param {string} args.yes - Text of the confirmation button. Default is `OK`.
+ * @param {string} args.no - Text of the cancellation button. Default is `Cancel`.
+ * @param {function} args.onYes - Callback for confirmation.
+ * @param {function} args.onNo - Callback for cancel.
  */
-Modal.confirm = function ( content, onYes, onNo ) {
-  var btnNo = Button.No();
-  var btnYes = Button.Yes( 'warning' );
-  if ( Array.isArray(content) ) {
-    // Arrays must be wrapped in a DIV.
-    content = $.div(content);
+Modal.confirm = function ( args, onYes, onNo ) {
+  if( typeof onYes === 'function' ) {
+    // This is the old calling way, with multiple arguments.
+    args = {
+      content: args,
+      onYes: onYes,
+      onNo: onNo
+    };
   }
-  var buttons = $.div( [ $.tag( 'hr' ), new Flex( {
+  if( typeof args.yes === 'undefined' ) args.yes = _('ok');
+  if( typeof args.no === 'undefined' ) args.no = _('cancel');
+  if( typeof args.onYes === 'undefined' ) args.onYes = function() {};
+  if( typeof args.onNo === 'undefined' ) args.onNo = function() {};
+    
+  var btnYes = new Button({ text: args.yes, type: 'simple' });
+  var btnNo = new Button({ text: args.no, type: 'simple' });
+  if ( Array.isArray(args.content) ) {
+    // Arrays must be wrapped in a DIV.
+    args.content = $.div(args.content);
+  }
+  var buttons = $.div( 'wdg-modal-flush-right', [new Flex( {
     content: [ btnNo, btnYes ]
   } ) ] );
-  if ( typeof content === 'string' && content.substr( 0, 6 ) == '<html>' ) {
+  if ( typeof args.content === 'string' && args.content.substr( 0, 6 ) == '<html>' ) {
     // This is HTML code.
-    var html = content.substr( 6 );
-    content = $.div();
-    content.innerHTML = html;
+    var html = args.content.substr( 6 );
+    args.content = $.div();
+    args.content.innerHTML = html;
   }
   var modal = new Modal( {
-    content: $.div( [ content, buttons ] ),
+    content: $.div( [ args.content, buttons ] ),
     padding: true
   } );
   modal.attach();
@@ -160,10 +178,8 @@ Modal.confirm = function ( content, onYes, onNo ) {
  * Display a message with an OK button.
  */
 Modal.alert = function ( content, onOK ) {
-  var btnOK = Button.Close( 'simple' );
-  var buttons = $.div( [ $.tag( 'hr' ), new Flex( {
-    content: [ btnOK ]
-  } ) ] );
+  var btnOK = new Button( { text: _('close'), type: 'simple' } );
+  var buttons = $.div( 'wdg-modal-flush-right', [ btnOK ] );
   if ( typeof content === 'string' && content.substr( 0, 6 ) == '<html>' ) {
     // This is HTML code.
     var html = content.substr( 6 );

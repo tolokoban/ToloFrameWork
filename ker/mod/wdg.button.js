@@ -5,14 +5,13 @@ var DB = require( "tfw.data-binding" );
 var Icon = require( "wdg.icon" );
 var Touchable = require( "tfw.touchable" );
 
-var TYPES = [ 'standard', 'simple', 'warning', 'shadow', 'special' ];
+var TYPES = [ 'standard', 'primary', 'warning' ];
 
 /**
  * Liste des classes CSS applicables sur un bouton :
- * * __simple__ : Simple lien, sans l'aspect "bouton".
- * * __shadow__ : Bouton légèrement plus foncé.
+ * * __standard__ : Bouton par défaut. Il est blanc.
+ * * __primary__ : Bouton bleu.
  * * __warning__ : Bouton orangé pour indiquer une action potentiellement dangereuse.
- * * __small__ : Bouton de petite taille (environ 70%).
  *
  * @param {string} opts.text - Texte à afficher dans le bouton.
  * @param {boolean} opts.enabled - Mettre `false` pour désactiver le bouton.
@@ -69,7 +68,9 @@ var Button = function ( opts ) {
     } else {
       icon = new Icon( {
         content: v,
-        size: "1.2em"
+        size: "1.5em",
+        color0: that.type === 'standard' ? "#000" : "#fff",
+        color1: that.type === 'standard' ? "#fff" : "#000"
       } );
     }
     refresh();
@@ -106,18 +107,14 @@ var Button = function ( opts ) {
       $.att( elem, 'disabled', 'yes' );
     }
   } );
-  DB.propBoolean( this, 'small' )( function ( v ) {
-    if ( v ) {
-      $.addClass( elem, 'small' );
-    } else {
-      $.removeClass( elem, 'small' );
-    }
-  } );
+  DB.propAddClass( this, 'small' );
+  DB.propAddClass( this, 'flat' );
   DB.prop( this, 'action', 0 );
   DB.propAddClass( this, 'wide' );
   DB.propRemoveClass( this, 'visible', 'hide' );
 
   opts = DB.extend( {
+    type: "standard",
     text: "OK",
     href: null,
     target: null,
@@ -125,12 +122,12 @@ var Button = function ( opts ) {
     action: 0,
     wait: false,
     anim: false,
-    icon: "",
+    flat: false,
     small: false,
     enabled: true,
+    icon: "",
     wide: false,
-    visible: true,
-    type: "standard"
+    visible: true
   }, opts, this );
 
   // Animate the pressing.
@@ -226,10 +223,10 @@ Button.Delete = function ( type ) {
   return genericButton( 'delete', type || 'warning' );
 };
 Button.No = function ( type ) {
-  return genericButton( 'no' );
+  return genericButton( 'no', type || 'simple' );
 };
 Button.Ok = function ( type ) {
-  return genericButton( 'ok', type || 'default' );
+  return genericButton( 'ok', type || 'simple' );
 };
 Button.Edit = function ( type ) {
   return genericButton( 'edit' );
@@ -243,7 +240,7 @@ Button.Yes = function ( type ) {
 
 Button.default = {
   caption: "OK",
-  type: "default"
+  type: "simple"
 };
 
 module.exports = Button;

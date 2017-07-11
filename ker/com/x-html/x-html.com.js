@@ -82,7 +82,7 @@ exports.compile = function(root, libs) {
                 type: N.TAG, name: "meta",
                 attribs: {
                     name: "viewport",
-                    content: "width=device-width, initial-scale=1, maximum-scale=1"
+                    content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
                 },
                 void: true
             }
