@@ -1,11 +1,12 @@
 "use strict";
 
+require("font.roboto");
 var $ = require( "dom" );
 var DB = require( "tfw.data-binding" );
 var Icon = require( "wdg.icon" );
 var Touchable = require( "tfw.touchable" );
 
-var TYPES = [ 'standard', 'primary', 'warning' ];
+var TYPES = [ 'standard', 'primary', 'warning', 'simple' ];
 
 /**
  * Liste des classes CSS applicables sur un bouton :
@@ -55,6 +56,12 @@ var Button = function ( opts ) {
 
   DB.prop( this, 'value' );
   DB.propEnum( TYPES )( this, 'type' )( function ( v ) {
+    if ( v === 'simple' ) {
+      v = 'standard';
+      window.setTimeout(function() {
+        that.flat = true;
+      });
+    }
     TYPES.forEach( function ( type ) {
       $.removeClass( elem, type );
     } );

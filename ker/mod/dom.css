@@ -219,3 +219,40 @@ hr {
 .theme-color-B9{color: #899EA9}
 .theme-color-bg-B10{background-color: #78909C}
 .theme-color-B10{color: #78909C}
+
+/****************************/
+/** Material Design Themes **/
+/****************************/
+
+/* Background color for Background. */
+.thm-bg0 {
+    background-color: #FAFAFA;
+}
+body.thm-dark .thm-bg0 {
+    background-color: #303030;
+}
+
+/* Background color for App bar. */
+.thm-bg1 {
+    background-color: #F5F5F5;
+}
+body.thm-dark .thm-bg1 {
+    background-color: #212121;
+}
+
+/* Background color for Status bar. */
+.thm-bg2 {
+    background-color: #E0E0E0;
+}
+body.thm-dark .thm-bg2 {
+    background-color: #000;
+}
+
+/* Background color for Cards/Dialogs. */
+.thm-bg3 {
+    background-color: #FFF;
+}
+body.thm-dark .thm-bg3 {
+    background-color: #424242;
+}
+
