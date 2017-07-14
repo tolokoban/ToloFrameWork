@@ -129,7 +129,7 @@ Fx.prototype.pause = function() {
     return this;
 };
 
-Fx.prototype.exec = function(msg) {
+Fx.prototype.exec = function() {
     var args = Array.prototype.slice.call( arguments );
     this.addTask(function(next, session) {
         args.forEach(function (arg) {
