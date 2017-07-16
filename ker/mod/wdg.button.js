@@ -85,7 +85,11 @@ var Button = function ( opts ) {
   DB.propBoolean( this, 'anim' )( function ( v ) {
     if ( icon ) icon.rotate = v;
   } );
-  var waitBackup = {};
+  var waitBackup = {
+    enabled: true,
+    icon: "",
+    anim: false
+  };
   DB.propBoolean( this, 'wait' )( function ( v ) {
     if ( v ) {
       waitBackup.enabled = that.enabled;
@@ -107,7 +111,7 @@ var Button = function ( opts ) {
     classToAdd: 'theme-elevation-8'
   } );
   DB.propBoolean( this, 'enabled' )( function ( v ) {
-    touchable.enabled = touchable;
+    touchable.enabled = v;
     if ( v ) {
       $.removeAtt( elem, 'disabled' );
     } else {
@@ -127,12 +131,12 @@ var Button = function ( opts ) {
     target: null,
     value: "action",
     action: 0,
-    wait: false,
     anim: false,
     flat: false,
     small: false,
     enabled: true,
     icon: "",
+    wait: false,
     wide: false,
     visible: true
   }, opts, this );
@@ -251,3 +255,19 @@ Button.default = {
 };
 
 module.exports = Button;
+
+
+function setStyle() {
+  this.element.class = '';
+
+  if( this.flat ) {
+
+
+  } else {
+    $.addClass( this, this.flat ? 'thm-fg0' : 'thm-bg0' );
+  }
+
+  if( !this.enabled ) {
+    $.addClass( this, 'disabled' );
+  }
+}

@@ -256,3 +256,35 @@ body.thm-dark .thm-bg3 {
     background-color: #424242;
 }
 
+/* Primary color. */
+.thm-bgP {
+    background-color: #1E88E5;
+    color: #000;
+}
+
+.thm-bgPL {
+    background-color: #6AB7Ff;
+    color: #000;
+}
+
+.thm-bgPD {
+    background-color: #005CB2;
+    color: #fff;
+}
+
+/* Secondary */
+.thm-bgS {
+    background-color: #FFA000;
+    color: #000;
+}
+
+.thm-bgSL {
+    background-color: #FFD149;
+    color: #000;
+}
+
+.thm-bgSD {
+    background-color: #C67100;
+    color: #000;
+}
+
