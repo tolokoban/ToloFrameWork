@@ -10,7 +10,8 @@
   },
   "scripts": {
     "clean": "node bin/tfw.js clean",
-    "debug": "node bin/tfw.js build dev watch",
+    "watch": "node bin/tfw.js build debug watch",
+    "debug": "node bin/tfw.js build debug clean",
     "release": "node bin/tfw.js build version clean",
     "test": "node node_modules/jasmine/bin/jasmine.js",
     "test:dbg": "node --inspect-brk node_modules/jasmine/bin/jasmine.js"

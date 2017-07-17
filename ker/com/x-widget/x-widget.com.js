@@ -464,7 +464,6 @@ var parseBinding = ( function( ) {
          * <data> := "true" | "false" | "null" | <number> | <string>
          */
   return function( code ) {
-    console.info( "[x-widget.com] code=...", code );
     code = code.trim( );
     lexer.loadText( code );
     var tkn,
