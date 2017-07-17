@@ -228,7 +228,7 @@ hr {
 .thm-bg0 {
     background-color: #FAFAFA;
 }
-body.thm-dark .thm-bg0 {
+html.thm-dark .thm-bg0 {
     background-color: #303030;
 }
 
@@ -236,7 +236,7 @@ body.thm-dark .thm-bg0 {
 .thm-bg1 {
     background-color: #F5F5F5;
 }
-body.thm-dark .thm-bg1 {
+html.thm-dark .thm-bg1 {
     background-color: #212121;
 }
 
@@ -244,7 +244,7 @@ body.thm-dark .thm-bg1 {
 .thm-bg2 {
     background-color: #E0E0E0;
 }
-body.thm-dark .thm-bg2 {
+html.thm-dark .thm-bg2 {
     background-color: #000;
 }
 
@@ -252,7 +252,7 @@ body.thm-dark .thm-bg2 {
 .thm-bg3 {
     background-color: #FFF;
 }
-body.thm-dark .thm-bg3 {
+html.thm-dark .thm-bg3 {
     background-color: #424242;
 }
 
@@ -287,4 +287,64 @@ body.thm-dark .thm-bg3 {
     background-color: #C67100;
     color: #000;
 }
+
+/* Toolbar size */
+.thm-sz-toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    height: 56px;
+}
+
+/* Elevation */
+.thm-ele0 { z-index: 0; box-shadow: none }
+/* Switch */
+.thm-ele1 { z-index: 1; box-shadow: 0 0px 1px rgba(0,0,0,.4) }
+/* Card (resting), Raised button (resting), Quick entry / Search bar (resting) */
+.thm-ele2 { z-index: 2; box-shadow: 0 1px 2px rgba(0,0,0,.4) }
+/* Refresh indicator, Quick entry / Search bar (scrolled state) */
+.thm-ele3 { z-index: 3; box-shadow: 0 1px 3px rgba(0,0,0,.4) }
+/* App bar */
+.thm-ele4 { z-index: 4; box-shadow: 0 2px 4px rgba(0,0,0,.4) }
+/* Floating action button (FAB - resting) */
+.thm-ele6 { z-index: 6; box-shadow: 0 3px 6px rgba(0,0,0,.4) }
+/* Bottom navigation bar, Menu, Card (when picked up), Raised button (pressed state) */
+.thm-ele8 { z-index: 8; box-shadow: 0 4px 8px rgba(0,0,0,.4) }
+/* Sub menus */
+.thm-ele9 { z-index: 9; box-shadow: 0 4px 9px rgba(0,0,0,.4) }
+.thm-ele10 { z-index: 10; box-shadow: 0 5px 10px rgba(0,0,0,.4) }
+.thm-ele11 { z-index: 11; box-shadow: 0 5px 11px rgba(0,0,0,.4) }
+/* Floating action button (FAB - pressed) */
+.thm-ele12 { z-index: 2; box-shadow: 0 1px 2px rgba(0,0,0,.4) }
+/* Nav drawer, Right drawer, Modal bottom sheet */
+.thm-ele16 { z-index: 6; box-shadow: 0 3px 6px rgba(0,0,0,.4) }
+/* Dialog, Picker */
+.thm-ele24 { z-index: 4; box-shadow: 0 2px 4px rgba(0,0,0,.4) }
+
+
+
+
+/* Flex */
+.flex-grow0 { flex-grow: 0 }
+.flex-grow1 { flex-grow: 1 }
+.flex-grow2 { flex-grow: 2 }
+.flex-grow3 { flex-grow: 3 }
+.flex-grow4 { flex-grow: 4 }
+.flex-grow5 { flex-grow: 5 }
+.flex-grow6 { flex-grow: 6 }
+.flex-grow7 { flex-grow: 7 }
+.flex-grow8 { flex-grow: 8 }
+.flex-grow9 { flex-grow: 9 }
+.flex-shrink0 { flex-shrink: 0 }
+.flex-shrink1 { flex-shrink: 1 }
+.flex-shrink2 { flex-shrink: 2 }
+.flex-shrink3 { flex-shrink: 3 }
+.flex-shrink4 { flex-shrink: 4 }
+.flex-shrink5 { flex-shrink: 5 }
+.flex-shrink6 { flex-shrink: 6 }
+.flex-shrink7 { flex-shrink: 7 }
+.flex-shrink8 { flex-shrink: 8 }
+.flex-shrink9 { flex-shrink: 9 }
 

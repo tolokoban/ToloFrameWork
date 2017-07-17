@@ -1,0 +1,37 @@
+body, html {
+  height: 100%;
+}
+
+header {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  width: 100%;
+}
+
+section {
+  position: absolute;
+  left: 0;
+  top: 56px;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 16px;
+}
+
+div.panel {
+  margin: 0;
+  padding: 8px;
+}
+
+div.preview {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: top;
+}
+
+code.code {
+  display: bloc;
+}

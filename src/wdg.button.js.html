@@ -1,29 +1,15 @@
-<x-html title="Module wdg.button">
-    <wdg-code $name="wdg.button"
-             id="btn"
-             text="OK / txtText"
-             icon="ok / txtIcon"
-             type="standard / txtType"
-             value="button / txtValue"
-             small="false / chkSmall"
-             enabled="true / chkEnabled"
-             wide="false / chkWide"
-             visible="true / chkVisible">
-        <wdg:text id="txtText" $label="text" $value="OK" $wide="true" />
-        <wdg:text id="txtType" $label="type" $value="standard"
-                  $list="standard, simple, warning, shadow, special"
-                  $wide="true" />
-        <wdg:text id="txtIcon" $label="icon" $value="ok" $wide="true"
-        $list="ok, cancel, close, menu"/>
-        <wdg:text id="txtValue" $label="value" $value="button" $wide="true" />
-        <wdg:checkbox id="chkSmall"
-                      $text="small" $value="false" $wide="true" />
-        <wdg:checkbox id="chkEnabled"
-                      $text="enabled" $value="true" $wide="true" />
-        <wdg:checkbox id="chkWide"
-                      $text="wide" $value="false" $wide="true" />
-        <wdg:checkbox id="chkVisible"
-                      $text="visible" $value="true" $wide="true"/>
-        <wdg:label $value="" bind:value="btn:action"/>
-    </wdg-code>
-</x-html>
+<wdg.button>
+    <wdg:text att="text" $label="text" $value="Button" />
+    <wdg:text att="type" $label="type" $value="standard"
+              $list="standard, primary, warning" />
+    <wdg:text att="icon" $label="icon" $value="ok" $list="gear, ok, cancel, close, menu, back, add"/>
+    <wdg:checkbox att="flat" $text="flat" $value="false" />
+    <wdg:checkbox att="wait" $text="wait" $value="false" />
+    <wdg:checkbox att="enabled" $text="enabled" $value="true" />
+    <wdg:checkbox att="wide" $text="wide" $value="false" />
+
+    <hr/>
+    <x-md>
+Les boutons, c'est __super__ !        
+    </x-md>
+</wdg.button>

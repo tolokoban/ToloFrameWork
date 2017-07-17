@@ -1,10 +1,3 @@
-/**********************************************************************
- @example
- <x-widget name="tfw.input" $value="Email" $validator="[^@]+@[^@]\\.[^@.]+"/>
- <x-widget name="tfw.input" $validator="[^@]+@[^@]\\.[^@.]+">Email</x-widget>
-
- **********************************************************************/
-
 exports.tags = ["wdg-code"];
 exports.priority = 0;
 
