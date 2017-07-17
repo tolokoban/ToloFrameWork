@@ -17,6 +17,7 @@ exports.compile = function(root, libs) {
   var widgetAttributes = root.attribs || {};
   var panel1 = { type: libs.Tree.TAG, name: "div", attribs: { style: 'width: 320px' }, children: [] };
   var panel2 = { type: libs.Tree.TAG, name: "div", attribs: { 'class': 'flex-grow1' }, children: [] };
+  var center = { type: libs.Tree.TAG, name: "center", children: [] };
   var children = [{
     type: libs.Tree.TAG, name: "div", attribs: { 'class': 'preview' }, children: [panel1, panel2]
   }];
@@ -65,19 +66,31 @@ exports.compile = function(root, libs) {
   ['thm-bg0', 'thm-bg1', 'thm-bg2', 'thm-bg3',
    'thm-bgP', 'thm-bgPL', 'thm-bgPD',
    'thm-bgS', 'thm-bgSL', 'thm-bgSD'].forEach(function (cls) {
-     panel1.children.push({
+     var onClick = "document.getElementById('PANEL').className='panel thm-ele1 " + cls + "'";
+     center.children.push({
        type: libs.Tree.TAG,
-       name: 'div',
-       attribs: { 'class': 'panel ' + cls },
-       children: [
-         {
-           type: libs.Tree.TAG,
-           name: 'wdg:' + name.substr( 4 ),
-           attribs: widgetAttributes
-         }]
+       name: 'button',
+       attribs: {
+         'class': 'thm-ele2 ' + cls,
+         onclick: onClick
+       }
      });
    });
-
+  panel1.children.push(
+    {
+      type: libs.Tree.TAG,
+      name: 'div',
+      attribs: { 'class': 'panel thm-bg0 thm-ele1', id: 'PANEL' },
+      children: [
+        {
+          type: libs.Tree.TAG,
+          name: 'wdg:' + name.substr( 4 ),
+          attribs: widgetAttributes
+        },
+        center
+      ]
+    }
+  );
   console.log( "widgetAttributes:", JSON.stringify( widgetAttributes, null, '  ' ) );
 
   root.name = "x-html";

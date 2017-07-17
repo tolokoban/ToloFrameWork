@@ -23,6 +23,20 @@ section {
 div.panel {
   margin: 0;
   padding: 8px;
+  transition: background-color .2s;
+}
+
+div.panel > center > button {
+  display: inline-block;
+  cursor: pointer;
+  margin: 2px;
+  content: ".";
+  font-size: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 100%;
+  border: none;
+  padding: 0;
 }
 
 div.preview {

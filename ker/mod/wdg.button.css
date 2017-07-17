@@ -1,120 +1,82 @@
 .wdg-button {
-    vertical-align: middle;
-    position: relative;
-    display: inline-block;
-    line-height: 36px;
-    min-height: 36px;
-    padding: 0 16px;
-    text-decoration: none;
-    border-radius: 2px;
-    text-shadow: none;
-    cursor: pointer;
-    margin: 4px 8px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    min-width: 72px;
-    transition: all .2s;
-    text-align: left;
-    border: none;
-    text-transform: uppercase;
-    font-family: Roboto, josefin-sans, sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: #000;
-    background-color: #fff;
+  vertical-align: middle;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 0;
+  text-decoration: none;
+  border-radius: 2px;
+  text-shadow: none;
+  cursor: pointer;
+  margin: 4px 8px;
+  min-width: 72px;
+  border: none;
+  transition: all .2s;
 }
 
-.wdg-button.dom[disabled=yes]:hover,
-.wdg-button.dom[disabled=yes] {
-    pointer-event: none;
-    text-decoration: none;
-    cursor: default;
-    background: #888;
-    color: rgba(0,0,0,.4);
-    text-shadow: none;
-    box-shadow: none;
-    font-style: italic;
+.wdg-button.dom.wide {
+  width: 100%;
 }
 
-.wdg-button.dom[disabled=yes].flat:hover,
-.wdg-button.dom[disabled=yes].flat {
-    pointer-event: none;
-    text-decoration: none;
-    cursor: default;
-    background: transparent;
-}
-
-.wdg-button.primary {
-    background-color: rgb(16,108,200);
-    color: #fff;
-}
-
-.wdg-button.warning {
-    background-color: rgb(255,87,34);
-    color: #fff;
-}
-
-.wdg-button.primary.flat {
-    color: rgb(16,108,200);
-}
-
-.wdg-button.warning.flat {
-    color: rgb(255,87,34);
+.wdg-button.flat {
+  background-color: transparent;
 }
 
 .wdg-button.flat:hover {
-    background-color: rgb(0,0,0,0.1);
+  background-color: rgba(128,128,128,.5);
 }
 
-.wdg-button.primary.flat:hover {
-    background-color: rgb(16,108,200,0.12);
+.wdg-button > div.text {
+  flex-grow: 1;
+  order: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: left;
+  text-transform: uppercase;
+  font-family: Roboto, josefin-sans, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 8px;
 }
 
-.wdg-button.warning.flat:hover {
-    background-color: rgb(255,87,34,0.12);
+.wdg-button > div.icon {
+  order: 1;
+  flex-grow: 0;
+  margin: 0;
+  padding: 0;
+  display: none;
 }
 
-.wdg-button.flat {
-    background-color: transparent;
-    box-shadow: none;
-    transform: translate(0,0);
+.wdg-button.iconToLeft > div.icon {
+  order: -1;
 }
 
-.wdg-button > * {
-    vertical-align: middle;
-    display: block;
-    float: left;
+.wdg-button.icon > div.icon {
+  display: block;
 }
 
-.wdg-button > div.wdg-icon.flat {
-    margin: 0 8px 0 -8px;
+
+.wdg-button.disabled:hover,
+.wdg-button.disabled {
+  pointer-event: none;
+  text-decoration: none;
+  cursor: default;
+  background: #888;
+  text-shadow: none;
+  box-shadow: none;
+  font-style: italic;
 }
 
-.wdg-button[disabled=yes] > div.wdg-icon {
-    opacity: .25;
-}
-
-a.wdg-button.wide, button.wdg-button.wide {
-    display: block;
-    width: 100%;
-}
-
-a.wdg-button.hide, button.wdg-button.hide {
-    display: none;
-}
-
-.wdg-button.flat {
-    border-radius: none;
-    background: none;
-    text-shadow: none;
-    box-shadow: none;
-    line-height: 2rem;
-    min-height: 2rem;
-    transform: translate(0,0);
+.wdg-button.disabled:hover > div,
+.wdg-button.disabled > div {
+  opacity: .5;
 }
 
 .wdg-button:focus {
-    text-decoration: underline;
-    text-decoration-style: dotted;
+  text-decoration: underline;
+  text-decoration-style: dotted;
 }

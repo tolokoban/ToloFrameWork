@@ -264,7 +264,7 @@ Icon.Icons = {
         } ],
         [ 'path', {
       d: 'M-30,-30L30,30M-30,30L30,-30',
-      stroke: 3,
+      stroke: 1,
       'stroke-width': 16
         } ]
     ] ],
@@ -463,12 +463,12 @@ Icon.Icons = {
   ok: [ 'g', [
         [ 'path', {
       d: 'M-30,0L-10,30,30,-30',
-      stroke: 0,
+      stroke: 1,
       'stroke-width': 30
         } ],
         [ 'path', {
       d: 'M-30,0L-10,30,30,-30',
-      stroke: 4,
+      stroke: 0,
       'stroke-width': 16
         } ]
     ] ],

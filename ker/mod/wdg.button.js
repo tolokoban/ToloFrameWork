@@ -6,7 +6,7 @@ var DB = require( "tfw.data-binding" );
 var Icon = require( "wdg.icon" );
 var Touchable = require( "tfw.touchable" );
 
-var TYPES = [ 'standard', 'primary', 'warning', 'simple' ];
+var TYPES = [ 'standard', 'primary', 'warning' ];
 
 /**
  * Liste des classes CSS applicables sur un bouton :
@@ -30,55 +30,39 @@ var TYPES = [ 'standard', 'primary', 'warning', 'simple' ];
 var Button = function ( opts ) {
   var that = this;
 
+  var divIcon = $.div( 'icon' );
+  var divText = $.div( 'text' );
   var elem = $.elem(
     this,
-    'button', 'wdg-button', 'theme-elevation-2'
+    'button', 'wdg-button', 'thm-ele2',
+    [divIcon, divText]
   );
-  if ( typeof opts.href === 'string' && opts.href.length > 0 ) {
-    $.att( elem, 'href', opts.href );
-  }
-  if ( typeof opts.target === 'string' && opts.target.length > 0 ) {
-    $.att( elem, 'target', opts.target );
-  }
 
-  var icon = null;
-
-  var refresh = function () {
-    $.clear( elem );
-    if ( icon ) {
-      $.add( elem, icon.element, that.text );
-      that._icon = icon;
-    } else {
-      elem.textContent = that.text;
-      delete that._icon;
-    }
-  };
+  var refresh = setStyle.bind( this, {
+    icon: divIcon, text: divText
+  });
+  var icon;
 
   DB.prop( this, 'value' );
-  DB.propEnum( TYPES )( this, 'type' )( function ( v ) {
-    if ( v === 'simple' ) {
-      v = 'standard';
-      window.setTimeout(function() {
-        that.flat = true;
-      });
-    }
-    TYPES.forEach( function ( type ) {
-      $.removeClass( elem, type );
-    } );
-    $.addClass( elem, v );
-  } );
+  DB.propEnum( TYPES )( this, 'type' )( refresh );
   DB.prop( this, 'icon' )( function ( v ) {
-    if ( !v || ( typeof v === 'string' && v.trim().length == 0 ) ) {
+    if ( !v || ( typeof v === 'string' && v.trim().length === 0 ) ) {
       icon = null;
+      $.addClass( divIcon, 'hide' );
     } else if ( v.element ) {
       icon = v.element;
     } else {
       icon = new Icon( {
         content: v,
-        size: "1.5em",
-        color0: that.type === 'standard' ? "#000" : "#fff",
-        color1: that.type === 'standard' ? "#fff" : "#000"
+        size: "24px"
       } );
+    }
+    $.clear( divIcon );
+    if( icon ) {
+      $.add( divIcon, icon );
+      $.removeClass( divIcon, 'hide' );
+    } else {
+      $.addClass( divIcon, 'hide' );
     }
     refresh();
   } );
@@ -105,26 +89,24 @@ var Button = function ( opts ) {
     }
   } );
   DB.propString( this, 'text' )( function ( v ) {
-    refresh();
+    divText.textContent = v;
   } );
   var touchable = new Touchable( elem, {
     classToAdd: 'theme-elevation-8'
   } );
   DB.propBoolean( this, 'enabled' )( function ( v ) {
     touchable.enabled = v;
-    if ( v ) {
-      $.removeAtt( elem, 'disabled' );
-    } else {
-      $.att( elem, 'disabled', 'yes' );
-    }
+    refresh();
   } );
-  DB.propAddClass( this, 'small' );
-  DB.propAddClass( this, 'flat' );
+  DB.propBoolean( this, 'iconToLeft' )( refresh );
+  DB.propBoolean( this, 'small' )( refresh );
+  DB.propBoolean( this, 'flat' )( refresh );
   DB.prop( this, 'action', 0 );
-  DB.propAddClass( this, 'wide' );
+  DB.propBoolean( this, 'wide' )( refresh );
   DB.propRemoveClass( this, 'visible', 'hide' );
 
   opts = DB.extend( {
+    iconToLeft: true,
     type: "standard",
     text: "OK",
     href: null,
@@ -135,7 +117,7 @@ var Button = function ( opts ) {
     flat: false,
     small: false,
     enabled: true,
-    icon: "",
+    icon: null,
     wait: false,
     wide: false,
     visible: true
@@ -152,6 +134,8 @@ var Button = function ( opts ) {
     }
   } );
   touchable.tap.add( that.fire.bind( that ) );
+
+  refresh();
 };
 
 /**
@@ -257,17 +241,37 @@ Button.default = {
 module.exports = Button;
 
 
-function setStyle() {
-  this.element.class = '';
+function setStyle( children ) {
+  this.element.className = 'wdg-button';
 
   if( this.flat ) {
+    $.addClass( this, 'flat' );
 
-
+    switch( this.type ) {
+    case 'primary':
+      $.addClass( this, 'thm-fgP' );
+      break;
+    case 'warning':
+      $.addClass( this, 'thm-fgS' );
+      break;
+    }
   } else {
-    $.addClass( this, this.flat ? 'thm-fg0' : 'thm-bg0' );
+    $.addClass( this, 'thm-ele2' );
+
+    switch( this.type ) {
+    case 'primary':
+      $.addClass( this, 'thm-bgP' );
+      break;
+    case 'warning':
+      $.addClass( this, 'thm-bgS' );
+      break;
+    default:
+      $.addClass( this, 'thm-bg3' );
+    }
   }
 
-  if( !this.enabled ) {
-    $.addClass( this, 'disabled' );
-  }
+  if( !this.enabled ) $.addClass( this, 'disabled' );
+  if( this.wide ) $.addClass( this, 'wide' );
+  if( typeof this.icon === 'string' && this.icon.trim().length > 0 ) $.addClass( this, 'icon' );
+  if( this.iconToLeft ) $.addClass( this, 'iconToLeft' );
 }
