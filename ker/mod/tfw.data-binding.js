@@ -402,6 +402,7 @@ exports.extend = function( def, ext, obj, callback ) {
       for( key in obj[ID] ) {
         exports.bind( obj, key, callback );
       }
+      callback();
     }
   }
 

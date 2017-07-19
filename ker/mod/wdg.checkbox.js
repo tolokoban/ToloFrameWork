@@ -12,33 +12,57 @@ var Touchable = require("tfw.touchable");
 var Checkbox = function(opts) {
   var that = this;
 
-  var spinner = $.div('wdg-checkbox-spin', 'thm-ele2', [
-    $.div( [
-      $.div( "thm-bgS", [
-        new Icon({ content: 'ok', size: "16px", color0: "transparent", color1: "0" })
-      ]),
-      $.div( "thm-bg3", [
-        new Icon({ content: 'cancel', size: "16px", color0: "transparent", color1: "0" })
-      ])
-    ])
-  ]);
-  var text = $.div('label');
-  var elem = $.elem( this, 'button', 'wdg-checkbox', [spinner, text] );
+  var btn = $.div( 'btn', 'thm-ele2' );
+  var bar = $.div( 'bar' );
+  var text = $.div();
+  var elem = $.elem( this, 'button', 'wdg-checkbox', [$.div([bar, btn]), text] );
 
-  DB.propAddClass(this, 'value', 'checked' );
-  DB.propString(this, 'text')(function(v) {
-    $.textOrHtml( text, v );
-  });
+  var refresh = function() {
+    if( typeof that.text !== 'string' || that.text.trim().length === 0 ) {
+      $.addClass( that, 'no-text' );
+    } else {
+      $.textOrHtml( text, that.text );
+      $.removeClass( that, 'no-text' );
+    }
+    if( that.inverted ) {
+      $.addClass( that, 'inverted' );
+    } else {
+      $.removeClass( that, 'inverted' );
+    }
+    if( that.wide ) {
+      $.addClass( that, 'wide' );
+    } else {
+      $.removeClass( that, 'wide' );
+    }
+    if( that.value ) {
+      $.addClass( that, 'checked' );
+      $.addClass( bar, 'thm-bgSL' );
+      $.removeClass( bar, 'thm-bg2' );
+      $.addClass( btn, 'thm-bgS' );
+      $.removeClass( btn, 'thm-bg1' );
+    } else {
+      $.removeClass( that, 'checked' );
+      $.removeClass( bar, 'thm-bgSL' );
+      $.addClass( bar, 'thm-bg2' );
+      $.removeClass( btn, 'thm-bgS' );
+      $.addClass( btn, 'thm-bg1' );
+    }
+  };
+
+  DB.propBoolean(this, 'value' );
+  DB.propString(this, 'text');
   DB.propInteger(this, 'action', 0);
-  DB.propAddClass(this, 'wide');
+  DB.propBoolean(this, 'wide');
+  DB.propBoolean(this, 'inverted');
   DB.propRemoveClass(this, 'visible', 'hide');
 
   DB.extend({
     value: false,
     text: "checked",
+    inverted: false,
     wide: false,
     visible: true
-  }, opts, this);
+  }, opts, this, refresh);
 
   var touchable = new Touchable( elem );
   touchable.tap.add( this.fire.bind( this ) );

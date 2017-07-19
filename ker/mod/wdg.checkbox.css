@@ -1,103 +1,82 @@
 .wdg-checkbox {
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0;
-    border: 0;
-    background: none;
-    padding: 0 16px 0 8px;
-    text-align: left;
-    font-size: 1em;
-    line-height: 2em;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow-x: hidden;
-    transition: all .2s;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  vertical-align: middle;
+  margin: 4px 8px;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
 }
 
-.wdg-checkbox > * {
-    display: inline-block;
-    vertical-align: middle;
-    text-height: 2em;
-    white-space: nowrap;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
+.wdg-checkbox.wide {
+  display: flex;
 }
 
-.wdg-checkbox > *.wdg-icon {
-    margin: 0;
+.wdg-checkbox > div:first-child {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  overflow: visible;
+  flex-grow: 0;
+  margin: 2px 8px 2px 2px;
+  order: -1;
 }
 
-.wdg-checkbox > div {
-    margin-left: .5em;
+.wdg-checkbox > div:first-child > div {
+  content: ".";
+  font-size: 0;
 }
 
-.wdg-checkbox.align-left {
-    text-align: left;
+.wdg-checkbox.inverted > div:first-child {
+  order: 1;
+  margin: 2px 2px 2px 8px;
 }
 
-.wdg-checkbox.align-center {
-    text-align: center;
+.wdg-checkbox.no-text.inverted > div:first-child,
+.wdg-checkbox.no-text > div:first-child {
+  margin: 2px;
 }
 
-.wdg-checkbox.align-right {
-    text-align: right;
+.wdg-checkbox > div:last-child {
+  order: 0;
+  opacity: .6;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
 }
 
-.wdg-checkbox div.label {
-    opacity: .4;
+.wdg-checkbox.no-text > div:last-child {
+  display: none;
 }
 
-.wdg-checkbox.checked div.label {
-    opacity: 1;
+.wdg-checkbox .bar {
+  position: absolute;
+  left: 0;
+  top: 3px;
+  width: 34px;
+  height: 14px;
+  border-radius: 7px;
 }
 
-.wdg-checkbox > .wdg-checkbox-spin {
-    display: inline-block;
-    position: relative;
-    padding: 0;
-    width: 24px;
-    height: 24px;
-    perspective: 200px;
-    overflow: visible;
-    border-radius: 12px;
+.wdg-checkbox .btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  transform: translateX(0);
+  transition: all .1s;
 }
 
-.wdg-checkbox > .wdg-checkbox-spin > div {
-    position: absolute;
-    width: 1.1em;
-    height: 1.1em;
-    transform-style: preserve-3d;
-    transition: transform .5s;
-    transform: perspective(200px) rotateY(180deg);
-    line-height: 1.1em;
-    padding: 0;
-    text-align: center;
-    vertical-align: middle;
+.wdg-checkbox.checked .btn {
+  transform: translateX(16px);
 }
 
-.wdg-checkbox > .wdg-checkbox-spin > div > div {
-    margin: 0;
-    vertical-align: middle;    
+.wdg-checkbox.checked > div:last-child {
+  opacity: 1;
 }
-
-.wdg-checkbox.checked > .wdg-checkbox-spin > div {
-    transform: perspective(200px) rotateY(0);
-}
-
-.wdg-checkbox > .wdg-checkbox-spin > div > div {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 100%;
-    border: none;
-    perspective: 200px;
-    backface-visibility: hidden;
-}
-
-.wdg-checkbox > .wdg-checkbox-spin > div > div:last-child {
-    transform: perspective(200px) rotateY(180deg);
-}
-
-

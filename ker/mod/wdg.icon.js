@@ -9,9 +9,6 @@ var ENUM = ['0', '1', 'P', 'PL', 'PD', 'S', 'SL', 'SD'];
  * @param {string} opts.content - Name of the icon.
  * @param {object} opts.content - Structure of the icon.
  * @param {boolean} opts.rotate - Activer l'auto-rotation.
- * @param {boolean} opts.button - Show as round button.
- * @param {string} opts.type - "default" or "accent".
- * @param {any} opts.value - Value taken by the property `action` when the icon is clicked.
  * @param {string|number} opts.size - CSS size of the icon.
  */
 var Icon = function ( opts ) {
@@ -24,14 +21,13 @@ var Icon = function ( opts ) {
     'stroke-linecap': 'round',
     'stroke-linejoin': 'round'
   } );
-  var svg = $.svgRoot( {
+  var svg = $.svgRoot( 'wdg-icon', {
     width: '100%',
     height: '100%',
     viewBox: '-65 -65 130 130',
     preserveAspectRatio: "xMidYMid meet"
   } );
-  var root = $.div( 'wdg-icon', [ svg ] );
-  var elem = $.elem( this, root );
+  var elem = $.elem( this, svg );
   $.add( svg, g );
   DB.prop( this, 'value' );
   DB.propBoolean( this, 'rotate' )( function ( v ) {
@@ -39,34 +35,6 @@ var Icon = function ( opts ) {
       $.addClass( svg, "rotate" );
     } else {
       $.removeClass( svg, "rotate" );
-    }
-  } );
-  DB.propBoolean( this, 'button' )( function ( v ) {
-    if ( v ) {
-      $.addClass( elem, 'theme-elevation-8' );
-      $.removeClass( elem, 'flat' );
-      var s = that.size;
-      $.css( elem, {
-        padding: 'calc(0.25 * ' + s.v + s.u + ') 0 0 0',
-        width: "calc(1.5 * " + s.v + s.u + ")",
-        height: "calc(1.5 * " + s.v + s.u + ")",
-        'line-height': s.v + s.u
-      } );
-      $.css( svg, {
-        'line-height': s.v + s.u
-      } );
-      //that.size = '2rem';
-      var touchable = new Touchable( elem, {
-        classToAdd: 'theme-elevation-16'
-      } );
-      touchable.tap.add( DB.fire.bind( DB, that, 'action', that.value ) );
-    } else {
-      $.removeClass( elem, 'theme-elevation-8' );
-      $.addClass( elem, 'flat' );
-      $.css( elem, {
-        padding: 0
-      } );
-      $.off( elem );
     }
   } );
   DB.propUnit( this, 'size' )( function ( v ) {
@@ -77,7 +45,6 @@ var Icon = function ( opts ) {
       'line-height': s
     } );
   } );
-  DB.prop( this, 'action' );
   DB.propAddClass( this, 'wide' );
   DB.propRemoveClass( this, 'visible', 'hide' );
   var updateColor = function ( index ) {
@@ -138,30 +105,12 @@ var Icon = function ( opts ) {
     color1: '1',
     angle: 0,
     size: '2rem',
-    button: false,
     value: "icon",
     rotate: false,
     wide: false,
     visible: true
   }, opts, this );
 };
-
-/**
- * @class Icon
- * @function on
- * @param {function} slot - Function to call when `action` has changed.
- */
-Icon.prototype.on = function ( slot ) {
-  return DB.bind( this, 'action', slot );
-};
-
-/**
- * @return void
- */
-Icon.prototype.fire = function () {
-  DB.fire( this, 'action', this.value );
-};
-
 
 function setContent( mapColors, svg, v ) {
   $.clear( svg );
