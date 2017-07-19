@@ -49,7 +49,7 @@ var converters = {
     return new Date();
   },
   castEnum: function( enumeration ) {
-    var lowerCaseEnum = enumeration.map(String.toLowerCase);
+    var lowerCaseEnum = enumeration.map(toLowerCase);
     return function(v) {
       if (typeof v === 'number') {
         return enumeration[Math.floor( v ) % enumeration.length];
@@ -102,7 +102,7 @@ var converters = {
     if( Array.isArray( v ) ) return v;
     if( v === null || v === undefined ) return [];
     if( typeof v === 'string' ) {
-      return v.split( ',' ).map(String.trim);
+      return v.split( ',' ).map(trim);
     }
     return [JSON.stringify( v )];
   },
@@ -114,7 +114,7 @@ var converters = {
       if( typeof v.u !== 'string' ) {
         v.u = 'px';
       } else {
-        v.u = v.u.trim.toLowerCase();
+        v.u = v.u.trim().toLowerCase();
       }
       if ( v.u === '' ) {
         v.u = 'px';
@@ -361,7 +361,14 @@ exports.bind = function( srcObj, srcAtt, dstObj, dstAtt, options ) {
 };
 
 
-exports.extend = function( def, ext, obj ) {
+/**
+ * @param {object} def - Default values for properties.
+ * @param {object} ext - Properties to override.
+ * @param {object} obj - DOM object whose properties belong.
+ * @param {function}  callback -  Optional. Functioin  to call  when a
+ * bindable property of `obj` changes.
+ */
+exports.extend = function( def, ext, obj, callback ) {
   var out = JSON.parse( JSON.stringify( def ) );
 
   var key, val;
@@ -390,10 +397,24 @@ exports.extend = function( def, ext, obj ) {
       if (key.charAt(0) == '$') continue;
       obj[key] = out[key];
     }
+    // General callback.
+    if( typeof callback === 'function' ) {
+      for( key in obj[ID] ) {
+        exports.bind( obj, key, callback );
+      }
+    }
   }
 
   return out;
 };
 
+
+function toLowerCase( txt ) {
+  return txt.toLowerCase();
+}
+
+function trim( txt ) {
+  return txt.trim();
+}
 
 exports.converters = converters;

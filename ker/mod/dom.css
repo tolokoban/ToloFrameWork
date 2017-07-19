@@ -256,10 +256,22 @@ html.thm-dark .thm-bg3 {
     background-color: #424242;
 }
 
+/* SVG */
+svg .stroke0 { stroke: #000 }
+svg .fill0 { fill: #000 }
+svg .stroke1 { stroke: #fff }
+svg .fill1 { fill: #fff }
+
+html.thm-dark svg .stroke0 { stroke: #fff }
+html.thm-dark svg .fill0 { fill: #fff }
+html.thm-dark svg .stroke1 { stroke: #000 }
+html.thm-dark svg .fill1 { fill: #000 }
+
+
 /* Primary color. */
 .thm-bgP {
     background-color: #1E88E5;
-    color: #000;
+    color: #fff;
 }
 
 .thm-bgPL {
@@ -271,6 +283,12 @@ html.thm-dark .thm-bg3 {
     background-color: #005CB2;
     color: #fff;
 }
+
+.thm-bgP svg .stroke0, .thm-bgPD svg .stroke0 { stroke: #fff }
+.thm-bgP svg .fill0, .thm-bgPD svg .fill0 { fill: #fff }
+.thm-bgP svg .stroke1, .thm-bgPD svg .stroke1 { stroke: #000 }
+.thm-bgP svg .fill1, .thm-bgPD svg .fill1 { fill: #000 }
+
 
 /* Secondary */
 .thm-bgS {
@@ -285,8 +303,13 @@ html.thm-dark .thm-bg3 {
 
 .thm-bgSD {
     background-color: #C67100;
-    color: #000;
+    color: #fff;
 }
+
+.thm-bgSD svg .stroke0 { stroke: #fff }
+.thm-bgSD svg .fill0 { fill: #fff }
+.thm-bgSD svg .stroke1 { stroke: #000 }
+.thm-bgSD svg .fill1 { fill: #000 }
 
 /* Toolbar size */
 .thm-sz-toolbar {

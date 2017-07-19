@@ -2,9 +2,12 @@ var $ = require( "dom" );
 var DB = require( "tfw.data-binding" );
 var Touchable = require( "tfw.touchable" );
 
+var ENUM = ['0', '1', 'P', 'PL', 'PD', 'S', 'SL', 'SD'];
+
 /**
  * @class Icon
  * @param {string} opts.content - Name of the icon.
+ * @param {object} opts.content - Structure of the icon.
  * @param {boolean} opts.rotate - Activer l'auto-rotation.
  * @param {boolean} opts.button - Show as round button.
  * @param {string} opts.type - "default" or "accent".
@@ -30,7 +33,6 @@ var Icon = function ( opts ) {
   var root = $.div( 'wdg-icon', [ svg ] );
   var elem = $.elem( this, root );
   $.add( svg, g );
-  DB.prop( this, 'content' )( setContent.bind( this, mapColors, g ) );
   DB.prop( this, 'value' );
   DB.propBoolean( this, 'rotate' )( function ( v ) {
     if ( v ) {
@@ -79,38 +81,65 @@ var Icon = function ( opts ) {
   DB.propAddClass( this, 'wide' );
   DB.propRemoveClass( this, 'visible', 'hide' );
   DB.propToggleClass( this, 'type', {
-    default: "theme-color-bg-B0",
-    accent: "theme-color-bg-A5"
+    default: "thm-bg3",
+    accent: "thm-bgS"
   } );
-  var updateColor = function ( index, color ) {
+  var updateColor = function ( index ) {
     var children = mapColors[ index ];
     if ( typeof children === 'undefined' ) return;
-    children.fill.forEach( function ( child ) {
-      $.att( child, "fill", that[ 'color' + index ] );
-    } );
-    children.stroke.forEach( function ( child ) {
-      $.att( child, "stroke", that[ 'color' + index ] );
-    } );
-  };
+    children.fill.forEach(function (child) {
+      ENUM.forEach(function (cls) {
+        $.removeClass( child, cls );
+      });
+      $.removeAtt( child, 'fill' );
+    });
+    children.stroke.forEach(function (child) {
+      ENUM.forEach(function (cls) {
+        $.removeClass( child, cls );
+      });
+      $.removeAtt( child, 'stroke' );
+    });
 
-  for ( var i = 0; i < 6; i++ ) {
+    var color = '' + that[ 'color' + index ];
+    if( ENUM.indexOf( color ) > -1 ) {
+      // This color is a class.
+      children.fill.forEach( function ( child ) {
+        $.addClass( child, 'fill' + color );
+      } );
+      children.stroke.forEach( function ( child ) {
+        $.addClass( child, 'stroke' + color );
+      } );
+    } else {
+      // This is a direct color.
+      children.fill.forEach( function ( child ) {
+        $.att( child, "fill",color );
+      } );
+      children.stroke.forEach( function ( child ) {
+        $.att( child, "stroke", color );
+      } );
+    }
+  };
+  DB.prop( this, 'content' )( function( v ) {
+    setContent.call( that, mapColors, g, v );
+    for ( var i = 0; i < 2; i++ ) {
+      updateColor(i);
+    }
+  });
+
+  for ( var i = 0; i < 2; i++ ) {
     DB.propColor( this, 'color' + i )( updateColor.bind( this, i ) );
   }
 
   opts = DB.extend( {
-    color0: '#000000',
-    color1: '#ffffff',
-    color2: '#777777',
-    color3: '#ff0000',
-    color4: '#00ff00',
-    color5: '#0000ff',
     content: [ 'circle', {
       stroke: 1,
       fill: 0,
       r: 90,
       cx: 0,
       cy: 0
-        } ],
+    } ],
+    color0: '0',
+    color1: '1',
     type: 'default',
     angle: 0,
     size: '2rem',
@@ -195,18 +224,17 @@ function addChild( mapColors, parent, child ) {
         }, this );
       } else if ( typeof itm === 'object' ) {
         for ( key in itm ) {
-          val = itm[ key ];
-          if ( ( key == 'fill' || key == 'stroke' ) && typeof val === 'number' ) {
-            color = Math.floor( val ) % 6;
-            att = 'color' + color;
-            val = this[ att ];
-            if ( typeof mapColors[ color ] === 'undefined' ) {
-              mapColors[ color ] = {
-                fill: [],
-                stroke: []
-              };
+          val = '' + itm[ key ]; // Convert to string because 1 is not part of ENUM.
+          if ( ( key == 'fill' || key == 'stroke' ) && ENUM.indexOf( val ) > -1 ) {
+            if ( "01".indexOf( val ) > -1 ) {
+              if ( typeof mapColors[ val ] === 'undefined' ) {
+                mapColors[ val ] = {
+                  fill: [],
+                  stroke: []
+                };
+              }
+              mapColors[ val ][ key ].push( node );
             }
-            mapColors[ color ][ key ].push( node );
           }
           $.att( node, key, val );
         }
@@ -217,33 +245,33 @@ function addChild( mapColors, parent, child ) {
 
 function draw( d ) {
   return [ 'g', [
-        [ 'path', {
+    [ 'path', {
       d: d,
       stroke: 1,
       'stroke-width': 36
     } ],
-        [ 'path', {
+    [ 'path', {
       d: d,
       stroke: 0,
       'stroke-width': 24
     } ]
-    ] ];
+  ] ];
 }
 
 function path2( d ) {
   return [ 'g', [
-        [ 'path', {
+    [ 'path', {
       d: d,
       stroke: 1,
       fill: 'none',
       'stroke-width': 12
     } ],
-        [ 'path', {
+    [ 'path', {
       d: d,
       stroke: 'none',
       fill: 0
     } ]
-    ] ];
+  ] ];
 };
 
 Icon.Icons = {
@@ -257,17 +285,17 @@ Icon.Icons = {
     'M-40,-40H-25L-15,-50H15L25,-40H40A10,10,0,0,1,50,-30V30A10,10,0,0,1,40,40H-40A10,10,0,0,1,-50,30V-30A10,10,0,0,1,-40,-40M0,-25A25,25,0,0,0,-25,0A25,25,0,0,0,0,25A25,25,0,0,0,25,0A25,25,0,0,0,0,-25M0,-15A15,15,0,0,1,15,0A15,15,0,0,1,0,15A15,15,0,0,1,-15,0A15,15,0,0,1,0,-15Z'
   ),
   cancel: [ 'g', [
-        [ 'path', {
+    [ 'path', {
       d: 'M-30,-30L30,30M-30,30L30,-30',
       stroke: 0,
       'stroke-width': 30
-        } ],
-        [ 'path', {
+    } ],
+    [ 'path', {
       d: 'M-30,-30L30,30M-30,30L30,-30',
       stroke: 1,
       'stroke-width': 16
-        } ]
-    ] ],
+    } ]
+  ] ],
   center: path2(
     'M0,-15A15,15,0,0,0,-15,0A15,15,0,0,0,0,15A15,15,0,0,0,15,0A15,15,0,0,0,0,-15M35,35H15V45H35A10,10,0,0,0,45,35V15H35M35,-45H15V-35H35V-15H45V-35A10,10,0,0,0,35,-45M-35,-35H-15V-45H-35A10,10,0,0,0,-45,-35V-15H-35M-35,15H-45V35A10,10,0,0,0,-35,45H-15V35H-35V15Z'
   ),
@@ -285,116 +313,116 @@ Icon.Icons = {
   "flag-jp": [ "g", {
     stroke: "none"
   }, [
-        [ "path", {
+    [ "path", {
       fill: "#000",
       d: "M-65,50h130v-100h-130z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#fff",
       d: "M-60,45h120v-90h-120z"
     } ],
-        [ "circle", {
+    [ "circle", {
       fill: "#bc002d",
       r: 24
     } ]
-    ] ],
+  ] ],
   "flag-fr": [ "g", {
     stroke: "none"
   }, [
-        [ "path", {
+    [ "path", {
       fill: "#000",
       d: "M-65,50h130v-100h-130z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#002395",
       d: "M-60,45h40v-90h-40z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#fff",
       d: "M-20,45h40v-90h-40z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#ed2939",
       d: "M20,45h40v-90h-40z"
     } ]
-    ] ],
+  ] ],
   "flag-it": [ "g", {
     stroke: "none"
   }, [
-        [ "path", {
+    [ "path", {
       fill: "#000",
       d: "M-65,50h130v-100h-130z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#009246",
       d: "M-60,45h40v-90h-40z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#fff",
       d: "M-20,45h40v-90h-40z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#ce2b37",
       d: "M20,45h40v-90h-40z"
     } ]
-    ] ],
+  ] ],
   "flag-de": [ "g", {
     stroke: "none"
   }, [
-        [ "path", {
+    [ "path", {
       fill: "#000",
       d: "M-65,41h130v-82h-130z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#ffce00",
       d: "M-60,36h120v-24h-120z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#dd0000",
       d: "M-60,12h120v-24h-120z"
     } ]
-    ] ],
+  ] ],
   "flag-en": [ "g", {
     stroke: "none"
   }, [
-        [ "path", {
+    [ "path", {
       fill: "#000",
       d: "M-65,37h130v-75h-130z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#bb133e",
       d: "M-60,32h120v-65h-120z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#fff",
       d: "M-60,22h120v5h-120z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#fff",
       d: "M-60,12h120v5h-120z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#fff",
       d: "M-60,2h120v5h-120z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#fff",
       d: "M-60,-8h120v5h-120z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#fff",
       d: "M-60,-18h120v5h-120z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#fff",
       d: "M-60,-28h120v5h-120z"
     } ],
-        [ "path", {
+    [ "path", {
       fill: "#002664",
       d: "M-60,-33h48v35h-48z"
     } ],
 
-    ] ],
+  ] ],
   font: path2('M25,-20H40V40H45V45H25V40H30V25H10L3,40H10V45H-10V40H-5L25,-20M30,-15L13,20H30V-15M-35,-45H-10C-4,-45,0,-41,0,-35V20H-15V-5H-30V20H-45V-35C-45,-41,-41,-45,-35,-45M-30,-35V-15H-15V-35H-30Z'),
   'format-align-center': path2('M-45,-45H45V-35H-45V-45M-25,-25H25V-15H-25V-25M-45,-5H45V5H-45V-5M-25,15H25V25H-25V15M-45,35H45V45H-45V35Z'),
   'format-align-justify': path2('M-45,-45H45V-35H-45V-45M-45,-25H45V-15H-45V-25M-45,-5H45V5H-45V-5M-45,15H45V25H-45V15M-45,35H45V45H-45V35Z' ),
@@ -442,55 +470,55 @@ Icon.Icons = {
   menu: path2('M-45,-30H45V-20H-45V-30M-45,-5H45V5H-45V-5M-45,20H45V30H-45V20Z'),
   minus: draw( "M-45,0H45" ),
   "minus-o": [ "g", [
-        [ "circle", {
+    [ "circle", {
       r: 60,
       stroke: "none",
       fill: 0
     } ],
-        [ "circle", {
+    [ "circle", {
       r: 50,
       stroke: "none",
       fill: 1
     } ],
-        [ "path", {
+    [ "path", {
       d: "M-30,0H30",
       fill: "none",
       stroke: 0,
       "stroke-width": 16
     } ]
-    ] ],
+  ] ],
   "minus-small": draw( "M-30,0H30" ),
   ok: [ 'g', [
-        [ 'path', {
+    [ 'path', {
       d: 'M-30,0L-10,30,30,-30',
       stroke: 1,
       'stroke-width': 30
-        } ],
-        [ 'path', {
+    } ],
+    [ 'path', {
       d: 'M-30,0L-10,30,30,-30',
       stroke: 0,
       'stroke-width': 16
-        } ]
-    ] ],
+    } ]
+  ] ],
   plus: draw( "M-45,0H45M0,-45V45" ),
   "plus-o": [ "g", [
-        [ "circle", {
+    [ "circle", {
       r: 60,
       stroke: "none",
       fill: 0
     } ],
-        [ "circle", {
+    [ "circle", {
       r: 50,
       stroke: "none",
       fill: 1
     } ],
-        [ "path", {
+    [ "path", {
       d: "M-30,0H30M0,-30V30",
       fill: "none",
       stroke: 0,
       "stroke-width": 16
     } ]
-    ] ],
+  ] ],
   "plus-small": draw( "M-30,0H30M0,-30V30" ),
   print: [ 'path', {
     fill: 0,
@@ -507,37 +535,37 @@ Icon.Icons = {
   speaker: path2('M40,35L33,28C41,21,45,11,45,0C45,-11,41,-21,33,-28L40,-35C49,-26,55,-14,55,0C55,14,49,26,40,35M26,21L19,14C23,11,25,6,25,0C25,-6,23,-11,19,-14L26,-21C32,-16,35,-8,35,0C35,8,32,16,26,21M-40,-45H0A10,10,0,0,1,10,-35V35A10,10,0,0,1,0,45H-40A10,10,0,0,1,-50,35V-35A10,10,0,0,1,-40,-45M-20,-35A10,10,0,0,0,-30,-25A10,10,0,0,0,-20,-15A10,10,0,0,0,-10,-25A10,10,0,0,0,-20,-35M-20,-5A20,20,0,0,0,-40,15A20,20,0,0,0,-20,35A20,20,0,0,0,0,15A20,20,0,0,0,-20,-5M-20,5A10,10,0,0,1,-10,15A10,10,0,0,1,-20,25A10,10,0,0,1,-30,15A10,10,0,0,1,-20,5Z'),
   star: path2('M0,26L31,45L23,10L50,-14L14,-17L0,-50L-14,-17L-50,-14L-23,10L-31,45L0,26Z'),
   'tri-down': [ 'g', [
-        [ 'path', {
+    [ 'path', {
       d: 'M-30,-30L0,30,30,-30Z',
       stroke: 0,
       fill: 1,
       'stroke-width': 8
-        } ]
-    ] ],
+    } ]
+  ] ],
   'tri-left': [ 'g', [
-        [ 'path', {
+    [ 'path', {
       d: 'M30,-30L-30,0,30,30Z',
       stroke: 0,
       fill: 1,
       'stroke-width': 8
-        } ]
-    ] ],
+    } ]
+  ] ],
   'tri-right': [ 'g', [
-        [ 'path', {
+    [ 'path', {
       d: 'M-30,-30L30,0,-30,30Z',
       stroke: 0,
       fill: 1,
       'stroke-width': 8
-        } ]
-    ] ],
+    } ]
+  ] ],
   'tri-up': [ 'g', [
-        [ 'path', {
+    [ 'path', {
       d: 'M-30,30L0,-30,30,30Z',
       stroke: 0,
       fill: 1,
       'stroke-width': 8
-        } ]
-    ] ],
+    } ]
+  ] ],
   undo: path2('M3,-20C-11,-20,-23,-15,-32,-7L-50,-25V20H-5L-23,2C-16,-4,-7,-7,3,-7C20,-7,35,4,41,20L52,16C45,-5,26,-20,3,-20Z'),
   up: draw( 'M-30,30L0,-30,30,30' ),
   'up-double': draw( 'M-30,40L0,10,30,40M-30,-10L0,-40,30,-10' ),
@@ -545,29 +573,29 @@ Icon.Icons = {
     'M0,-40A20,20,0,0,1,20,-20A20,20,0,0,1,0,0A20,20,0,0,1,-20,-20A20,20,0,0,1,0,-40M0,10C22,10,40,19,40,30V40H-40V30C-40,19,-22,10,0,10Z'
   ),
   wait: [ 'g', [
-        [ 'path', {
+    [ 'path', {
       d: "M0,40 A40,40,0,1,1,40,0",
       stroke: 0,
       'stroke-width': 40
-        } ],
-        [ 'path', {
+    } ],
+    [ 'path', {
       d: "M0,40 A40,40,0,1,1,40,0",
       stroke: 1,
       'stroke-width': 24
-        } ]
-    ] ],
+    } ]
+  ] ],
   "zoom-in": [ "g", [
-        path2(
+    path2(
       'M-12,-45A33,33,0,0,1,20,-12C20,-4,17,3,12,9L14,10H18L43,35L35,43L10,18V14L9,12C3,17,-4,20,-12,20A33,33,0,0,1,-45,-12A33,33,0,0,1,-12,-45M-12,-35C-25,-35,-35,-25,-35,-12C-35,0,-25,10,-12,10C0,10,10,0,10,-12C10,-25,0,-35,-12,-35Z'
     ),
-        path2( 'M-50,42h10v-10h4v10h10v4h-10v10h-4v-10h-10Z' )
-    ] ],
+    path2( 'M-50,42h10v-10h4v10h10v4h-10v10h-4v-10h-10Z' )
+  ] ],
   "zoom-out": [ "g", [
-        path2(
+    path2(
       'M-12,-45A33,33,0,0,1,20,-12C20,-4,17,3,12,9L14,10H18L43,35L35,43L10,18V14L9,12C3,17,-4,20,-12,20A33,33,0,0,1,-45,-12A33,33,0,0,1,-12,-45M-12,-35C-25,-35,-35,-25,-35,-12C-35,0,-25,10,-12,10C0,10,10,0,10,-12C10,-25,0,-35,-12,-35Z'
     ),
-        path2( 'M-50,42h24v4h-32Z' )
-    ] ]
+    path2( 'M-50,42h24v4h-32Z' )
+  ] ]
 };
 
 // Synonyms.

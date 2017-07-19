@@ -39,31 +39,11 @@ var Button = function ( opts ) {
   });
 
   DB.prop( this, 'value' );
-  DB.propEnum( TYPES )( this, 'type' )( refresh );
-  DB.prop( this, 'icon' )( refresh );
-  DB.propBoolean( this, 'anim' )( refresh );
-  var waitBackup = {
-    enabled: true,
-    icon: "?",
-    anim: false
-  };
-  DB.propBoolean( this, 'wait' )( function ( v ) {
-    if ( v ) {
-      waitBackup.enabled = that.enabled;
-      waitBackup.icon = that.icon;
-      waitBackup.anim = that.anim;
-      that.enabled = false;
-      that.icon = 'wait';
-      that.anim = true;
-    } else {
-      that.enabled = waitBackup.enabled;
-      that.icon = waitBackup.icon;
-      that.anim = waitBackup.anim;
-    }    
-  } );
-  DB.propString( this, 'text' )( function ( v ) {
-    text.textContent = v;
-  } );
+  DB.propEnum( TYPES )( this, 'type' );
+  DB.prop( this, 'icon' );
+  DB.propBoolean( this, 'anim' );
+  DB.propBoolean( this, 'wait' );
+  DB.propString( this, 'text' );
   var touchable = new Touchable( elem, {
     classToAdd: 'theme-elevation-8'
   } );
@@ -71,11 +51,11 @@ var Button = function ( opts ) {
     touchable.enabled = v;
     refresh();
   } );
-  DB.propBoolean( this, 'iconToLeft' )( refresh );
-  DB.propBoolean( this, 'small' )( refresh );
-  DB.propBoolean( this, 'flat' )( refresh );
+  DB.propBoolean( this, 'iconToLeft' );
+  DB.propBoolean( this, 'small' );
+  DB.propBoolean( this, 'flat' );
   DB.prop( this, 'action', 0 );
-  DB.propBoolean( this, 'wide' )( refresh );
+  DB.propBoolean( this, 'wide' );
   DB.propRemoveClass( this, 'visible', 'hide' );
 
   opts = DB.extend( {
@@ -94,7 +74,7 @@ var Button = function ( opts ) {
     icon: null,
     wide: false,
     visible: true
-  }, opts, this );
+  }, opts, this, refresh );
 
   // Animate the pressing.
   $.on( this.element, {
@@ -214,7 +194,14 @@ function setStyle( children ) {
     }
   }
 
-  if ( !this.icon || ( typeof this.icon === 'string' && this.icon.trim().length === 0 ) ) {
+  children.text.textContent = this.text;
+  
+  if ( this.wait ) {
+    children.icon.visible = true;
+    children.icon.content = "wait";
+    children.icon.rotate = true;    
+  }
+  else if ( !this.icon || ( typeof this.icon === 'string' && this.icon.trim().length === 0 ) ) {
     children.icon.visible = false;
   } else {
     children.icon.visible = true;
@@ -222,8 +209,7 @@ function setStyle( children ) {
     children.icon.rotate = this.anim;
   }
 
-  if( !this.enabled ) $.addClass( this, 'disabled' );
+  if( !this.enabled || this.wait ) $.addClass( this, 'disabled' );
   if( this.wide ) $.addClass( this, 'wide' );
-  if( typeof this.icon === 'string' && this.icon.trim().length > 0 ) $.addClass( this, 'icon' );
   if( this.iconToLeft ) $.addClass( this, 'iconToLeft' );
 }

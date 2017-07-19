@@ -17,8 +17,8 @@
   transition: all .2s;
 }
 
-.wdg-button.dom.wide {
-  width: 100%;
+.wdg-button.wide {
+  width: calc(100% - 16px);
 }
 
 .wdg-button.flat {
@@ -43,22 +43,17 @@
   margin: 0 8px;
 }
 
-.wdg-button > div.icon {
+.wdg-button > div.wdg-icon {
   order: 1;
   flex-grow: 0;
-  margin: 0;
+  margin: 0 8px 0 0;
   padding: 0;
-  display: none;
 }
 
-.wdg-button.iconToLeft > div.icon {
+.wdg-button.iconToLeft > div.wdg-icon {
   order: -1;
+  margin: 0 0 0 8px;
 }
-
-.wdg-button.icon > div.icon {
-  display: block;
-}
-
 
 .wdg-button.disabled:hover,
 .wdg-button.disabled {
