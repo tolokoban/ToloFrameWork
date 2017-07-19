@@ -30,48 +30,21 @@ var TYPES = [ 'standard', 'primary', 'warning' ];
 var Button = function ( opts ) {
   var that = this;
 
-  var divIcon = $.div( 'icon' );
-  var divText = $.div( 'text' );
-  var elem = $.elem(
-    this,
-    'button', 'wdg-button', 'thm-ele2',
-    [divIcon, divText]
-  );
+  var icon = new Icon({ size: "24px" });
+  var text = $.div( 'text' );
+  var elem = $.elem( this, 'button', [icon, text] );
 
   var refresh = setStyle.bind( this, {
-    icon: divIcon, text: divText
+    icon: icon, text: text
   });
-  var icon;
 
   DB.prop( this, 'value' );
   DB.propEnum( TYPES )( this, 'type' )( refresh );
-  DB.prop( this, 'icon' )( function ( v ) {
-    if ( !v || ( typeof v === 'string' && v.trim().length === 0 ) ) {
-      icon = null;
-      $.addClass( divIcon, 'hide' );
-    } else if ( v.element ) {
-      icon = v.element;
-    } else {
-      icon = new Icon( {
-        content: v,
-        size: "24px"
-      } );
-    }
-    $.clear( divIcon );
-    if( icon ) {
-      $.add( divIcon, icon );
-      $.removeClass( divIcon, 'hide' );
-    } else {
-      $.addClass( divIcon, 'hide' );
-    }
-    refresh();
-  } );
-  DB.propBoolean( this, 'anim' )( function ( v ) {
-    if ( icon ) icon.rotate = v;
-  } );
+  DB.prop( this, 'icon' )( refresh );
+  DB.propBoolean( this, 'anim' )( refresh );
   var waitBackup = {
     enabled: true,
-    icon: "",
+    icon: "?",
     anim: false
   };
   DB.propBoolean( this, 'wait' )( function ( v ) {
@@ -86,10 +59,10 @@ var Button = function ( opts ) {
       that.enabled = waitBackup.enabled;
       that.icon = waitBackup.icon;
       that.anim = waitBackup.anim;
-    }
+    }    
   } );
   DB.propString( this, 'text' )( function ( v ) {
-    divText.textContent = v;
+    text.textContent = v;
   } );
   var touchable = new Touchable( elem, {
     classToAdd: 'theme-elevation-8'
@@ -117,8 +90,8 @@ var Button = function ( opts ) {
     flat: false,
     small: false,
     enabled: true,
-    icon: null,
     wait: false,
+    icon: null,
     wide: false,
     visible: true
   }, opts, this );
@@ -163,35 +136,6 @@ Button.prototype.fire = function () {
     }
   }
 };
-
-/**
- * Disable the button and start a wait animation.
- */
-Button.prototype.waitOn = function ( text ) {
-  if ( typeof this._backup === 'undefined' ) {
-    this._backup = {
-      text: this.text,
-      icon: this.icon,
-      enabled: this.enabled
-    };
-  }
-  if ( typeof text === 'string' ) this.text = text;
-  this.enabled = false;
-  this.icon = "wait";
-  if ( this._icon ) this._icon.rotate = true;
-};
-
-/**
- * Stop the wait animation and enable the button again.
- */
-Button.prototype.waitOff = function () {
-  this.text = this._backup.text;
-  this.icon = this._backup.icon;
-  this.enabled = this._backup.enabled;
-  if ( this._icon ) this._icon.rotate = false;
-  delete this._backup;
-};
-
 
 function genericButton( id, type ) {
   if ( typeof type === 'undefined' ) type = 'standard';
@@ -268,6 +212,14 @@ function setStyle( children ) {
     default:
       $.addClass( this, 'thm-bg3' );
     }
+  }
+
+  if ( !this.icon || ( typeof this.icon === 'string' && this.icon.trim().length === 0 ) ) {
+    children.icon.visible = false;
+  } else {
+    children.icon.visible = true;
+    children.icon.content = this.icon;
+    children.icon.rotate = this.anim;
   }
 
   if( !this.enabled ) $.addClass( this, 'disabled' );
