@@ -6,7 +6,7 @@ var DB = require( "tfw.data-binding" );
 var Icon = require( "wdg.icon" );
 var Touchable = require( "tfw.touchable" );
 
-var TYPES = [ 'standard', 'primary', 'warning' ];
+var TYPES = [ 'standard', 'primary', 'secondary' ];
 
 /**
  * Liste des classes CSS applicables sur un bouton :
@@ -51,15 +51,14 @@ var Button = function ( opts ) {
     touchable.enabled = v;
     refresh();
   } );
-  DB.propBoolean( this, 'iconToLeft' );
-  DB.propBoolean( this, 'small' );
+  DB.propBoolean( this, 'inverted' );
   DB.propBoolean( this, 'flat' );
   DB.prop( this, 'action', 0 );
   DB.propBoolean( this, 'wide' );
   DB.propRemoveClass( this, 'visible', 'hide' );
 
   opts = DB.extend( {
-    iconToLeft: true,
+    inverted: false,
     type: "standard",
     text: "OK",
     href: null,
@@ -139,7 +138,7 @@ Button.Close = function ( type ) {
   return genericButton( 'close', type || 'simple' );
 };
 Button.Delete = function ( type ) {
-  return genericButton( 'delete', type || 'warning' );
+  return genericButton( 'delete', type || 'secondary' );
 };
 Button.No = function ( type ) {
   return genericButton( 'no', type || 'simple' );
@@ -175,7 +174,7 @@ function setStyle( children ) {
     case 'primary':
       $.addClass( this, 'thm-fgP' );
       break;
-    case 'warning':
+    case 'secondary':
       $.addClass( this, 'thm-fgS' );
       break;
     }
@@ -186,7 +185,7 @@ function setStyle( children ) {
     case 'primary':
       $.addClass( this, 'thm-bgP' );
       break;
-    case 'warning':
+    case 'secondary':
       $.addClass( this, 'thm-bgS' );
       break;
     default:
@@ -211,5 +210,5 @@ function setStyle( children ) {
 
   if( !this.enabled || this.wait ) $.addClass( this, 'disabled' );
   if( this.wide ) $.addClass( this, 'wide' );
-  if( this.iconToLeft ) $.addClass( this, 'iconToLeft' );
+  if( !this.inverted ) $.addClass( this, 'iconToLeft' );
 }

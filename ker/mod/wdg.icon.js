@@ -80,10 +80,6 @@ var Icon = function ( opts ) {
   DB.prop( this, 'action' );
   DB.propAddClass( this, 'wide' );
   DB.propRemoveClass( this, 'visible', 'hide' );
-  DB.propToggleClass( this, 'type', {
-    default: "thm-bg3",
-    accent: "thm-bgS"
-  } );
   var updateColor = function ( index ) {
     var children = mapColors[ index ];
     if ( typeof children === 'undefined' ) return;
@@ -140,7 +136,6 @@ var Icon = function ( opts ) {
     } ],
     color0: '0',
     color1: '1',
-    type: 'default',
     angle: 0,
     size: '2rem',
     button: false,

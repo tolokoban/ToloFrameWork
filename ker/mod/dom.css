@@ -284,10 +284,31 @@ html.thm-dark svg .fill1 { fill: #000 }
     color: #fff;
 }
 
-.thm-bgP svg .stroke0, .thm-bgPD svg .stroke0 { stroke: #fff }
-.thm-bgP svg .fill0, .thm-bgPD svg .fill0 { fill: #fff }
-.thm-bgP svg .stroke1, .thm-bgPD svg .stroke1 { stroke: #000 }
-.thm-bgP svg .fill1, .thm-bgPD svg .fill1 { fill: #000 }
+.thm-bgP svg .stroke0, .thm-bgPD svg .stroke0
+{ stroke: #fff }
+.thm-bgP svg .fill0, .thm-bgPD svg .fill0
+{ fill: #fff }
+.thm-bgP svg .stroke1, .thm-bgPD svg .stroke1
+{ stroke: #000 }
+.thm-bgP svg .fill1, .thm-bgPD svg .fill1
+{ fill: #000 }
+
+.thm-bgPL svg .stroke0,
+.thm-bg0 svg .stroke0, .thm-bg1 svg .stroke0, .thm-bg2 svg .stroke0, .thm-bg3 svg .stroke0, 
+.thm-bgS svg .stroke0, .thm-bgSL svg .stroke0, .thm-bgSD svg .stroke0
+{ stroke: #000 }
+.thm-bgPL svg .fill0,
+.thm-bg0 svg .fill0, .thm-bg1 svg .fill0, .thm-bg2 svg .fill0, .thm-bg3 svg .fill0, 
+.thm-bgS svg .fill0, .thm-bgSL svg .fill0, .thm-bgSD svg .fill0
+{ fill: #000 }
+.thm-bgPL svg .stroke1,
+.thm-bg0 svg .stroke1, .thm-bg1 svg .stroke1, .thm-bg2 svg .stroke1, .thm-bg3 svg .stroke1, 
+.thm-bgS svg .stroke1, .thm-bgSL svg .stroke1, .thm-bgSD svg .stroke1
+{ stroke: #fff }
+.thm-bgPL svg .fill1,
+.thm-bg0 svg .fill1, .thm-bg1 svg .fill1, .thm-bg2 svg .fill1, .thm-bg3 svg .fill1, 
+.thm-bgS svg .fill1, .thm-bgSL svg .fill1, .thm-bgSD svg .fill1
+{ fill: #fff }
 
 
 /* Secondary */
