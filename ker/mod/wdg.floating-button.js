@@ -10,7 +10,7 @@ var TYPES = [ 'standard', 'primary', 'secondary' ];
 var FloatingButton = function( opts ) {
   var that = this;
 
-  var icon = new Icon();
+  var icon = new Icon({ size: "24px" });
   var elem = $.elem( this, 'button', 'dom', 'custom', 'wdg-floating-button', 'thm-ele6', [icon] );
   var touchable = new Touchable( elem, {
     classToAdd: 'thm-ele12'
@@ -23,10 +23,8 @@ var FloatingButton = function( opts ) {
   DB.propBoolean( this, 'small' )(function( v ) {
     if( v ) {
       $.addClass( 'small' );
-      icon.size = "24px";
     } else {
       $.removeClass( 'small' );
-      icon.size = "32px";
     }
   });
   DB.propEnum( TYPES )( this, 'type' )(function(v) {
