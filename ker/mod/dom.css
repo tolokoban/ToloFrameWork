@@ -387,11 +387,11 @@ html.thm-dark svg .fill1 { fill: #000 }
 .thm-ele10 { z-index: 10; box-shadow: 0 5px 10px rgba(0,0,0,.4) }
 .thm-ele11 { z-index: 11; box-shadow: 0 5px 11px rgba(0,0,0,.4) }
 /* Floating action button (FAB - pressed) */
-.thm-ele12 { z-index: 2; box-shadow: 0 1px 2px rgba(0,0,0,.4) }
+.thm-ele12 { z-index: 12; box-shadow: 0 6px 12px rgba(0,0,0,.4) }
 /* Nav drawer, Right drawer, Modal bottom sheet */
-.thm-ele16 { z-index: 6; box-shadow: 0 3px 6px rgba(0,0,0,.4) }
+.thm-ele16 { z-index: 16; box-shadow: 0 8px 16px rgba(0,0,0,.4) }
 /* Dialog, Picker */
-.thm-ele24 { z-index: 4; box-shadow: 0 2px 4px rgba(0,0,0,.4) }
+.thm-ele24 { z-index: 24; box-shadow: 0 12px 24px rgba(0,0,0,.4) }
 
 
 

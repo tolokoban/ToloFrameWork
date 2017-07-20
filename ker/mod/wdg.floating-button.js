@@ -20,13 +20,7 @@ var FloatingButton = function( opts ) {
   DB.prop( this, 'icon' )(function( v ) {
     icon.content = v;
   });
-  DB.propBoolean( this, 'small' )(function( v ) {
-    if( v ) {
-      $.addClass( 'small' );
-    } else {
-      $.removeClass( 'small' );
-    }
-  });
+  DB.propAddClass( this, 'small' );
   DB.propEnum( TYPES )( this, 'type' )(function(v) {
     $.removeClass( elem, 'thm-bg3', 'thm-bgP', 'thm-bgS' );
     switch( v ) {
@@ -38,11 +32,9 @@ var FloatingButton = function( opts ) {
   DB.propBoolean( this, 'enabled' )( function ( v ) {
     touchable.enabled = v;
     if( v ) {
-      $.addClass( 'small' );
-      icon.size = "24px";
+      $.removeClass( 'disabled' );
     } else {
-      $.removeClass( 'small' );
-      icon.size = "32px";
+      $.addClass( 'disabled' );
     }
   } );
   DB.prop( this, 'action', 0 );

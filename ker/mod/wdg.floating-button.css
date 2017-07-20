@@ -1,5 +1,21 @@
 .wdg-floating-button {
   display: inline-flex;
-  flex-orientation: row;
-  
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 100%;
+  border: none;
+}
+
+.wdg-floating-button.small {
+  width: 40px;
+  height: 40px;
+}
+
+.wdg-floating-button > * {
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-self: center;
 }

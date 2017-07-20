@@ -45,7 +45,7 @@ var Button = function ( opts ) {
   DB.propBoolean( this, 'wait' );
   DB.propString( this, 'text' );
   var touchable = new Touchable( elem, {
-    classToAdd: 'theme-elevation-8'
+    classToAdd: 'thm-ele8'
   } );
   DB.propBoolean( this, 'enabled' )( function ( v ) {
     touchable.enabled = v;
