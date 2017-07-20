@@ -32,7 +32,7 @@ var Button = function ( opts ) {
 
   var icon = new Icon({ size: "24px" });
   var text = $.div( 'text' );
-  var elem = $.elem( this, 'button', [icon, text] );
+  var elem = $.elem( this, 'button', 'wdg-button', [icon, text] );
 
   var refresh = setStyle.bind( this, {
     icon: icon, text: text
@@ -86,8 +86,6 @@ var Button = function ( opts ) {
     }
   } );
   touchable.tap.add( that.fire.bind( that ) );
-
-  refresh();
 };
 
 /**
