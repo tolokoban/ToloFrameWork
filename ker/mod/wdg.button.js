@@ -55,7 +55,7 @@ var Button = function ( opts ) {
   DB.propBoolean( this, 'flat' );
   DB.prop( this, 'action', 0 );
   DB.propBoolean( this, 'wide' );
-  DB.propRemoveClass( this, 'visible', 'hide' );
+  DB.propBoolean( this, 'visible' );
 
   opts = DB.extend( {
     inverted: false,
@@ -114,44 +114,34 @@ Button.prototype.fire = function () {
   }
 };
 
-function genericButton( id, type ) {
-  if ( typeof type === 'undefined' ) type = 'standard';
-  var iconName = id;
-  var intl = id;
-  if ( intl == 'yes' ) iconName = 'ok';
-  if ( intl == 'no' ) iconName = 'cancel';
-  var btn = new Button( {
-    text: _( intl ),
-    icon: iconName,
-    value: id,
-    type: type
-  } );
-  return btn;
+function genericButton( base, opts ) {
+  if( typeof opts === 'undefined' ) opts = {};
+  return new Button( DB.extend( base, opts ) );
 }
 
-Button.Cancel = function ( type ) {
-  return genericButton( 'cancel', type || 'simple' );
+Button.Cancel = function ( opts ) {
+  return genericButton({ text: _('cancel'), flat: true }, opts);
 };
-Button.Close = function ( type ) {
-  return genericButton( 'close', type || 'simple' );
+Button.Close = function ( opts ) {
+  return genericButton({ text: _('close'), flat: true }, opts);
 };
-Button.Delete = function ( type ) {
-  return genericButton( 'delete', type || 'secondary' );
+Button.Delete = function ( opts ) {
+  return genericButton({ text: _('delete'), type: 'secondary', icon: 'delete' }, opts);
 };
-Button.No = function ( type ) {
-  return genericButton( 'no', type || 'simple' );
+Button.No = function ( opts ) {
+  return genericButton({ text: _('no'), flat: true }, opts);
 };
-Button.Ok = function ( type ) {
-  return genericButton( 'ok', type || 'simple' );
+Button.Ok = function ( opts ) {
+  return genericButton({ text: _('ok'), flat: true }, opts);
 };
-Button.Edit = function ( type ) {
-  return genericButton( 'edit' );
+Button.Edit = function ( opts ) {
+  return genericButton({ text: _('edit'), type: 'primary', icon: 'edit' }, opts);
 };
-Button.Save = function ( type ) {
-  return genericButton( 'save', type || 'special' );
+Button.Save = function ( opts ) {
+  return genericButton({ text: _('save'), type: 'primary', icon: 'save' }, opts);
 };
-Button.Yes = function ( type ) {
-  return genericButton( 'yes', type || 'default' );
+Button.Yes = function ( opts ) {
+  return genericButton({ text: _('yes'), flat: true }, opts);
 };
 
 Button.default = {
@@ -165,6 +155,9 @@ module.exports = Button;
 function setStyle( children ) {
   this.element.className = 'wdg-button';
 
+  if( !this.visible ) {
+    $.addClass( this, 'hide' );
+  }
   if( this.flat ) {
     $.addClass( this, 'flat' );
 

@@ -1,71 +1,79 @@
 .wdg-showhide {
-    display: block;
-    position: static;
-    padding: 0;
-    margin: .5rem;
-    background: #fff;
+  display: block;
+  position: static;
+  padding: 0;
+  margin: .5rem;
+  background: #fff;
 }
 
 .wdg-showhide.inline {
-    display: inline-block;
-    vertical-align: top;
+  display: inline-block;
+  vertical-align: top;
 }
 
 .wdg-showhide > .head {
-    position: static;
-    display: block;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    height: 2rem;
-    line-height: 2rem;
-    cursor: pointer;
+  position: static;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 2rem;
+  line-height: 2rem;
+  cursor: pointer;
+}
+
+.wdg-showhide > .head > * {
+  flex-grow: 1;
 }
 
 .wdg-showhide > .head > *:first-child {
-    transition: transform .2s;
-    transform: rotate(0);
+  transition: transform .2s;
+  transform: rotate(0);
+  flex-grow: 0;
 }
 
 .wdg-showhide > .head .label {
-    padding-left: 1rem;
+  padding-left: 1rem;
 }
 
 .wdg-showhide > .body {
-    display: none;
-    margin: 0;
-    padding: .5rem;
-    overflow-y: auto;
+  display: none;
+  margin: 0;
+  padding: .5rem;
+  overflow-y: auto;
 }
 
 .wdg-showhide.simple {
-    background: transparent;
+  background: transparent;
 }
 
 .wdg-showhide.simple > .body {
-    padding: 0 0 1rem 0;
-    background: transparent;
-    overflow: visible;
+  padding: 0 0 1rem 0;
+  background: transparent;
+  overflow: visible;
 }
 
 .wdg-showhide.simple span.label {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .wdg-showhide.show > .head > *:first-child {
-    transition: transform .2s;
-    transform: rotate(90deg);
+  transition: transform .2s;
+  transform: rotate(90deg);
 }
 
 .wdg-showhide.show > .body {
-    display: block;
-    opacity: 0;
-    transform: translateX(48px);
-    transition: none;
+  display: block;
+  opacity: 0;
+  transform: translateX(48px);
+  transition: none;
 }
 
 .wdg-showhide.show.fade-in > .body {
-    opacity: 1;
-    transform: translateX(0);
-    transition: all .3s;
+  opacity: 1;
+  transform: translateX(0);
+  transition: all .3s;
 }

@@ -32,9 +32,9 @@ var FloatingButton = function( opts ) {
   DB.propBoolean( this, 'enabled' )( function ( v ) {
     touchable.enabled = v;
     if( v ) {
-      $.removeClass( 'disabled' );
+      $.removeClass( elem, 'disabled' );
     } else {
-      $.addClass( 'disabled' );
+      $.addClass( elem, 'disabled' );
     }
   } );
   DB.prop( this, 'action', 0 );
