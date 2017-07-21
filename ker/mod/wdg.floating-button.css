@@ -19,3 +19,15 @@
   flex-shrink: 0;
   align-self: center;
 }
+
+@media (max-width: 460px) {
+  .wdg-floating-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .wdg-floating-button.small {
+    width: 32px;
+    height: 32px;
+  }
+}
