@@ -22,9 +22,9 @@ function Showhide( opts ) {
 
   var icon = new Icon({content: "tri-right", size: "24px"});
   var label = $.tag('span', 'label');
-  var head = $.div('head', 'theme-label', 'theme-color-bg-1', [icon, label]);
-  var body = $.div('body', 'theme-color-bg-B1');
-  var elem = $.elem( this, 'div', 'wdg-showhide', 'theme-elevation-2', [head, body] );
+  var head = $.div('head', 'thm-bgPD', [icon, label]);
+  var body = $.div('body', 'thm-bg0');
+  var elem = $.elem( this, 'div', 'wdg-showhide', 'thm-ele2', [head, body] );
 
   Focusable( this, function(evt) {
     switch( evt.keyCode ) {

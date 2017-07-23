@@ -7,7 +7,14 @@ div.wdg-text {
     margin: .5rem;
     font-size: 1rem;
     vertical-align: middle;
-    background-color: #fff;
+}
+
+div.wdg-text .label {
+  font-size: 70%;
+  padding: 0 0 0 8px;
+  opacity: .7;
+  background: transparent;
+  height: 16px;
 }
 
 div.wdg-text div.nowrap {

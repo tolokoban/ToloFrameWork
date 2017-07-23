@@ -224,9 +224,15 @@ hr {
 /** Material Design Themes **/
 /****************************/
 
+h1, h2, h3 { font-weight: bold }
+
+h1 { font-size: 120%; }
+h2 { font-size: 110%; }
+h3 { font-size: 100%; }
+
 /* Background color for Background. */
 .thm-bg0 {
-    background-color: #FAFAFA;
+    background-color: #F0F0F0;
 }
 html.thm-dark .thm-bg0 {
     background-color: #303030;
@@ -234,7 +240,7 @@ html.thm-dark .thm-bg0 {
 
 /* Background color for App bar. */
 .thm-bg1 {
-    background-color: #F5F5F5;
+    background-color: #E0E0E0;
 }
 html.thm-dark .thm-bg1 {
     background-color: #212121;
@@ -242,7 +248,7 @@ html.thm-dark .thm-bg1 {
 
 /* Background color for Status bar. */
 .thm-bg2 {
-    background-color: #E0E0E0;
+    background-color: #D0D0D0;
 }
 html.thm-dark .thm-bg2 {
     background-color: #000;
@@ -270,17 +276,17 @@ html.thm-dark svg .fill1 { fill: #000 }
 
 /* Primary color. */
 .thm-bgP {
-    background-color: #36CD00;
+    background-color: #2CA600;
     color: #fff;
 }
 
 .thm-bgPL {
-    background-color: #3CE600;
+    background-color: #36CD00;
     color: #000;
 }
 
 .thm-bgPD {
-    background-color: #2FB300;
+    background-color: #218000;
     color: #fff;
 }
 

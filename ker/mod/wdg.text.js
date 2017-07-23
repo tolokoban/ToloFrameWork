@@ -29,16 +29,16 @@ var Text = function ( opts ) {
   var autocompleteProposals = [];
   var autocompleteShift = 0;
 
-  var label = $.div( 'theme-label', 'theme-color-bg-1' );
+  var label = $.div( 'label' );
   var input = $.tag( 'input' );
   var lang = new Lang( {
     small: true,
     visible: true
   } );
-  var body = $.div( 'nowrap', [ input, lang ] );
-  var datalist = $.div( 'datalist', 'theme-elevation-12' );
+  var body = $.div( 'nowrap', 'thm-ele2', 'thn-bg3', [ input, lang ] );
+  var datalist = $.div( 'datalist', 'thm-ele12' );
   this._input = input;
-  var elem = $.elem( this, 'div', 'wdg-text', 'theme-elevation-2', [ label, body, datalist ] );
+  var elem = $.elem( this, 'div', 'wdg-text', [ label, body, datalist ] );
 
   DB.bind( lang, 'value', function ( v ) {
     input.value = that.value[ v ] || '';
@@ -298,16 +298,18 @@ var Text = function ( opts ) {
     if ( !dataListHasFocus ) {
       $.removeClass( elem, "list" );
     }
-    $.addClass( elem, "theme-elevation-2" );
-    $.removeClass( elem, "theme-elevation-8" );
-    $.removeClass( input, 'theme-color-bg-A1' );
+    $.addClass( body, "thm-ele2" );
+    $.removeClass( body, "thm-ele4" );
+    $.addClass( input, 'thm-bg3' );
+    $.removeClass( input, 'thm-bgSL' );
     DB.fire( that, 'focus', false );
   } );
   input.addEventListener( 'focus', function () {
     that.selectAll();
-    $.removeClass( elem, "theme-elevation-2" );
-    $.addClass( elem, "theme-elevation-8" );
-    $.addClass( input, 'theme-color-bg-A1' );
+    $.removeClass( body, "thm-ele2" );
+    $.addClass( body, "thm-ele4" );
+    $.removeClass( input, 'thm-bg3' );
+    $.addClass( input, 'thm-bgSL' );
     DB.fire( that, 'focus', true );
   } );
   input.addEventListener( 'keydown', function ( evt ) {} );

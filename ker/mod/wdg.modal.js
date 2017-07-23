@@ -22,9 +22,11 @@ var Button = require( "wdg.button" );
 function Modal( opts ) {
   var that = this;
 
-  var body = $.div( 'theme-elevation-24', 'theme-color-bg-B3' );
-  var cell = $.div( [ body ] );
-  var elem = $.elem( this, 'div', 'wdg-modal', [ cell ] );
+  var body = $.div();
+  var header = $.tag( 'header', 'thm-ele8', 'thm-bgPD' );
+  var footer = $.tag( 'footer' );
+  var cell = $.div( 'cell', 'thm-ele24', 'thm-bg0', [ header, body, footer ] );
+  var elem = $.elem( this, 'div', 'wdg-modal', [ $.div([cell]) ] );
 
   DB.prop( this, 'content' )( function ( v ) {
     $.clear( body );
@@ -34,6 +36,26 @@ function Modal( opts ) {
       } );
     } else if ( typeof v !== 'undefined' && v !== null ) {
       $.add( body, v );
+    }
+  } );
+  DB.prop( this, 'header' )( function ( v ) {
+    $.clear( header );
+    if ( Array.isArray( v ) ) {
+      v.forEach( function ( itm ) {
+        $.add( header, itm );
+      } );
+    } else if ( typeof v !== 'undefined' && v !== null ) {
+      $.add( header, v );
+    }
+  } );
+  DB.prop( this, 'footer' )( function ( v ) {
+    $.clear( footer );
+    if ( Array.isArray( v ) ) {
+      v.forEach( function ( itm ) {
+        $.add( footer, itm );
+      } );
+    } else if ( typeof v !== 'undefined' && v !== null ) {
+      $.add( footer, v );
     }
   } );
   DB.propString( this, 'width' )( function ( v ) {
@@ -55,7 +77,9 @@ function Modal( opts ) {
 
   opts = DB.extend( {
     visible: false,
+    header: [],
     content: [],
+    footer: [],
     padding: true,
     scroll: true,
     wide: false,

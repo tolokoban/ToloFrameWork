@@ -23,20 +23,23 @@ var Combo = function(opts) {
   var that = this;
 
   this._children = {};
-  var label = $.div( 'theme-label', 'theme-color-bg-1' );
-  var button = $.div( 'button', 'theme-color-bg-1', [new Icon({content: 'tri-down', size: '1.5rem'})] );
-  var body = $.tag( 'button', 'body' );
+  var label = $.div( 'label' );
+  var button = $.div( 'div', 'thm-bgP', [new Icon({content: 'tri-down', size: '24px'})] );
+  var body = $.tag( 'div', 'body' );
   var datalist = $.div( 'datalist' );
   this._button = button;
-  var elem = $.elem( this, 'div', 'wdg-combo', 'theme-elevation-2',
-                     [label, $.div('table', [body, button]), datalist] );
+  var table = $.div('table', 'thm-ele2', 'thm-bg3', [body, button]);
+  var elem = $.elem( this, 'div', 'wdg-combo',
+                     [label, table, datalist] );
   var touchable = new Touchable( elem );
 
   body.addEventListener('focus', function() {
-    $.addClass( elem, 'theme-elevation-8' );
+    $.removeClass( table, 'thm-ele2' );
+    $.addClass( table, 'thm-ele4' );
   });
   body.addEventListener('blur', function() {
-    $.removeClass( elem, 'theme-elevation-8' );
+    $.addClass( table, 'thm-ele2' );
+    $.removeClass( table, 'thm-ele4' );
   });
   DB.propRemoveClass(this, 'enabled', 'disabled');
   DB.propBoolean(this, 'focus')(function(v) {

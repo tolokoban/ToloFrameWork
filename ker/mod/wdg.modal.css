@@ -1,68 +1,116 @@
 div.wdg-modal {
-    margin: 0;
-    padding: 0;
-    display: block;
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,.7);
-    z-index: 999999;
-    opacity: 1;
-    transition: opacity .2s;
+  margin: 0;
+  padding: 0;
+  display: block;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.7);
+  z-index: 999999;
+  opacity: 1;
+  transition: opacity .2s;
 }
 
+div.wdg-modal .cell {
+  padding: 0;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+div.wdg-modal .cell > header {
+  justify-content: start;
+  align-items: center;
+  font-weight: bold;
+  height: 32px;
+  padding: 0 16px;
+}
+
+div.wdg-modal .cell > footer {
+  justify-content: end;
+  align-items: center;
+  height: 48px;
+  padding: 0 8px;
+}
+
+div.wdg-modal .cell > header,
+div.wdg-modal .cell > footer {
+  flex-grow: 0;
+  display: inline-flex;
+  flex-direction: row;
+}
+
+div.wdg-modal .cell > div {
+  flex-grow: 1;
+  overflow: auto;
+}
+
+
 div.wdg-modal.fadeout {
-    opacity: 0;
-    transition: opacity .2s;
+  opacity: 0;
+  transition: opacity .2s;
 }
 
 div.wdg-modal > div {
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
-    width: 100vw;
-    height: 100vh;
-    max-height: 100vh;
-    padding: 1rem;
-    overflow: hidden;
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  padding: 1rem;
+  overflow: hidden;
 }
 
 div.wdg-modal.fadeout > div > div {
-    transform: scale(.1);
-    transition: all .2s;
+  transform: scale(.1);
+  transition: all .2s;
 }
 
 div.wdg-modal > div > div {
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-    max-height: 95vh;
-    min-width: 240px;
-    overflow: hidden;
-    text-align: left;
-    transform: scale(1);
-    transition: all .2s;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  max-height: 95vh;
+  min-width: 240px;
+  overflow: hidden;
+  text-align: left;
+  transform: scale(1);
+  transition: all .2s;
 }
 
 div.wdg-modal.padding > div > div {
-    padding: 1rem;
+  padding: 0;
 }
 
-div.wdg-modal.scroll > div > div {
-    overflow-y: auto;
+div.wdg-modal.padding > div > div > div {
+  padding: 8px;
+  overflow-y: auto;
 }
 
 div.wdg-modal div.scrollable {
-    max-height: 80vh;
-    max-height: calc(95vh - 80px);
-    overflow: auto;
-    padding: 0;
-    margin: 0;
+  max-height: 80vh;
+  max-height: calc(95vh - 80px);
+  overflow: auto;
+  padding: 0;
+  margin: 0;
 }
 
 div.wdg-modal.fullscreen > div > div {
+  max-height: 100vh;
+  height: 100%;
+  width: 100%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  position: fixed;
+}
+
+@media (max-width: 490px) {
+  div.wdg-modal > div > div {
     max-height: 100vh;
     height: 100%;
     width: 100%;
@@ -71,23 +119,11 @@ div.wdg-modal.fullscreen > div > div {
     left: 0;
     top: 0;
     position: fixed;
-}
-
-@media (max-width: 490px) {
-    div.wdg-modal > div > div {
-        max-height: 100vh;
-        height: 100%;
-        width: 100%;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        top: 0;
-        position: fixed;
-    }
+  }
 }
 
 .wdg-modal-flush-right {
-    text-align: right;
-    margin: 24px 0 0 0;
-    padding: 0;
+  text-align: right;
+  margin: 24px 0 0 0;
+  padding: 0;
 }

@@ -1,6 +1,6 @@
 .wdg-showhide {
   display: block;
-  position: static;
+  position: relative;
   padding: 0;
   margin: .5rem;
   background: #fff;
@@ -11,8 +11,11 @@
   vertical-align: top;
 }
 
+.wdg-showhide > * {
+  position: relative;
+}
+
 .wdg-showhide > .head {
-  position: static;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -23,6 +26,8 @@
   height: 2rem;
   line-height: 2rem;
   cursor: pointer;
+  font-weight: bold;
+  z-index: 1;
 }
 
 .wdg-showhide > .head > * {
@@ -65,15 +70,15 @@
   transform: rotate(90deg);
 }
 
-.wdg-showhide.show > .body {
+.wdg-showhide.show > .body {  
   display: block;
   opacity: 0;
-  transform: translateX(48px);
-  transition: none;
+  transform: translateY(-32px);
+  transition: none;  
 }
 
 .wdg-showhide.show.fade-in > .body {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0);
   transition: all .3s;
 }
