@@ -40,7 +40,10 @@ div.wdg-combo > div.table button.body {
 }
 
 div.wdg-combo > div.table div.button {
-  width: 1rem;
+  width: 24px;
+  max-width: 24px;
+  margin: 0;
+  padding: 0;
 }
 
 div.wdg-combo.disabled > div.table div.body {

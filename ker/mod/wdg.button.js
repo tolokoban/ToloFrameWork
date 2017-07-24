@@ -41,6 +41,7 @@ var Button = function ( opts ) {
   DB.prop( this, 'value' );
   DB.propEnum( TYPES )( this, 'type' );
   DB.prop( this, 'icon' );
+  DB.propBoolean( this, 'responsive' );
   DB.propBoolean( this, 'anim' );
   DB.propBoolean( this, 'wait' );
   DB.propString( this, 'text' );
@@ -65,6 +66,7 @@ var Button = function ( opts ) {
     target: null,
     value: "action",
     action: 0,
+    responsive: false,
     anim: false,
     flat: false,
     small: false,
@@ -193,11 +195,15 @@ function setStyle( children ) {
   }
   else if ( !this.icon || ( typeof this.icon === 'string' && this.icon.trim().length === 0 ) ) {
     children.icon.visible = false;
+    $.removeClass( this, 'responsive' );
   } else {
     children.icon.visible = true;
     children.icon.content = this.icon;
     children.icon.rotate = this.anim;
-  }
+    if( this.responsive ) {
+      $.addClass( this, 'responsive' );
+    }
+  }  
 
   if( !this.enabled || this.wait ) $.addClass( this, 'disabled' );
   if( this.wide ) $.addClass( this, 'wide' );
