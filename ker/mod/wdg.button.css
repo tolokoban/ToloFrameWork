@@ -81,3 +81,9 @@
   text-decoration: underline;
   text-decoration-style: dotted;
 }
+
+/* On small screen, responsive mode hides the text when there is an icon. */
+@media (max-width: 480px) {
+  .wdg-button.responsive > div.text { display: none; }
+  .wdg-button.responsive { max-width: 32px; min-width: 32px; margin: 0; }
+}

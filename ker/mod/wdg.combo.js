@@ -24,7 +24,7 @@ var Combo = function(opts) {
 
   this._children = {};
   var label = $.div( 'label' );
-  var button = $.div( 'div', 'thm-bgP', [new Icon({content: 'tri-down', size: '24px'})] );
+  var button = $.div( 'button', 'thm-bgP', [new Icon({content: 'tri-down', size: '24px'})] );
   var body = $.tag( 'div', 'body' );
   var datalist = $.div( 'datalist' );
   this._button = button;
