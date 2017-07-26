@@ -50,14 +50,14 @@ function normalize( arr ) {
 }
 
 function cameraPolar4( targetX, targetY, targetZ, dis, lat, lng, result ) {
-  result = result || new Float32Array( 16 ); // lat = PI/4,  lng = 0
-  var cosLat = Math.cos( lat ); // V2/2
-  var sinLat = Math.sin( lat ); // V2/2
-  var cosLng = Math.cos( lng ); // 1
-  var sinLng = Math.sin( lng ); // 0
+  result = result || new Float32Array( 16 );
+  var cosLat = Math.cos( lat );
+  var sinLat = Math.sin( lat );
+  var cosLng = Math.cos( lng );
+  var sinLng = Math.sin( lng );
   // Vecteur Z de la caméra.
-  var Zx = cosLng * cosLat; // V2/2
-  var Zy = sinLng * cosLat; // 0
+  var Zx = cosLng * cosLat;
+  var Zy = sinLng * cosLat;
   var Zz = sinLat; // V2/2
   // Le vecteur X se déduit par un produit vectoriel de (0,0,1) avec Z.
   var Xx = -Zy;
