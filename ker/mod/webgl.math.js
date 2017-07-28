@@ -53,8 +53,8 @@ function cameraPolar4( targetX, targetY, targetZ, dis, lat, lng, result ) {
   result = result || new Float32Array( 16 );
   var cosLat = Math.cos( lat );
   var sinLat = Math.sin( lat );
-  var cosLng = Math.cos( lng );
-  var sinLng = Math.sin( lng );
+  var cosLng = - Math.cos( lng + Math.PI * .5 );
+  var sinLng = - Math.sin( lng + Math.PI * .5 );
   // Vecteur Z de la caméra.
   var Zx = cosLng * cosLat;
   var Zy = sinLng * cosLat;
