@@ -12,10 +12,10 @@
 
 // Webkit and Opera still use 'mousewheel' event type.
 var WHEEL_EVENT = "onwheel" in document.createElement("div") ? "wheel" :
-    // Modern browsers support "wheel"
-    document.onmousewheel !== undefined ? "mousewheel" :
-    // Webkit and IE support at least "mousewheel"
-    "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
+      // Modern browsers support "wheel"
+      document.onmousewheel !== undefined ? "mousewheel" :
+      // Webkit and IE support at least "mousewheel"
+      "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
 
 
 var G = {
@@ -99,7 +99,10 @@ var onDocumentMouseUp = function(evt) {
       x: G.targetX + dx,
       y: G.targetY + dy,
       dx: dx,
-      dy: dy
+      dy: dy,
+      button: G.bodyButton,
+      stopPropagation: evt.stopPropagation.bind( evt ),
+      preventDefault: evt.preventDefault.bind( evt )
     });
   }
   // Tap or doubletap.
@@ -151,7 +154,7 @@ function PointerEvents( element ) {
   // Touch events.
   addEvent.call(that, element, 'touchstart', function(evt) {
     evt.preventDefault();
-    
+
     if( !G.touchDevice ) {
       G.touchDevice = true;
       document.body.removeEventListener( 'mousedown', onDocumentMouseDown, true );
@@ -171,6 +174,7 @@ function PointerEvents( element ) {
       if (slots.down) {
         slots.down({
           action: 'down',
+          button: G.bodyButton,
           target: element,
           x: G.targetX,
           y: G.targetY,
@@ -182,7 +186,7 @@ function PointerEvents( element ) {
   });
   addEvent.call(that, element, 'touchmove', function(evt) {
     evt.preventDefault();
-    
+
     var lastX = G.bodyMoveX;
     var lastY = G.bodyMoveY;
     G.bodyMoveX = evt.touches[0].clientX;
@@ -207,7 +211,7 @@ function PointerEvents( element ) {
   });
   addEvent.call(that, element, 'touchend', function(evt) {
     evt.preventDefault();
-    
+
     var slots = that._slots;
     var dx = G.bodyMoveX - G.bodyDownX;
     var dy = G.bodyMoveY - G.bodyDownY;
@@ -270,7 +274,7 @@ function PointerEvents( element ) {
     if (slots.down) {
       slots.down({
         action: 'down',
-        //target: element,
+        button: G.bodyButton,
         target: G.bodyTarget,
         x: G.targetX,
         y: G.targetY,
@@ -287,8 +291,10 @@ function PointerEvents( element ) {
       slots.move({
         target: element,
         action: 'move',
-        x: evt.offsetX + rectB.left - rectA.left,
-        y: evt.offsetY + rectB.top - rectA.top
+        x: evt.clientX - rectA.left,
+        y: evt.clientY - rectA.top
+        //x: evt.clientX + rectB.left - rectA.left,
+        //y: evt.clientY + rectB.top - rectA.top
       });
     }
   });
