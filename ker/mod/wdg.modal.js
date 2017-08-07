@@ -15,7 +15,7 @@ var Button = require( "wdg.button" );
 
 /**
 @exports {class}
-@param {object} opts.content - 
+@param {object} opts.content -
 
 
 */
@@ -151,20 +151,18 @@ Modal.confirm = function ( args, onYes, onNo ) {
       onNo: onNo
     };
   }
+  if( typeof args.title === 'undefined' ) args.title = _('confirm');
   if( typeof args.yes === 'undefined' ) args.yes = _('ok');
   if( typeof args.no === 'undefined' ) args.no = _('cancel');
   if( typeof args.onYes === 'undefined' ) args.onYes = function() {};
   if( typeof args.onNo === 'undefined' ) args.onNo = function() {};
-    
-  var btnYes = new Button({ text: args.yes, type: 'simple' });
-  var btnNo = new Button({ text: args.no, type: 'simple' });
+
+  var btnYes = new Button({ text: args.yes, flat: true });
+  var btnNo = new Button({ text: args.no, flat: true });
   if ( Array.isArray(args.content) ) {
     // Arrays must be wrapped in a DIV.
     args.content = $.div(args.content);
   }
-  var buttons = $.div( 'wdg-modal-flush-right', [new Flex( {
-    content: [ btnNo, btnYes ]
-  } ) ] );
   if ( typeof args.content === 'string' && args.content.substr( 0, 6 ) == '<html>' ) {
     // This is HTML code.
     var html = args.content.substr( 6 );
@@ -172,8 +170,9 @@ Modal.confirm = function ( args, onYes, onNo ) {
     args.content.innerHTML = html;
   }
   var modal = new Modal( {
-    content: $.div( [ args.content, buttons ] ),
-    padding: true
+    header: args.title,
+    footer: [btnNo, btnYes],
+    content: args.content
   } );
   modal.attach();
 

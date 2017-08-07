@@ -12,7 +12,6 @@
   text-shadow: none;
   cursor: pointer;
   margin: 4px 8px;
-  min-width: 72px;
   border: none;
   transition: all .2s;
   font-family: Roboto, josefin-sans, sans-serif;
@@ -48,6 +47,11 @@
   text-transform: uppercase;
   margin: 0 8px;
 }
+
+.wdg-button.no-text > div.text {
+  display: none;
+}
+
 
 .wdg-button > .wdg-icon {
   order: 1;

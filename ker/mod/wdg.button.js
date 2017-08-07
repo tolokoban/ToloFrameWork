@@ -61,7 +61,7 @@ var Button = function ( opts ) {
   opts = DB.extend( {
     inverted: false,
     type: "standard",
-    text: "OK",
+    text: "",
     href: null,
     target: null,
     value: "action",
@@ -127,6 +127,9 @@ Button.Cancel = function ( opts ) {
 Button.Close = function ( opts ) {
   return genericButton({ text: _('close'), flat: true }, opts);
 };
+Button.GotIt = function ( opts ) {
+  return genericButton({ text: _('gotit'), flat: true }, opts);
+};
 Button.Delete = function ( opts ) {
   return genericButton({ text: _('delete'), type: 'secondary', icon: 'delete' }, opts);
 };
@@ -186,12 +189,18 @@ function setStyle( children ) {
     }
   }
 
-  children.text.textContent = this.text;
-  
+  var txt = (this.text || "").trim();
+  if( txt.length > 0 ) {
+    children.text.textContent = this.text;
+    $.removeClass( this, "no-text" );
+  } else {
+    $.addClass( this, "no-text" );
+  }
+
   if ( this.wait ) {
     children.icon.visible = true;
     children.icon.content = "wait";
-    children.icon.rotate = true;    
+    children.icon.rotate = true;
   }
   else if ( !this.icon || ( typeof this.icon === 'string' && this.icon.trim().length === 0 ) ) {
     children.icon.visible = false;
@@ -203,7 +212,7 @@ function setStyle( children ) {
     if( this.responsive ) {
       $.addClass( this, 'responsive' );
     }
-  }  
+  }
 
   if( !this.enabled || this.wait ) $.addClass( this, 'disabled' );
   if( this.wide ) $.addClass( this, 'wide' );

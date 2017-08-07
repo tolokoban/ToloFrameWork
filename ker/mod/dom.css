@@ -30,7 +30,7 @@ a, b, i, em, code, span {
 
 /*********************/
 /* Responsive Design */
-@media (max-width: 320px) {
+@media (max-width: 319px) {
   .dom-hide-if-lt-320 { display: none  }
 }
 
@@ -38,7 +38,7 @@ a, b, i, em, code, span {
   .dom-hide-if-gt-320 { display: none  }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 479px) {
   .dom-hide-if-lt-480 { display: none  }
 }
 
@@ -46,12 +46,20 @@ a, b, i, em, code, span {
   .dom-hide-if-gt-480 { display: none  }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .dom-hide-if-lt-640 { display: none  }
 }
 
 @media (min-width: 640px) {
   .dom-hide-if-gt-640 { display: none  }
+}
+
+@media (max-width: 799px) {
+  .dom-hide-if-lt-800 { display: none  }
+}
+
+@media (min-width: 800px) {
+  .dom-hide-if-gt-800 { display: none  }
 }
 
 

@@ -9,6 +9,10 @@ div.wdg-text {
     vertical-align: middle;
 }
 
+div.wdg-text.no-label > .label {
+  display: none;
+}
+
 div.wdg-text .label {
   font-size: 70%;
   padding: 0 0 0 8px;

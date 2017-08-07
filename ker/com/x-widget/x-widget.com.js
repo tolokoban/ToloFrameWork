@@ -110,6 +110,7 @@ function parseComponent( root, libs, indent ) {
   delete root.autoclose;
   root.attribs = {
     id: com.attr.id,
+    "class": com.attr.class || "",
     style: "display:none"
   };
 
