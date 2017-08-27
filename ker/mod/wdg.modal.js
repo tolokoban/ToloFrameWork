@@ -157,6 +157,9 @@ Modal.confirm = function ( args, onYes, onNo ) {
   if( typeof args.onYes === 'undefined' ) args.onYes = function() {};
   if( typeof args.onNo === 'undefined' ) args.onNo = function() {};
 
+  onYes = args.onYes;
+  onNo = args.onNo;
+
   var btnYes = new Button({ text: args.yes, flat: true });
   var btnNo = new Button({ text: args.no, flat: true });
   if ( Array.isArray(args.content) ) {
