@@ -76,9 +76,14 @@ exports.compile = function( root, libs ) {
   libs.require( "x-widget" );
   libs.require( com.name );
   libs.addInitJS( "var W = require('x-widget');" );
-  libs.addInitJS( "        W('" + com.attr.id + 
-    "', '" + com.name + "', " + 
-    stringifyProperties( com.prop, '          ' ) + ")" );
+  var cmd = "        W('" + com.attr.id
+      + "', '" + com.name + "', "
+      + stringifyProperties( com.prop, '          ' );
+  if( com.attr ) {
+    cmd += "," + JSON.stringify( com.attr );
+  }
+  cmd += ")";
+  libs.addInitJS( cmd );
   SKIP = false;
 };
 
@@ -117,28 +122,33 @@ function parseComponent( root, libs, indent ) {
   return com;
 }
 
+var RX_ID = /^[$_a-zA-Z][$_a-zA-Z0-9]*$/g;
+
 function camelCase( text ) {
-  return text.split( '-' ).map( function( itm, idx ) {
-    if ( idx === 0 ) 
+  var result = text.split( '-' ).map( function( itm, idx ) {
+    if ( idx === 0 )
       return itm;
     return itm.charAt( 0 ).toUpperCase( ) + itm.substr( 1 );
-  }).join( '' );
+  }).join( '' ).trim();
+  RX_ID.lastIndex = 0;
+  if( !RX_ID.test( result ) ) result = JSON.stringify( result );
+  return result;
 }
 
 function stringifyProperties( prop, indent ) {
   var count = 0;
   var key,
-    val;
+      val;
   var out;
 
   // We want to know if there is more than one item.
   for ( key in prop ) {
     count++;
-    if ( count > 1 ) 
+    if ( count > 1 )
       break;
-    }
-  
-  if ( count === 0 ) 
+  }
+
+  if ( count === 0 )
     return "{}";
   else if ( count == 1 ) {
     for ( key in prop ) {
@@ -170,7 +180,7 @@ function stringifyArray( arr, indent ) {
   if ( hasMoreThanOneItem ) {
     var out = '[';
     arr.forEach( function( itm, idx ) {
-      if ( idx > 0 ) 
+      if ( idx > 0 )
         out += ",";
       out += "\n" + indent + itm;
     });
@@ -232,8 +242,8 @@ function getPropertiesAndBindings( root, libs, com, indent ) {
   var postInit = {};
   var hasPostInit = false;
   var key,
-    val,
-    values;
+      val,
+      values;
   var bindings;
   var slots;
   for ( key in root.attribs ) {
@@ -241,21 +251,21 @@ function getPropertiesAndBindings( root, libs, com, indent ) {
       // All the attributes that start with a '$' are used as args attributes.
       val = root.attribs[key];
       com.prop[key.substr( 1 )] = JSON.stringify( val );
-    } 
+    }
     else if ( key.substr( 0, 5 ) == 'intl:' ) {
       // Internationalization.
       val = root.attribs[key];
       com.prop[key.substr( 5 )] = "APP._(" + JSON.stringify( val ) + ")";
-    } 
+    }
     else if ( key.substr( 0, 5 ) == 'bind:' ) {
-      // Syntaxe : 
+      // Syntaxe :
       // <bind> := <bind-item> <bind-next>*
       // <bind-next> := "," <bind-item>
       // <bind-item> := <widget-name> <attribute>? <value>?
-      // <widget-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/ 
+      // <widget-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/
       // <attribute> := ":" <attrib-name>
-      // <attrib-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/ 
-      // <value> := "=" <data> 
+      // <attrib-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/
+      // <value> := "=" <data>
       // <data> := "true" | "false" | "null" | <number> | <string>
       //
       // @example
@@ -266,10 +276,12 @@ function getPropertiesAndBindings( root, libs, com, indent ) {
       }
       postInit[key.substr( 5 )].B = parseBinding(root.attribs[key]);
       hasPostInit = true;
-    } 
+    }
     else if ( key.substr( 0, 5 ) == 'slot:' ) {
-      // @example <wdg:button slot:action="removeOrder" /> <wdg:button slot:action="removeOrder, changePage" /> <wdg:button
-      // slot:action="my-module:my-function" />
+      // @example
+      // <wdg:button slot:action="removeOrder" />
+      // <wdg:button slot:action="removeOrder, changePage" />
+      // <wdg:button slot:action="my-module:my-function" />
       values = root.attribs[key].split( "," );
       key = key.substr( 5 );
       if ( typeof postInit[key] === 'undefined' ) {
@@ -277,7 +289,8 @@ function getPropertiesAndBindings( root, libs, com, indent ) {
       }
       slots = [ ];
       values.forEach( function( val ) {
-        // Before the colon (:) there is the module name. After, there is the function name. If there is no colon, `APP` is used
+        // Before the colon (:) there is the module name. After, there
+        // is the function  name. If there is no colon,  `APP` is used
         // as module.
         val = val.split( ':' );
         if ( val.length < 2 ) {
@@ -290,6 +303,9 @@ function getPropertiesAndBindings( root, libs, com, indent ) {
       postInit[key].S = slots;
       hasPostInit = true;
     }
+    else {
+      com.attr[key] = root.attribs[key];
+    }
   }
 
   if ( hasPostInit ) {
@@ -298,18 +314,18 @@ function getPropertiesAndBindings( root, libs, com, indent ) {
 }
 
 /**
- @example
+   @example
 
- <wdg:combo $key="fr">
- <content json>
- {
- "en": "English",
- "fr": "Français",
- "it": "Italiano"
- }
- </content>
- </wdg:combo>
- */
+   <wdg:combo $key="fr">
+   <content json>
+   {
+   "en": "English",
+   "fr": "Français",
+   "it": "Italiano"
+   }
+   </content>
+   </wdg:combo>
+*/
 function parseChildrenProperties( root, libs, com, indent ) {
   if (!Array.isArray( root.children )) {
     root.children = [ ];
@@ -394,11 +410,11 @@ function parsePropertyList( root, libs, com, indent ) {
 function parseElement( root, libs, com, indent ) {
   var out = "W({\n" + indent + "  elem: " + JSON.stringify( root.name );
   var attr = {},
-    hasAttributes = false;
+      hasAttributes = false;
   var prop = {},
-    hasProperties = false;
+      hasProperties = false;
   var attKey,
-    attVal;
+      attVal;
   for ( attKey in root.attribs ) {
     attVal = root.attribs[attKey];
     if ( attKey.charAt( 0 ) == '$' ) {
@@ -437,7 +453,11 @@ function parseElement( root, libs, com, indent ) {
 function parseWidget( root, libs, parent, indent ) {
   var com = parseComponent( root, libs, indent );
   libs.require( com.name );
-  return indent + "W('" + com.attr.id + "', '" + com.name + "', " + stringifyProperties( com.prop, indent ) + ")";
+  var code = "W('" + com.attr.id + "','"
+      + com.name + "',"
+      + stringifyProperties( com.prop, indent )
+      + "," + JSON.stringify(com.attr) + ")";
+  return code;
 }
 
 function isWidget( root ) {
@@ -454,24 +474,24 @@ var parseBinding = ( function( ) {
   var lexer = new Lexer({ value: "(-?(\.[0-9]+|[0-9]+(\.[0-9]+)?))|true|false|null|('(\\.|[^\\']+)*')", comma: "[ \t\n\r]*,[ \t\n\r]*", colon: "[ \t\n\r]*:[ \t\n\r]*", equal: "[ \t\n\r]*=[ \t\n\r]*", name: "[$a-zA-Z_-][$a-zA-Z_0-9-]+" });
 
   /**
-         * Syntaxe :
-         * <bind> := <bind-item> <bind-next>*
-         * <bind-next> := "," <bind-item>
-         * <bind-item> := <widget-name> <attribute>? <value>?
-         * <widget-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/
-         * <attribute> := ":" <attrib-name>
-         * <attrib-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/
-         * <value> := "=" <data>
-         * <data> := "true" | "false" | "null" | <number> | <string>
-         */
+   * Syntaxe :
+   * <bind> := <bind-item> <bind-next>*
+   * <bind-next> := "," <bind-item>
+   * <bind-item> := <widget-name> <attribute>? <value>?
+   * <widget-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/
+   * <attribute> := ":" <attrib-name>
+   * <attrib-name> := /[$a-zA-Z_-][$0-9a-zA-Z_-]+/
+   * <value> := "=" <data>
+   * <data> := "true" | "false" | "null" | <number> | <string>
+   */
   return function( code ) {
     code = code.trim( );
     lexer.loadText( code );
     var tkn,
-      widget,
-      attribute = 'action',
-      value,
-      bindings = [ ];
+        widget,
+        attribute = 'action',
+        value,
+        bindings = [ ];
 
     function addBinding( ) {
       if ( typeof widget === 'string' ) {
@@ -488,38 +508,38 @@ var parseBinding = ( function( ) {
 
     while ( true ) {
       tkn = lexer.next( );
-      if ( null === tkn ) 
+      if ( null === tkn )
         break;
-      if ( tkn.id != 'name' ) 
+      if ( tkn.id != 'name' )
         throw Error( "Expected `name`, but found `" + tkn.id + "`!`" );
       widget = lexer.text( tkn );
 
       tkn = lexer.next( );
-      if ( null === tkn ) 
+      if ( null === tkn )
         break;
       if ( tkn.id == 'colon' ) {
         tkn = lexer.next( );
-        if ( null === tkn ) 
+        if ( null === tkn )
           throw Error( "Missing `name` after `:`!`" );
-        if ( tkn.id != 'name' ) 
+        if ( tkn.id != 'name' )
           throw Error( "Expected `name` after `:`, but found `" + tkn.id + "`!`" );
         attribute = lexer.text( tkn );
         tkn = lexer.next( );
-        if ( null === tkn ) 
+        if ( null === tkn )
           break;
-        }
+      }
       if ( tkn.id == 'equal' ) {
         tkn = lexer.next( );
-        if ( null === tkn ) 
+        if ( null === tkn )
           throw Error( "Missing `value` after `=`!`" );
-        if ( tkn.id != 'value' ) 
+        if ( tkn.id != 'value' )
           throw Error( "Expected `value` after `=`, but found `" + tkn.id + "`!`" );
         value = lexer.text( tkn );
         tkn = lexer.next( );
-        if ( null === tkn ) 
+        if ( null === tkn )
           break;
-        }
-      if ( tkn.id != 'comma' ) 
+      }
+      if ( tkn.id != 'comma' )
         throw Error( "Expected `comma`, but found `" + tkn.id + "`!`" );
       addBinding( );
     }

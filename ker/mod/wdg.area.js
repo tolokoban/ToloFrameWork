@@ -1,151 +1,124 @@
+/**
+ * @class Area
+ *
+ * @param {string} value - Text displayed in the area view.
+ * @param {string} label - Label to display above the text area.
+ * @param {boolean} enabled - Enable/Disable the text area.
+ * @param {number} rows - Minimum number of rows.
+ * @param {number} cols - Minimum number of cols.
+ * @param {boolean} wide - Take the full width.
+ */
+
 "use strict";
+
 var $ = require("dom");
-var Fx = require("dom.fx");
 var DB = require("tfw.data-binding");
-var Icon = require("wdg.icon");
-var Flex = require("wdg.flex");
-var Lang = require( "wdg.lang" );
-var Modal = require("wdg.modal");
-var Button = require("wdg.button");
+var LaterAction = require( "tfw.timer" ).laterAction;
+
 
 /**
  * @class AreaEditor
  */
 var Area = function( opts ) {
-    var that = this;
+  var that = this;
 
-    var elem = $.elem(this, 'div', 'wdg-area', 'theme-elevation-2');
-    var iconFullscreen = new Icon({ content: Icon.Icons.fullscreen, size: '1.5rem', button: true });
-    var label = $.div('theme-label');
-    var header = $.div('header', 'theme-color-bg-1', [iconFullscreen, label]);
-    var slider = $.div('slider');
-    var area = $.tag('textarea');
-    var body = $.div('body', [area]);
-    $.add( elem, header, body, slider);
+  var label = $.div( 'label' );
+  var input = $.tag( 'textarea', 'thm-ele2' );
 
-    DB.propBoolean(this, 'focus')(function(v) {
-        if (v) {
-            area.focus();
-        } else {
-            area.blur();
-        }
-    });
-    DB.propString(this, 'label')(function(v) {
-        if (typeof v === 'number') v = '' + v;
-        if (typeof v !== 'string') v = '';
-        label.textContent = v;
-    });
-    DB.propInteger(this, 'height')(function(v) {
-        $.css(elem, {height: v + "px"});
-    });
-    DB.propString(this, 'value')(function(v) {
-        area.value = v;
-    });
-    DB.propAddClass(this, 'wide');
-    DB.propRemoveClass(this, 'visible', 'hide');
+  var elem = $.elem(this, 'div', 'wdg-area', [label, input]);
 
-    DB.extend({
-        label: "",
-        value: "",
-        height: 90,
-        wide: true,
-        visible: true
-    }, opts, this);
+  DB.propBoolean(this, 'focus')(function(v) {
+    if (v) {
+      input.focus();
+    } else {
+      input.blur();
+    }
+  });
+  DB.propString(this, 'label')(function(v) {
+    if (typeof v === 'number') v = '' + v;
+    if (typeof v !== 'string') v = '';
+    label.textContent = v;
+  });
+  DB.propInteger(this, 'maxrows');
+  DB.propInteger(this, 'rows')(function(v) {
+    $.att( input, { rows: v } );
+  });
+  DB.propInteger(this, 'cols')(function(v) {
+    $.att( input, { cols: v } );
+  });
+  DB.propString(this, 'value')(function(v) {
+    input.value = v;
+  });
+  DB.propBoolean( this, 'enabled' )( function ( v ) {
+    if ( v ) {
+      $.removeAtt( input, 'disabled' );
+    } else {
+      $.att( input, {
+        disabled: v
+      } );
+    }
+  } );
+  DB.propAddClass(this, 'wide');
+  DB.propRemoveClass(this, 'visible', 'hide');
+  
+  DB.extend({
+    label: "",
+    value: "",
+    cols: 20,
+    rows: 2,
+    maxrows: 8,
+    wide: true,
+    visible: true
+  }, opts, this);
 
-    var initialHeight = this.height;
+  input.addEventListener('keyup', function(evt) {
+    that.value = input.value;
+    console.info("[wdg.area] =evt.keyCode", evt.keyCode);
+    switch( evt.keyCode ) {
+    case 13:
+      grow( input, that.rows, that.maxrows );
+      break;
+    }
+  }, false);
 
-    $.on( slider, {
-        down: function() {
-            initialHeight = that.height;
-        },
-        drag: function(evt) {
-            that.height = Math.max( 90, initialHeight + evt.dy );
-        }
-    });
-
-    // Managing fullscreen display.
-    var fullscreen = new Fx.Fullscreen({
-        target: elem
-    });
-    DB.bind(iconFullscreen, 'action', function() {
-        fullscreen.value = !fullscreen.value;
-    });
-
-    area.addEventListener('keyup', function() {
-        that.value = area.value;
-    }, false);
+  input.addEventListener('focus', function() {
+    $.removeClass( input, 'thm-ele2' );
+    $.addClass( input, 'thm-ele4' );
+    $.addClass( input, 'thm-bgSL' );
+  }, false);
+  
+  input.addEventListener('blur', function() {
+    $.addClass( input, 'thm-ele2' );
+    $.removeClass( input, 'thm-ele4' );
+    $.removeClass( input, 'thm-bgSL' );
+  }, false);
 };
 
 module.exports = Area;
 
 
-Area.promptIntl = function( title, value, onValidate ) {
-  if( typeof onValidate !== 'function' ) {
-    onValidate = function() {};
+/**
+ * Check the number of rows regarding the inner text.
+ */
+function grow(area, min, max) {
+  if( typeof min !== 'undefined' ) {
+    min = parseInt( min );
+    if( isNaN( min ) ) min = 2;
   }
-  var description = JSON.parse( JSON.stringify( value || '' ) );
-  var subset = [];
-  if( typeof description === 'string' ) {
-    // Turn it multilang.
-    var text = description;
-    description = {};
-    description[require('$').lang()] = text;
+  if( typeof max !== 'undefined' ) {
+    max = parseInt( max );
+    if( isNaN( max ) ) max = 8;
   }
-  var lang;
-  for( lang in description ) {
-    subset.push( lang );
+  if( max < min ) max = min;
+
+  var text = area.value;
+  var lines = 1;
+  var index = -1;
+  for(;;) {
+    index = text.indexOf( "\n", index + 1 );
+    if( index === -1 ) break;
+    lines++;
   }
-  
-  var btnCancel = Button.Cancel();
-  btnCancel.$grow = 0;
-  var btnOK = Button.Ok();
-  btnOK.$grow = 0;
-  var inpLang = new Lang({ subset: subset, value: subset[0] });
-  var divLang = $.div([ _('lang'), "<html>&nbsp;", inpLang ]);
-  divLang.$grow = 1;
-  var inpCom = new Area({ 
-    label: title,
-    wide: true,
-    height: 'auto',
-    value: description
-  });
-  var body = $.div( 'tp4-edit-markers-button-body', [ inpCom ] );
-  body.$grow = 1;
-  var head = new Flex({ 
-    type: 'fill',
-    justify: 'between',
-    content: [divLang, btnCancel, btnOK] 
-  });
-  head.$grow = 0;
-  
-  var modal = new Modal({
-    fullscreen: true,
-    content: [
-      new Flex({ orientation: 'V', justify: 'between', type: 'fill', content: [
-        head,
-        body
-      ] })
-    ]
-  });
-  
-  btnCancel.on( modal.detach.bind( modal ) );
-  btnOK.on(function() {
-    onValidate( description );
-    modal.detach();
-  });
-  modal.attach();
-  inpCom.value = description[inpLang.value];
-  DB.bind( inpCom, 'value', function( html ) {
-    description[inpLang.value] = html;
-  });
-  DB.bind( inpLang, 'value', function( language ) {
-    inpCom.value = description[language];
-    var lang;
-    subset = [];
-    for( lang in description ) {
-      subset.push( lang );
-    }
-    inpLang.subset = subset;
-  });
-  inpCom.focus = true;  
-};
+  index = Math.max( min, Math.min( max, index ) );
+  $.att( area, {rows: lines} );
+}

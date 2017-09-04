@@ -28,6 +28,10 @@
   cursor: pointer;
   font-weight: bold;
   z-index: 1;
+  text-transform: uppercase;
+  font-family: Roboto, josefin-sans, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .wdg-showhide > .head > * {
@@ -70,11 +74,11 @@
   transform: rotate(90deg);
 }
 
-.wdg-showhide.show > .body {  
+.wdg-showhide.show > .body {
   display: block;
   opacity: 0;
   transform: translateY(-32px);
-  transition: none;  
+  transition: none;
 }
 
 .wdg-showhide.show.fade-in > .body {
