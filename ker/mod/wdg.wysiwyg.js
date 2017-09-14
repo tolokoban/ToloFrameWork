@@ -90,7 +90,7 @@ var WysiwygEditor = function( opts ) {
 
   var elem = $.elem( this, 'div', 'wdg-wysiwyg', 'theme-elevation-2' );
   var iconFullscreen = new FloatingButton({ 
-    content: 'fullscreen', small: true
+    icon: 'fullscreen', small: true
   });
   var label = $.div( 'theme-label' );
   var header = $.div('header', 'theme-color-bg-1', [ iconFullscreen, label ]);

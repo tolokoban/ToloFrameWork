@@ -11,7 +11,7 @@
   font: inherit;
 }
 
-.wdg-checkbox.wide {
+.wdg-checkbox.wide.dom {
   display: flex;
 }
 
