@@ -1,79 +1,20 @@
-.wdg-area {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-    position: relative;
-    border: none;
-    width: auto;
-    min-width: 240px;
-    min-height: 180px;
-    font-size: 1em;
-    margin: .5em 0;
-    background-color: #fff;
-    color: #000;
+.wdg-area > .label {
+    font-size: 70%;
+    padding: 0 0 0 8px;
+    opacity: .7;
+    background: transparent;
+    height: 16px;    
 }
 
-.wdg-area > div {
-    display: block;
-    position: relative;
-    width: 100%;
-    flex: 0 0 auto;
-    margin: 0;
-    height: calc(100% - 2rem - 6px);
+.wdg-area > textarea {  
+  width: auto;
+  padding: .5rem;
+  border: none;
+  color: #000;
+  font-size: 1rem;
+  font-family: inherit;
 }
 
-.wdg-area > .header {
-    display: block;
-    height: 2em;
-    line-height: 2em;
-    padding: 0;
-    margin: 0;
-    vertical-align: middle;
-    text-align: left;
+.wdg-area.wide > textarea {
+  width: 100%;
 }
-
-.wdg-area > div.header > * {
-    margin: 0;
-    vertical-align: middle;
-    display: inline-block;
-}
-
-.wdg-area > div.header > div:first-child {
-    position: relative;
-    left: -.5rem;
-    top: -.75rem;
-}
-
-.wdg-area > div.header > div.theme-label {
-    padding-left: 1rem;
-    margin: 0;
-}
-
-.wdg-area > .slider {
-    height: 4px;
-    margin: 5px 3px 2px 3px;
-    border-top: 1px solid #aaa;
-    border-bottom: 1px solid #aaa;
-    width: auto;
-    cursor: row-resize;
-}
-
-.wdg-area > .body {
-    flex: 1 0;
-}
-
-.wdg-area > .body > textarea {
-    border: none;
-    margin: 0;
-    padding: .5rem;
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    resize: none;
-}
-

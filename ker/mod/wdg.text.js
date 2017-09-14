@@ -1,8 +1,3 @@
-var $ = require( "dom" );
-var DB = require( "tfw.data-binding" );
-var Lang = require( "wdg.lang" );
-var LaterAction = require( "tfw.timer" ).laterAction;
-
 /**
  * @class Text
  * @description  HTML5 text input with many options.
@@ -22,6 +17,14 @@ var LaterAction = require( "tfw.timer" ).laterAction;
  * @param opts.wide {boolean} - .
  * @param opts.visible {boolean} - .
  */
+
+"use strict";
+
+var $ = require( "dom" );
+var DB = require( "tfw.data-binding" );
+var Lang = require( "wdg.lang" );
+var LaterAction = require( "tfw.timer" ).laterAction;
+
 var Text = function ( opts ) {
   var that = this;
 

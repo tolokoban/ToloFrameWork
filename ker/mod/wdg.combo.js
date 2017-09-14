@@ -115,32 +115,28 @@ var Combo = function(opts) {
  */
 Combo.prototype.fire = function() {
   var modalChildren = [];
-  if (typeof this.label === 'string') {
-    // If there is a label for this combo, we have to repeat it in the modal.
-    var label = $.div('theme-label', 'theme-color-bg-1', 'theme-elevation-2');
-    $.textOrHtml( label, this.label );
-    modalChildren.push( label );
-  }
 
   var ul = $.tag('ul', 'wdg-combo-modal');
   modalChildren.push( ul );
 
-  var btnCancel = new Button({icon: 'cancel', text: _('cancel'), type: 'simple'});
-  modalChildren.push( $.tag('hr'), $.tag('center', [btnCancel]) );
-
-  var modal = new Modal({content: modalChildren, padding: "true", wide: false});
-  document.body.appendChild( modal.element );
-  modal.visible = true;
-
-  function close() {
-    modal.visible = false;
-    document.body.removeChild( modal.element );
+  var btnCancel = Button.Cancel();
+  var label = $.div([ _('label') ]);
+  if (typeof this.label === 'string') {
+    $.textOrHtml( label, this.label );
   }
+  
+  var modal = new Modal({
+    header: label,
+    footer: btnCancel,
+    content: modalChildren
+  });
+  modal.attach();
+
+  var close = modal.detach.bind( modal );
   DB.bind(btnCancel, 'action', close);
 
   var key, val, container;
   for( key in this._children ) {
-    if (key == this.value) continue;
     val = this._children[key];
     if (typeof val.element === 'function') {
       val = val.element();
@@ -148,7 +144,8 @@ Combo.prototype.fire = function() {
     else if (typeof val.element !== 'undefined') {
       val = val.element;
     }
-    container = $.tag('li', 'theme-elevation-2', 'theme-color-bg-B0', [val]);
+    container = $.tag('li', 'thm-ele2', key == this.value ? 'thm-bgSL' : 'thm-bg3');
+    container.innerHTML = val.outerHTML;
     $.add( ul, container );
     attachEvent.call( this, key, container, close );
   }

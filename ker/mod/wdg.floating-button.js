@@ -1,3 +1,22 @@
+/**
+ * @class FloatingButton
+ * @constructor
+ * @param {string} opts.icon - Icon's name.
+ * @param {string} opts.type - "primary" or "secondary". Anything else is considered as "default".
+ * @param {string} opts.href - If defined, make the button acts like an hyperlink.
+ * @param {boolean} opts.enabled - Tapable only when enabled.
+ * @param {boolean} opts.small - Small buttons are 40x40 instead of 56x56.
+ * @param {any} opts.value - The value `action` will fire when the button is taped.
+ * @param {boolean} opts.visible - Widget visibility.
+ *
+ * @member {FloatingButton} on
+ * @param {function} callback - Function to call when the button is taped.
+ *
+ * @member {FloatingButton} fire
+ * Simulate a physical tap.
+ *
+ * @export {FloatingButton}
+ */
 "use strict";
 
 var $ = require( "dom" );
@@ -39,7 +58,7 @@ var FloatingButton = function( opts ) {
   } );
   DB.prop( this, 'action', 0 );
   DB.propRemoveClass( this, 'visible', 'hide' );
-  
+
   opts = DB.extend( {
     type: "standard",
     value: "action",
@@ -47,6 +66,7 @@ var FloatingButton = function( opts ) {
     small: false,
     enabled: true,
     icon: "add",
+    href: null,
     visible: true
   }, opts, this );
 
@@ -78,7 +98,11 @@ FloatingButton.prototype.on = function ( slot ) {
  */
 FloatingButton.prototype.fire = function () {
   if ( this.enabled ) {
-    DB.fire( this, 'action', this.value );
+    if( typeof this.href === 'string' && this.href.trim().length > 0 ) {
+      location = this.href;
+    } else {
+      DB.fire( this, 'action', this.value );
+    }
   }
 };
 

@@ -22,7 +22,7 @@ function Showhide( opts ) {
 
   var icon = new Icon({content: "tri-right", size: "24px"});
   var label = $.tag('span', 'label');
-  var head = $.div('head', 'thm-bgPD', [icon, label]);
+  var head = $.div('head', [icon, label]);
   var body = $.div('body', 'thm-bg0');
   var elem = $.elem( this, 'div', 'wdg-showhide', 'thm-ele2', [head, body] );
 
@@ -50,13 +50,11 @@ function Showhide( opts ) {
     if (v) {
       $.addClass( elem, 'simple' );
       $.removeClass( elem, 'thm-ele2' );
-      $.removeClass( head, 'thm-bg3' );
-      $.addClass( head, 'theme-color-7' );
+      $.removeClass( head, 'thm-bgPD' );
     } else {
       $.removeClass( elem, 'simple' );
       $.addClass( elem, 'thm-ele2' );
-      $.addClass( head, 'thm-bg3' );
-      $.removeClass( head, 'theme-color-7' );
+      $.addClass( head, 'thm-bgPD' );
     }
   });
   DB.propString(this, 'label')(function(v) {

@@ -11,7 +11,11 @@
   font: inherit;
 }
 
+<<<<<<< HEAD
+.wdg-checkbox.dom.wide {
+=======
 .wdg-checkbox.wide.dom {
+>>>>>>> 97ea7a713ee3f9224937fee1d3f4b809f127fa0e
   display: flex;
 }
 

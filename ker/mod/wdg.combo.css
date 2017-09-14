@@ -98,7 +98,6 @@ ul.wdg-combo-modal {
   overflow: auto;
   margin: 0;
   padding: 0 .2rem;
-  border-top: 1px solid rgba(0,0,0,.3);
 }
 
 ul.wdg-combo-modal > li {

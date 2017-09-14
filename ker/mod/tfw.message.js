@@ -13,44 +13,38 @@
  */
 var $ = require( "dom" );
 
+// Le DIV qui contient le message à afficher.
+var g_message = null;
+// Identifiant du Timeout qui sert à retirer la classe "show" du message.
+var g_timeout;
 
-var G = {
-  lastMsg: null
-};
 
 function show( className, text, delay ) {
-  clear();
-
+  if( !g_message ) {
+    // Première création du message.
+    g_message = $.div( 'tfw-message', "thm-ele24" );
+    document.body.appendChild( g_message );
+  }
   if ( typeof delay !== 'number' ) delay = 5000;
-  var div = $.div( 'tfw-message', className );
-  $.textOrHtml( div, text );
-  G.lastMsg = div;
-  document.body.appendChild( div );
+  // Mettre à jour la class CSS.
+  $.removeClass( g_message, "info", "error" );
+  $.addClass( g_message, className );
+  
+  $.clear( g_message, text );
 
-  function hide() {
-    $.removeClass( div, 'show' );
-    window.setTimeout( $.detach.bind( $, div ), 300 );
-    G.lastMsg = null;
-  }
-  var id = window.setTimeout( hide, delay );
-  window.setTimeout( function () {
-    $.addClass( div, 'show' );
-    $.on( div, function () {
-      hide();
-      window.clearTimeout( id );
-      G.lastMsg = null;
-    } );
-  } );
-}
+  window.setTimeout(function() {
+    $.addClass( g_message, "show" );
+  });
 
-function clear() {
-  if ( G.lastMsg ) {
-    // Remove an already displayed message because a new one must take its place.
-    $.detach( G.lastMsg );
-    G.lastMsg = null;
-  }
+  if( g_timeout ) window.clearTimeout( g_timeout );
+  g_timeout = window.setTimeout(function() {
+    $.removeClass( g_message, "show" );
+  }, delay);
 }
 
 exports.info = show.bind( null, 'info' );
 exports.error = show.bind( null, 'error' );
-exports.clear = clear;
+exports.clear = function() {
+  if( g_timeout ) window.clearTimeout( g_timeout );
+  $.addRemove( g_message, "show" );  
+};
