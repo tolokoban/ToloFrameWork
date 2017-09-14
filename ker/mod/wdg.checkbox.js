@@ -59,7 +59,7 @@ var Checkbox = function(opts) {
   DB.extend({
     value: false,
     text: "checked",
-    inverted: false,
+    inverted: true,
     wide: false,
     visible: true
   }, opts, this, refresh);

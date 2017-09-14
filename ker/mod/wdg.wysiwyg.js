@@ -16,6 +16,7 @@ var Modal = require( "wdg.modal" );
 var Combo = require( "wdg.combo" );
 var Prompt = require( "wdg.modal.prompt" );
 var InputColor = require( "tp4.input-color" );
+var FloatingButton = require("wdg.floating-button");
 
 var DEFAULT_MENU = [
   {
@@ -87,8 +88,8 @@ var WysiwygEditor = function( opts ) {
   var iframeHasChanged = false;
 
   var elem = $.elem( this, 'div', 'wdg-wysiwyg', 'theme-elevation-2' );
-  var iconFullscreen = new Icon({ 
-    content: 'fullscreen', size: '1.5rem', button: true 
+  var iconFullscreen = new FloatingButton({ 
+    icon: 'fullscreen', small: true
   });
   var label = $.div( 'theme-label' );
   var header = $.div('header', 'theme-color-bg-1', [ iconFullscreen, label ]);
