@@ -204,7 +204,7 @@ Modal.confirm = function ( args, onYes, onNo ) {
  * Display a message with an OK button.
  */
 Modal.alert = function ( content, onOK ) {
-  var btnOK = new Button( { text: _('close'), type: 'simple' } );
+  var btnOK = new Button( { text: _('close'), flat: true } );
   var buttons = $.div( 'wdg-modal-flush-right', [ btnOK ] );
   if ( typeof content === 'string' && content.substr( 0, 6 ) == '<html>' ) {
     // This is HTML code.
@@ -213,11 +213,10 @@ Modal.alert = function ( content, onOK ) {
     content.innerHTML = html;
   }
   var modal = new Modal( {
-    scroll: false,
+    footer: btnOK,
     content: $.div( [
         $.div( 'scrollable', [ content ] ), buttons
-    ] ),
-    padding: true
+    ] )
   } );
   modal.attach();
 
