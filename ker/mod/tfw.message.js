@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @module tfw.message
  *
@@ -29,7 +31,7 @@ function show( className, text, delay ) {
   // Mettre à jour la class CSS.
   $.removeClass( g_message, "info", "error" );
   $.addClass( g_message, className );
-  
+
   $.clear( g_message, text );
 
   window.setTimeout(function() {
@@ -46,5 +48,5 @@ exports.info = show.bind( null, 'info' );
 exports.error = show.bind( null, 'error' );
 exports.clear = function() {
   if( g_timeout ) window.clearTimeout( g_timeout );
-  $.addRemove( g_message, "show" );  
+  $.removeClass( g_message, "show" );
 };
