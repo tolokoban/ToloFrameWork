@@ -40,7 +40,7 @@ function show( className, text, delay ) {
 
   if( g_timeout ) window.clearTimeout( g_timeout );
   g_timeout = window.setTimeout(function() {
-    $.removeClass( g_message, "show" );
+    if( g_message ) $.removeClass( g_message, "show" );
   }, delay);
 }
 
@@ -48,5 +48,5 @@ exports.info = show.bind( null, 'info' );
 exports.error = show.bind( null, 'error' );
 exports.clear = function() {
   if( g_timeout ) window.clearTimeout( g_timeout );
-  $.removeClass( g_message, "show" );
+  if( g_message ) $.removeClass( g_message, "show" );
 };
