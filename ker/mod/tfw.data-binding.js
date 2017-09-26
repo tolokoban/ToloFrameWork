@@ -230,7 +230,7 @@ exports.get = function( obj, att ) {
  * @param {any} value - Constatn value of this attribute.
  */
 exports.readOnly = function( obj, name, value ) {
-  if( typeof att === 'function' ) {
+  if( typeof value === 'function' ) {
     Object.defineProperty( obj, name, {
       get: value,
       set: function() {},
@@ -255,6 +255,28 @@ exports.readOnly = function( obj, name, value ) {
  *
  */
 exports.prop = propCast.bind( null, null );
+exports.propWidget = function( obj, att, widget, widgetAttribute ) {
+  if( typeof widgetAttribute === 'undefined' ) widgetAttribute = "value";
+  
+  if( typeof obj[ID] === 'undefined' ) obj[ID] = {};
+  obj[ID][att] = {    
+    event: new Listeners()
+  };
+  exports.bind( widget, widgetAttribute, function( v ) {
+    obj[ID][att].event.fire( v, obj, att );    
+  });
+  Object.defineProperty( obj, att, {
+    get: function() {
+      return widget[widgetAttribute];
+    },
+    set: function(v) {
+      widget[widgetAttribute] = v;
+    },
+    configurable: false,
+    enumerable: true
+  });
+  return exports.bind.bind(exports, obj, att);
+};
 /**
  * @export @function propToggleClass
  * Create an enum attribute which toggles a CSS class when assigned.
@@ -362,6 +384,8 @@ exports.bind = function( srcObj, srcAtt, dstObj, dstAtt, options ) {
 
 
 /**
+ * @export.extend
+ * @function extend
  * @param {object} def - Default values for properties.
  * @param {object} ext - Properties to override.
  * @param {object} obj - DOM object whose properties belong.
