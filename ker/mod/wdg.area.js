@@ -38,6 +38,11 @@ var Area = function( opts ) {
     if (typeof v === 'number') v = '' + v;
     if (typeof v !== 'string') v = '';
     label.textContent = v;
+    if( v.trim().length === 0 ) {
+      label.style.display = "none";
+    } else {
+      delete label.style.display;
+    }
   });
   DB.propInteger(this, 'maxrows');
   DB.propInteger(this, 'rows')(function(v) {
@@ -48,6 +53,10 @@ var Area = function( opts ) {
   });
   DB.propString(this, 'value')(function(v) {
     input.value = v;
+  });
+  DB.propUnit(this, 'height')(function(v) {
+    if( !v ) return;
+    $.css( input, { height: v.v + v.u } );
   });
   DB.propBoolean( this, 'enabled' )( function ( v ) {
     if ( v ) {
@@ -67,6 +76,7 @@ var Area = function( opts ) {
     cols: 20,
     rows: 2,
     maxrows: 8,
+    height: null,
     wide: true,
     visible: true
   }, opts, this);
