@@ -256,7 +256,7 @@ exports.readOnly = function( obj, name, value ) {
  */
 exports.prop = propCast.bind( null, null );
 exports.propWidget = function( obj, att, widget, widgetAttribute ) {
-  if( typeof widgetAttribute === 'undefined' ) widgetAttribute = "value";
+  if( typeof widgetAttribute === 'undefined' ) widgetAttribute = att;
   
   if( typeof obj[ID] === 'undefined' ) obj[ID] = {};
   obj[ID][att] = {    
