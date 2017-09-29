@@ -137,6 +137,7 @@ Modal.prototype.detach = function () {
 /**
  * @function Modal.comfirm
  * @param {array|object|string} args.content - Content to display.
+ * @param {string} args.title - Modal title.
  * @param {string} args.yes - Text of the confirmation button. Default is `OK`.
  * @param {string} args.no - Text of the cancellation button. Default is `Cancel`.
  * @param {function} args.onYes - Callback for confirmation.

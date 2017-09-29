@@ -16,7 +16,7 @@ var Modal = require( "wdg.modal" );
 var Combo = require( "wdg.combo" );
 var Prompt = require( "wdg.modal.prompt" );
 var InputColor = require( "tp4.input-color" );
-var FloatingButton = require("wdg.floating-button");
+
 
 var DEFAULT_MENU = [
   {
@@ -87,14 +87,9 @@ var WysiwygEditor = function( opts ) {
   var postponedHTML = null;
   var iframeHasChanged = false;
 
-  var elem = $.elem( this, 'div', 'wdg-wysiwyg', 'theme-elevation-2' );
-  var iconFullscreen = new FloatingButton({ 
-    icon: 'fullscreen', small: true
-  });
-  var label = $.div( 'theme-label' );
-  var header = $.div('header', 'theme-color-bg-1', [ iconFullscreen, label ]);
+  var elem = $.elem( this, 'div', 'wdg-wysiwyg', 'thm-ele2' );
   var slider = $.div( 'slider' );
-  var menu = $.div( 'menu' );
+  var menu = $.div( 'menu', "thm-bgPL" );
   var iframe = $.tag('iframe', { src: 'squire2/squire.html' });
   var loaded = new Promise( function( resolve, reject ) {
     iframe.addEventListener( 'load', function( ) {
@@ -125,7 +120,7 @@ var WysiwygEditor = function( opts ) {
     }, false);
   });
   var body = $.div('body', [ iframe ]);
-  $.add( elem, header, menu, body, slider );
+  $.add( elem, menu, body, slider );
 
   DB.propBoolean( this, 'focus' )( function( v ) {
     loaded.then( function( ) {
@@ -135,14 +130,6 @@ var WysiwygEditor = function( opts ) {
         that.squire.blur( );
       }
     });
-  });
-  DB.propAddClass( this, 'showFullscreenButton' );
-  DB.propString( this, 'label' )( function( v ) {
-    if ( typeof v === 'number' ) 
-      v = '' + v;
-    if ( typeof v !== 'string' ) 
-      v = '';
-    label.textContent = v;
   });
   DB.propUnit( this, 'height' )( function( v ) {
     if ( v.u === 'px' ) {
@@ -213,11 +200,9 @@ var WysiwygEditor = function( opts ) {
   DB.propRemoveClass( this, 'visible', 'hide' );
 
   DB.extend( {
-    label: "",
     value: "",
     menu: DEFAULT_MENU,
     height: 240,
-    showFullscreenButton: false,
     visible: true
   }, opts, this );
 
@@ -243,9 +228,6 @@ var WysiwygEditor = function( opts ) {
     onBeforeReplace: function( ) {
       postponedHTML = that.squire.getHTML( );
     }
-  });
-  DB.bind( iconFullscreen, 'action', function( ) {
-    fullscreen.value = !fullscreen.value;
   });
 };
 

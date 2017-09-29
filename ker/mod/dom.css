@@ -331,6 +331,10 @@ html.thm-dark svg .fill1 { fill: #000 }
   color: #fff;
 }
 
+.thm-fgP {
+  color: #218000;
+}
+
 .thm-bgP svg .stroke0, .thm-bgPD svg .stroke0
 { stroke: #fff }
 .thm-bgP svg .fill0, .thm-bgPD svg .fill0
@@ -398,6 +402,10 @@ html.thm-dark svg .fill1 { fill: #000 }
 .thm-bgSD {
   background-color: #C67100;
   color: #fff;
+}
+
+.thm-fgS {
+  color: #C67100;
 }
 
 .thm-bgSD svg .stroke0 { stroke: #fff }

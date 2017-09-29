@@ -6,7 +6,7 @@ var DB = require( "tfw.data-binding" );
 var Icon = require( "wdg.icon" );
 var Touchable = require( "tfw.touchable" );
 
-var TYPES = [ 'undef', 'standard', 'primary', 'secondary' ];
+var TYPES = [ 'undef', 'default', 'standard', 'primary', 'secondary' ];
 
 /**
  * Liste des classes CSS applicables sur un bouton :
@@ -60,7 +60,7 @@ var Button = function ( opts ) {
 
   opts = DB.extend( {
     inverted: false,
-    type: "standard",
+    type: "undef",
     text: "",
     href: null,
     target: null,
@@ -166,9 +166,9 @@ function setStyle( children ) {
   if( this.flat ) {
     $.addClass( this, 'flat' );
     
-    if( !this.type || this.type == 'undef' ) this.type = "primary";
     switch( this.type ) {
     case 'primary':
+    case 'undef':
       $.addClass( this, 'thm-fgP' );
       break;
     case 'secondary':
@@ -178,7 +178,6 @@ function setStyle( children ) {
   } else {
     $.addClass( this, 'thm-ele2' );
 
-    if( !this.type || this.type == 'undef' ) this.type = "default";
     switch( this.type ) {
     case 'primary':
       $.addClass( this, 'thm-bgP' );

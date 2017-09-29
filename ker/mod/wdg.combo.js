@@ -138,7 +138,10 @@ Combo.prototype.fire = function() {
   var key, val, container;
   for( key in this._children ) {
     val = this._children[key];
-    if (typeof val.element === 'function') {
+    if (typeof val === 'string') {
+      val = $.tag( "span", [val] );
+    }
+    else if (typeof val.element === 'function') {
       val = val.element();
     }
     else if (typeof val.element !== 'undefined') {
