@@ -74,7 +74,7 @@ var MACROS = {
     var k = parseItemOrGroup(tokenizer);
     return {tag: 'mrow', children: [
       {tag: 'mo', children: '('},
-      {tag: 'mfrac', attribs: {thickness: '0px'}, children: [n, k]},
+      {tag: 'mfrac', attribs: {linethickness: '0px'}, children: [n, k]},
       {tag: 'mo', children: ')'}
     ]};
   }
