@@ -55,7 +55,7 @@
     "compile": {
       "type": "firefoxos",
       "files": [
-        "\\.html$"
+        "test\\.html$"
       ]
     },
     "output": "gh-pages"

@@ -24,7 +24,9 @@ div.wdg-modal .cell > header {
   justify-content: start;
   align-items: center;
   font-weight: bold;
+  font-size: 150%;
   height: 32px;
+  min-height: 32px;
   padding: 0 16px;
 }
 
@@ -32,6 +34,7 @@ div.wdg-modal .cell > footer {
   justify-content: flex-end;
   align-items: center;
   height: 48px;
+  min-height: 48px;
   padding: 0 8px;
 }
 
@@ -43,10 +46,21 @@ div.wdg-modal .cell > footer {
 }
 
 div.wdg-modal .cell > div {
+  position: relative;
   flex-grow: 1;
+  z-index: 0;
   overflow: auto;
+  margin: 0;
+  padding: 0;
 }
 
+div.wdg-modal .cell > div.top {
+  border-top: 1px solid rgba(127,127,127,0.5);
+}
+
+div.wdg-modal .cell > div.bottom {
+  border-bottom: 1px solid rgba(127,127,127,0.5);
+}
 
 div.wdg-modal.fadeout {
   opacity: 0;
