@@ -52,6 +52,12 @@ var MACROS = {
     parent.firstArgLength = parent.children.length;
     parent.tag = 'mfrac';
   },
+  choose: function (tokenizer, parent) {
+    // `parent` has  only two arguments :  the first is made  of the
+    // first `firstArgLength` children.
+    parent.children = ["Please use \binom{n}{k} instead!"];
+    parent.tag = 'mtext';
+  },
   limits: function(tokenizer, parent, idx) {
     var err = "Limit controls must follow a math operator.";
     if (parent.children.length < 1) tokenizer.fatal(err, idx);
@@ -62,6 +68,15 @@ var MACROS = {
   sqrt: function(tokenizer, parent, idx) {
     var child = parseItemOrGroup(tokenizer);
     return {tag: 'msqrt', children: [child]};
+  },
+  binom: function(tokenizer, parent, idx) {
+    var n = parseItemOrGroup(tokenizer);
+    var k = parseItemOrGroup(tokenizer);
+    return {tag: 'mrow', children: [
+      {tag: 'mo', children: '('},
+      {tag: 'mfrac', attribs: {thickness: '0px'}, children: [n, k]},
+      {tag: 'mo', children: ')'}
+    ]};
   }
 };
 
@@ -100,7 +115,7 @@ exports.compile = function(root, libs) {
         + '">'
         + tagToString(mrow) + '</math>';
     console.info("[x-latex.com] html=", html);
-    root.text = libs.compileHTML( html );
+    root.text = html;
     libs.require("polyfill.mathml");
     libs.addInitJS( "require('polyfill.mathml');" );
   }
