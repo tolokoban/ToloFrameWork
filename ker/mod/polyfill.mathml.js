@@ -26,6 +26,12 @@ if (!hasMathMLSupport()) {
     "https://cdnjs.cloudflare.com/ajax/libs/mathjax/0.1/MathJax.js?config=TeX-MML-AM_CHTML"
   );
   head.appendChild( script );
+  if( document.body.hasChildNodes() ) {
+    var disclaimer = document.createElement("div");
+    disclaimer.setAttribute( "id", "polyfill-mathml" );
+    disclaimer.innerHTML = _("disclaimer");
+    document.body.insertBefore( disclaimer, document.body.firstChild );
+  }
 } else {
   console.log("MathML is supported!");
 }
