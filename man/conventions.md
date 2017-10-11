@@ -115,7 +115,7 @@ A [WebWorker](https://developer.mozilla.org/en-US/docs/Web/API/Worker) is indepe
 
 ## src/mod/org.home.module/
 
-
+Static resource files. The content of this directory (if it exists) will be copied to *{{css/org.home.module/}}*.
 
 
 ----
