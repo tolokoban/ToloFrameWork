@@ -1,7 +1,7 @@
 # Files structure convention
 
-* __package.json__: 
-* __src/index.html__: 
+* __package.json__
+* __src/index.html__: HTML file to compile.
 * __src/mod/org.home.module.js__: Module javascript code.
 * __src/mod/org.home.module.css__: Cascading style sheet.
 * __src/mod/org.home.module.ini__: Internationalization.
@@ -115,7 +115,7 @@ A [WebWorker](https://developer.mozilla.org/en-US/docs/Web/API/Worker) is indepe
 
 ## src/mod/org.home.module/
 
-
+Static resource files. The content of this directory (if it exists) will be copied to *{{css/org.home.module/}}*.
 
 
 ----
