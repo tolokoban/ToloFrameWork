@@ -1,7 +1,7 @@
 # Files structure convention
 
-* __package.json__: 
-* __src/index.html__: 
+* __package.json__
+* __src/index.html__: HTML file to compile.
 * __src/mod/org.home.module.js__: Module javascript code.
 * __src/mod/org.home.module.css__: Cascading style sheet.
 * __src/mod/org.home.module.ini__: Internationalization.
