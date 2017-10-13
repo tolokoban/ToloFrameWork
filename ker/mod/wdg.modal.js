@@ -57,12 +57,18 @@ function Modal( opts ) {
     laterScroll();
   } );
   DB.prop( this, 'footer' )( function ( v ) {
-    $.clear( footer );
+    if ( typeof v === 'undefined' || v === null || v.length === 0 ) {
+      $.addClass( footer, 'hide' );
+      return;
+    }
+    
+    $.removeClass( footer, 'hide' );
+    $.clear( footer );    
     if ( Array.isArray( v ) ) {
       v.forEach( function ( itm ) {
         $.add( footer, itm );
       } );
-    } else if ( typeof v !== 'undefined' && v !== null ) {
+    } else  {
       $.add( footer, v );
     }
     laterScroll();

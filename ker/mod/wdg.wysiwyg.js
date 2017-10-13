@@ -2,7 +2,7 @@
  require( 'tp4.wysiwyg-editor' )
  -----------------------------------------------------------------------
  https://github.com/neilj/Squire
- **********************************************************************/
+**********************************************************************/
 "use strict";
 
 require( "polyfill.promise" );
@@ -67,10 +67,10 @@ var DEFAULT_MENU = [
   { id: 'format-float-none' }
 ];
 /*
-['header', setHeader.bind( squire )],
-"|",
-['list-ul', squire.makeUnorderedList.bind( squire )],
-['list-ol', squire.makeOrderedList.bind( squire )],
+  ['header', setHeader.bind( squire )],
+  "|",
+  ['list-ul', squire.makeUnorderedList.bind( squire )],
+  ['list-ol', squire.makeOrderedList.bind( squire )],
 */
 
 /**
@@ -109,6 +109,18 @@ var WysiwygEditor = function( opts ) {
         // Prevent from update looping.
         iframeHasChanged = true;
         that.value = squire.getHTML( );
+      });
+      squire.addEventListener( "willPaste", function( event ) {
+        console.info("[tp4.wysiwyg-editor] (willPaste) event=", event);
+        var text = event.fragment.textContent;
+        var normalized = text.trim().toLowerCase();
+        if( normalized.substr(0, 8) !== '<iframe ' ) return;
+        if( normalized.substr(normalized.length - 9) !== '</iframe>' ) return;
+        var div = $.div();
+        div.innerHTML = text;
+        var iframe = div.firstChild;
+        event.fragment.firstChild.textContent = "";
+        event.fragment.firstChild.innerHTML = div.innerHTML;
       });
       Object.defineProperty(that, 'squire', {
         value: squire,
@@ -303,7 +315,7 @@ function setFontFaceSizeColor( ) {
   selFontColor.val( 'black' );
 
   Modal.confirm( $.div([
-    selFontName, 
+    selFontName,
     new Flex({ content: [selFontSize, selFontColor] })
   ]), function() {
     that.setFontFace(selFontName.value);
@@ -341,73 +353,73 @@ function makeLink( ) {
 /**
  * `this` is the squire object.
  */
-function onMenu( item ) {  
+function onMenu( item ) {
   var squire = this.squire;
   var id = item.id;
-  
+
   switch ( id ) {
-    case 'eraser':
-      squire.removeAllFormatting( );
-      break;
-    case 'link':
-      makeLink.call( squire );
-      break;
-    case 'image':
-      this.insertImage();
-      break;
-    case 'format-bold':
-      if (squire.hasFormat( 'b' )) {
-        squire.removeBold( );
-      } else {
-        squire.bold( );
-      }
-      break;
-    case 'format-italic':
-      if (squire.hasFormat( 'i' ) || squire.hasFormat( 'em' )) {
-        squire.removeItalic( );
-      } else {
-        squire.italic( );
-      }
-      break;
-    case 'format-underline':
-      if (squire.hasFormat( 'u' )) {
-        squire.removeUnderline( );
-      } else {
-        squire.underline( );
-      }
-      break;
-    case 'format-align-left':
-      squire.setTextAlignment( 'left' );
-      break;
-    case 'format-align-center':
-      squire.setTextAlignment( 'center' );
-      break;
-    case 'format-align-right':
-      squire.setTextAlignment( 'right' );
-      break;
-    case 'format-align-justify':
-      squire.setTextAlignment( 'justify' );
-      break;
-    case 'font':
-      setFontFaceSizeColor.call( squire );
-      break;
-    case 'format-float-left':
-      setFloat.call( squire, 'left' );
-      break;
-    case 'format-float-center':
-      setFloat.call( squire, 'center' );
-      break;
-    case 'format-float-right':
-      setFloat.call( squire, 'right' );
-      break;
-    case 'format-float-none':
-      setFloat.call( squire, 'none' );
-      break;
-    case 'format-header':
-      setHeader.call( squire );
-      break;
-    default:
-      this.processButton( id );
+  case 'eraser':
+    squire.removeAllFormatting( );
+    break;
+  case 'link':
+    makeLink.call( squire );
+    break;
+  case 'image':
+    this.insertImage();
+    break;
+  case 'format-bold':
+    if (squire.hasFormat( 'b' )) {
+      squire.removeBold( );
+    } else {
+      squire.bold( );
+    }
+    break;
+  case 'format-italic':
+    if (squire.hasFormat( 'i' ) || squire.hasFormat( 'em' )) {
+      squire.removeItalic( );
+    } else {
+      squire.italic( );
+    }
+    break;
+  case 'format-underline':
+    if (squire.hasFormat( 'u' )) {
+      squire.removeUnderline( );
+    } else {
+      squire.underline( );
+    }
+    break;
+  case 'format-align-left':
+    squire.setTextAlignment( 'left' );
+    break;
+  case 'format-align-center':
+    squire.setTextAlignment( 'center' );
+    break;
+  case 'format-align-right':
+    squire.setTextAlignment( 'right' );
+    break;
+  case 'format-align-justify':
+    squire.setTextAlignment( 'justify' );
+    break;
+  case 'font':
+    setFontFaceSizeColor.call( squire );
+    break;
+  case 'format-float-left':
+    setFloat.call( squire, 'left' );
+    break;
+  case 'format-float-center':
+    setFloat.call( squire, 'center' );
+    break;
+  case 'format-float-right':
+    setFloat.call( squire, 'right' );
+    break;
+  case 'format-float-none':
+    setFloat.call( squire, 'none' );
+    break;
+  case 'format-header':
+    setHeader.call( squire );
+    break;
+  default:
+    this.processButton( id );
   }
   this.focus = true;
 }
