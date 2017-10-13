@@ -1,3 +1,18 @@
+#polyfill-mathml {
+  margin: 8px;
+  padding: 8px;
+  border: 2px solid #fff;
+  color: #fff;
+  background: red;
+  box-shadow: 0 0 0 4px #a00;
+}
+
+#polyfill-mathml > a {
+  color: #ff0;
+}
+
+
+
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -227,3 +242,4 @@ div.math math:active > semantics > *:first-child {
 div.math math:active annotation:first-of-type {
     display: inline !important;
 }
+

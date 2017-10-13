@@ -23,7 +23,13 @@ function Modal( opts ) {
   var that = this;
 
   var body = $.div();
-  var header = $.tag( 'header', 'thm-ele8', 'thm-bgPD' );
+  body.addEventListener("scroll", onScroll.bind( this, body ));
+  var laterScroll = function() {
+    window.setTimeout(function() {
+      onScroll( body );
+    });
+  };
+  var header = $.tag( 'header' );  //, 'thm-ele8', 'thm-bgPD' );
   var footer = $.tag( 'footer' );
   var cell = $.div( 'cell', 'thm-ele24', 'thm-bg0', [ header, body, footer ] );
   var elem = $.elem( this, 'div', 'wdg-modal', [ $.div([cell]) ] );
@@ -37,6 +43,7 @@ function Modal( opts ) {
     } else if ( typeof v !== 'undefined' && v !== null ) {
       $.add( body, v );
     }
+    laterScroll();
   } );
   DB.prop( this, 'header' )( function ( v ) {
     $.clear( header );
@@ -47,6 +54,7 @@ function Modal( opts ) {
     } else if ( typeof v !== 'undefined' && v !== null ) {
       $.add( header, v );
     }
+    laterScroll();
   } );
   DB.prop( this, 'footer' )( function ( v ) {
     $.clear( footer );
@@ -57,11 +65,13 @@ function Modal( opts ) {
     } else if ( typeof v !== 'undefined' && v !== null ) {
       $.add( footer, v );
     }
+    laterScroll();
   } );
   DB.propString( this, 'width' )( function ( v ) {
     $.css( body, {
       'max-width': v
     } );
+    laterScroll();
   } );
   DB.propAddClass( this, 'fullscreen' );
   DB.propAddClass( this, 'padding' );
@@ -224,5 +234,30 @@ Modal.alert = function ( content, onOK ) {
   } );
   return modal;
 };
+
+
+/**
+ * Help the user to understand that the `body` can or cannot scroll to
+ * the top or to the bottom, or both.
+ * If the user can scroll up, a thin top inset shadow is displayed.
+ * If the user can scroll down, a thin bottom inset shadow is displayed.
+ */
+function onScroll( body, evt ) {
+  console.info("[wdg.modal] evt=", evt);
+  if( body.scrollTop > 0 ) {
+    $.addClass( body, "top" );
+  } else {
+    $.removeClass( body, "top" );
+  }
+
+  if( body.scrollHeight - body.scrollTop > body.clientHeight ) {
+    $.addClass( body, "bottom" );
+  } else {
+    $.removeClass( body, "bottom" );
+  }
+
+  console.info("[wdg.modal] body.scrollHeight, body.clientHeight=", body.scrollHeight, body.clientHeight);
+}
+
 
 module.exports = Modal;
