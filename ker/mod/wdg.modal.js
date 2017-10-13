@@ -206,7 +206,6 @@ Modal.confirm = function ( args, onYes, onNo ) {
  */
 Modal.alert = function ( content, onOK ) {
   var btnOK = new Button( { text: _('close'), flat: true } );
-  var buttons = $.div( 'wdg-modal-flush-right', [ btnOK ] );
   if ( typeof content === 'string' && content.substr( 0, 6 ) == '<html>' ) {
     // This is HTML code.
     var html = content.substr( 6 );
@@ -215,9 +214,7 @@ Modal.alert = function ( content, onOK ) {
   }
   var modal = new Modal( {
     footer: btnOK,
-    content: $.div( [
-        $.div( 'scrollable', [ content ] ), buttons
-    ] )
+    content: content
   } );
   modal.attach();
 
