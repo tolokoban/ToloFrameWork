@@ -119,8 +119,21 @@ var WysiwygEditor = function( opts ) {
         var div = $.div();
         div.innerHTML = text;
         var iframe = div.firstChild;
+        $.css( iframe, { maxWidth: "80vw" } );
+        var src = iframe.getAttribute( "src" );
+        var a = $.tag( "a", { target: "IFRAME", href: src } );
+        a.innerHTML = '<svg width=32 height=32><g stroke="#000" fill="none" stroke-width=2><path d="M14,8h-6v6 M14,24h-6v-6 M18,8h6v6 M18,24h6v-6"/></g></svg>';
+        a.setAttribute(
+          "style",
+          "border-radius:100%;position:absolute;right:4px;top:4px;display:inline-block;z-index:2;"
+            + "background:#fff;width:32px;height:32px;line-height:32px;text-align:center;"
+            + "font-size:16px;font-weight:bold;font-family:sans-serif;box-shadow:0 8px 16px rgba(0,0,0,.5);"
+          + "text-decoration:none;color:#000;"
+        );
+        $.add( div, a );
         event.fragment.firstChild.textContent = "";
         event.fragment.firstChild.innerHTML = div.innerHTML;
+        $.css( event.fragment.firstChild, { position: "relative", padding: 0 } );
       });
       Object.defineProperty(that, 'squire', {
         value: squire,
@@ -358,6 +371,12 @@ function onMenu( item ) {
   var id = item.id;
 
   switch ( id ) {
+  case 'undo':
+    squire.undo();
+    break;
+  case 'redo':
+    squire.redo();
+    break;
   case 'eraser':
     squire.removeAllFormatting( );
     break;
