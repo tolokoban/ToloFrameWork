@@ -21,10 +21,13 @@ div.wdg-modal .cell {
 }
 
 div.wdg-modal .cell > header {
+  white-space: nowrap;
+  overflow: hidden;
   justify-content: start;
   align-items: center;
   font-weight: bold;
   font-size: 150%;
+  line-height: 32px;
   height: 32px;
   min-height: 32px;
   padding: 0 16px;
