@@ -2,7 +2,10 @@
  * @module
  *
  * Provide all the functions needed for data-binding.
- *
+ * JavaScript object have __attributes__.
+ * Data-binding add a new comcept to objects: __properties__.
+ * A property is an attribute you can listen for get and set operations.
+ * 
  * @example
  * var DB = require('tfw.data-binding');
  * DB.propAddClass( widget, 'visible', 'show' );
