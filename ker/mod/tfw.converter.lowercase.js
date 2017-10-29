@@ -1,5 +1,4 @@
 "use strict";
 
-module.exports = function() {
-  return function(v) { return ("" + v).toLowerCase(); };
-};
+function f(v) { return ("" + v).toLowerCase(); }
+module.exports = function() { return f; };

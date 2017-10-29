@@ -5,9 +5,11 @@ var PropertyManager = require("tfw.binding.property-manager");
 
 
 exports.defProps = function( obj, props, args ) {
-  var propertyName, pm;
+  var propertyName, pm, prop;
   for( propertyName in props ) {
-    pm = exports.defProp( obj, propertyName, props[propertyName], args );
+    prop = props[propertyName];
+    if( prop === null ) pm = exports.defAction( obj, propertyName );
+    else pm = exports.defProp( obj, propertyName, prop, args );
   }
 
   return pm;
@@ -43,6 +45,28 @@ exports.defProp = function( obj, name, opts, args ) {
   if( typeof opts.init !== 'undefined' ) {
     window.setTimeout( pm.change.bind( pm, name, opts.init ) );
   }
+
+  return pm;
+};
+
+/**
+ * This is a special property which emit a change event as soon as any
+ * value is set to  it, even if this valule has  already been set just
+ * before. Moreover, the value of this attribute is always its name.
+ * This is used for action properties in buttons, for instance.
+ */
+exports.defAction = function( obj, name ) {
+  var pm = PropertyManager( obj );
+
+  Object.defineProperty( obj, name, {
+    set: function(v) { 
+      pm.set( name, name ); 
+      pm.fire( name ); 
+    },
+    get: function() { return name; },
+    configurable: false,
+    enumerable: true
+  });
 
   return pm;
 };

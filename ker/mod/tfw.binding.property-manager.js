@@ -70,7 +70,6 @@ PropertyManager.prototype.change = function( propertyName, value, wave ) {
     prop.val = value;
     var that = this;
     exec(prop, function() {
-      console.info(this.name + ":" + propertyName, ":=", value, wave );
       // Fire change event.
       that.fire( propertyName, wave );
     });
