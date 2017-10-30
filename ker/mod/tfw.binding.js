@@ -17,7 +17,13 @@ exports.defProps = function( obj, props, args ) {
 
 
 /**
- * @param {function(v)} opts.cast
+ * @param {function(v)=undefined} opts.set - Function to call when the
+ * value changed.
+ * @param  {function(v)=undefined} opts.cast  -  Function  to call  to
+ * convert the value we need to store.
+ * @param {number=undefined} opts.delay - If defined, the value is set
+ * not before `delay` milliseconds.
+ * @param {any=undefined} opts.init - The intial value to set.
  */
 exports.defProp = function( obj, name, opts, args ) {
   var pm = PropertyManager( obj );

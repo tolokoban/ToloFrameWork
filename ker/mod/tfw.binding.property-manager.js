@@ -43,7 +43,7 @@ PropertyManager.prototype.get = function( propertyName ) {
   return this._p( propertyName ).val;
 };
 
-PropertyManager.prototype.valueId = function( propertyName ) {
+PropertyManager.prototype.propertyId = function( propertyName ) {
   return this._p( propertyName ).id;
 };
 
