@@ -149,6 +149,16 @@ module.exports = function( container ) {
   return pm;
 };
 
+/**
+ * @export .isLinkable
+ * Look if an object has a property manager assigned to it.
+ */
+module.exports.isLinkable = function( obj, propertyName ) {
+  if( obj[SYMBOL] === undefined ) return false;
+  if( typeof propertyName !== 'string' ) return true;
+  return obj[SYMBOL]._props[propertyName] !== undefined;
+};
+
 
 // Private.
 PropertyManager.prototype._p = function( propertyName ) {
