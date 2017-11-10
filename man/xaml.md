@@ -37,18 +37,26 @@ module.exports = function() {
     prefixed: { cast: ConverterBoolean, init: false }
   });
   
-  var create = document.createElement.bind( document );
-  var append = document.appendChild.bind();
-  var att = document.setAttribute.bind();
-  var on = document.addEventListener.bind();
-  
-  var e0 = create("div");
-  att( e0, "class", "tfw-view-checkbox" );
-  var e00 = create("div");
-  att( e00, "class", "text" );
+  var e0 = document.createElement("div");
+  e0.setAttribute( "class", "tfw-view-checkbox" );
+  e0.addEventListener(
+    "click",
+    function( evt ) {
+      onClick.call( that, evt );
+    }, false );
+  View.toggleClass( e0, "prefixed", that, "prefixed" );
+  var e00 = document.createElement("div");
+  e00.setAttribute( "class", "text" );
   Binding.on( that, 'text', function() {
     e00.textContent = that.text;
   });
+  var e01 = document.createElement("div");
+  e01.setAttribute( "class", "value" );
+  View.toggleClass( e01, "checked", that, "value" );
+  var e010 = document.createElement("div");
+  e01.appendChild( e010 );
+  e0.appendChild( e00 );
+  e0.appendChild( e01 );
   
   Binding.readonly( this, "$", e0 );
 }
