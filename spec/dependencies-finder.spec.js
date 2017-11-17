@@ -8,11 +8,16 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 3600000;
 describe('Module "dependencies-finder"', function() {
   var check = function(file, requires) {
     it('should find requires in ' + file, function() {
-      expect( Finder(FILES[file]).requires ).toEqual( requires );      
+      expect( Finder(FILES[file]).requires ).toEqual( requires );
     });
   };
-  it('should find requires', function() {
+  describe('should find requires', function() {
     debugger;
+    check( "comments", ['YoMan'] );
+    check( "tp4.wdg-event", [
+      'dom', 'tfw.data-binding', 'wdg.text', 'wdg.flex', 
+      'tp4.button.edit-intl'
+    ]);
     check( "tfw.binding", ['tfw.binding.converters', 'tfw.binding.property-manager'] );
     check( "dom", ['$', 'polyfill.classList', 'tfw.pointer-events'] );
   });
@@ -21,10 +26,72 @@ describe('Module "dependencies-finder"', function() {
 
 
 var FILES = {
+  "comments": `
+/**
+ * @example
+ * var Toto = require("Alright");
+ */
+var Titi = require("YoMan");
+`,
+"tp4.wdg-event": `"use strict";
+
+var $ = require("dom");
+var DB = require("tfw.data-binding");
+var Text = require( "wdg.text" );
+var Flex = require( "wdg.flex" );
+var Description = require( "tp4.button.edit-intl" );
+
+
+/**
+ * @class Event
+ *
+ * @param {boolean} opts.visible - Set the visiblity of the component.
+ *
+ * @example
+ * var Tp.Wdg.Event = require("tp.wdg.event");
+ * var instance = new Tp.Wdg.Event({visible: false});
+ */
+var Event = function(opts) {
+    var inpName = new Text({
+      label: _("name"),
+      width: "320px"
+    });
+    var inpCode = new Text({
+      label: _("code"),
+      width: "120px"
+    });
+    var inpDesc = new Description({
+      text: _("desc"), html: true
+    });  
+  var elem = $.elem( this, 'div', [
+    new Flex({
+      justify: "between",
+      content: [inpName, inpCode]
+    }),
+    inpDesc
+  ]);
+  
+  DB.propRemoveClass( this, 'visible', 'hide' );
+  DB.propWidget( this, "focus", inpName );
+  DB.propWidget( this, "name", inpName, "value" );
+  DB.propWidget( this, "code", inpCode, "value" );
+  DB.propWidget( this, "desc", inpDesc, "value" );
+  
+  opts = DB.extend({
+    visible: true,
+    name: "",
+    code: "",
+    desc: ""
+  }, opts, this);
+};
+
+
+module.exports = Event;
+`,
   "tfw.binding": `/** @module tfw.binding */require( 'tfw.binding', function(require, module, exports) { var _=function(){return ''};    "use strict";
 
 var Converters = require("tfw.binding.converters");
-var PropertyManager = require("tfw.binding.property-manager");
+var PropertyManager = require('tfw.binding.property-manager');
 
 
 exports.defProps = function( obj, props ) {
@@ -69,7 +136,7 @@ exports.createConverter = function( arg ) {
 module.exports._ = _;
 });
 `,
-"dom": `/** @module dom */require( 'dom', function(require, module, exports) { var _=function(){var D={"en":{}},X=require("$").intl;function _(){return X(D,arguments);}_.all=D;return _}();
+  "dom": `/** @module dom */require( 'dom', function(require, module, exports) { var _=function(){var D={"en":{}},X=require("$").intl;function _(){return X(D,arguments);}_.all=D;return _}();
    /**
  * @module dom
  *
@@ -267,7 +334,7 @@ function add( element ) {
                     var html = child.substr( 6 );
                     child = $.tag('span');
                     child.innerHTML = html;
-                } 
+                }
                 else if( RX_ENTITY.test( child ) ) {
                   var text = child;
                   child = $.tag('span');
@@ -573,7 +640,7 @@ function restoreStyle( elements ) {
 }
 
 
-  
+
 module.exports._ = _;
 /**
  * @module dom
