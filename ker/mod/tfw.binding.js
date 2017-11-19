@@ -48,6 +48,20 @@ exports.defProp = function( obj, name, opts, initialValues ) {
 
   if( typeof opts === 'undefined' ) opts = {};
   if( typeof opts === 'function' ) opts = { set: opts };
+  if( Array.isArray( opts ) ) opts = { init: opts };
+  if( typeof opts === 'string' ) opts = { 
+    init: opts,
+    cast: function(v) { return "" + v; }
+  };
+  if( typeof opts === 'number' ) opts = { 
+    init: opts,
+    cast: function(v) { return parseFloat( v ); }
+  };
+  if( typeof opts === 'boolean' ) opts = { 
+    init: opts,
+    cast: function(v) { return v ? true : false; }
+  };
+  if( typeof opts !== 'object' ) opts = { init: opts };
 
   pm.converter( name, createConverter( opts.cast ) );
   pm.delay( name, opts.delay );
