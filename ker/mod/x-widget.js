@@ -1,22 +1,21 @@
-/************************************************************
-@example
-
-var W = require("x-widget");
-W({
-  elem: "div",
-  attr: {"class": "black"},
-  prop: {"$key": "menu"},
-  children: [
-    "This is the ",
-    W({
-      elem: "b",
-      children: ["menu"]
-    }),
-    "..."
-  ]
-});
-************************************************************/
-
+/**
+ * @example
+ * 
+ * var W = require("x-widget");
+ * W({
+ *   elem: "div",
+ *   attr: {"class": "black"},
+ *   prop: {"$key": "menu"},
+ *   children: [
+ *     "This is the ",
+ *     W({
+ *       elem: "b",
+ *       children: ["menu"]
+ *     }),
+ *     "..."
+ *   ]
+ * });
+ */
 "use strict";
 
 var $ = require("dom");
