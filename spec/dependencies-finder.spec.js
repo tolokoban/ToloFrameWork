@@ -8,11 +8,18 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 3600000;
 describe('Module "dependencies-finder"', function() {
   var check = function(file, requires) {
     it('should find requires in ' + file, function() {
-      expect( Finder(FILES[file]).requires ).toEqual( requires );      
+      expect( Finder(FILES[file]).requires ).toEqual( requires );
     });
   };
-  it('should find requires', function() {
+  describe('should find requires', function() {
     debugger;
+    check( "x-widget", ['dom', 'tfw.data-binding'] );
+    //check( "strings", ["A", "C'est", "EF"] );
+    check( "comments", ['YoMan'] );
+    check( "tp4.wdg-event", [
+      'dom', 'tfw.data-binding', 'wdg.text', 'wdg.flex', 
+      'tp4.button.edit-intl'
+    ]);
     check( "tfw.binding", ['tfw.binding.converters', 'tfw.binding.property-manager'] );
     check( "dom", ['$', 'polyfill.classList', 'tfw.pointer-events'] );
   });
@@ -21,10 +28,76 @@ describe('Module "dependencies-finder"', function() {
 
 
 var FILES = {
+  "strings": `// Prout
+require("A");
+require('C\'est');
+require("E\"F")`,
+  "comments": `
+/**
+ * @example
+ * var Toto = require("Alright");
+ */
+var Titi = require("YoMan");
+`,
+"tp4.wdg-event": `"use strict";
+
+var $ = require("dom");
+var DB = require("tfw.data-binding");
+var Text = require( "wdg.text" );
+var Flex = require( "wdg.flex" );
+var Description = require( "tp4.button.edit-intl" );
+
+
+/**
+ * @class Event
+ *
+ * @param {boolean} opts.visible - Set the visiblity of the component.
+ *
+ * @example
+ * var Tp.Wdg.Event = require("tp.wdg.event");
+ * var instance = new Tp.Wdg.Event({visible: false});
+ */
+var Event = function(opts) {
+    var inpName = new Text({
+      label: _("name"),
+      width: "320px"
+    });
+    var inpCode = new Text({
+      label: _("code"),
+      width: "120px"
+    });
+    var inpDesc = new Description({
+      text: _("desc"), html: true
+    });  
+  var elem = $.elem( this, 'div', [
+    new Flex({
+      justify: "between",
+      content: [inpName, inpCode]
+    }),
+    inpDesc
+  ]);
+  
+  DB.propRemoveClass( this, 'visible', 'hide' );
+  DB.propWidget( this, "focus", inpName );
+  DB.propWidget( this, "name", inpName, "value" );
+  DB.propWidget( this, "code", inpCode, "value" );
+  DB.propWidget( this, "desc", inpDesc, "value" );
+  
+  opts = DB.extend({
+    visible: true,
+    name: "",
+    code: "",
+    desc: ""
+  }, opts, this);
+};
+
+
+module.exports = Event;
+`,
   "tfw.binding": `/** @module tfw.binding */require( 'tfw.binding', function(require, module, exports) { var _=function(){return ''};    "use strict";
 
 var Converters = require("tfw.binding.converters");
-var PropertyManager = require("tfw.binding.property-manager");
+var PropertyManager = require('tfw.binding.property-manager');
 
 
 exports.defProps = function( obj, props ) {
@@ -69,7 +142,7 @@ exports.createConverter = function( arg ) {
 module.exports._ = _;
 });
 `,
-"dom": `/** @module dom */require( 'dom', function(require, module, exports) { var _=function(){var D={"en":{}},X=require("$").intl;function _(){return X(D,arguments);}_.all=D;return _}();
+  "dom": `/** @module dom */require( 'dom', function(require, module, exports) { var _=function(){var D={"en":{}},X=require("$").intl;function _(){return X(D,arguments);}_.all=D;return _}();
    /**
  * @module dom
  *
@@ -267,7 +340,7 @@ function add( element ) {
                     var html = child.substr( 6 );
                     child = $.tag('span');
                     child.innerHTML = html;
-                } 
+                }
                 else if( RX_ENTITY.test( child ) ) {
                   var text = child;
                   child = $.tag('span');
@@ -573,7 +646,7 @@ function restoreStyle( elements ) {
 }
 
 
-  
+
 module.exports._ = _;
 /**
  * @module dom
@@ -581,4 +654,268 @@ module.exports._ = _;
  * @see module:tfw.pointer-events
 
  */
-});`};
+});`,
+"x-widget": `/**
+ * @example
+ * 
+ * var W = require("x-widget");
+ * W({
+ *   elem: "div",
+ *   attr: {"class": "black"},
+ *   prop: {"$key": "menu"},
+ *   children: [
+ *     "This is the ",
+ *     W({
+ *       elem: "b",
+ *       children: ["menu"]
+ *     }),
+ *     "..."
+ *   ]
+ * });
+ */
+"use strict";
+
+var $ = require("dom");
+var DB = require("tfw.data-binding");
+
+var widgets = {};
+// Used for \`onWidgetCreation()\`.
+var slots = {};
+
+
+var Widget = function(id, modName, args, attribs) {
+  if (typeof id === 'string') return Widget1.call( this, id, modName, args, attribs );
+  else return Widget2.call( this, id );
+};
+
+function Widget1(id, modName, args, attribs ) {
+  if( typeof attribs === 'undefined' ) attribs = {};
+
+  try {
+    var module = require( modName );
+    var wdg = new module( args );
+    var elem = typeof wdg.element === 'function' ? wdg.element() : wdg.element;
+    var dst = document.getElementById( id );
+    if (dst) {
+      // This widget does exist in the current DOM.
+      // We have to replace it.
+      dst.parentNode.replaceChild( elem, dst );
+    }
+    elem.setAttribute( 'id', id );
+    // Add classes defined in the containing element (\`dst\`).
+    $.addClass( elem, attribs.class || "" );
+    register( id, wdg );
+    return wdg;
+  }
+  catch (ex) {
+    console.error("[x-widget] Unable to create widget \`" + modName + "\`!");
+    console.error("[x-widget] id = ", id, ", args = ", args);
+    throw Error(ex);
+  }
+};
+
+function Widget2(args) {
+  var id;
+  var elem = $.tag( args.elem );
+  if (args.attr) {
+    // Adding DOM element attributes.
+    $.att( elem, args.attr );
+    id = args.attr.id;
+  }
+
+  if (Array.isArray( args.children )) {
+    // Adding DOM element children.
+    args.children.forEach(function (child) {
+      $.add( elem, child );
+    });
+  }
+  // Converting into a widget.
+  var key, val;
+  var wdg = {};
+
+  if (args.prop) {
+    // Adding READ-ONLY properties to the widget.
+    for( key in args.prop ) {
+      val = args.prop[key];
+      Object.defineProperty( wdg, key, {
+        value: val, writable: false, configurable: false, enumerable: true
+      });
+    }
+  }
+  // Assigning the element to the widget.
+  Object.defineProperty( wdg, 'element', {
+    value: elem, writable: false, configurable: false, enumerable: true
+  });
+
+  if( typeof id !== 'undefined' ) {
+    // Registering the widget only if it as got an id.
+    register( id, wdg );
+  }
+  return wdg;
+}
+
+Widget.template = function( attribs ) {
+  var key, val, id, name = '', args = {};
+  for( key in attribs ) {
+    val = attribs[key];
+    if( key == 'name' ) {
+      name = val;
+    }
+    else if( key == 'id' ) {
+      id = val;
+    }
+    else if( key.charAt(0)=='$' ) {
+      args[key.substr( 1 )] = val;
+    }
+  }
+  var module = require( name );
+  var wdg = new module( args );
+  if( id ) {
+    register( id, wdg );
+  }
+
+  return typeof wdg.element === 'function' ? wdg.element() : (wdg.element || wdg);
+};
+
+function register( id, wdg ) {
+  widgets[id] = wdg;
+  var mySlots = slots[id];
+  if( typeof mySlots !== 'undefined' ) {
+    window.setTimeout(function() {
+      mySlots.forEach(function (slot) {
+        slot( wdg );
+      });
+      delete slots[id];
+    });
+  }
+  return typeof wdg.element === 'function' ? wdg.element : (wdg.element || wdg);
+};
+
+Widget.getById = function( id ) {
+  if( !widgets[id] ) throw Error( "[x-widget.getById()] ID not found: " + id + "!" );
+  return widgets[id];
+};
+
+Widget.onWidgetCreation = function( id, slot ) {
+  if( typeof widgets[id] === 'undefined' ) {
+    if( typeof slots[id] === 'undefined' ) slots[id] = [slot];
+    else slots[id].push( slot );
+  } else {
+    // Asynchronous call to the slot
+    window.setTimeout(
+      function() {
+        slot( widgets[id] );
+      }
+    );
+  }
+};
+
+/**
+ * @example
+ * var W = require("x-widget");
+ * W.bind('wdg.layout-stack0',{"value":{"B":[["btnNewTask","action"],["btnCancel","action"]]}});
+ */
+Widget.bind = function( id, attribs ) {
+  // Destination object: the one on the attributes of which we want to bind.
+  var dstObj = widgets[id];
+  // Destination attribute name.
+  var dstAtt;
+  // Temporary variables to hold source object and attributes.
+  var srcObj, srcAtt;
+  // @example
+  // ["btnNewTask","action","btnCancel","action"]
+  var bindings;
+  var slots;
+  // Index used to parse multiple bindings.
+  var idx;
+  for( dstAtt in attribs ) {
+    bindings = attribs[dstAtt].B;
+    if (Array.isArray( bindings )) {
+      // \`binding\` is an array of arrays.
+      // Subarrays have 2 or 3 elements.
+      // * ID if the source object
+      // * attribute to bind on
+      // * [optional] value  to use as  a constant. This  is the
+      // * case where  we just want  to set a constant  value as
+      // * soon as the source's attribute has changed.
+      bindings.forEach(function (binding) {
+        srcObj = widgets[binding[0]];
+        if( typeof srcObj === 'undefined' ) {
+          console.error( "[x-widget:bind(" + id + ")] Trying to bind attribute \""
+                         + dstAtt
+                         + "\" of widget \"" + id + "\" to the unexisting widget \""
+                         + binding[0] + "\"!");
+          return;
+        }
+        srcAtt = binding[1];
+        try {
+          if (binding.length == 2) {
+            DB.bind( srcObj, srcAtt, dstObj, dstAtt );
+          } else {
+            var value = binding[2];
+            DB.bind( srcObj, srcAtt, function() {
+              dstObj[dstAtt] = value;
+            });
+          }
+        } catch( ex ) {
+          console.error("Binding error for widget \`" + id + "\`!", {
+            ex: ex,
+            binding: binding
+          });
+        }
+      });
+    }
+
+    slots = attribs[dstAtt].S;
+    if (Array.isArray( slots )) {
+      // Each item is the name of a function to call when the value of this attribute changes.
+      // If the item is a \`string\`, the function is from the global \`APP\` object.
+      // Otherwise, the item must be an array with two children:
+      // the first one  is the module's name and  the second one
+      // id the name of the function.
+      // The slots are called with two arguments:
+      //  * the value and
+      //  * the object the attribute belongs.
+      slots.forEach(function (slot) {
+        var mod = APP;
+        var fct = slot;
+        if (Array.isArray( slot )) {
+          try {
+            mod = require(slot[0]);
+          } catch( ex ) {
+            console.error("[x-widget:bind] Widget \`" + id + "\` can't require unexistent \`"
+                          + slot[0] + "\`: ", ex);
+            throw( ex );
+          }
+          fct = slot[1];
+        }
+        fct = mod[fct];
+        if (typeof fct !== 'function') {
+          if( Array.isArray(slot) ) {
+            throw Error("[x-widget:bind]  Widget \`" + id + "\` use unexisting slot \`"
+                        + slot[1] + "\` of module \`" + slot[0] + "\`!");
+          } else {
+            throw Error("[x-widget:bind]  Widget \`" + id + "\` use unexisting slot \`"
+                        + slot + "\` of main module \`APP\`!");
+          }
+        } else {
+          try {
+            DB.bind( dstObj, dstAtt, fct );
+          } catch( ex ) {
+            console.error("Binding error for widget \`" + id + "\`!", {
+              ex: ex,
+              dstObj: dstObj,
+              dstAtt: dstAtt,
+              fct: fct,
+              slot: slot
+            });
+          }
+        }
+      });
+
+    }
+  }
+};
+
+module.exports = Widget;
+`};
