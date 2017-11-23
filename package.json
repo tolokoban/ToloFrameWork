@@ -46,7 +46,8 @@
     "readline-sync": "^1.4.7",
     "string": "^3.3.3",
     "tlk-lexer": "0.0.5",
-    "uglify-js": "^2.8.29"
+    "uglify-js": "^2.8.29",
+    "toloframework-permissive-json": "^1.0.0"
   },
   "homepage": "https://github.com/tolokoban/ToloFrameWork",
   "main": "index.js",
