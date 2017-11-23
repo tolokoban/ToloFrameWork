@@ -41,13 +41,13 @@
     "colors": "^1.1.2",
     "jaguar": "^1.1.10",
     "jsdoc": "^3.5.5",
-    "less": "^2.7",
+    "less": "^2.7.3",
     "marked": "^0.3.6",
     "readline-sync": "^1.4.7",
     "string": "^3.3.3",
     "tlk-lexer": "0.0.5",
-    "uglify-js": "^2.8.29",
-    "toloframework-permissive-json": "^1.0.0"
+    "toloframework-permissive-json": "^1.0.0",
+    "uglify-js": "^2.8.29"
   },
   "homepage": "https://github.com/tolokoban/ToloFrameWork",
   "main": "index.js",

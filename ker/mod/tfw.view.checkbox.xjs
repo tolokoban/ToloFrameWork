@@ -1,0 +1,9 @@
+// tfw.view.checkbox
+{View DIV
+ class:tfw-view-checkbox
+ class.ok:{link value}
+ [
+   {DIV class:btn [{DIV}]}
+   {DIV {link content}}
+ ]
+}
