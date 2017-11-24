@@ -1,6 +1,7 @@
 "use strict";
 
 var $ = require("dom");
+var PM = require("tfw.binding.property-manager");
 
 
 exports.Tag = function(tagName, attribs) {
@@ -12,19 +13,14 @@ exports.Tag = function(tagName, attribs) {
   if( Array.isArray(attribs) ) {
     var that = this;
     attribs.forEach(function (attName) {
-      
+      PM( that ).create(attName, {
+        get: function() {
+          return elem.getAttribute( attName );
+        },
+        set: function(v) {
+          elem.setAttribute( attName, v );
+        }
+      });
     });
   }
-};
-
-exports.Tag.prototype.add = function() {
-  var args = Array.slice.call(arguments);
-  args.unshift( this.$ );
-  return $.add.apply($, args);
-};
-
-exports.Tag.prototype.clear = function() {
-  var args = Array.slice.call(arguments);
-  args.unshift( this.$ );
-  return $.clear.apply($, args);
 };

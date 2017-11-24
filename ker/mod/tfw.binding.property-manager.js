@@ -29,7 +29,7 @@ function PropertyManager( container ) {
  * @param {any} value.
  */
 PropertyManager.prototype.set = function( propertyName, value ) {
-  this._p( propertyName ).val = value;
+  this.create( propertyName ).set( value );
 };
 
 /**
@@ -40,34 +40,34 @@ PropertyManager.prototype.set = function( propertyName, value ) {
  *
  */
 PropertyManager.prototype.get = function( propertyName ) {
-  return this._p( propertyName ).val;
+  return this.create( propertyName ).get();
 };
 
 PropertyManager.prototype.propertyId = function( propertyName ) {
-  return this._p( propertyName ).id;
+  return this.create( propertyName ).id;
 };
 
 PropertyManager.prototype.fire = function( propertyName, wave ) {
-  var prop = this._p( propertyName );
-  prop.event.fire( prop.val, propertyName, this._container, wave );
+  var prop = this.create( propertyName );
+  prop.event.fire( prop.get(), propertyName, this._container, wave );
   if( propertyName !== '*' ) {
     // You can listen  on all the properties of  a PropertyManager using
     // the special property name `*`.
-    var propContainer = this._p( '*' );
-    propContainer.event.fire( prop.val, propertyName, this._container, wave );
+    var propContainer = this.create( '*' );
+    propContainer.event.fire( prop.get(), propertyName, this._container, wave );
   }
 };
 
 PropertyManager.prototype.change = function( propertyName, value, wave ) {
-  var prop = this._p( propertyName );
+  var prop = this.create( propertyName );
 
-  var currentValue = prop.val;
+  var currentValue = prop.get();
   var converter = prop.converter;
   if( typeof converter === 'function' ) {
     value = converter( value );
   }
   if( value !== currentValue ) {
-    prop.val = value;
+    prop.set( value );
     var that = this;
     exec(prop, function() {
       // Fire change event.
@@ -85,7 +85,7 @@ PropertyManager.prototype.change = function( propertyName, value, wave ) {
  * @return {function} Current converter.
  */
 PropertyManager.prototype.converter = function( propertyName, converter ) {
-  var prop = this._p( propertyName );
+  var prop = this.create( propertyName );
   if( typeof converter === 'function' ) {
     prop.converter = converter;
   }
@@ -99,7 +99,7 @@ PropertyManager.prototype.converter = function( propertyName, converter ) {
 };
 
 PropertyManager.prototype.delay = function( propertyName, delay ) {
-  var prop = this._p( propertyName );
+  var prop = this.create( propertyName );
   delay = parseFloat( delay );
   if( isNaN( delay ) ) return prop.delay;
   prop.delay = delay;
@@ -113,7 +113,7 @@ PropertyManager.prototype.delay = function( propertyName, delay ) {
  * when a property changed.
  */
 PropertyManager.prototype.on = function( propertyName, action ) {
-  var prop = this._p( propertyName );
+  var prop = this.create( propertyName );
   prop.event.add( action );
 };
 
@@ -125,7 +125,7 @@ PropertyManager.prototype.on = function( propertyName, action ) {
  * when a property changed.
  */
 PropertyManager.prototype.off = function( propertyName, action ) {
-  var prop = this._p( propertyName );
+  var prop = this.create( propertyName );
   prop.event.remove( action );
 };
 
@@ -160,21 +160,39 @@ module.exports.isLinkable = function( obj, propertyName ) {
 };
 
 
-// Private.
-PropertyManager.prototype._p = function( propertyName ) {
+/**
+ * @export .create
+ * Create an new linkable property.
+ * @param {string} propertyName - Name of the property.
+ * @param {function=undefined} options.get - Special getter.
+ * @param {function=undefined} options.set - Special setter.
+ */
+PropertyManager.prototype.create = function( propertyName, options ) {
+  var that = this;
+  if( typeof options === 'undefined' ) options = {};
   if( typeof propertyName !== 'string' ) fail("propertyName must be a string!");
   var p = this._props[propertyName];
   if( !p ) {
+    Object.defineProperty(this._container, propertyName, {
+      get: that.get.bind( that, propertyName ),
+      set: function(v) {
+        that.set( propertyName, v );
+        that.fire( propertyName );
+      },
+      enumerable: true, configurable: false
+    });
+    var value = undefined;
     p = {
-      val: undefined,
       event: new Event(),
       filter: undefined,
       converter: undefined,
       delay: 0,
       action: null,
-      timeout: 0
+      timeout: 0,
+      get: typeof options.get === 'function' ? options.get : function() { return value; },
+      set: typeof options.set === 'function' ? options.set : function(v) { value = v; }
     };
-    this._props[propertyName] = p;
+    this._props[propertyName] = p;    
   }
   return p;
 };

@@ -1,5 +1,5 @@
 // tfw.view.checkbox
-{View DIV
+{View BUTTON
  view.attribs: {
    value: false,
    reversed: false,
@@ -9,7 +9,10 @@
  class.ok:value
  event.pointerdown:{Toggle value}
  [
-   {DIV class:btn [{DIV}]}
-   {DIV {Attrib content}}
+   {DIV class:pin [
+     {DIV class:"bar thm-bg2"}
+     {DIV class:"btn thm-ele2 thm-bg1"}
+   ]}
+   {DIV class:txt {Attrib content}}
  ]
 }
