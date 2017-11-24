@@ -1,5 +1,7 @@
 "use strict";
 
+var $ = require("dom");
+
 
 exports.Tag = function(tagName, attribs) {
   var elem = document.createElement(tagName);
@@ -16,8 +18,13 @@ exports.Tag = function(tagName, attribs) {
 };
 
 exports.Tag.prototype.add = function() {
-  var elem = this.$;
-  Array.slice.call(arguments).forEach(function(child, idx) {
-    elem.appendChild( child.$ );
-  });
+  var args = Array.slice.call(arguments);
+  args.unshift( this.$ );
+  return $.add.apply($, args);
+};
+
+exports.Tag.prototype.clear = function() {
+  var args = Array.slice.call(arguments);
+  args.unshift( this.$ );
+  return $.clear.apply($, args);
 };

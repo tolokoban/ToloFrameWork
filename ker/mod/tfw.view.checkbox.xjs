@@ -1,9 +1,15 @@
 // tfw.view.checkbox
 {View DIV
+ view.attribs: {
+   value: false,
+   reversed: false,
+   content: Checkbox
+ }
  class:tfw-view-checkbox
- class.ok:{link value}
+ class.ok:value
+ event.pointerdown:{Toggle value}
  [
    {DIV class:btn [{DIV}]}
-   {DIV {link content}}
+   {DIV {Attrib content}}
  ]
 }
