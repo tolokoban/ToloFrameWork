@@ -55,3 +55,11 @@ button.tfw-view-checkbox > div.pin > div.btn {
   transform: translateX(0);
   transition: all .1s;
 }
+
+button.tfw-view-checkbox.ok > div.txt {
+  opacity: 1;
+}
+
+button.tfw-view-checkbox.ok > div.pin > div.btn {
+  transform: translateX(14px);
+}

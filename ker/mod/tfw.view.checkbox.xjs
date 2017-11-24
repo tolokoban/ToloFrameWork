@@ -6,12 +6,14 @@
    content: Checkbox
  }
  class:tfw-view-checkbox
- class.ok:value
- event.pointerdown:{Toggle value}
+ class.ok:{Attrib value}
+ event.tap:{Toggle value}
  [
    {DIV class:pin [
-     {DIV class:"bar thm-bg2"}
-     {DIV class:"btn thm-ele2 thm-bg1"}
+     {DIV class:"bar thm-ele2"
+       class.thm-bgSL|thm-bg2: {Attrib value} }
+     {DIV class:"btn thm-ele2"
+       class.thm-bgS|thm-bg1: {Attrib value} }
    ]}
    {DIV class:txt {Attrib content}}
  ]

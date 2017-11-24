@@ -1,4 +1,4 @@
-exports.config={"name":"\"toloframework\"","description":"\"Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.\"","author":"\"Tolokoban\"","version":"\"0.42.1\"","major":"0","minor":"42","revision":"1","date":"2017-10-10T09:15:02.000Z","consts":{}};
+exports.config={"name":"\"toloframework\"","description":"\"Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.\"","author":"\"Tolokoban\"","version":"\"0.42.2\"","major":"0","minor":"42","revision":"2","date":"2017-11-24T17:56:14.000Z","consts":{}};
 var currentLang = null;
 exports.lang = function(lang) {
     if (lang === undefined) {
