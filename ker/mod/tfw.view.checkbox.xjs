@@ -1,20 +1,21 @@
 // tfw.view.checkbox
 {View BUTTON
- view.attribs: {
-   value: false,
-   reversed: false,
-   content: Checkbox
- }
- class:tfw-view-checkbox
- class.ok:{Attrib value}
- event.tap:{Toggle value}
- [
-   {DIV class:pin [
-     {DIV class:"bar thm-ele2"
-       class.thm-bgSL|thm-bg2: {Attrib value} }
-     {DIV class:"btn thm-ele2"
-       class.thm-bgS|thm-bg1: {Attrib value} }
-   ]}
-   {DIV class:txt {Attrib content}}
- ]
+  view.attribs: {
+    value: false,
+    reversed: false,
+    content: Checkbox
+  }
+  class:tfw-view-checkbox
+  class.ok:{Attrib value}
+  event.tap:{Toggle value}
+  event.keyup:{Toggle value}
+  [
+    {DIV class:pin [
+        {DIV class:"bar thm-ele2"
+          class.thm-bgSL|thm-bg2: {Attrib value} }
+        {DIV class:"btn thm-ele2"
+          class.thm-bgS|thm-bg1: {Attrib value} }
+      ]}
+    {DIV class:txt {Attrib content}}
+  ]
 }

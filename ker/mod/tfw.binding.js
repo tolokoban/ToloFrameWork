@@ -85,29 +85,6 @@ exports.defProp = function( obj, name, opts, initialValues ) {
   }
 };
 
-/**
- * This is a special property which emit a change event as soon as any
- * value is set to  it, even if this valule has  already been set just
- * before. Moreover, the value of this attribute is always its name.
- * This is used for action properties in buttons, for instance.
- */
-exports.defAction = function( obj, name ) {
-  var pm = PropertyManager( obj );
-
-  Object.defineProperty( obj, name, {
-    set: function(v) { 
-      pm.set( name, name ); 
-      pm.fire( name ); 
-    },
-    get: function() { return name; },
-    configurable: false,
-    enumerable: true
-  });
-
-  return pm;
-};
-
-
 function createConverter( arg ) {
   if( typeof arg === 'function' ) return arg;
   return undefined;

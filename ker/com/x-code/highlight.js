@@ -3,6 +3,14 @@
 var Path = require( "path" );
 
 var TOKENS = {
+  xjs: {
+    comment: /^\/\/[^\n\r]*/,
+    keyword: /^[a-z]+\.[^ \n\r\t{},'":]+\s*:/,
+    "function": /^[^ \n\r\t{},'":]+\s*:/,
+    string: /^"((\\"|[^"])*")|^('(\\'|[^']+)*')/,
+    number: /^[-+]?[0-9]+(\.[0-9]+)?([eE][0-9]+)?/,
+    symbol: /^[{}\[\]]+/
+  },
   js: {
     comment: /^\/\/[^\n\r]*/,
     "function": /^[$_a-zA-Z][$_a-zA-Z0-9]*(?=([ \n\r\t]*\())/,
@@ -77,13 +85,13 @@ var TOKENS = {
     operator: /^(&[a-zA-Z]+;|===|!==|==|!=|<=|>=|<|>|\|\||&&|\*|\+|\-|\/|%|[\+=&\|\-]+)/,
     KEYWORDS1: [
       "attribute", "const", "uniform", "varying",
-      "break", "continue", "do", "for", "while", 
+      "break", "continue", "do", "for", "while",
       "if", "else",
       "in", "out", "inout",
       "float", "int", "void", "bool",
       "true", "false",
       "lowp", "mediump", "highp", "precision", "invariant",
-      "discard", "return", 
+      "discard", "return",
       "mat2", "mat3", "mat4",
       "vec2", "vec3", "vec4", "ivec2", "ivec3", "ivec4", "bvec2", "bvec3", "bvec4",
       "sampler2D", "samplerCube",
@@ -92,7 +100,7 @@ var TOKENS = {
     KEYWORDS2: [
       "radians", "degrees", "sin", "cos", "tan", "asin", "acos", "atan",
       "pow", "exp", "log", "exp2", "log2", "sqrt", "inversesqrt",
-      "abs", "sign", "floor", "ceil", "fract", "mod", "min", "max", 
+      "abs", "sign", "floor", "ceil", "fract", "mod", "min", "max",
       "clamp", "mix", "step", "smoothstep",
       "length", "distance", "dot", "cross", "normalize", "faceforward", "reflect", "refract",
       "matrixCompMult",
@@ -114,13 +122,13 @@ function h( code, lang, libs ) {
   var N = libs.Tree;
   code = code.trim( ) + " ";
   var tokens = TOKENS[lang] || TOKENS.js,
-    buff = '',
-    idx = 0,
-    key,
-    rx,
-    match,
-    found,
-    c;
+      buff = '',
+      idx = 0,
+      key,
+      rx,
+      match,
+      found,
+      c;
   if (!Array.isArray( tokens.KEYWORDS1 )) {
     tokens.KEYWORDS1 = [ ];
   }
@@ -134,7 +142,7 @@ function h( code, lang, libs ) {
     while ( idx < code.length ) {
       found = false;
       for ( key in tokens ) {
-        if (key === key.toUpperCase( )) 
+        if (key === key.toUpperCase( ))
           break;
         rx = tokens[key];
         match = rx.exec(code.substr( idx ));

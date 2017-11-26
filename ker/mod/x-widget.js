@@ -37,7 +37,13 @@ function Widget1(id, modName, args, attribs ) {
   try {
     var module = require( modName );
     var wdg = new module( args );
-    var elem = typeof wdg.element === 'function' ? wdg.element() : wdg.element;
+    var elem;
+    if( typeof wdg.element === 'function' ) elem = wdg.element();
+    else if( wdg.element instanceof Node ) elem = wdg.element;
+    else if( wdg.$ instanceof Node ) elem = wdg.$;
+    else {
+      throw Error("Sorry, but \"" + modName + "\" is not a widget nor a view!", wdg);
+    }
     var dst = document.getElementById( id );
     if (dst) {
       // This widget does exist in the current DOM.

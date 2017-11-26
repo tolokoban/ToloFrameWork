@@ -1,0 +1,17 @@
+// tfw.view.checkbox
+{View BUTTON
+  view.attribs: {
+    action: {action}
+    content: "Click me!"
+    flat: false
+    type: {[default primary secondary]}
+  }
+  class: "tfw-view-button thm-bgP"
+  class.|thm-ele2: {Attrib flat}
+  //class.*: {Attrib [flat,type] getClass() }
+  event.tap: {Set action true}
+  event.keyup: {Set action true}
+  [
+    {DIV class: text {Attrib content}}
+  ]
+}

@@ -166,6 +166,8 @@ module.exports.isLinkable = function( obj, propertyName ) {
  * @param {string} propertyName - Name of the property.
  * @param {function=undefined} options.get - Special getter.
  * @param {function=undefined} options.set - Special setter.
+ * @param {function=undefined}  options.cast - Conversion to  apply to
+ * the value before setting it.
  */
 PropertyManager.prototype.create = function( propertyName, options ) {
   var that = this;
@@ -182,6 +184,18 @@ PropertyManager.prototype.create = function( propertyName, options ) {
       enumerable: true, configurable: false
     });
     var value = undefined;
+    var setter;
+    if( typeof options.cast === 'function' ) {
+      if( typeof options.set === 'function' ) {
+        setter = function(v) {
+          options.set( options.cast( v ) );
+        };
+      } else {
+        setter = function(v) { value = options.cast(v); };
+      }
+    } else {
+      setter = typeof options.set === 'function' ? options.set : function(v) { value = v; };
+    }
     p = {
       event: new Event(),
       filter: undefined,
@@ -190,11 +204,33 @@ PropertyManager.prototype.create = function( propertyName, options ) {
       action: null,
       timeout: 0,
       get: typeof options.get === 'function' ? options.get : function() { return value; },
-      set: typeof options.set === 'function' ? options.set : function(v) { value = v; }
+      set: setter
     };
     this._props[propertyName] = p;    
   }
   return p;
+};
+
+
+/**
+ * This is a special property which emit a change event as soon as any
+ * value is set to  it, even if this valule has  already been set just
+ * before. Moreover, the value of this attribute is always its name.
+ * This is used for action properties in buttons, for instance.
+ */
+PropertyManager.prototype.createAction = function( propertyName ) {
+  var that = this;
+
+  return this._props[propertyName] = {
+      event: new Event(),
+      filter: undefined,
+      converter: undefined,
+      delay: 0,
+      action: null,
+      timeout: 0,
+      get: function() { return propertyName; },
+      set: function() { that.fire( propertyName, propertyName ); }
+  };
 };
 
 

@@ -8,7 +8,7 @@
  */
 var Highlight = require("./highlight");
 
-var LANGUAGES = ['js', 'glsl', 'css', 'html', 'xml'];
+var LANGUAGES = ['js', 'glsl', 'css', 'html', 'xml', 'xjs'];
 
 
 exports.tags = ["x-code"];
@@ -18,38 +18,40 @@ exports.priority = 0;
  * Compile a node of the HTML tree.
  */
 exports.compile = function(root, libs) {
-    if( typeof root.attribs === 'undefined' ) root.attribs = {};
+  if( typeof root.attribs === 'undefined' ) root.attribs = {};
 
-    var src = root.attribs.src;
-    var lang = root.attribs.lang || 'js';
-    if (LANGUAGES.indexOf( lang ) === -1) {
-      libs.fatal("Unknown language: " + lang + "!");
+  var src = root.attribs.src;
+  var lang = root.attribs.lang || 'js';
+  if (LANGUAGES.indexOf( lang ) === -1) {
+    libs.fatal("Unknown language: " + lang + "!");
+  }
+  var code = '';
+  if (src) {
+    if (!libs.fileExists(src)) {
+      src += '.js';
     }
-    var code = '';
-    if (src) {
-        if (!libs.fileExists(src)) {
-            src += '.js';
-        }
-        if (!libs.fileExists(src)) {
-            libs.fatal("File not found: \"" + src + "\"!");
-        }
-        libs.addInclude(src);
-        code = libs.readFileContent(src);
-    } else {
-        code = libs.Tree.text(root);
+    if (!libs.fileExists(src)) {
+      libs.fatal("File not found: \"" + src + "\"!");
     }
-    if (root.attribs.section) {
-      code = restrictToSection( code, root.attribs.section );
-      if( code.length === 0 ) {
-        libs.fatal("Unable to find section #(" + root.attribs.section + ")");
-      }
+    libs.addInclude(src);
+    code = libs.readFileContent(src);
+  } else {
+    code = libs.Tree.text(root);
+  }
+  if (root.attribs.section) {
+    code = restrictToSection( code, root.attribs.section );
+    if( code.length === 0 ) {
+      libs.fatal("Unable to find section #(" + root.attribs.section + ")");
     }
-    code = removeLeftMargin( code );
-    var highlightedCode = Highlight.parseCode(code, lang, libs);
-    root.type = libs.Tree.VOID;
-    delete root.attribs;
-    delete root.name;
-    libs.Tree.text(root, highlightedCode);
+  }
+  code = removeLeftMargin( code );
+  var highlightedCode = Highlight.parseCode(code, lang, libs);
+  root.type = libs.Tree.VERBATIM;
+  root.text = highlightedCode;
+  delete root.attribs;
+  delete root.name;
+  delete root.children;  
+  //libs.Tree.text(root, highlightedCode);
 };
 
 /**
@@ -86,23 +88,23 @@ function removeLeftMargin( code ) {
  *
  */
 function restrictToSection( code, section ) {
-    var linesToKeep = [];
-    var outOfSection = true;
-    var lookFor = '#(' + section + ')';
+  var linesToKeep = [];
+  var outOfSection = true;
+  var lookFor = '#(' + section + ')';
 
-    code.split('\n').forEach(function( line ) {
-        if (outOfSection) {
-            if (line.indexOf( lookFor ) > -1) {
-                outOfSection = false;
-            }
-        } else {
-            if (line.indexOf( lookFor ) > -1) {
-                outOfSection = true;
-            } else {
-                linesToKeep.push( line );
-            }
-        }
-    });
+  code.split('\n').forEach(function( line ) {
+    if (outOfSection) {
+      if (line.indexOf( lookFor ) > -1) {
+        outOfSection = false;
+      }
+    } else {
+      if (line.indexOf( lookFor ) > -1) {
+        outOfSection = true;
+      } else {
+        linesToKeep.push( line );
+      }
+    }
+  });
 
-    return linesToKeep.join('\n');
+  return linesToKeep.join('\n');
 }

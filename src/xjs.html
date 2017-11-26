@@ -1,0 +1,58 @@
+<page title="XJS user manual 666">
+    <x-md>
+# XJS against all the boilerplate!
+The Javascript for a module is usually stored in a `module.js` file. But because writing some sort of code can be fastidious, toloframework can use a `module.xjs` file to generate Javascript before minification. XJS files are written in a syntax near the JSON one: it is just less restrictive on how you use strings and it allows you to put Javascript comments.
+
+XJS is extensible and you can easily add your own code generators.
+For now, we will focus on the builtin generator: __View__.
+
+## XJS View
+Writing good code for visual components with data binding can result in lot of unreadable javascript code. View helps you writing such a code in a declarative way. Let's take an example:
+
+<x-widget name="tfw.view.checkbox" $content="Hello world!" $value="true"/>
+
+To create this checkbox component, all you need is a `jsx` file and a `css` file. And you can click on it: it really works! And when it has the focus, you can use the keyboard to toggle its state. And all this without a single line of javascript code.
+
+<x-code lang="xjs">// tfw.view.checkbox
+{View BUTTON
+  view.attribs: {
+    value: false,
+    reversed: false,
+    content: Checkbox
+  }
+  class:tfw-view-checkbox
+  class.ok:{Attrib value}
+  event.tap:{Toggle value}
+  event.keyup:{Toggle value}
+  [
+    {DIV class:pin [
+        {DIV class:"bar thm-ele2"
+          class.thm-bgSL|thm-bg2: {Attrib value} }
+        {DIV class:"btn thm-ele2"
+          class.thm-bgS|thm-bg1: {Attrib value} }
+      ]}
+    {DIV class:txt {Attrib content}}
+  ]
+}</x-code>
+To understand this syntax you must know that permissive JSON uses implicit attribute names. So stuff like `{Attrib value}` can be translated in pure JSON as `{"0": "Attrib", "1": "value"}`.
+
+Basically, XJS takes an object and generate javascript code. To know which code generator to use, it looks at the attribute "0" of the object. In our case, this is __View__.
+
+A view is an HTML element which can contain other HTML elements or views. When the first implicit attribute is uppercase, this is an HTML element, otherwise this is a View. As you can see here, this view is a BUTTON. The module `tfw.view.checkbox` will be a class which you can instantiate and use like this:
+<x-code>var Checkbox = require("tfw.view.checkbox");
+var chk = new Checkbox({ content: "Hello world!" });
+document.body.appendChild( chk.$ );
+</x-code>
+
+All views have the `$` attribute which maps to the root HTML element.
+Other attributes can be defined with their default values in the XJS object:
+<x-code lang="xjs">view.attribs: {
+  value: false,
+  reversed: false,
+  content: Checkbox
+}</x-code>
+
+
+
+    </x-md>
+</page>
