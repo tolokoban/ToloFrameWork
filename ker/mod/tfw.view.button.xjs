@@ -7,7 +7,7 @@
     flat: {boolean init: false}
     type: {[default primary secondary]}
   }
-  class: "tfw-view-button thm-bgP"
+  class: "tfw-view-button"
   class.*: {[flat,type,pressed] getClasses }
   event.tap: {Set action true}
   event.keyup: {Set action true}

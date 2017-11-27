@@ -29,7 +29,7 @@ exports.Tag = function(tagName, attribs) {
  * Apply a  set of CSS  classes after removing the  previously applied
  * one for the same `id`.
  */
-exports.Tag.protoype.applyClass = function( newClasses, id ) {
+exports.Tag.prototype.applyClass = function( newClasses, id ) {
   var elem = this.$;
   if( typeof id === 'undefined' ) id = 0;
   if( typeof this._applyer === 'undefined' ) this._applyer = {};
