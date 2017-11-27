@@ -53,7 +53,7 @@ You can set CSS classes in a static way:
 ```
 {DIV class: "elevation-8 round"}
 ```
-or in a bound way:
+or in a bounded way:
 ```
 {DIV class: {Bind style}}
 ```
