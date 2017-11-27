@@ -3,15 +3,18 @@
   view.attribs: {
     action: {action}
     content: "Click me!"
-    flat: false
+    pressed: {boolean init: false}
+    flat: {boolean init: false}
     type: {[default primary secondary]}
   }
   class: "tfw-view-button thm-bgP"
-  class.|thm-ele2: {Attrib flat}
-  //class.*: {Attrib [flat,type] getClass() }
+  class.*: {[flat,type,pressed] getClasses }
   event.tap: {Set action true}
   event.keyup: {Set action true}
+  event.down: {Set pressed true}
+  event.up: {Set pressed false}
   [
-    {DIV class: text {Attrib content}}
+    {DIV view.id:text, class:text {Bind content}}
+    {DIV view.id:icon, class:icon {Bind icon}}
   ]
 }
