@@ -28,11 +28,16 @@ If the value is a special object, it must have this syntax:
 * `init`: (_optional_) initial value. Must be a standard value.
 
 ### Defining HTML elements
-```{TEXTAREA cols: 80 rows: 5 "Hello world!"}```
-```{UL [
+```
+{TEXTAREA cols: 80 rows: 5 "Hello world!"}
+```
+
+```
+{UL [
   {LI [{B First} ": Arthur."}]}
   {LI [{B Second} ": Bonjovi."}]}
-]}```
+]}
+```
 
 * `"0"`: The element name must be uppercase.
 * `"1"`: The children cvan be of three types:
@@ -45,9 +50,13 @@ If the value is a special object, it must have this syntax:
 
 #### CSS Classes manipulation
 You can set CSS classes in a static way:
-```{DIV class: "elevation-8 round"}```
+```
+{DIV class: "elevation-8 round"}
+```
 or in a bound way:
-```{DIV class: {Bind style}}```
+```
+{DIV class: {Bind style}}
+```
 
 You can also bind the existence of a given class to a boolean property:
 ```
