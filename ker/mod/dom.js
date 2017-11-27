@@ -236,9 +236,15 @@ function off( element ) {
   delete element[SYMBOL].events;
 }
 
-function on( element, slots ) {
+function on( element, slots, extra ) {
   // If only a function is passed, we consider this is a Tap event.
   if( typeof slots === 'function' || slots === null ) slots = { tap: slots };
+  else if( typeof slots === 'string' && typeof extra === 'function' ) {
+    // Syntax: $.on( elem, 'tap', function(evt) {...} )
+    var obj = {};
+    obj[slots] = extra;
+    slots = obj;
+  }
 
   if( Array.isArray( element ) ) {
     element.forEach(function ( elem ) {
