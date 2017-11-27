@@ -8,6 +8,7 @@
     type: {[default primary secondary]}
   }
   class: "tfw-view-button"
+  class.flat: {Bind flat}
   class.*: {[flat,type,pressed] getClasses }
   event.tap: {Set action true}
   event.keyup: {Set action true}
