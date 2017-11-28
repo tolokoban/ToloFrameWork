@@ -3,13 +3,19 @@
   view.attribs: {
     action: {action}
     content: "Click me!"
-    pressed: {boolean init: false}
-    flat: {boolean init: false}
-    type: {[default primary secondary]}
+    pressed: {boolean false}
+    flat: {boolean false}
+    type: {[default primary secondary] default}
+    enabled: {boolean true}
+    visible: {boolean true}
+    wide: {boolean false}
   }
   class: "tfw-view-button"
   class.flat: {Bind flat}
-  class.*: {[flat,type,pressed] getClasses }
+  class.|hide: {Bind visible}
+  class.wide: {Bind wide}
+  class.*: {[flat,type,pressed] getClasses}
+  attrib.|disabled: {Bind enabled}
   event.tap: {Set action true}
   event.keyup: {Set action true}
   event.down: {Set pressed true}

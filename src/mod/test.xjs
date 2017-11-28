@@ -1,0 +1,16 @@
+{View DIV [
+  {tfw.view.button
+    content: "VNegoce Power!"
+    visible: {Bind "visible/value"}
+    enabled: {Bind "enabled/value"}
+    wide: {Bind "wide/value"}
+    flat: {Bind "flat/value"}
+    type: {Bind "type/value"}
+    }
+  {HR}
+  {tfw.view.checkbox view.id: visible, content: visible, value: true}
+  {tfw.view.checkbox view.id: enabled, content: enabled, value: true}
+  {tfw.view.checkbox view.id: wide, content: wide, value: false}
+  {tfw.view.checkbox view.id: flat, content: flat, value: false}
+  {INPUT view.id: type, placeholder: "type", value: "default" }
+]}

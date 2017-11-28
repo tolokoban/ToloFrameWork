@@ -33,8 +33,8 @@
   background-color: transparent;
 }
 
-.tfw-view-button.flat:hover {
-  background-color: rgba(128,128,128,.5);
+.tfw-view-button[!disabled]:hover {
+  filter: saturate(100%) brightness(120%);
 }
 
 .tfw-view-button > div.text {
@@ -43,7 +43,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  text-align: left;
+  text-align: center;
   text-transform: uppercase;
   margin: 0 8px;
 }
@@ -65,12 +65,12 @@
   margin: 0 4px 0 8px;
 }
 
-.tfw-view-button.disabled:hover,
-.tfw-view-button.disabled {
+.tfw-view-button[disabled]:hover,
+.tfw-view-button[disabled] {
   pointer-event: none;
   text-decoration: none;
   cursor: default;
-  background: #888;
+  background: rgba(128,128,128,.5);
   text-shadow: none;
   box-shadow: none;
   font-style: italic;

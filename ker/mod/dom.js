@@ -167,6 +167,7 @@ function att( element, attribs, value ) {
   element = $(element);
   var key, val;
   if (typeof attribs === 'string') {
+    if( typeof value === 'undefined' ) value = "";
     key = attribs;
     attribs = {};
     attribs[key] = value;

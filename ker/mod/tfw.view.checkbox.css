@@ -12,6 +12,15 @@ button.tfw-view-checkbox {
   cursor: pointer;
 }
 
+button.tfw-view-checkbox.wide {
+  display: flex;
+}
+
+button.tfw-view-checkbox.wide.hide,
+button.tfw-view-checkbox.hide {
+  display: none;
+}
+
 button.tfw-view-checkbox > div.txt {
   order: 1;
   opacity: .6;

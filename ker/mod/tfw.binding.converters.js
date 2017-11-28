@@ -1,8 +1,30 @@
 "use strict";
 
 var CONVERTERS = {
-  boolean: function() { return function(v) { return v ? true : false; }; },
-  not: function() { return function(v) { return v ? false : true; }; },
+  boolean: function() {
+    return function(v) {
+      switch( typeof v ) {
+      case 'string':
+        return v.trim().toLowerCase() === 'true';
+      case 'number':
+        return v !== 0;
+      default:
+        return v ? true : false;
+      }
+    };
+  },
+  not: function() {
+    return function(v) {
+      switch( typeof v ) {
+      case 'string':
+        return v.trim().toLowerCase() !== 'true';
+      case 'number':
+        return v === 0;
+      default:
+        return v ? false : true;
+      }
+    };
+  },
   string: function() { return function(v) { return "" + v; }; },
   integer: function( valueForNaN ) {
     if( typeof valueForNaN === 'number' ) {

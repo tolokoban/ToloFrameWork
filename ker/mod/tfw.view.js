@@ -13,14 +13,24 @@ exports.Tag = function(tagName, attribs) {
   if( Array.isArray(attribs) ) {
     var that = this;
     attribs.forEach(function (attName) {
-      PM( that ).create(attName, {
-        get: function() {
-          return elem.getAttribute( attName );
-        },
-        set: function(v) {
-          elem.setAttribute( attName, v );
-        }
-      });
+      if( attName.toLowerCase() === 'value' ) {
+        PM( that ).create(attName, {
+          get: function() { return elem.value; },
+          set: function(v) { elem.value = v; }
+        });
+        elem.addEventListener( "input", function() {
+          PM( that ).fire( attName );
+        }, false);
+      } else {
+        PM( that ).create(attName, {
+          get: function() {
+            return elem.getAttribute( attName );
+          },
+          set: function(v) {
+            elem.setAttribute( attName, v );
+          }
+        });
+      }
     });
   }
 };
@@ -33,7 +43,7 @@ exports.Tag.prototype.applyClass = function( newClasses, id ) {
   var elem = this.$;
   if( typeof id === 'undefined' ) id = 0;
   if( typeof this._applyer === 'undefined' ) this._applyer = {};
-  
+
   var oldClasses = this._applyer[id];
   if( Array.isArray( oldClasses ) ) {
     oldClasses.forEach( $.removeClass.bind( $, elem ) );
@@ -41,4 +51,3 @@ exports.Tag.prototype.applyClass = function( newClasses, id ) {
   this._applyer[id] = newClasses;
   newClasses.forEach( $.addClass.bind( $, elem ) );
 };
-
