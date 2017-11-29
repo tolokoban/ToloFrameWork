@@ -1,0 +1,31 @@
+// tfw.view.options
+// Kind og radio buttons in a rectangle layout.
+{View DIV class: tfw-view-options
+  view.attribs: {
+    type: {[default, primary, secondary] default}
+    value: {string ""}
+    items: {any { yes: Yes, no: No }}
+  }
+  view.templates: {
+    item: {View
+      view.attribs: {
+        content: {any}
+        index: {integer 0}
+        selection: {integer 0}
+      }
+      DIV class: item
+      [
+        {DIV [{DIV}]}
+        {DIV {Bind content}}
+      ]
+    }
+  }
+  {Array items
+    template: item
+    map: {
+      selection: selection
+      index: (index)
+      content: (item)
+    }
+  }
+}

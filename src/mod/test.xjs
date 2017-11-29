@@ -5,8 +5,8 @@
     enabled: {Bind "enabled/value"}
     wide: {Bind "wide/value"}
     flat: {Bind "flat/value"}
-    type: {Bind "type/value"}
-    }
+    type: {Bind "type/value" delay: 500}
+  }
   {HR}
   {tfw.view.checkbox view.id: visible, content: visible, value: true}
   {tfw.view.checkbox view.id: enabled, content: enabled, value: true}
