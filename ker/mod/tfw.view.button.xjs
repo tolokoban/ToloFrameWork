@@ -2,6 +2,7 @@
 {View BUTTON
   view.attribs: {
     action: {action}
+    icon: ""
     content: "Click me!"
     pressed: {boolean false}
     flat: {boolean false}
@@ -21,7 +22,9 @@
   event.down: {Set pressed true}
   event.up: {Set pressed false}
   [
+    {DIV view.id:icon, class:icon [
+      {wdg.icon icon: {Bind icon}}
+    ]}
     {DIV view.id:text, class:text {Bind content}}
-    {DIV view.id:icon, class:icon {Bind icon}}
   ]
 }

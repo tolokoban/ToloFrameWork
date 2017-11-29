@@ -1,30 +1,8 @@
 "use strict";
 
 var CONVERTERS = {
-  boolean: function() {
-    return function(v) {
-      switch( typeof v ) {
-      case 'string':
-        return v.trim().toLowerCase() === 'true';
-      case 'number':
-        return v !== 0;
-      default:
-        return v ? true : false;
-      }
-    };
-  },
-  not: function() {
-    return function(v) {
-      switch( typeof v ) {
-      case 'string':
-        return v.trim().toLowerCase() !== 'true';
-      case 'number':
-        return v === 0;
-      default:
-        return v ? false : true;
-      }
-    };
-  },
+  boolean: function() { return booleanConverter; },
+  not: function() { return notConverter; },
   string: function() { return function(v) { return "" + v; }; },
   integer: function( valueForNaN ) {
     if( typeof valueForNaN === 'number' ) {
@@ -54,7 +32,10 @@ var CONVERTERS = {
       var idx = Math.max( 0, caseInsensitiveList.indexOf( ("" + v).toLowerCase() ) );
       return list[idx];
     };
-  }
+  },
+  unit: function() { return cssUnitConverter; },
+  isEmptyString: function() { return isEmptyStringConverter; },
+  isNotEmptyString: function() { return isEmptyStringConverter; }
 };
 
 exports.get = function( converterName ) {
@@ -69,3 +50,43 @@ exports.set = function( converterName, converter ) {
     delete CONVERTERS[converterName];
   }
 };
+
+
+
+var RX_CSS_UNIT = /^(-?[.0-9]+)[ \n\r]*([a-z%]*)/;
+function cssUnitConverter(v) {
+  if( typeof v === 'number' ) return v + "px";
+  v = ("" + v).trim().toLowerCase();
+  var m = RX_CSS_UNIT.exec( v );
+  if( !m ) return "0";
+  var scalar = parseFloat( m[1] );
+  if( isNaN( scalar ) ) return "0";
+  var unit = m[2];
+  if( unit.length < 1 ) unit = "px";
+  return scalar + unit;
+}
+
+
+function booleanConverter(v) {
+  switch( typeof v ) {
+  case 'string':
+    return v.trim().toLowerCase() === 'true';
+  case 'number':
+    return v !== 0;
+  default:
+    return v ? true : false;
+  }
+}
+
+
+function notConverter(v) { return !booleanConverter( v ); }
+
+
+function isEmptyStringConverter(v) {
+  return ("" + v).trim().length === 0;
+}
+
+
+function isNotEmptyStringConverter(v) {
+  return ("" + v).trim().length > 0;
+}

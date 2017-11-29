@@ -1,0 +1,8 @@
+// tfw.view.icon
+{View DIV class: tfw-view-icon
+  view.attribs: {
+    visible: {boolean true}
+    value: {string ok}
+    width: {unit 24}
+  }  
+}
