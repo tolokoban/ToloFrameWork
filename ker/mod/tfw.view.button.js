@@ -1,5 +1,11 @@
 "use strict";
 
+var CODE_BEHIND = {
+  getClasses: getClasses
+};
+
+
+
 function getClasses() {
   var classes = [];
   if( this.flat ) {

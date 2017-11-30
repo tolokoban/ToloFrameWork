@@ -13,8 +13,8 @@ require("polyfill.classList");
 var PointerEvents = require("tfw.pointer-events");
 
 var $ = function(dom) {
-  if (!dom) {
-    debugger;
+  if( dom instanceof Node ) return dom;
+  if ( dom === undefined || dom === null ) {
     throw Error("`dom` is not a valid element!", dom);
   }
   if( dom.$ instanceof Node ) return dom.$;

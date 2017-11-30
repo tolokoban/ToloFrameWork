@@ -5,7 +5,7 @@ var PM = require("tfw.binding.property-manager");
 
 
 exports.Tag = function(tagName, attribs) {
-  var elem = document.createElement(tagName);
+  var elem = tagName === 'svg' ? $.svg() : $.tag(tagName);
   Object.defineProperty(this, '$', {
     value: elem, writable: false, enumerable: true, configurable: false
   });

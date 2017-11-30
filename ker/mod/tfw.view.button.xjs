@@ -23,7 +23,7 @@
   event.up: {Set pressed false}
   [
     {DIV view.id:icon, class:icon [
-      {wdg.icon icon: {Bind icon}}
+      {tfw.view.icon content: {Bind icon}}
     ]}
     {DIV view.id:text, class:text {Bind content}}
   ]

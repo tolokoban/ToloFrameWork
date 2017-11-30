@@ -75,7 +75,7 @@ var Icon = function ( opts ) {
     } else {
       // This is a direct color.
       children.fill.forEach( function ( child ) {
-        $.att( child, "fill",color );
+        $.att( child, "fill", color );
       } );
       children.stroke.forEach( function ( child ) {
         $.att( child, "stroke", color );

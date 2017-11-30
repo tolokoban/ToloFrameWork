@@ -1,5 +1,9 @@
 {View DIV class: test [
   {SECTION [
+    {tfw.view.checkbox}
+    {HR}
+  ]}  
+  {SECTION [
     {tfw.view.button
       content: "VNegoce Power!"
       visible: {Bind "visible/value"}

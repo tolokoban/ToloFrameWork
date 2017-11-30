@@ -44,6 +44,8 @@
     "less": "^2.7.3",
     "marked": "^0.3.6",
     "readline-sync": "^1.4.7",
+    "rework": "^1.0.1",
+    "rework-vars": "^3.1.1",
     "string": "^3.3.3",
     "tlk-lexer": "0.0.5",
     "toloframework-permissive-json": "^1.0",

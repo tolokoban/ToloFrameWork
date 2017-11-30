@@ -1,2 +1,0 @@
-// Code behind.
-"use strict";

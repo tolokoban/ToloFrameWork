@@ -27,8 +27,14 @@ var slots = {};
 
 
 var Widget = function(id, modName, args, attribs) {
+  try {
   if (typeof id === 'string') return Widget1.call( this, id, modName, args, attribs );
-  else return Widget2.call( this, id );
+    else return Widget2.call( this, id );
+  }
+  catch( ex ) {
+    console.error( ex );
+    throw Error("Exception in " + modName + "(" + JSON.stringify(args) + "):\n" + ex);
+  }
 };
 
 function Widget1(id, modName, args, attribs ) {

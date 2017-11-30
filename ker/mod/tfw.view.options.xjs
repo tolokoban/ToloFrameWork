@@ -14,6 +14,7 @@
         selection: {integer 0}
       }
       DIV class: item
+      event.tap: {Set selection {Get index}}
       [
         {DIV [{DIV}]}
         {DIV {Bind content}}
