@@ -15,11 +15,9 @@
   event.keyup: {Toggle value}
   [
     {DIV class:pin [
-        {DIV class:"bar thm-ele2"
-          class.thm-bgSL|thm-bg2: {Bind value} }
-        {DIV class:"btn thm-ele2"
-          class.thm-bgS|thm-bg1: {Bind value} }
-      ]}
+      {DIV class:"bar thm-ele2", view.id: bar, class.thm-bgSL|thm-bg2: {Bind value} }
+      {DIV class:"btn thm-ele2", view.id: btn, class.thm-bgS|thm-bg1: {Bind value} }
+    ]}
     {DIV class:txt {Bind content}}    
   ]
 }

@@ -164,6 +164,7 @@ module.exports.isLinkable = function( obj, propertyName ) {
  * @export .create
  * Create an new linkable property.
  * @param {string} propertyName - Name of the property.
+ * @param {any} options.init - Initial value. Won't fire any change notification.
  * @param {function=undefined} options.get - Special getter.
  * @param {function=undefined} options.set - Special setter.
  * @param {function=undefined}  options.cast - Conversion to  apply to
@@ -178,6 +179,7 @@ PropertyManager.prototype.create = function( propertyName, options ) {
     Object.defineProperty(this._container, propertyName, {
       get: that.get.bind( that, propertyName ),
       set: function(v) {
+        if( v === that.get( propertyName ) ) return;
         that.set( propertyName, v );
         that.fire( propertyName );
       },
@@ -206,7 +208,10 @@ PropertyManager.prototype.create = function( propertyName, options ) {
       get: typeof options.get === 'function' ? options.get : function() { return value; },
       set: setter
     };
-    this._props[propertyName] = p;    
+    this._props[propertyName] = p;
+    if( typeof options.init !== 'undefined' ) {
+      this.set( propertyName, options.init );
+    }
   }
   return p;
 };

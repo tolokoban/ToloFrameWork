@@ -281,7 +281,7 @@ function on( element, slots, extra ) {
 
 function tagNS( ns, name ) {
   try {
-    var e = document.createElementNS( ns, name );
+    var e = document.createElementNS( ns, name.trim().toLowerCase() );
     var i, arg, key, val;
     for (i = 2 ; i < arguments.length ; i++) {
       arg = arguments[i];

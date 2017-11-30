@@ -1,8 +1,10 @@
 {View DIV class: test [
   {SECTION [
     {tfw.view.checkbox}
-    {HR}
   ]}  
+  {SECTION [
+    {tfw.view.icon content: home, size: 48}
+  ]}
   {SECTION [
     {tfw.view.button
       content: "VNegoce Power!"
@@ -11,18 +13,17 @@
       wide: {Bind "wide/value"}
       flat: {Bind "flat/value"}
       icon: {Bind "icon/value"}
-      type: {Bind "type/value" delay: 500}
+      responsive: {Bind "responsive/value"}
+      inverted: {Bind "inverted/value"}
+      type: {Bind "type/value" delay: 2500}
     }
-    {HR}
-    {tfw.view.checkbox view.id: visible, content: visible, value: true}
-    {tfw.view.checkbox view.id: enabled, content: enabled, value: true}
-    {tfw.view.checkbox view.id: wide, content: wide, value: false}
-    {tfw.view.checkbox view.id: flat, content: flat, value: false}
-    {SPAN "Type: "}{INPUT view.id: type, placeholder: "type", value: "default" }
-    {SPAN ", Icon: "}{INPUT view.id: icon, placeholder: "icon", value: "ok" }
-  ]}
-  {SECTION [
-    {tfw.view.icon}
-    {HR}
+    {P [{tfw.view.checkbox view.id: visible, content: visible, value: true}]}
+    {P [{tfw.view.checkbox view.id: enabled, content: enabled, value: true}]}
+    {P [{tfw.view.checkbox view.id: wide, content: wide, value: false}]}
+    {P [{tfw.view.checkbox view.id: flat, content: flat, value: false}]}
+    {P [{tfw.view.checkbox view.id: responsive, content: responsive, value: false}]}
+    {P [{tfw.view.checkbox view.id: inverted, content: inverted, value: false}]}
+    {P [{SPAN "Type: "}{INPUT view.id: type, placeholder: "type", value: "default" }]}
+    {P [{SPAN ", Icon: "}{INPUT view.id: icon, placeholder: "icon", value: "ok" }]}
   ]}
 ]}

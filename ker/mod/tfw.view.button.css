@@ -39,7 +39,7 @@
 
 .tfw-view-button > div.text {
   flex-grow: 1;
-  order: 0;
+  order: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -48,21 +48,20 @@
   margin: 0 8px;
 }
 
+.tfw-view-button.inverted > div.text {
+  order: -1;
+}
+
 .tfw-view-button.no-text > div.text {
   display: none;
 }
 
 
-.tfw-view-button > .wdg-icon {
-  order: 1;
+.tfw-view-button > .icon {
+  order: 0;
   flex-grow: 0;
   margin: 0 8px 0 4px;
   padding: 0;
-}
-
-.tfw-view-button.iconToLeft > .wdg-icon {
-  order: -1;
-  margin: 0 4px 0 8px;
 }
 
 .tfw-view-button[disabled]:hover,
@@ -74,11 +73,6 @@
   text-shadow: none;
   box-shadow: none;
   font-style: italic;
-}
-
-.tfw-view-button.disabled:hover > div,
-.tfw-view-button.disabled > div {
-  opacity: .5;
 }
 
 .tfw-view-button:focus {

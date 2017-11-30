@@ -24,17 +24,22 @@ function onContentChanged( content ) {
     if( typeof content === 'undefined' ) content = Icons.iconsBook.question;
   }
 
-  this._content = createSvgFromDefinition( content );
-  console.info("[tfw.view.icon] this._content=", this._content);
+  this._content = createSvgFromDefinition.call( this, content );
   $.clear( this, this._content.svgRootGroup );
+
+  // Update pens' colors.
+  [0,1,2,3,4,5,6,7].forEach(function (penIndex) {
+    updatePen.call( this, penIndex, this["pen" + penIndex] );
+  }, this);
+
 }
 
 // Special colors.
 // 0 is black,  1 is white, P  is primary, S is secondary,  L is light
 // and D is dark.
 var FILL_COLORS_TO_CLASSES = {
-  '0': "thm-svg-fill-0",
-  '1': "thm-svg-fill-1",
+  '0': "fill0",
+  '1': "fill1",
   P:   "thm-svg-fill-P",
   PL:  "thm-svg-fill-PL",
   PD:  "thm-svg-fill-PD",
@@ -43,8 +48,8 @@ var FILL_COLORS_TO_CLASSES = {
   SD:  "thm-svg-fill-SD"
 };
 var STROKE_COLORS_TO_CLASSES = {
-  '0': "thm-svg-stroke-0",
-  '1': "thm-svg-stroke-1",
+  '0': "stroke0",
+  '1': "stroke1",
   P:    "thm-svg-stroke-P",
   PL:   "thm-svg-stroke-PL",
   PD:   "thm-svg-stroke-PD",
@@ -55,7 +60,7 @@ var STROKE_COLORS_TO_CLASSES = {
 
 
 function createSvgFromDefinition( def ) {
-  var svgRootGroup = $.svg( 'g', {
+  var svgParent = $.svg( 'g', {
     'stroke-width': 6,
     fill: "none",
     'stroke-linecap': 'round',
@@ -67,8 +72,14 @@ function createSvgFromDefinition( def ) {
   var elementsToFillPerColor = [[], [], [], [], [], [], [], []];
   var elementsToStrokePerColor = [[], [], [], [], [], [], [], []];
 
-  addChild( svgRootGroup, elementsToFillPerColor, elementsToStrokePerColor, def );
-
+  var svgRootGroup = addChild( this.$, elementsToFillPerColor, elementsToStrokePerColor, def );
+  $.att( svgRootGroup, {
+    'stroke-width': 6,
+    fill: "none",
+    'stroke-linecap': 'round',
+    'stroke-linejoin': 'round'
+  });
+  
   return {
     svgRootGroup: svgRootGroup,
     elementsToFillPerColor: elementsToFillPerColor,
@@ -94,13 +105,14 @@ function addChild( parent, elementsToFillPerColor, elementsToStrokePerColor, def
   def.forEach(function (childItem, index) {
     if( index === 0 ) return;
     if( Array.isArray( childItem ) ) {
-      childItem.forEach( addChild.bind( null, parent, elementsToFillPerColor, elementsToStrokePerColor ) );
+      childItem.forEach( addChild.bind( null, element, elementsToFillPerColor, elementsToStrokePerColor ) );
     } else {
       setAttributesAndRegisterElementsWithSpecialColors(
-        parent, elementsToFillPerColor, elementsToStrokePerColor, childItem );
+        element, elementsToFillPerColor, elementsToStrokePerColor, childItem );
     }
   });
 
+  $.add( parent, element );
   return element;
 }
 
@@ -110,13 +122,13 @@ function setAttributesAndRegisterElementsWithSpecialColors(
 
   for( attName in attribs ) {
     attValue = attribs[attName];
-    if( attValue === 'fill' || attValue === 'stroke' ) {
+    if( attName === 'fill' || attName === 'stroke' ) {
       valueAsIndex = parseInt( attValue );
       if( isNaN( valueAsIndex ) ) {
         // Straigth attribute.
         $.att( node, attName, attValue );
       } else {
-        elementsPerColor = attValue === 'fill' ? elementsToFillPerColor : elementsToStrokePerColor;
+        elementsPerColor = attName === 'fill' ? elementsToFillPerColor : elementsToStrokePerColor;
         valueAsIndex = clamp(valueAsIndex, 0, elementsPerColor.length - 1 );
         elementsPerColor[ valueAsIndex ].push( node );
       }
@@ -148,12 +160,6 @@ function updatePen( penIndex, penColor ) {
 function updateColor( elementsToFill, elementsToStroke, color ) {
   updateColorForType( "fill", elementsToFill, FILL_COLORS_TO_CLASSES, color );
   updateColorForType( "stroke", elementsToStroke, STROKE_COLORS_TO_CLASSES, color );
-  elementsToFill.forEach(function (element) {
-    $.att( element, "fill", color );
-  });
-  elementsToStroke.forEach(function (element) {
-    $.att( element, "stroke", color );
-  });
 }
 
 function updateColorForType( attName, elements, classes, color ) {

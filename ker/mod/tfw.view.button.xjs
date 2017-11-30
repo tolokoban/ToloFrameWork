@@ -8,23 +8,28 @@
     flat: {boolean false}
     type: {[default primary secondary] default}
     enabled: {boolean true}
+    inverted: {boolean false}
     visible: {boolean true}
     wide: {boolean false}
+    responsive: {boolean false}
   }
+  
   class: "tfw-view-button"
   class.flat: {Bind flat}
-  class.|hide: {Bind visible}
-  class.wide: {Bind wide}
   class.*: {[flat,type,pressed] getClasses}
   attrib.|disabled: {Bind enabled}
+  class.inverted: {Bind inverted}
+  class.|hide: {Bind visible}
+  class.wide: {Bind wide}
+  class.responsive: {Bind responsive}
+  
   event.tap: {Set action true}
   event.keyup: {Set action true}
   event.down: {Set pressed true}
   event.up: {Set pressed false}
+  
   [
-    {DIV view.id:icon, class:icon [
-      {tfw.view.icon content: {Bind icon}}
-    ]}
+    {DIV view.id:icon, class:icon [ {tfw.view.icon content: {Bind icon}} ]}
     {DIV view.id:text, class:text {Bind content}}
   ]
 }
