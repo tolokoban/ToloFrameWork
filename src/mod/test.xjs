@@ -3,7 +3,7 @@
     {tfw.view.checkbox}
   ]}  
   {SECTION [
-    {tfw.view.icon content: home, size: 48}
+    {tfw.view.icon content: home, size: 96}
   ]}
   {SECTION [
     {tfw.view.button
@@ -15,7 +15,7 @@
       icon: {Bind "icon/value"}
       responsive: {Bind "responsive/value"}
       inverted: {Bind "inverted/value"}
-      type: {Bind "type/value" delay: 2500}
+      type: {Bind "type/value" delay: 1500}
     }
     {P [{tfw.view.checkbox view.id: visible, content: visible, value: true}]}
     {P [{tfw.view.checkbox view.id: enabled, content: enabled, value: true}]}
@@ -24,6 +24,6 @@
     {P [{tfw.view.checkbox view.id: responsive, content: responsive, value: false}]}
     {P [{tfw.view.checkbox view.id: inverted, content: inverted, value: false}]}
     {P [{SPAN "Type: "}{INPUT view.id: type, placeholder: "type", value: "default" }]}
-    {P [{SPAN ", Icon: "}{INPUT view.id: icon, placeholder: "icon", value: "ok" }]}
+    {P [{SPAN "Icon: "}{INPUT view.id: icon, placeholder: "icon", value: "ok" }]}
   ]}
 ]}

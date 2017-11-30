@@ -14,24 +14,31 @@ var CODE_BEHIND = {
   onPen4Changed: function(v) { updatePen.call( this, 4, v ); },
   onPen5Changed: function(v) { updatePen.call( this, 5, v ); },
   onPen6Changed: function(v) { updatePen.call( this, 6, v ); },
-  onPen7Changed: function(v) { updatePen.call( this, 7, v ); }  
+  onPen7Changed: function(v) { updatePen.call( this, 7, v ); }
 };
 
 
 function onContentChanged( content ) {
-  if( typeof content === 'string' ) {
-    content = Icons.iconsBook[content];
-    if( typeof content === 'undefined' ) content = Icons.iconsBook.question;
+  try {
+    if( typeof content === 'string' ) {
+      content = Icons.iconsBook[content];
+    }
+
+    this._content = createSvgFromDefinition.call( this, content );
+    $.clear( this, this._content.svgRootGroup );
+
+    // Update pens' colors.
+    [0,1,2,3,4,5,6,7].forEach(function (penIndex) {
+      updatePen.call( this, penIndex, this["pen" + penIndex] );
+    }, this);
+
+    this.$.style.display = "";
   }
-
-  this._content = createSvgFromDefinition.call( this, content );
-  $.clear( this, this._content.svgRootGroup );
-
-  // Update pens' colors.
-  [0,1,2,3,4,5,6,7].forEach(function (penIndex) {
-    updatePen.call( this, penIndex, this["pen" + penIndex] );
-  }, this);
-
+  catch( ex ) {
+    console.error( "Bad content for tfw.view.icon!" );
+    console.error( ex );
+    this.$.style.display = "none";
+  }
 }
 
 // Special colors.
@@ -79,7 +86,7 @@ function createSvgFromDefinition( def ) {
     'stroke-linecap': 'round',
     'stroke-linejoin': 'round'
   });
-  
+
   return {
     svgRootGroup: svgRootGroup,
     elementsToFillPerColor: elementsToFillPerColor,
@@ -118,25 +125,25 @@ function addChild( parent, elementsToFillPerColor, elementsToStrokePerColor, def
 
 function setAttributesAndRegisterElementsWithSpecialColors(
   node, elementsToFillPerColor, elementsToStrokePerColor, attribs ) {
-  var attName, attValue, valueAsIndex, elementsPerColor;
+    var attName, attValue, valueAsIndex, elementsPerColor;
 
-  for( attName in attribs ) {
-    attValue = attribs[attName];
-    if( attName === 'fill' || attName === 'stroke' ) {
-      valueAsIndex = parseInt( attValue );
-      if( isNaN( valueAsIndex ) ) {
-        // Straigth attribute.
-        $.att( node, attName, attValue );
+    for( attName in attribs ) {
+      attValue = attribs[attName];
+      if( attName === 'fill' || attName === 'stroke' ) {
+        valueAsIndex = parseInt( attValue );
+        if( isNaN( valueAsIndex ) ) {
+          // Straigth attribute.
+          $.att( node, attName, attValue );
+        } else {
+          elementsPerColor = attName === 'fill' ? elementsToFillPerColor : elementsToStrokePerColor;
+          valueAsIndex = clamp(valueAsIndex, 0, elementsPerColor.length - 1 );
+          elementsPerColor[ valueAsIndex ].push( node );
+        }
       } else {
-        elementsPerColor = attName === 'fill' ? elementsToFillPerColor : elementsToStrokePerColor;
-        valueAsIndex = clamp(valueAsIndex, 0, elementsPerColor.length - 1 );
-        elementsPerColor[ valueAsIndex ].push( node );
+        $.att( node, attName, attValue );
       }
-    } else {
-      $.att( node, attName, attValue );
     }
   }
-}
 
 function checkDefinitionSyntax( def ) {
   if( !Array.isArray( def ) ) {

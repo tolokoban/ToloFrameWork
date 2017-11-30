@@ -2,17 +2,21 @@
 {View BUTTON
   view.attribs: {
     value: {boolean false},
-    reversed: {boolean false},
+    inverted: {boolean false},
     visible: {boolean true},
-    wide: {boolean false},
+    wide: {boolean true},
     content: Checkbox
   }
+
   class: tfw-view-checkbox
   class.ok: {Bind value}
+  class.inverted: {Bind inverted}
   class.wide: {Bind wide}
   class.|hide: {Bind visible}
+
   event.tap: {Toggle value}
-  event.keyup: {Toggle value}
+  event.keyup: onKeyUp
+
   [
     {DIV class:pin [
       {DIV class:"bar thm-ele2", view.id: bar, class.thm-bgSL|thm-bg2: {Bind value} }
