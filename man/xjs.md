@@ -4,13 +4,34 @@ In all this document, we will call __special object__ any object with an implici
 That is any object with an attribute named __"0"__, like `{boolean init: true}` for instance.
 Other objects, strings, numbers and so on are called __standard values__.
 
+### Code behind
+Even if XJS.View has been made as powerful as possible, there are still cases where Javascript code is needed.
+Here is a dummy example to show you how to use code behind. The view will add a new line when its `value` attribute will be set.
+
+__foobar.js__
+```js
+var CODE_BEHIND = {
+  onValueChanged: function( value ) { this.$.appendChild( document.createTextNode( value + "\n" ) ); }
+};
+```
+
+__foobar.xjs__
+```
+{View PRE
+  view.attribs: {
+    value: {string behind: onValueChanged }
+  }}
+```
+
+
 ### Defining attributes
 ```
 {View DIV
   view.attribs: {
     action: {action}
     content: "Click me!"
-    flat: {boolean init: false}
+    flat: {boolean false}
+    special: {any null behind: onSpecialChanged}
     type: {[default primary secondary]}
   }
 ```
@@ -25,7 +46,8 @@ If the value is a special object, it must have this syntax:
     * `[...]`: array of strings representing an enumerate. After setting any value to this attribute, you will always get an item of this array and nothing else.
       Setting a value that is not part of the defined array is the same as setting the first element of the array.
       The setting is case insensitive, but the getting is not. That means that in the above example if you set `Primary` to `type`, you will get `primary` in return.
-* `init`: (_optional_) initial value. Must be a standard value.
+* `"1"`: (_optional_) initial value. Must be a standard value.
+* `behind`: (_optional_) function to call in teh code behind as sson as this attribute changes.
 
 ### Defining HTML elements
 ```
