@@ -1,5 +1,33 @@
+@-webkit-keyframes tfw-view-icon-rotation {
+  from { -webkit-transform: rotate(0); transform: rotate(0) }
+  to { -webkit-transform: rotate(360deg); transform: rotate(360deg) }
+}
+@-moz-keyframes tfw-view-icon-rotation {
+  from { -webkit-transform: rotate(0); transform: rotate(0) }
+  to { -webkit-transform: rotate(360deg); transform: rotate(360deg) }
+}
+@-o-keyframes tfw-view-icon-rotation {
+  from { -webkit-transform: rotate(0); transform: rotate(0) }
+  to { -webkit-transform: rotate(360deg); transform: rotate(360deg) }
+}
+@keyframes tfw-view-icon-rotation {
+  from { -webkit-transform: rotate(0); transform: rotate(0) }
+  to { -webkit-transform: rotate(360deg); transform: rotate(360deg) }
+}
+
+
 .tfw-view-icon {
   display: inline-block;
   margin: 0;
   padding: 0;
+  transition: transform .3s;
 }
+
+.tfw-view-icon.animate {
+  animation: wdg-icon-rotation 1.5s linear infinite;
+  -webkit-animation: wdg-icon-rotation 1.5s linear infinite;
+}
+
+.tfw-view-icon.flipH { transform: scaleX(-1) }
+.tfw-view-icon.flipY { transform: scaleY(-1) }
+.tfw-view-icon.flipH.flipY { transform: scale(-1,-1) }
