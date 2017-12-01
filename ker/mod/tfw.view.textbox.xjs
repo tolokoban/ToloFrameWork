@@ -1,0 +1,18 @@
+// tfw.view.textbox
+{View DIV class: tfw-view-textbox
+  view.attribs: {
+    value: {string ""}
+    label: {string ""}
+  }
+  [
+    {DIV view.id: head, class: head {Bind label}}
+    {DIV view.id: body, class: body
+      [
+        {INPUT view.id: input
+               value: {Bind value}
+               placeholder: {Bind label}}
+      ]}
+    {DIV view.id: foot, class: foot}
+    {DIV view.id: completion}
+  ]
+}
