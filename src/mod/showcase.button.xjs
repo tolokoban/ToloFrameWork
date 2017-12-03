@@ -1,0 +1,35 @@
+{View SECTION
+  %Panel%: {ARTICLE
+    style.display: inline-block
+    style.margin: "2px"
+    style.padding: "6px"
+    style.border: "2px dotted rgba(0,0,0,.5)"
+    class: %bg%
+    [
+      {tfw.view.button
+        content: "VNegoce Power!"
+        visible: {Bind "visible/value"}
+        enabled: {Bind "enabled/value"}
+        wide: {Bind "wide/value"}
+        flat: {Bind "flat/value"}
+        icon: {Bind "icon/value"}
+        responsive: {Bind "responsive/value"}
+        inverted: {Bind "inverted/value"}
+        type: {Bind "type/value" delay: 1500}}]}
+  [
+    {%Panel% %bg%: thm-bg0}
+    {%Panel% %bg%: thm-bg1}
+    {%Panel% %bg%: thm-bg2}
+    {%Panel% %bg%: thm-bg3}
+    {HR}
+    {tfw.view.checkbox view.id: visible, content: visible, value: true}
+    {tfw.view.checkbox view.id: enabled, content: enabled, value: true}
+    {tfw.view.checkbox view.id: wide, content: wide, value: false}
+    {tfw.view.checkbox view.id: flat, content: flat, value: false}
+    {tfw.view.checkbox view.id: responsive, content: responsive, value: false}
+    {tfw.view.checkbox view.id: inverted, content: inverted, value: false}
+    {tfw.view.textbox view.id: type, label: type, value: default}
+    //{SPAN "Type: "}{INPUT view.id: type, placeholder: "type", value: "default" }
+    {SPAN "Icon: "}{INPUT view.id: icon, placeholder: "icon", value: "ok" }
+  ]
+}

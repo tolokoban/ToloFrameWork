@@ -3,7 +3,7 @@
   view.attribs: {
     action: {action}
     icon: ""
-    content: "Click me!"
+    content: {string "Click me!"}
     pressed: {boolean false}
     flat: {boolean false}
     type: {[default primary secondary] default}

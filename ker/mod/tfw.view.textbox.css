@@ -1,0 +1,27 @@
+div.tfw-view-textbox {
+  display: inline-block;
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,.5);
+  margin: 4px;
+}
+
+div.tfw-view-textbox > div {
+  margin: 0;
+}
+
+div.tfw-view-textbox input {
+  border: 0;
+  margin: 0;
+  background: transparent;
+  font: inherit;
+}
+
+div.tfw-view-textbox > div.body {
+  padding: 0 8px;
+}
+
+div.tfw-view-textbox > div.head,
+div.tfw-view-textbox > div.foot {
+  opacity: .5;
+  font-size: 60%;
+}

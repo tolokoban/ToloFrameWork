@@ -70,7 +70,6 @@ exports.compile = function( root, libs ) {
   }
 
   SKIP = true;
-  debugger;
   var com = parseComponent( root, libs, '        ' );
 
   libs.require( "x-widget" );
