@@ -106,6 +106,7 @@ function actionChanged( src, dst, id, value, propertyName, container, wave ) {
       pmDst.change( dst.name, value, wave );
     }, src.delay);
   } else {
+    console.log(src.name + " -> (" + JSON.stringify(value) + ") -> " + dst.name);
     pmDst.change( dst.name, value, wave );
   }
 }

@@ -4,7 +4,7 @@
     value: {string ""}
     label: {string ""}
     focus: {boolean false}
-    width: {unit "10rem"}
+    width: {unit "8rem"}
   }
   class: tfw-view-textbox
   class.focus: {Bind focus} 
@@ -16,7 +16,7 @@
                value: {Bind value}
                focus: {Bind focus}
                placeholder: {Bind label}
-               css.width: {Bind width}}
+               style.width: {Bind width}}
       ]}
     {DIV view.id: foot, class: foot}
     {DIV view.id: bottom, class: "bottom thm-bgS"}

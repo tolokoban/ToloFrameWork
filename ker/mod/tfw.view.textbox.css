@@ -39,12 +39,12 @@ div.tfw-view-textbox > div.bottom {
   width: 100%;
   height: 2px;
   transform: scaleX(0);
-  transform-origin: left top;
+  transform-origin: right top;
   transition: transform .6s;
 }
 
 div.tfw-view-textbox.focus > div.bottom {
   transform: scaleX(1);
-  transform-origin: right top;
+  transform-origin: left top;
   transition: transform .6s;
 }

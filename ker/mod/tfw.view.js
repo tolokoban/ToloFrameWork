@@ -31,12 +31,18 @@ exports.Tag = function(tagName, attribs) {
 
 
 function defineAttribValue( elem ) {
+  var that = this;
+
+  var lastSettedValue = null;
   PM( this ).create('value', {
-    get: function() { return elem.value; },
-    set: function(v) { elem.value = v; }
+    get: function() { return lastSettedValue; },
+    set: function(v) {
+      elem.value = v;
+      lastSettedValue = v;
+    }
   });
-  elem.addEventListener( "input", function() {
-    PM( this ).fire( 'value' );
+  elem.addEventListener( "input", function(evt) {
+    PM( that ).change( 'value', evt.target.value );
   }, false);
 }
 
