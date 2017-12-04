@@ -59,6 +59,8 @@ PropertyManager.prototype.fire = function( propertyName, wave ) {
 };
 
 PropertyManager.prototype.change = function( propertyName, value, wave ) {
+  if( typeof wave === 'undefined' ) wave = [];
+
   var prop = this.create( propertyName );
 
   var currentValue = prop.get();
@@ -178,11 +180,7 @@ PropertyManager.prototype.create = function( propertyName, options ) {
   if( !p ) {
     Object.defineProperty(this._container, propertyName, {
       get: that.get.bind( that, propertyName ),
-      set: function(v) {
-        if( v === that.get( propertyName ) ) return;
-        that.set( propertyName, v );
-        that.fire( propertyName );
-      },
+      set: that.change.bind( that, propertyName ),
       enumerable: true, configurable: false
     });
     var value = undefined;

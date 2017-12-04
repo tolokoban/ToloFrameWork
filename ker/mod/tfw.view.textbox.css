@@ -1,8 +1,10 @@
 div.tfw-view-textbox {
+  position: relative;
   display: inline-block;
   border: none;
   border-bottom: 1px solid rgba(0,0,0,.5);
   margin: 4px;
+  font: inherit;
 }
 
 div.tfw-view-textbox > div {
@@ -17,11 +19,32 @@ div.tfw-view-textbox input {
 }
 
 div.tfw-view-textbox > div.body {
-  padding: 0 8px;
+  padding: 0;
 }
 
 div.tfw-view-textbox > div.head,
 div.tfw-view-textbox > div.foot {
   opacity: .5;
-  font-size: 60%;
+  font-size: .7em;
+}
+
+
+div.tfw-view-textbox > div.bottom {
+  content: ".";
+  font-size: 0;
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left top;
+  transition: transform .6s;
+}
+
+div.tfw-view-textbox.focus > div.bottom {
+  transform: scaleX(1);
+  transform-origin: right top;
+  transition: transform .6s;
 }

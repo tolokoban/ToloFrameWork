@@ -7,20 +7,21 @@ var ID = 0;
 /**
  * @export
  * @class Link
- * Bind A with B.
+ * Bind A with B. A is waiting for value change in B and vice versa.
  * 
- * @param {object} args.A.obj - Source object holding properties.
- * @param {string} args.A.name - Name of the source's property.
+ * @param {object} args.A.obj - Object holding properties for input A.
+ * @param {string} args.A.name  - Name of the property  of the holding
+ * object for input A.
  * @param  {number=0} args.A.delay  - Number  of milliseconds  to wait
  * before using the data sent by B. If a new value is sent by B before
  * the delay, the previous value is forgotten.
  * @param {function=null}  args.A.action - Function to  execute when A
- * received data from B.
+ * received a new value from B.
  * @param {string=undefined} args.A.value -  If specified, it is the
  * value we use whatsover B sent.
  * @param  {function=undefined}  args.A.value  -  If  `value`  is  a
  * function, it will be called  with the propertyName as sole argument
- * and the return will be sent to dst.
+ * and the return will be used as value for A.
  * @param  {function=undefined}  args.A.converter  -  Converter  for
  * values entering the source.
  * @param  {function=undefined} args.A.filter  -  Filter for  values
@@ -174,8 +175,6 @@ function hasAlreadyBeenHere( id, wave ) {
       // We already took this link in this wave.
       return true;
     }
-  } else {
-    wave = [id];
   }
   return false;
 }

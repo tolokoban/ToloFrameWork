@@ -1,10 +1,8 @@
-{View DIV class: test [
+{"View" DIV class: test [
   {SECTION [
-    {tfw.view.checkbox
-      content: "Ha ! Ha ! Ha !"}
-  ]}  
-  {SECTION [
-    {tfw.view.icon content: home, size: 96}
+    {tfw.view.icon content: {Bind 'text/value'}, size: 32}
+    {HR}
+    {tfw.view.textbox view.id:text, value: "home", label: "Icon's value:"}
   ]}
-  {SECTION [{showcase.button}]}
+//  {SECTION [{showcase.button}]}
 ]}

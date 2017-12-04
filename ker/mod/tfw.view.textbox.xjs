@@ -1,18 +1,25 @@
 // tfw.view.textbox
-{View DIV class: tfw-view-textbox
+{View DIV
   view.attribs: {
     value: {string ""}
     label: {string ""}
+    focus: {boolean false}
+    width: {unit "10rem"}
   }
+  class: tfw-view-textbox
+  class.focus: {Bind focus} 
   [
     {DIV view.id: head, class: head {Bind label}}
     {DIV view.id: body, class: body
       [
         {INPUT view.id: input
                value: {Bind value}
-               placeholder: {Bind label}}
+               focus: {Bind focus}
+               placeholder: {Bind label}
+               css.width: {Bind width}}
       ]}
     {DIV view.id: foot, class: foot}
-    {DIV view.id: completion}
+    {DIV view.id: bottom, class: "bottom thm-bgS"}
+    {DIV view.id: completion, class: completion}
   ]
 }
