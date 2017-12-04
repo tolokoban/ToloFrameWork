@@ -1,8 +1,4 @@
 {"View" DIV class: test [
-  {SECTION [
-    {tfw.view.icon content: {Bind 'text/value'}, size: 32}
-    {HR}
-    {tfw.view.textbox view.id:text, value: "home", label: "Icon's value:"}
-  ]}
-//  {SECTION [{showcase.button}]}
+  {SECTION [{showcase.icon}]}
+  {SECTION [{showcase.button}]}
 ]}

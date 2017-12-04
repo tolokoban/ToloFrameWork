@@ -1,9 +1,9 @@
-{View SECTION
+{View SECTION style.margin: "0" style.padding: "0"
   %Panel%: {ARTICLE
     style.display: inline-block
     style.margin: "2px"
-    style.padding: "6px"
-    style.border: "2px dotted rgba(0,0,0,.5)"
+    style.padding: "4px"
+    style.border: "1px solid rgba(0,0,0,.5)"
     class: %bg%
     [
       {tfw.view.button
@@ -21,7 +21,7 @@
     {%Panel% %bg%: thm-bg1}
     {%Panel% %bg%: thm-bg2}
     {%Panel% %bg%: thm-bg3}
-    {HR}
+
     {tfw.view.checkbox view.id: visible, content: visible, value: true}
     {tfw.view.checkbox view.id: enabled, content: enabled, value: true}
     {tfw.view.checkbox view.id: wide, content: wide, value: false}

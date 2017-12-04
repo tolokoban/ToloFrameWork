@@ -7,6 +7,11 @@ div.tfw-view-textbox {
   font: inherit;
 }
 
+div.tfw-view-textbox.focus {
+  z-index: 999999;
+}
+
+
 div.tfw-view-textbox > div {
   margin: 0;
 }
@@ -16,6 +21,11 @@ div.tfw-view-textbox input {
   margin: 0;
   background: transparent;
   font: inherit;
+  color: rgba(0,0,0,.9);
+}
+
+div.tfw-view-textbox.focus input {
+  color: #000;
 }
 
 div.tfw-view-textbox > div.body {
@@ -48,3 +58,46 @@ div.tfw-view-textbox.focus > div.bottom {
   transform-origin: left top;
   transition: transform .6s;
 }
+
+div.tfw-view-textbox > footer {
+  display: none;
+  position: absolute;
+  bottom: -4px;
+  right: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  padding: 0;
+  z-index: 2;
+  overflow: show;
+}
+div.tfw-view-textbox.focus > footer {
+  display: block;
+}
+
+div.tfw-view-textbox.focus > footer > div.completion {
+  padding: 0;
+  margin: 0;
+  overflow: auto;
+  font: inherit;
+  font-size: .85em;
+}
+
+div.tfw-view-textbox.focus > footer > div.completion > div {
+  width: 100%;
+  height: 1.5em;
+  line-height: 1.5em;
+  padding: 0 .5em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+div.tfw-view-textbox.focus > footer > div.completion > span {
+  opacity: .6;
+}
+
+div.tfw-view-textbox.focus > footer > div.completion > b {
+  font-weight: normal;
+}
+

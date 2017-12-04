@@ -1,0 +1,33 @@
+{View SECTION style.margin: "0" style.padding: "0"
+  %Panel%: {ARTICLE
+    style.display: inline-block
+    style.margin: "2px"
+    style.padding: "4px"
+    style.border: "1px solid rgba(0,0,0,.5)"
+    class: %bg%
+    [
+      {tfw.view.icon
+      pen0: {Bind pen0}
+      pen1: {Bind pen1}
+      content: {Bind 'text/value' delay: 333}
+      size: {Bind 'size/value', delay: 333}}]}
+  [
+    {%Panel% %bg%: thm-bg0}
+    {%Panel% %bg%: thm-bg1}
+    {%Panel% %bg%: thm-bg2}
+    {%Panel% %bg%: thm-bg3}
+
+    {tfw.view.textbox view.id:text, value: "home", label: "Icon's value"
+      list: [android, bug, camera, cancel, center, close, code, delete, direction,
+             down, down-double, edit, eraser, export, flag-jp, flag-fr, flag-it, flag-en,
+             font, fullscreen, gear, gps, hand, home, image, import, improvement, left,
+             left-double, link, location, logout, mail, map-layer, menu, minus, minus-o,
+             minus-small, ok, plus, plus-o, plus-small, print, question, redo, refresh,
+             right, right-double, search, select, unselect, share, show, speaker, star,
+             tri-down, tri-left, tri-right, tri-up, twitter, undo, up, up-double, user,
+             wait, zoom-in, zoom-out]}
+    {tfw.view.textbox view.id:size, value: "32px", label: "Icon's size"}
+    {tfw.view.textbox view.id:pen0, value: "0", label: "Icon's pen 0"}
+    {tfw.view.textbox view.id:pen1, value: "1", label: "Icon's pen 1"}
+  ]
+}

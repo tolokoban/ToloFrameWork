@@ -104,9 +104,8 @@ function actionChanged( src, dst, id, value, propertyName, container, wave ) {
     clearTimeout( dst._id );
     dst._id = setTimeout(function() {
       pmDst.change( dst.name, value, wave );
-    }, src.delay);
+    }, dst.delay);
   } else {
-    console.log(src.name + " -> (" + JSON.stringify(value) + ") -> " + dst.name);
     pmDst.change( dst.name, value, wave );
   }
 }

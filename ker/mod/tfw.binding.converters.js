@@ -2,7 +2,9 @@
 
 var CONVERTERS = {
   boolean: function() { return booleanConverter; },
+  booleans: function() { return booleansConverter; },
   not: function() { return notConverter; },
+  strings: function() { return stringsConverter; },
   string: function() { return function(v) { return "" + v; }; },
   integer: function( valueForNaN ) {
     if( typeof valueForNaN === 'number' ) {
@@ -34,6 +36,7 @@ var CONVERTERS = {
     };
   },
   unit: function() { return cssUnitConverter; },
+  units: function() { return cssUnitsConverter; },
   isEmptyString: function() { return isEmptyStringConverter; },
   isNotEmptyString: function() { return isEmptyStringConverter; }
 };
@@ -66,6 +69,10 @@ function cssUnitConverter(v) {
   return scalar + unit;
 }
 
+function cssUnitsConverter(v) {
+  if( !Array.isArray( v ) ) return [];
+  return v.map(cssUnitConverter);
+}
 
 function booleanConverter(v) {
   switch( typeof v ) {
@@ -76,6 +83,11 @@ function booleanConverter(v) {
   default:
     return v ? true : false;
   }
+}
+
+function booleansConverter(v) {
+  if( !Array.isArray( v ) ) return [];
+  return v.map(booleanConverter);
 }
 
 
@@ -89,4 +101,10 @@ function isEmptyStringConverter(v) {
 
 function isNotEmptyStringConverter(v) {
   return ("" + v).trim().length > 0;
+}
+
+
+function stringsConverter(v) {
+  if( !Array.isArray( v ) ) return [];
+  return v.map(function(v) { return "" + v; });
 }

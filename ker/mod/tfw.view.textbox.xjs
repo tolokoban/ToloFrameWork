@@ -1,10 +1,11 @@
 // tfw.view.textbox
 {View DIV
   view.attribs: {
-    value: {string ""}
+    value: {string "" behind: onValueChanged}
     label: {string ""}
     focus: {boolean false}
     width: {unit "8rem"}
+    list: {strings}
   }
   class: tfw-view-textbox
   class.focus: {Bind focus} 
@@ -20,6 +21,6 @@
       ]}
     {DIV view.id: foot, class: foot}
     {DIV view.id: bottom, class: "bottom thm-bgS"}
-    {DIV view.id: completion, class: completion}
+    {FOOTER [{DIV view.id: completion, class: "completion thm-bg3 thm-ele4"}]}
   ]
 }
