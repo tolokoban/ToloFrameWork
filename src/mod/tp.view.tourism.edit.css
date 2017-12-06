@@ -1,0 +1,21 @@
+div.tp-view-tourism-edit {
+  display: table;
+}
+
+div.tp-view-tourism-edit > div {
+  display: table-row;
+  white-space: nowrap;
+}
+
+div.tp-view-tourism-edit > div > div {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+div.tp-view-tourism-edit > div > div > div.disabled {
+  opacity: .5;
+}
+
+div.tp-view-tourism-edit > div > div > *.hide {
+  display: none;
+}

@@ -1,0 +1,21 @@
+{"View" DIV
+  view.attribs: {
+    duration-visible: {boolean false}
+    duration: {boolean false}
+  }
+  class: tp-view-tourism-edit
+  
+  [
+    {DIV [
+      {DIV [
+        {tfw.view.checkbox value: {Bind durationVisible} content: "" view.id: durationCheckbox}
+      ]}
+      {DIV [        
+        {DIV class: disabled class.hide: {Bind "durationCheckbox/value"} ["Durée"]}        
+        {tfw.view.textbox class.|hide: {Bind duration-visible}
+          value: {Bind duration}
+          label: "Durée"}
+      ]}
+    ]}
+  ]
+}
