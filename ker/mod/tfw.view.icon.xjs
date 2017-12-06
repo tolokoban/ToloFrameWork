@@ -5,8 +5,8 @@
     content: {string ok behind: onContentChanged}
     size: {unit 28}
     animate: {boolean false}
-    flipH: {boolean false}
-    flipV: {boolean false}
+    flip-h: {boolean false}
+    flip-v: {boolean false}
     pen0: {string 0  behind: onPen0Changed}
     pen1: {string 1  behind: onPen1Changed}
     pen2: {string P  behind: onPen2Changed}
@@ -20,8 +20,8 @@
   class: tfw-view-icon
   class.|hide: {Bind visible}
   class.animate: {Bind animate}
-  class.flipH: {Bind flipH}
-  class.flipV: {Bind flipV}
+  class.flipH: {Bind flip-h}
+  class.flipV: {Bind flip-v}
   style.width: {Bind size}
   style.height: {Bind size}
   width: 100%
