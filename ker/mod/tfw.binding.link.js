@@ -8,7 +8,7 @@ var ID = 0;
  * @export
  * @class Link
  * Bind A with B. A is waiting for value change in B and vice versa.
- * 
+ *
  * @param {object} args.A.obj - Object holding properties for input A.
  * @param {string} args.A.name  - Name of the property  of the holding
  * object for input A.
@@ -39,12 +39,19 @@ var ID = 0;
  * accepted by `A`.
  */
 var Link = function( args ) {
-  checkArgs( args );
+  try {
+    checkArgs.call( this, args );
 
-  var id = ID++;
-  var onChangedA = link( args, id, "A", "B" );
-  var onChangedB = link( args, id, "B", "A" );
-  addDestroyFunction.call( this, onChangedA, onChangedB );
+    var id = ID++;
+    var onChangedA = link.call( this, args, id, "A", "B" );
+    var onChangedB = link.call( this, args, id, "B", "A" );
+    addDestroyFunction.call( this, onChangedA, onChangedB );
+  }
+  catch( ex ) {
+    console.error("new Link( " + args + " )");
+    fail( ex, "new Link( <args> ) " + (this.name || "") );
+  }
+
 };
 
 
@@ -52,6 +59,8 @@ module.exports = Link;
 
 
 function link( args, id, emitterKey, receiverKey ) {
+  var that = this;
+
   var onChanged = [];
   args[receiverKey].forEach(function (receiver, receiverIndex) {
     if( !receiver.open ) return;
@@ -59,18 +68,18 @@ function link( args, id, emitterKey, receiverKey ) {
     args[emitterKey].forEach(function (emitter, emitterIndex) {
       if( typeof emitter.name === 'string'
           && typeof receiver.name === 'string'
-          && emitter.obj === receiver.obj 
-          && emitter.name === receiver.name ) 
+          && emitter.obj === receiver.obj
+          && emitter.name === receiver.name )
       {
         console.error(
-          "It is forbidden to bind a property on itself! (" 
+          "It is forbidden to bind a property on itself! ("
             + emitterIndex + " -> " + receiverIndex + ")"
         );
         console.info("[tfw.binding.link] args=", args);
         return;
       }
       var pmEmitter = PropertyManager( emitter.obj );
-      var slot = actionChanged.bind( this, emitter, receiver, id );
+      var slot = actionChanged.bind( that, emitter, receiver, id );
       pmEmitter.on( emitter.name, slot );
       onChanged.push({ pm: pmEmitter, name: emitter.name, slot: slot });
     });
@@ -90,69 +99,117 @@ function addDestroyFunction( onSrcChanged, onDstChanged ) {
 }
 
 function actionChanged( src, dst, id, value, propertyName, container, wave ) {
+  var that = this;
+
   var pmSrc = PropertyManager( src.obj );
   var pmDst = PropertyManager( dst.obj );
 
-  if( hasAlreadyBeenHere( id, wave ) ) return;
+  if( this.name ) {
+    console.log( "Link " + this.name + ": ", {
+      src: src, dst: dst, id: id, value: value, propertyName: propertyName, container: container, wave: wave
+    } );
+  }
+  if( hasAlreadyBeenHere( id, wave ) ) {
+    if( this.name ) {
+      console.log( "...has been BLOCKED by the wave! ", wave );
+    }
+    return;
+  }
 
   value = processValue( value, src, dst );
   value = processSwitch( value, dst, pmSrc );
   value = processConverter( value, src, dst );
-  if( filterFailed( value, src, dst ) ) return;
+  if( filterFailed( value, src, dst ) ) {
+    if( this.name ) console.log( "...has been FILTERED!" );
+    return;
+  }
 
   if( typeof dst.delay === 'number' ) {
+    if( this.name ) console.log( "...has been DELAYED for " + dst.delay + " ms!" );
     clearTimeout( dst._id );
     dst._id = setTimeout(function() {
+      if( that.name ) {
+        console.log( "Link " + that.name + " (after " + dst.delay + " ms): ", {
+          src: src, dst: dst, id: id, value: value, propertyName: propertyName, wave: wave
+        } );
+        console.log("...try to change a value. ", {
+          propertyName: dst.name, value: value, target: Object.keys( dst.obj["__tfw.property-manager__"] )
+        });
+      }
       pmDst.change( dst.name, value, wave );
     }, dst.delay);
   } else {
+    if( this.name )
+      console.log("...try to change a value. ", {
+        propertyName: dst.name, value: value, target: Object.keys( dst.obj["__tfw.property-manager__"] )
+      });
     pmDst.change( dst.name, value, wave );
   }
 }
 
 
 function checkArgs( args ) {
-  if( typeof args === 'undefined' ) fail("Missing mandatory argument!");
-  if( typeof args.A === 'undefined' ) fail("Missing `args.A`!");
-  if( !Array.isArray( args.A ) ) args.A = [args.A];
-  if( typeof args.B === 'undefined' ) fail("Missing `args.B`!");
-  if( !Array.isArray( args.B ) ) args.B = [args.B];
+  try {
+    if( typeof args === 'undefined' ) fail("Missing mandatory argument!");
+    if( typeof args.A === 'undefined' ) fail("Missing `args.A`!");
+    if( !Array.isArray( args.A ) ) args.A = [args.A];
+    if( typeof args.B === 'undefined' ) fail("Missing `args.B`!");
+    if( !Array.isArray( args.B ) ) args.B = [args.B];
 
-  var k;
-  for( k = 0 ; k < args.A.length ; k++ ) {
-    checkPod( args.A[k], k );
+    // If  a name  is given,  debug information  will be  showed in  the
+    // console.
+    this.name = args.name;
+
+    var k;
+    for( k = 0 ; k < args.A.length ; k++ ) {
+      checkPod( args.A[k], k );
+    }
+    for( k = 0 ; k < args.B.length ; k++ ) {
+      checkPod( args.B[k], k );
+    }
   }
-  for( k = 0 ; k < args.B.length ; k++ ) {
-    checkPod( args.B[k], k );
+  catch( ex ) {
+    console.error("checkArgs( " + args + " )");
+    fail( ex, "checkArgs( <args> )" );
   }
 }
 
 function checkPod( pod, index ) {
-  if( !pod.action ) {
-    if( typeof pod.obj === 'undefined' ) fail("Missing `[" + index + "].obj`!");
-    if( typeof pod.name === 'undefined' ) fail("Missing `[" + index + "].name`!");
-  }
-  else if ( typeof pod.action !== 'function' ) {
-    fail("Attribute `[" + index + "].action` must be a function!");
-  }
-  else {
-    if( typeof pod.obj !== 'undefined' )
-      throw "[" + index + "].action cannot be defined in the same time of ["
-      + index + "].obj! They are exclusive attributes.";
-    if( typeof pod.name !== 'undefined' )
-      throw "[" + index + "].action cannot be defined in the same time of ["
-      + index + "].name! They are exclusive attributes.";
+  try {
+    if( !pod.action ) {
+      if( typeof pod.obj === 'undefined' ) fail("Missing `[" + index + "].obj`!");
+      if( typeof pod.name === 'undefined' ) fail("Missing `[" + index + "].name`!");
+      // Check if the attribute exists.
+      if( !PropertyManager.isLinkable( pod.obj, pod.name ) )
+        throw "`" + pod.name + "` is not a linkable attribute.\n"
+        + "Valid linkable attributes are: "
+        + PropertyManager.getAllAttributesNames( pod.obj ).join(", ") + ".";
+    }
+    else if ( typeof pod.action !== 'function' ) {
+      throw "Attribute `[" + index + "].action` must be a function!";
+    }
+    else {
+      if( typeof pod.obj !== 'undefined' )
+        throw "[" + index + "].action cannot be defined in the same time of ["
+        + index + "].obj! They are exclusive attributes.";
+      if( typeof pod.name !== 'undefined' )
+        throw "[" + index + "].action cannot be defined in the same time of ["
+        + index + "].name! They are exclusive attributes.";
 
-    // An action is emulated by a hollow object.
-    var hollowObject = {};
-    PropertyManager( hollowObject ).create("x", {
-      set: pod.action
-    });
-    pod.obj = hollowObject;
-    pod.name = "x";
-    delete pod.action;
+      // An action is emulated by a hollow object.
+      var hollowObject = {};
+      PropertyManager( hollowObject ).create("<action>", {
+        set: pod.action
+      });
+      pod.obj = hollowObject;
+      pod.name = "<action>";
+    }
+    if( typeof pod.open === 'undefined' ) pod.open = true;
   }
-  if( typeof pod.open === 'undefined' ) pod.open = true;
+  catch( ex ) {
+    console.error("checkpod(", pod, ", ", index, ")");
+    fail( ex, "checkpod( <pod>, " + index + ")" );
+  }
 }
 
 
@@ -162,7 +219,7 @@ function fail( msg, source ) {
   } else {
     source = "::" + source;
   }
-  throw Error("[tfw.binding.link" + source + "] " + msg);
+  throw msg + "\n" + "[tfw.binding.link" + source + "]";
 }
 
 

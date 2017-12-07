@@ -1,0 +1,5 @@
+{View DIV
+  view.attribs: {
+    duration: {integer 0}
+  }
+}

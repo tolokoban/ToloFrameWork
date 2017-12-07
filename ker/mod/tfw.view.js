@@ -49,7 +49,8 @@ function defineAttribValue( elem ) {
 function defineAttribFocus( elem ) {
   var that = this;
   PM( this ).create('focus', {
-    cast: Converters.get('boolean')()
+    cast: Converters.get('boolean')(),
+    delay: 1
   });
   PM( this ).on( "focus", function(v) {
     if( v ) elem.focus();

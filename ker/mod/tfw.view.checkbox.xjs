@@ -1,5 +1,5 @@
 // tfw.view.checkbox
-{View BUTTON
+{View BUTTON view.debug: false
   view.attribs: {
     value: {boolean false},
     inverted: {boolean false},

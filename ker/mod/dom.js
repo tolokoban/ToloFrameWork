@@ -2,7 +2,7 @@
  * @module dom
  *
  * @description
- * Functions which facilitate DOm manipulations.
+ * Functions which facilitate DOM manipulations.
  * Included __interact.js__. You can find documentation for it here:
  * [http://interactjs.io/docs/]
  *

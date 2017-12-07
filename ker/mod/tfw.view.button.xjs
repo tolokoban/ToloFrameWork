@@ -1,5 +1,5 @@
 // tfw.view.checkbox
-{View BUTTON
+{View BUTTON view.debug: false
   view.attribs: {
     action: {action}
     icon: ""
@@ -24,7 +24,7 @@
   class.responsive: {Bind responsive}
   
   event.tap: {Set action true}
-  event.keyup: {Set action true}
+  event.keyup: [{Set action true}{Set pressed false}]
   event.down: {Set pressed true}
   event.up: {Set pressed false}
   

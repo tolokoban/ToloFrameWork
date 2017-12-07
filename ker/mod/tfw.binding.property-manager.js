@@ -161,6 +161,11 @@ module.exports.isLinkable = function( obj, propertyName ) {
   return obj[SYMBOL]._props[propertyName] !== undefined;
 };
 
+module.exports.getAllAttributesNames = function( obj ) {
+  if( obj[SYMBOL] === undefined ) return [];
+  return Object.keys( obj[SYMBOL]._props );
+};
+
 
 /**
  * @export .create
@@ -200,7 +205,7 @@ PropertyManager.prototype.create = function( propertyName, options ) {
       event: new Event(),
       filter: undefined,
       converter: undefined,
-      delay: 0,
+      delay: castPositiveInteger( options.delay ),
       action: null,
       timeout: 0,
       get: typeof options.get === 'function' ? options.get : function() { return value; },
@@ -260,4 +265,10 @@ function fail( msg, source ) {
     source = "::" + source;
   }
   throw Error("[tfw.binding.property-manager" + source + "] " + msg);
+}
+
+function castPositiveInteger( v ) {
+  if( typeof v !== 'number' ) return 0;
+  if( isNaN( v ) ) return 0;
+  return Math.max( 0, Math.floor( v ) );
 }
