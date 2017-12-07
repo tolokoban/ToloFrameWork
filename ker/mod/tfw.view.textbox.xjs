@@ -4,11 +4,15 @@
     value: {string "" behind: onValueChanged}
     label: {string ""}
     focus: {boolean false}
+    visible: {boolean true}
     width: {unit "8rem"}
     list: {strings}
   }
+
   class: tfw-view-textbox
   class.focus: {Bind focus} 
+  class.|hide: {Bind visible} 
+
   [
     {DIV view.id: head, class: head {Bind label}}
     {DIV view.id: body, class: body

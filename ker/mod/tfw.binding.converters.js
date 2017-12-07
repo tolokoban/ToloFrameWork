@@ -1,8 +1,12 @@
 "use strict";
 
+var $ = require("$");
+
+
 var CONVERTERS = {
   boolean: function() { return booleanConverter; },
   booleans: function() { return booleansConverter; },
+  multilang: function() { return multilangConverter; },
   not: function() { return notConverter; },
   strings: function() { return stringsConverter; },
   string: function() { return function(v) { return "" + v; }; },
@@ -107,4 +111,14 @@ function isNotEmptyStringConverter(v) {
 function stringsConverter(v) {
   if( !Array.isArray( v ) ) return [];
   return v.map(function(v) { return "" + v; });
+}
+
+
+function multilangConverter(v) {
+  if( !Array.isArray( v ) && typeof v !== 'object' ) {
+    var def = {};
+    def[$.lang()] = "" + v;
+    return def;
+  }
+  return v;
 }
