@@ -2,4 +2,10 @@
   view.attribs: {
     duration: {integer 0}
   }
+  [
+    {tfw.view.textbox label: Days}
+    {tfw.view.textbox label: Hours}
+    {tfw.view.textbox label: Minutes}
+    {tfw.view.textbox label: Seconds}
+  ]
 }

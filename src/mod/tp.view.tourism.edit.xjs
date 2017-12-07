@@ -16,6 +16,7 @@
         {tfw.view.textbox class.|hide: {Bind duration-visible}
           focus: {Bind duration-visible}
           value: {Bind duration}}
+        {tp.view.duration class.|hide: {Bind duration-visible}}
       ]}
     ]}
   ]
