@@ -64,6 +64,7 @@ var RX_CSS_UNIT = /^(-?[.0-9]+)[ \n\r]*([a-z%]*)/;
 function cssUnitConverter(v) {
   if( typeof v === 'number' ) return v + "px";
   v = ("" + v).trim().toLowerCase();
+  if( v === 'auto' || v === 'inherit' ) return v;
   var m = RX_CSS_UNIT.exec( v );
   if( !m ) return "0";
   var scalar = parseFloat( m[1] );

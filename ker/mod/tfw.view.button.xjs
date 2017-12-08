@@ -10,6 +10,7 @@
     enabled: {boolean true}
     inverted: {boolean false}
     visible: {boolean true}
+    width: {unit auto}
     wide: {boolean false}
     responsive: {boolean false}
   }
@@ -17,12 +18,15 @@
   class: "tfw-view-button"
   class.flat: {Bind flat}
   class.*: {[flat,type,pressed] getClasses}
-  attrib.|disabled: {Bind enabled}
   class.inverted: {Bind inverted}
   class.|hide: {Bind visible}
   class.wide: {Bind wide}
   class.responsive: {Bind responsive}
-  
+
+  attrib.|disabled: {Bind enabled}
+
+  style.width: {Bind width}
+
   event.tap: {Set action true}
   event.keyup: [{Set action true}{Set pressed false}]
   event.down: {Set pressed true}

@@ -22,6 +22,12 @@ exports.Tag = function(tagName, attribs) {
       case 'focus':
         defineAttribFocus.call( that, elem );
         break;
+      case 'textContent':
+        defineAttribTextContent.call( that, elem );
+        break;
+      case 'innerHTML':
+        defineAttribinnerHTML.call( that, elem );
+        break;
       default:
         defineStandardAttrib.call( that, elem, attName );
       }
@@ -60,6 +66,20 @@ function defineAttribFocus( elem ) {
     that.focus = true; }, false);
   elem.addEventListener( "blur", function() {
     that.focus = false; }, false);
+}
+
+function defineAttribTextContent( elem ) {
+  PM( this ).create('textContent', {
+    get: function() { return elem.textContent; },
+    set: function(v) { elem.textContent = v; }
+  });
+}
+
+function defineAttribInnerHTML( elem ) {
+  PM( this ).create('innerHTML', {
+    get: function() { return elem.innerHTML; },
+    set: function(v) { elem.innerHTML = v; }
+  });
 }
 
 function defineStandardAttrib( elem, attName ) {

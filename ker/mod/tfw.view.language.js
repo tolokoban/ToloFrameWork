@@ -9,7 +9,8 @@ var Button = require("tfw.view.button");
 
 var CODE_BEHIND = {
   onTap: onTap,
-  onLanguageChanged: onLanguageChanged
+  onLanguageChanged: onLanguageChanged,
+  onCurrentChanged: onCurrentChanged
 };
 
 
@@ -36,8 +37,18 @@ function onLanguageChanged( code ) {
   }
   var name = findLanguageNameFromCode( code ) || "";
   this.languageName = name;
+  this.current = this.value[code] || "";
 };
 
+
+/**
+ * When `current`is  set, we  have to update  `value` for  the current
+ * language `language`.
+ */
+function onCurrentChanged( current ) {
+  this.value[this.language] = current;
+  PM( this ).fire( "value" );
+};
 
 /**
  * @param {DIV} content - Where to add the language buttons.
@@ -67,6 +78,7 @@ function fillContentWithUsedLanguages( content, detach, currentlyUsedLanguageCod
       content: languageName,
       icon: "flag-" + code,
       flat: true,
+      width: "120px",
       type: "primary"
     });
     if( button.icon === '' ) button.icon = "tri-right";
@@ -88,6 +100,7 @@ function fillContentWithUnusedLanguages( content, detach, currentlyUnusedLanguag
       content: languageName,
       icon: "flag-" + code,
       flat: true,
+      width: "120px",
       type: "default"
     });
     if( button.icon === '' ) button.icon = "tri-right";
@@ -111,13 +124,13 @@ function findLanguageNameFromCode( languageCode ) {
 
   languageCode = languageCode.toLowerCase();
 
-  while( m > a ) {
+  while( b - a > 1 ) {
     m = Math.floor( (a + b) / 2 );
     item = LANGUAGES[m];
     code = item[0];
     name = item[1];
     if( code == languageCode ) return name;
-    if( code < languageCode ) b = m;
+    if( languageCode < code ) b = m;
     else a = m;
   }
   return null;
