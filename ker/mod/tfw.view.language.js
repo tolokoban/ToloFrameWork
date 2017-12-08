@@ -14,7 +14,9 @@ var CODE_BEHIND = {
 };
 
 
-function onTap() {
+function onTap( evt ) {
+  if( evt && evt.keyCode === 9 ) return;
+  
   var content = $.div();
   var btnClose = new Button({ content: Button._("close"), flat: true });
   var modal = new Modal({

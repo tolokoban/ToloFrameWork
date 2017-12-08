@@ -2,13 +2,39 @@
   view.attribs: {
     duration-visible: {boolean false}
     duration: {multilang {}}
+    level-visible: {boolean false}
+    level: {multilang {}}
     altitude-visible: {boolean false}
     altitude: {multilang {}}
   }
 
   class: tp-view-tourism-edit
+
+  %visible%: "-visible"
+  %text%: "-text"
+  %value%: "-text/value"
+  %Item%: {DIV [
+    {DIV [
+      {tfw.view.checkbox
+        value: {Bind %type%+%visible%},
+        content: {Intl %type%}}
+    ]}
+    {DIV [        
+      {tfw.view.textbox
+        view.id: %type%+%text%
+        focus: {Bind %type%+%visible%, back: false}
+        visible: {Bind %type%+%visible%}}
+      {tfw.view.language
+        value: {Bind %type%}
+        current: {Bind %type%+%value%}
+        visible: {Bind %type%+%visible%}}
+    ]}
+  ]}
   
   [
+    {%Item% %type%: level}
+    {%Item% %type%: duration}
+    {%Item% %type%: altitude}
     {DIV [
       {DIV [
         {tfw.view.checkbox
