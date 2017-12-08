@@ -77,8 +77,7 @@ function fillContentWithUsedLanguages( content, detach, currentlyUsedLanguageCod
     var button = new Button({
       content: languageName,
       icon: "flag-" + code,
-      flat: true,
-      width: "120px",
+      flat: false,
       type: "primary"
     });
     if( button.icon === '' ) button.icon = "tri-right";
@@ -100,7 +99,8 @@ function fillContentWithUnusedLanguages( content, detach, currentlyUnusedLanguag
       content: languageName,
       icon: "flag-" + code,
       flat: true,
-      width: "120px",
+      small: true,
+      width: "140px",
       type: "default"
     });
     if( button.icon === '' ) button.icon = "tri-right";
@@ -191,7 +191,7 @@ var LANGUAGES = [
   ["fi", "suomi, suomen kieli"],
   ["fj", "vosa Vakaviti"],
   ["fo", "føroyskt"],
-  ["fr", "français, langue française"],
+  ["fr", "français"],
   ["fy", "Frysk"],
   ["ga", "Gaeilge"],
   ["gd", "Gàidhlig"],

@@ -1,4 +1,6 @@
 {View BUTTON class: "tfw-view-language thm-bg3"
+  view.debug: true
+  
   view.attribs: {
     value: {multilang {}}
     language: {string "", behind: onLanguageChanged}
@@ -14,7 +16,8 @@
   event.tap: {Behind onTap}
   event.down: {Set pressed true}
   event.up: {Set pressed false}
-
+  event.keyup: {Behind onTap}
+  
   class.thm-ele4|thm-ele2: {Bind pressed}
   class.|hide: {Bind visible}
 }

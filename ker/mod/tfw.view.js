@@ -22,11 +22,11 @@ exports.Tag = function(tagName, attribs) {
       case 'focus':
         defineAttribFocus.call( that, elem );
         break;
-      case 'textContent':
+      case 'textcontent':
         defineAttribTextContent.call( that, elem );
         break;
-      case 'innerHTML':
-        defineAttribinnerHTML.call( that, elem );
+      case 'innerhtml':
+        defineAttribInnerHTML.call( that, elem );
         break;
       default:
         defineStandardAttrib.call( that, elem, attName );
@@ -71,14 +71,18 @@ function defineAttribFocus( elem ) {
 function defineAttribTextContent( elem ) {
   PM( this ).create('textContent', {
     get: function() { return elem.textContent; },
-    set: function(v) { elem.textContent = v; }
+    set: function(v) {
+      elem.textContent = v;
+    }
   });
 }
 
 function defineAttribInnerHTML( elem ) {
   PM( this ).create('innerHTML', {
     get: function() { return elem.innerHTML; },
-    set: function(v) { elem.innerHTML = v; }
+    set: function(v) {
+      elem.innerHTML = v;
+    }
   });
 }
 

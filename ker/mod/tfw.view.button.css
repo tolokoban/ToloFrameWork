@@ -85,3 +85,20 @@
   .tfw-view-button.responsive > div.text { display: none; }
   .tfw-view-button.responsive { max-width: 32px; min-width: 32px; margin: 0; }
 }
+
+/* Small version */
+.tfw-view-button.small {
+  min-height: 28px;
+  margin: 2px 4px;
+  font-size: 10px;
+  font-weight: normal;
+}
+
+.tfw-view-button.small > div.text {
+  text-align: left;
+}
+
+.tfw-view-button.smal > .icon {
+  margin: 0 4px 0 2px;
+}
+

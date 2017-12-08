@@ -13,6 +13,7 @@
     width: {unit auto}
     wide: {boolean false}
     responsive: {boolean false}
+    small: {boolean false, behind: onSmallChanged}
   }
   
   class: "tfw-view-button"
@@ -22,6 +23,7 @@
   class.|hide: {Bind visible}
   class.wide: {Bind wide}
   class.responsive: {Bind responsive}
+  class.small: {Bind small}
 
   attrib.|disabled: {Bind enabled}
 
@@ -33,7 +35,7 @@
   event.up: {Set pressed false}
   
   [
-    {DIV view.id:icon, class:icon [ {tfw.view.icon content: {Bind icon}} ]}
+    {DIV class:icon [ {tfw.view.icon view.id:icon, content: {Bind icon}} ]}
     {DIV view.id:text, class:text {Bind content}}
   ]
 }

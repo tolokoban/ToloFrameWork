@@ -1,7 +1,8 @@
 "use strict";
 
 var CODE_BEHIND = {
-  getClasses: getClasses
+  getClasses: getClasses,
+  onSmallChanged: onSmallChanged
 };
 
 
@@ -34,4 +35,9 @@ function getClasses() {
     }
   }
   return classes;
+}
+
+
+function onSmallChanged( isSmall ) {
+  this.$elements.icon.size = isSmall ? 20 : 28;
 }
