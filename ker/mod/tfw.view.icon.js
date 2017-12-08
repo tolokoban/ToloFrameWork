@@ -35,9 +35,8 @@ function onContentChanged( content ) {
     this.$.style.display = "";
   }
   catch( ex ) {
-    console.error( "Bad content for tfw.view.icon!" );
-    console.error( ex );
     this.$.style.display = "none";
+    if( this.content != '' ) this.content = '';
   }
 }
 

@@ -5,6 +5,7 @@ div.tp-view-tourism-edit {
 div.tp-view-tourism-edit > div {
   display: table-row;
   white-space: nowrap;
+  height: 40px;
 }
 
 div.tp-view-tourism-edit > div > div {

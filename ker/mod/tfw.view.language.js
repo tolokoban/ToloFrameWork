@@ -1,6 +1,11 @@
 "use strict";
 
+var $ = require("dom");
+var PM = require("tfw.binding.property-manager");
 var Tfw = require("$");
+var Modal = require("wdg.modal");
+var Button = require("tfw.view.button");
+
 
 var CODE_BEHIND = {
   onTap: onTap,
@@ -9,8 +14,20 @@ var CODE_BEHIND = {
 
 
 function onTap() {
+  var content = $.div();
+  var btnClose = new Button({ content: Button._("close"), flat: true });
+  var modal = new Modal({
+    header: _("title"),
+    content: content,
+    footer: btnClose
+  });
+  var detach =  modal.detach.bind( modal );
+  PM( btnClose ).on( "action", detach );
 
+  fillContentWithAllLanguages.call( this, content, detach );
+  modal.attach();
 };
+
 
 function onLanguageChanged( code ) {
   if( code === '' ) {
@@ -20,6 +37,67 @@ function onLanguageChanged( code ) {
   var name = findLanguageNameFromCode( code ) || "";
   this.languageName = name;
 };
+
+
+/**
+ * @param {DIV} content - Where to add the language buttons.
+ * @param {function} detach - Function to call to close the dialog.
+ */
+function fillContentWithAllLanguages( content, detach ) {
+  var value = this.value;
+  
+  $.clear( content );
+  var currentlyUsedLanguageCodes = Object.keys( value )
+      .filter(function( code ) { return !isEmpty( value[code] ); });
+  fillContentWithUsedLanguages.call( this, content, detach, currentlyUsedLanguageCodes );
+  
+  var currentlyUnusedLanguages = LANGUAGES.filter(function( language ) {
+    var code = language[0];
+    return currentlyUsedLanguageCodes.indexOf( code ) === -1;
+  });
+  fillContentWithUnusedLanguages.call( this, content, detach, currentlyUnusedLanguages );
+}
+
+function fillContentWithUsedLanguages( content, detach, currentlyUsedLanguageCodes ) {
+  var that = this;
+
+  currentlyUsedLanguageCodes.forEach(function (code) {
+    var languageName = findLanguageNameFromCode( code );
+    var button = new Button({
+      content: languageName,
+      icon: "flag-" + code,
+      flat: true,
+      type: "primary"
+    });
+    if( button.icon === '' ) button.icon = "tri-right";
+    $.add( content, button );
+    PM( button ).on( "action", function() {
+      that.language = code;
+      detach();
+    });
+  });
+}
+
+function fillContentWithUnusedLanguages( content, detach, currentlyUnusedLanguages ) {
+  var that = this;
+
+  currentlyUnusedLanguages.forEach(function (language) {
+    var code = language[0];
+    var languageName = language[1];
+    var button = new Button({
+      content: languageName,
+      icon: "flag-" + code,
+      flat: true,
+      type: "default"
+    });
+    if( button.icon === '' ) button.icon = "tri-right";
+    $.add( content, button );
+    PM( button ).on( "action", function() {
+      that.language = code;
+      detach();
+    });
+  });
+}
 
 
 /**
@@ -43,6 +121,12 @@ function findLanguageNameFromCode( languageCode ) {
     else a = m;
   }
   return null;
+}
+
+
+function isEmpty( text ) {
+  if( typeof text !== 'string' ) return true;
+  return text.trim().length === 0;
 }
 
 

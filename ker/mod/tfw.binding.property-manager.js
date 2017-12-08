@@ -229,16 +229,24 @@ PropertyManager.prototype.create = function( propertyName, options ) {
 PropertyManager.prototype.createAction = function( propertyName ) {
   var that = this;
 
-  return this._props[propertyName] = {
-      event: new Event(),
-      filter: undefined,
-      converter: undefined,
-      delay: 0,
-      action: null,
-      timeout: 0,
-      get: function() { return propertyName; },
-      set: function() { that.fire( propertyName, propertyName ); }
+  var prop = this._props[propertyName] = {
+    event: new Event(),
+    filter: undefined,
+    converter: undefined,
+    delay: 0,
+    action: null,
+    timeout: 0,
+    get: function() { return propertyName; },
+    set: function() {
+      that.fire( propertyName, propertyName );
+    }
   };
+  Object.defineProperty(this._container, propertyName, {
+    get: prop.get,
+    set: prop.set,
+    enumerable: true, configurable: false
+  });
+  return prop;
 };
 
 
