@@ -7,6 +7,8 @@ div.tfw-view-textbox {
   font: inherit;
 }
 
+div.tfw-view-textbox.hide { display: none; }
+
 div.tfw-view-textbox.focus {
   z-index: 999999;
 }

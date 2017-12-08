@@ -1,23 +1,49 @@
 {"View" DIV view.debug: false
   view.attribs: {
     duration-visible: {boolean false}
-    duration: {integer 0}
+    duration: {multilang {}}
+    altitude-visible: {boolean false}
+    altitude: {multilang {}}
   }
+
   class: tp-view-tourism-edit
   
   [
     {DIV [
       {DIV [
-        {tfw.view.checkbox, view.id:durationCheckbox,
-                            value:{Bind duration-visible},
-                            content:"Durée"}
+        {tfw.view.checkbox
+          value: {Bind duration-visible},
+          content: "Durée"}
       ]}
       {DIV [        
-        {tfw.view.textbox class.|hide: {Bind duration-visible}
-          focus: {Bind duration-visible}
-          value: {Bind duration}}
-        {tp.view.duration class.|hide: {Bind duration-visible}}
+        {tfw.view.textbox
+          view.id: duration-text
+          focus: {Bind duration-visible, back: false}
+          visible: {Bind duration-visible}}
+        {tfw.view.language
+          value: {Bind duration}
+          current: {Bind "duration-text/value"}
+          visible: {Bind duration-visible}}
       ]}
     ]}
+
+    {DIV [
+      {DIV [
+        {tfw.view.checkbox
+          value: {Bind altitude-visible},
+          content: "Altitude de départ"}
+      ]}
+      {DIV [        
+        {tfw.view.textbox
+          view.id: altitude-text
+          focus: {Bind altitude-visible, back: false}
+          visible: {Bind altitude-visible}}
+        {tfw.view.language
+          value: {Bind altitude}
+          current: {Bind "altitude-text/value"}
+          visible: {Bind altitude-visible}}
+      ]}
+    ]}
+
   ]
 }
