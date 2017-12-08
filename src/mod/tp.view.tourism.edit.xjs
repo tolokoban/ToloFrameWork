@@ -35,41 +35,5 @@
     {%Item% %type%: level}
     {%Item% %type%: duration}
     {%Item% %type%: altitude}
-    {DIV [
-      {DIV [
-        {tfw.view.checkbox
-          value: {Bind duration-visible},
-          content: "Durée"}
-      ]}
-      {DIV [        
-        {tfw.view.textbox
-          view.id: duration-text
-          focus: {Bind duration-visible, back: false}
-          visible: {Bind duration-visible}}
-        {tfw.view.language
-          value: {Bind duration}
-          current: {Bind "duration-text/value"}
-          visible: {Bind duration-visible}}
-      ]}
-    ]}
-
-    {DIV [
-      {DIV [
-        {tfw.view.checkbox
-          value: {Bind altitude-visible},
-          content: "Altitude de départ"}
-      ]}
-      {DIV [        
-        {tfw.view.textbox
-          view.id: altitude-text
-          focus: {Bind altitude-visible, back: false}
-          visible: {Bind altitude-visible}}
-        {tfw.view.language
-          value: {Bind altitude}
-          current: {Bind "altitude-text/value"}
-          visible: {Bind altitude-visible}}
-      ]}
-    ]}
-
   ]
 }
