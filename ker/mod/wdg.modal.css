@@ -59,10 +59,16 @@ div.wdg-modal .cell > div {
 
 div.wdg-modal .cell > div.top {
   border-top: 1px solid rgba(127,127,127,0.5);
+  box-shadow: 0 2px 4px rgba(0,0,0,.5) inset;
 }
 
 div.wdg-modal .cell > div.bottom {
   border-bottom: 1px solid rgba(127,127,127,0.5);
+  box-shadow: 0 -2px 4px rgba(0,0,0,.5) inset;
+}
+
+div.wdg-modal .cell > div.top.bottom {
+  box-shadow: 0 2px 4px rgba(0,0,0,.5) inset, 0 -2px 4px rgba(0,0,0,.5) inset;
 }
 
 div.wdg-modal.fadeout {

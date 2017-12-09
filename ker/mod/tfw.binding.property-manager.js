@@ -54,7 +54,7 @@ PropertyManager.prototype.fire = function( propertyName, wave ) {
     // You can listen  on all the properties of  a PropertyManager using
     // the special property name `*`.
     var propContainer = this.create( '*' );
-    propContainer.event.fire( prop.get(), propertyName, this._container, wave );
+    propContainer.event.fire( this._container, "*", this._container, wave );
   }
 };
 
@@ -63,18 +63,23 @@ PropertyManager.prototype.change = function( propertyName, value, wave ) {
 
   var prop = this.create( propertyName );
 
-  var currentValue = prop.get();
   var converter = prop.converter;
   if( typeof converter === 'function' ) {
     value = converter( value );
   }
-  if( value !== currentValue ) {
-    prop.set( value );
-    var that = this;
-    exec(prop, function() {
-      // Fire change event.
-      that.fire( propertyName, wave );
-    });
+
+  if( propertyName === '*' ) {
+    exec(prop, applyAttributesToTarget.bind( this, value, this._container ) );
+  } else {
+    var currentValue = prop.get();
+    if( value !== currentValue ) {
+      prop.set( value );
+      var that = this;
+      exec(prop, function() {
+        // Fire change event.
+        that.fire( propertyName, wave );
+      });
+    }
   }
 };
 
@@ -181,44 +186,62 @@ PropertyManager.prototype.create = function( propertyName, options ) {
   var that = this;
   if( typeof options === 'undefined' ) options = {};
   if( typeof propertyName !== 'string' ) fail("propertyName must be a string!");
-  var p = this._props[propertyName];
-  if( !p ) {
+  var p = this._props[propertyName] || createNewProperty.call( this, propertyName, options );
+  return p;
+};
+
+/**
+ * Copy all the attributes of `source` into `target`.
+ */
+function applyAttributesToTarget( source, target ) {
+  var attName, attValue;
+  for( attName in source ) {
+    if( module.exports.isLinkable( target, attName ) ) {
+      attValue = source[attName];
+      target[attName] = attValue;
+    }
+  }
+}
+
+function createNewProperty( propertyName, options ) {
+  var that = this;
+
+  if( propertyName !== '*' ) {
     Object.defineProperty(this._container, propertyName, {
       get: that.get.bind( that, propertyName ),
       set: that.change.bind( that, propertyName ),
       enumerable: true, configurable: false
     });
-    var value = undefined;
-    var setter;
-    if( typeof options.cast === 'function' ) {
-      if( typeof options.set === 'function' ) {
-        setter = function(v) {
-          options.set( options.cast( v ) );
-        };
-      } else {
-        setter = function(v) { value = options.cast(v); };
-      }
-    } else {
-      setter = typeof options.set === 'function' ? options.set : function(v) { value = v; };
-    }
-    p = {
-      event: new Event(),
-      filter: undefined,
-      converter: undefined,
-      delay: castPositiveInteger( options.delay ),
-      action: null,
-      timeout: 0,
-      get: typeof options.get === 'function' ? options.get : function() { return value; },
-      set: setter
-    };
-    this._props[propertyName] = p;
-    if( typeof options.init !== 'undefined' ) {
-      this.set( propertyName, options.init );
-    }
   }
-  return p;
-};
-
+  var value = undefined;
+  var setter;
+  if( typeof options.cast === 'function' ) {
+    if( typeof options.set === 'function' ) {
+      setter = function(v) {
+        options.set( options.cast( v ) );
+      };
+    } else {
+      setter = function(v) { value = options.cast(v); };
+    }
+  } else {
+    setter = typeof options.set === 'function' ? options.set : function(v) { value = v; };
+  }
+  var prop = {
+    event: new Event(),
+    filter: functionOrUndefined( options.filter ),
+    converter: functionOrUndefined( options.converter ),
+    delay: castPositiveInteger( options.delay ),
+    action: null,
+    timeout: 0,
+    get: typeof options.get === 'function' ? options.get : function() { return value; },
+    set: setter
+  };
+  this._props[propertyName] = prop;
+  if( typeof options.init !== 'undefined' ) {
+    this.set( propertyName, options.init );
+  }
+  return prop;
+}
 
 /**
  * This is a special property which emit a change event as soon as any
@@ -279,4 +302,9 @@ function castPositiveInteger( v ) {
   if( typeof v !== 'number' ) return 0;
   if( isNaN( v ) ) return 0;
   return Math.max( 0, Math.floor( v ) );
+}
+
+function functionOrUndefined( f ) {
+  if( typeof f === 'function' ) return f;
+  return undefined;
 }

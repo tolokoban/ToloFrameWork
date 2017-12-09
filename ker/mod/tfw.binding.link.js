@@ -178,7 +178,7 @@ function checkPod( pod, index ) {
   try {
     if( !pod.action ) {
       if( typeof pod.obj === 'undefined' ) fail("Missing `[" + index + "].obj`!");
-      if( typeof pod.name === 'undefined' ) fail("Missing `[" + index + "].name`!");
+      if( typeof pod.name === 'undefined' ) pod.name = "*";
       // Check if the attribute exists.
       if( !PropertyManager.isLinkable( pod.obj, pod.name ) )
         throw "`" + pod.name + "` is not a linkable attribute.\n"

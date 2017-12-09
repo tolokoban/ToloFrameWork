@@ -12,6 +12,7 @@ button.tfw-view-language {
   line-height: 34px;
   font-size: .6em;
   font-weight: bold;
+  cursor: pointer;
 }
 
 button.tfw-view-language.hide {

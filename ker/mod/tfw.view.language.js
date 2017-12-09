@@ -9,6 +9,7 @@ var Button = require("tfw.view.button");
 
 var CODE_BEHIND = {
   onTap: onTap,
+  onValueChanged: onValueChanged,
   onLanguageChanged: onLanguageChanged,
   onCurrentChanged: onCurrentChanged
 };
@@ -19,18 +20,24 @@ function onTap( evt ) {
   
   var content = $.div();
   var btnClose = new Button({ content: Button._("close"), flat: true });
-  var modal = new Modal({
+  var dialog = new Modal({
     header: _("title"),
     content: content,
-    footer: btnClose
+    footer: btnClose,
+    fullscreen: true
   });
-  var detach =  modal.detach.bind( modal );
+  var detach =  dialog.detach.bind( dialog );
   PM( btnClose ).on( "action", detach );
 
   fillContentWithAllLanguages.call( this, content, detach );
-  modal.attach();
+  dialog.attach();
 };
 
+
+function onValueChanged( value ) {
+  if( this.language === '' ) this.language = Tfw.lang();
+  this.current = value[this.language] || "";
+}
 
 function onLanguageChanged( code ) {
   if( code === '' ) {
@@ -60,9 +67,11 @@ function fillContentWithAllLanguages( content, detach ) {
   var value = this.value;
   
   $.clear( content );
+  var divUsedLanguages = $.div();
+  $.add( content, divUsedLanguages );
   var currentlyUsedLanguageCodes = Object.keys( value )
       .filter(function( code ) { return !isEmpty( value[code] ); });
-  fillContentWithUsedLanguages.call( this, content, detach, currentlyUsedLanguageCodes );
+  fillContentWithUsedLanguages.call( this, divUsedLanguages, detach, currentlyUsedLanguageCodes );
   
   var currentlyUnusedLanguages = LANGUAGES.filter(function( language ) {
     var code = language[0];

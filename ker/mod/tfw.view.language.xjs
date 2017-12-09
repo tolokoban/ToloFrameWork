@@ -1,6 +1,6 @@
 {View BUTTON class: "tfw-view-language thm-bg3"
   view.attribs: {
-    value: {multilang {}}
+    value: {multilang {} behind: onValueChanged}
     language: {string "", behind: onLanguageChanged}
     language-name: {string ""}
     current: {string "", behind: onCurrentChanged}
