@@ -1,0 +1,29 @@
+div.tfw-view-cropped-image {
+  padding: 0;
+  position: relative;
+  display: inline-block;
+}
+
+div.tfw-view-cropped-image > * {
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+div.tfw-view-cropped-image > img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  transition: none;
+  opacity: 1;
+}
+
+div.tfw-view-cropped-image > img.hide {
+  transition: opacity .3s;
+  opacity: 0;
+}

@@ -72,7 +72,7 @@ PropertyManager.prototype.change = function( propertyName, value, wave ) {
     exec(prop, applyAttributesToTarget.bind( this, value, this._container ) );
   } else {
     var currentValue = prop.get();
-    if( value !== currentValue ) {
+    if( prop.alwaysFired || value !== currentValue ) {
       prop.set( value );
       var that = this;
       exec(prop, function() {
@@ -232,6 +232,7 @@ function createNewProperty( propertyName, options ) {
     converter: functionOrUndefined( options.converter ),
     delay: castPositiveInteger( options.delay ),
     action: null,
+    alwaysFired: options.alwaysFired ? true : false,
     timeout: 0,
     get: typeof options.get === 'function' ? options.get : function() { return value; },
     set: setter
@@ -249,27 +250,10 @@ function createNewProperty( propertyName, options ) {
  * before. Moreover, the value of this attribute is always its name.
  * This is used for action properties in buttons, for instance.
  */
-PropertyManager.prototype.createAction = function( propertyName ) {
-  var that = this;
-
-  var prop = this._props[propertyName] = {
-    event: new Event(),
-    filter: undefined,
-    converter: undefined,
-    delay: 0,
-    action: null,
-    timeout: 0,
-    get: function() { return propertyName; },
-    set: function() {
-      that.fire( propertyName, propertyName );
-    }
-  };
-  Object.defineProperty(this._container, propertyName, {
-    get: prop.get,
-    set: prop.set,
-    enumerable: true, configurable: false
-  });
-  return prop;
+PropertyManager.prototype.createAction = function( propertyName, options ) {
+  if( typeof options === 'undefined' ) options = {};
+  options.alwaysFired = true;
+  return this.create( propertyName, options );
 };
 
 

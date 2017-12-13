@@ -1,0 +1,19 @@
+div.tfw-view-file-input {
+  padding: 0;
+}
+
+div.tfw-view-file-input > div.filename {
+  opacity: .5;
+  font-size: 75%;
+  margin: -.8em 0 1.2em 56px;
+  transition: opacity .3s;
+}
+
+div.tfw-view-file-input > div.filename.hide {
+  opacity: 0;
+}
+
+
+div.tfw-view-file-input input {
+  display: none;
+}

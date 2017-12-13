@@ -2,6 +2,7 @@
 {View BUTTON view.debug: false
   view.attribs: {
     action: {action}
+    tag: {string ACTION}
     icon: ""
     content: {string "Click me!"}
     pressed: {boolean false}
@@ -29,8 +30,8 @@
 
   style.width: {Bind width}
 
-  event.tap: {Set action true}
-  event.keyup: [{Set action true}{Set pressed false}]
+  event.tap: {Set action {Bind tag}}
+  event.keyup: [{Set action {Bind tag}}{Set pressed false}]
   event.down: {Set pressed true}
   event.up: {Set pressed false}
   
