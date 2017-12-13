@@ -1,0 +1,17 @@
+{View DIV class:tfw-view-cropped-image
+  view.attribs: {
+    url: {string behind: onUrlChanged}
+    width: {integer 800}
+    height: {integer 400}
+    // `head` shows the top or the left of the image.
+    cropping: {[head, body, tail] body}
+    canvas: {action}
+  }
+
+  [
+    {CANVAS view.id:canvas
+      width: {Bind width}
+      height: {Bind height}}
+    {IMG view.id:img class:hide}
+  ]
+}
