@@ -1,16 +1,27 @@
 div.tfw-view-file-input {
   padding: 0;
+  display: table;
 }
 
-div.tfw-view-file-input > div.filename {
-  opacity: .5;
+div.tfw-view-file-input > div {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+div.tfw-view-file-input > div:last {
+  text-align: right;
+}
+
+div.tfw-view-file-input > div > div.filename {
+  opacity: .6;
   font-size: 75%;
-  margin: -.8em 0 1.2em 56px;
+  margin: 0 .5em 0 1em;
   transition: opacity .3s;
 }
 
-div.tfw-view-file-input > div.filename.hide {
+div.tfw-view-file-input > div > div.filename.hide {
   opacity: 0;
+  transition: opacity .3s;
 }
 
 

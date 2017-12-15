@@ -16,13 +16,16 @@ function init() {
   clearCanvas.call( this );
   
   var screen = this.$elements.img.$;
+  screen.crossOrigin = "anonymous";
   screen.onload = function() {
     $.removeClass( screen, "hide" );
 
     var img = new Image();
+    img.crossOrigin = "anonymous";
     img.onload = onImageToPutIntoCanvasLoaded.bind( that, img );
-    img.onerror = function() {
-      console.error("Unable to load image from URL: ", img.src);
+    img.onerror = function( err ) {
+      console.error( "Unable to load image from URL: ", img.src );
+      console.error( err );
     };
     img.src = that._newUrl;
     that._newUrl = null;
@@ -62,7 +65,7 @@ function isHorizontalOverflow( img ) {
 function cropHorizontally( img ) {
   var zoom = this.height / img.height;
   var x = 0;
-  if( this.cropping == 'center' ) {
+  if( this.cropping == 'body' ) {
     x = 0.5 * (this.width - img.width);
   }
   else if( this.cropping == 'tail' ) {
@@ -78,6 +81,12 @@ function cropHorizontally( img ) {
 function cropVertically( img ) {
   var zoom = this.width / img.width;
   var y = 0;
+  if( this.cropping == 'body' ) {
+    y = 0.5 * (this.height - img.height);
+  }
+  else if( this.cropping == 'tail' ) {
+    y = this.height - img.height;
+  }
   draw.call( this, img, 0, y, zoom );
 }
 

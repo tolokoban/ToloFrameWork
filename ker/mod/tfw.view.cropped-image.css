@@ -5,6 +5,7 @@ div.tfw-view-cropped-image {
 }
 
 div.tfw-view-cropped-image > * {
+  display: block;
   margin: 0;
   border: none;
   box-shadow: none;

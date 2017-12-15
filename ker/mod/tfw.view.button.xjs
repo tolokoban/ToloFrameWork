@@ -1,13 +1,13 @@
 // tfw.view.checkbox
 {View BUTTON view.debug: false
   view.attribs: {
-    action: {action}
-    tag: {string ACTION}
+    action: {action}    
+    tag: {string ACTION} // The value `action` will take on every tap.
     icon: ""
     content: {string "Click me!"}
     pressed: {boolean false}
     flat: {boolean false}
-    type: {[default primary secondary] default}
+    type: {[default primary secondary] primary}
     enabled: {boolean true}
     inverted: {boolean false}
     visible: {boolean true}

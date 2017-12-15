@@ -8,13 +8,17 @@
 
   class: tfw-view-file-input
   [
-    {tfw.view.button
-      icon: import
-      flat: true
-      wide: true
-      content: {Bind content}
-      action: {Bind action}}
-    {DIV view.id:filename class:"filename hide" }
+    {DIV [
+      {tfw.view.button
+        icon: import
+        flat: true
+        wide: true
+        content: {Bind content}
+        action: {Bind action}}
+    ]}
+    {DIV [
+      {DIV view.id:filename class:"filename hide" }
+    ]}
     {INPUT view.id:input type:file}
   ]
 }
