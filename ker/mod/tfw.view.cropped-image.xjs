@@ -8,6 +8,8 @@
     canvas: {action}
   }
 
+  view.init: init
+
   [
     {CANVAS view.id:canvas
       width: {Bind width}

@@ -4,34 +4,46 @@ var $ = require("dom");
 
 
 var CODE_BEHIND = {
+  init: init,
   onUrlChanged: onUrlChanged
 };
 
 
-function onUrlChanged( newUrl ) {
+function init() {
   var that = this;
 
-  this.$elements.img.$.src = this.$elements.canvas.$.toDataURL();
-  $.removeClass( this.$elements.img, "hide" );
+  this.canvas = this.$elements.canvas.$;
+  var screen = this.$elements.img.$;
+  screen.onload = function() {
+    $.removeClass( screen, "hide" );
 
-  var img = new Image();
-  img.onload = onImageToPutIntoCanvasLoaded.bind( that, img );
-  img.onerror = function() {
-    console.error("Unable to load image from URL: ", img.src);
+    var img = new Image();
+    img.onload = onImageToPutIntoCanvasLoaded.bind( that, img );
+    img.onerror = function() {
+      console.error("Unable to load image from URL: ", img.src);
+    };
+    img.src = that._newUrl;
+    that._newUrl = null;
   };
-  img.src = newUrl;
+}
+
+function onUrlChanged( newUrl ) {
+  var that = this;
+  this._newUrl = newUrl;
+  this.$elements.img.$.src = this.$elements.canvas.$.toDataURL();
 }
 
 
 function onImageToPutIntoCanvasLoaded( img ) {
   $.addClass( this.$elements.img, "hide" );
   if( img.height < 1 || img.width < 1 ) return;
-  
+
   if( isHorizontalOverflow.call( this, img ) ) {
     cropHorizontally.call( this, img );
   } else {
     cropVertically.call( this, img );
   }
+  this.canvas = this.$elements.canvas.$;
 }
 
 
