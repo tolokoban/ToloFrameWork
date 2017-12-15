@@ -8,6 +8,11 @@
     canvas: {action}
   }
 
+  view.init: init
+
+  style.max-width: {Bind width converter: unit}
+  style.max-height: {Bind height converter: unit}
+  
   [
     {CANVAS view.id:canvas
       width: {Bind width}
