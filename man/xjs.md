@@ -8,9 +8,10 @@ Other objects, strings, numbers and so on are called __standard values__.
 * innerhtml: .
 * textcontent: .
 * value: .
-* view.id: .
-* view.debug: .
 * view.attribs: .
+* view.debug: .
+* view.id: .
+* view.init: .
 * attrib.<names>: .
 * class.<names>: .
 * class.*: .
