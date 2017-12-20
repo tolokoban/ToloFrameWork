@@ -14,8 +14,9 @@ Other objects, strings, numbers and so on are called __standard values__.
 * attrib.<names>: .
 * class.<names>: .
 * class.*: .
-* style.<name>: .
+* event.<event-name>: .
 * on.<attrib-name>: .
+* style.<name>: .
 * {Bind ...}: .
 * {Intl ...}: .
 
