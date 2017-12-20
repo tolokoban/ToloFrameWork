@@ -17,7 +17,7 @@ module.exports.register = function ( icons ) {
   var key, val;
   for ( key in icons ) {
     val = icons[ key ];
-    Icon.Icons[ key ] = val;
+    module.exports.iconsBook[ key ] = val;
   }
 
 };
@@ -290,6 +290,7 @@ module.exports.iconsBook = {
       'stroke-width': 16
     } ]
   ] ],
+  pack: ['path', {fill: 0, d: 'M45,23C45,24,44,26,42,27L3,49C2,50,1,50,0,50C-1,50,-2,50,-3,49L-42,27C-44,26,-45,24,-45,23V-22C-45,-24,-44,-26,-42,-27L-3,-49C-2,-50,-1,-50,0,-50C1,-50,2,-50,3,-49L42,-27C44,-26,45,-24,45,-22V23M0,-39L-35,-20V20L0,39L35,20V-20L0,-39M0,-29L24,-15L0,-1L-24,-15L0,-29M25,14L5,26V8L25,-3V14M-5,26L-25,14V-3L-5,8V26Z'}],
   plus: draw( "M-45,0H45M0,-45V45" ),
   "plus-o": [ "g", [
     [ "circle", {
@@ -390,3 +391,17 @@ module.exports.iconsBook = {
     path2( 'M-50,42h24v4h-32Z' )
   ] ]
 };
+
+
+// Synonyms.
+var synonyms = {
+  add: "plus",
+  back: "left",
+  help: "question",
+  save: "export"
+};
+var key, val;
+for( key in synonyms ) {
+  val = synonyms[key];
+  module.exports.iconsBook[key] = module.exports.iconsBook[val];
+}
