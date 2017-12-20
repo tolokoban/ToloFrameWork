@@ -7,7 +7,7 @@ var Converters = require('tfw.binding.converters');
 exports.Tag = function(tagName, attribs) {
   tagName = tagName.trim().toLowerCase();
 
-  var elem = tagName === 'svg' ? $.svgRoot() : $.tag(tagName);
+  var elem = tagName === 'svg' ? $.svgRoot() : newTag(tagName);
   Object.defineProperty(this, '$', {
     value: elem, writable: false, enumerable: true, configurable: false
   });
@@ -34,6 +34,13 @@ exports.Tag = function(tagName, attribs) {
     });
   }
 };
+
+
+var SVG_TAGS = ["g", "rect", "circle", "line", "path", "defs"];
+function newTag( name ) {
+  if( SVG_TAGS.indexOf( name.toLowerCase() ) !== -1 ) return $.svg( name );
+  return $.tag( name );
+}
 
 
 function defineAttribValue( elem ) {
