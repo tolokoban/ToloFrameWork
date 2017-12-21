@@ -43,6 +43,8 @@
  *  <wdg:checkbox $value="false" $wide="true" />
  *  <wdg:label intl:value="title-text" $wide="true" />
  **********************************************************************/
+var ToloframeworkPermissiveJson = require("toloframework-permissive-json");
+
 
 exports.tags = [ "x-widget", "x-wdg", "wdg:.+" ];
 exports.priority = 0;
@@ -72,6 +74,8 @@ exports.compile = function( root, libs ) {
   SKIP = true;
   var com = parseComponent( root, libs, '        ' );
 
+  console.log( "### " + com.name.green.bold );
+  
   libs.require( "x-widget" );
   libs.require( com.name );
   libs.addInitJS( "var W = require('x-widget');" );
@@ -318,9 +322,9 @@ function getPropertiesAndBindings( root, libs, com, indent ) {
    <wdg:combo $key="fr">
    <content json>
    {
-   "en": "English",
-   "fr": "Français",
-   "it": "Italiano"
+     "en": "English",
+     "fr": "Français",
+     "it": "Italiano"
    }
    </content>
    </wdg:combo>
@@ -330,6 +334,7 @@ function parseChildrenProperties( root, libs, com, indent ) {
     root.children = [ ];
   }
   root.children.forEach( function( child ) {
+    debugger;
     if ( child.type != libs.Tree.TAG ) {
       return;
     }
@@ -351,7 +356,9 @@ function parseChildrenProperties( root, libs, com, indent ) {
 function parsePropertyJSON( root, libs, com ) {
   var text = libs.Tree.text( root ).trim( );
   try {
-    com.prop[root.name] = JSON.stringify( JSON.parse( text ), null, '  ' );
+    var obj = ToloframeworkPermissiveJson.parse( text );
+    com.prop[root.name] = JSON.stringify( obj , null, '  ' );
+    console.info("[x-widget.com] obj=", obj);
   } catch ( ex ) {
     libs.fatal( "Unable to parse JSON value of property `" + root.name + "`: " + ex + "\n" + text );
   }
