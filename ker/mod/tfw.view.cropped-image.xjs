@@ -1,4 +1,4 @@
-{View DIV class:tfw-view-cropped-image
+{View DIV class:"tfw-view-cropped-image thm-ele2"
   view.attribs: {
     url: {string behind: onUrlChanged}
     width: {integer 800}
@@ -6,17 +6,23 @@
     // `head` shows the top or the left of the image.
     cropping: {[head, body, tail] body}
     canvas: {action}
+    action: {action}
   }
 
   view.init: init
 
   style.max-width: {Bind width converter: unit}
   style.max-height: {Bind height converter: unit}
+  event.tap: {Set action true}
   
   [
     {CANVAS view.id:canvas
       width: {Bind width}
       height: {Bind height}}
     {IMG view.id:img class:hide}
+    {tfw.view.file-input class:hide
+      view.id: input
+      on.file: onFileChanged
+      action: {Bind action}}
   ]
 }

@@ -5,7 +5,8 @@ var $ = require("dom");
 
 var CODE_BEHIND = {
   init: init,
-  onUrlChanged: onUrlChanged
+  onUrlChanged: onUrlChanged,
+  onFileChanged: onFileChanged
 };
 
 
@@ -14,7 +15,7 @@ function init() {
 
   this.canvas = this.$elements.canvas.$;
   clearCanvas.call( this );
-  
+
   var screen = this.$elements.img.$;
   screen.crossOrigin = "anonymous";
   screen.onload = function() {
@@ -36,6 +37,17 @@ function onUrlChanged( newUrl ) {
   var that = this;
   this._newUrl = newUrl;
   this.$elements.img.$.src = this.$elements.canvas.$.toDataURL();
+}
+
+
+function onFileChanged( file ) {
+  var that = this;
+
+  var reader = new FileReader();
+  reader.addEventListener("load", function() {
+    that.url = reader.result;
+  });
+  reader.readAsDataURL( file );
 }
 
 

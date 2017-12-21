@@ -1,25 +1,28 @@
-// tfw.view.textbox
+// tfw.view.textarea
 {View DIV
   view.attribs: {
     value: {string "" behind: onValueChanged}
     label: {string ""}
     focus: {boolean false}
     visible: {boolean true}
-    width: {unit "8rem"}
-    list: {strings}
+    width: {unit "auto"}
+    rows: {integer 5}
+    cols: {integer 80}
   }
 
-  class: tfw-view-textbox
+  class: tfw-view-textarea
   class.focus: {Bind focus} 
-  class.|hide: {Bind visible} 
+  class.|hide: {Bind visible}
   class.thm-bg3: {Bind focus back:false}
 
   [
     {DIV view.id: head, class: head {Bind label}}
     {DIV view.id: body, class: body
       [
-        {INPUT
+        {TEXTAREA
           view.id: input
+          cols: {Bind cols}
+          rows: 1
           value: {Bind value}
           focus: {Bind focus}
           placeholder: {Bind label}
@@ -27,6 +30,5 @@
       ]}
     {DIV view.id: foot, class: foot}
     {DIV view.id: bottom, class: "bottom thm-bgS"}
-    {FOOTER [{DIV view.id: completion, class: "completion thm-bg3 thm-ele4"}]}
   ]
 }
