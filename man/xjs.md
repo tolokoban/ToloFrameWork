@@ -20,6 +20,7 @@ Other objects, strings, numbers and so on are called __standard values__.
 * style.<name>: .
 * {Bind ...}: .
 * {Intl ...}: .
+* %macro%: .
 
 ### Code behind
 Even if XJS.View has been made as powerful as possible, there are still cases where Javascript code is needed.
