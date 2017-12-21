@@ -1,4 +1,4 @@
-// tfw.view.checkbox
+// tfw.view.button
 {View BUTTON view.debug: false
   view.attribs: {
     action: {action}    
