@@ -4,6 +4,24 @@ In all this document, we will call __special object__ any object with an implici
 That is any object with an attribute named __"0"__, like `{boolean init: true}` for instance.
 Other objects, strings, numbers and so on are called __standard values__.
 
+* focus: .
+* innerhtml: .
+* textcontent: .
+* value: .
+* view.attribs: .
+* view.debug: .
+* view.id: .
+* view.init: .
+* attrib.<names>: .
+* class.<names>: .
+* class.*: .
+* event.<event-name>: .
+* on.<attrib-name>: .
+* style.<name>: .
+* {Bind ...}: .
+* {Intl ...}: .
+* %macro%: .
+
 ### Code behind
 Even if XJS.View has been made as powerful as possible, there are still cases where Javascript code is needed.
 Here is a dummy example to show you how to use code behind. The view will add a new line when its `value` attribute will be set.
