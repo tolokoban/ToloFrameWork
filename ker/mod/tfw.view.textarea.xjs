@@ -8,6 +8,7 @@
     width: {unit "auto"}
     rows: {integer 5}
     cols: {integer 80}
+    resize: {[none, horizontal, vertical, both] none}
   }
 
   class: tfw-view-textarea

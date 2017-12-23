@@ -1,14 +1,14 @@
-div.tfw-view-cropped-image {
+.tfw-view-cropped-image {
   padding: 0;
   position: relative;
   display: inline-block;
-  background: #FFF;
-  border-radius: 8px;
-  cursor: pointer;
-  overflow: hidden;
 }
 
-div.tfw-view-cropped-image > * {
+.tfw-view-cropped-image.wide {
+  display: block;
+}
+
+.tfw-view-cropped-image > * {
   display: block;
   margin: 0;
   border: none;
@@ -16,7 +16,24 @@ div.tfw-view-cropped-image > * {
   background: transparent;
 }
 
-div.tfw-view-cropped-image > img {
+.tfw-view-cropped-image > .visual {
+  position: relative;
+  display: inline-block;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: #FFF;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.tfw-view-cropped-image > .label {
+  opacity: .5;
+  font-size: .8em;
+  text-align: left;
+}
+
+.tfw-view-cropped-image > div > img {
   position: absolute;
   left: 0;
   top: 0;
@@ -28,12 +45,12 @@ div.tfw-view-cropped-image > img {
   opacity: 1;
 }
 
-div.tfw-view-cropped-image > img.hide {
+.tfw-view-cropped-image > div > img.hide {
   transition: opacity .3s;
   opacity: 0;
 }
 
 
-div.tfw-view-cropped-image > div.tfw-view-file-input {
+.tfw-view-cropped-image > div > div.tfw-view-file-input {
   display: none;
 }

@@ -6,7 +6,8 @@ var $ = require("dom");
 var CODE_BEHIND = {
   init: init,
   onUrlChanged: onUrlChanged,
-  onFileChanged: onFileChanged
+  onFileChanged: onFileChanged,
+  onLabelChanged: onLabelChanged
 };
 
 
@@ -31,6 +32,19 @@ function init() {
     img.src = that._newUrl;
     that._newUrl = null;
   };
+}
+
+function onLabelChanged( textContent ) {
+  var label = this.$elements.label;
+
+  textContent = textContent.trim();
+  if( textContent.length === 0 ) {
+    $.addClass( label, "hide" );
+    return;
+  }
+
+  $.removeClass( label, "hide" );
+  label.$.textContent = textContent;
 }
 
 function onUrlChanged( newUrl ) {
