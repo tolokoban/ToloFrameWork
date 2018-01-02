@@ -3,7 +3,6 @@ div.tfw-view-textarea {
   display: inline-block;
   border: none;
   border-bottom: 1px solid rgba(0,0,0,.5);
-  margin: 4px;
   font: inherit;
 }
 

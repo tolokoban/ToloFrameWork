@@ -18,9 +18,12 @@
 
 .tfw-view-icon {
   display: inline-block;
+  transition: transform .3s;
+}
+
+.tfw-view-icon.view {
   margin: 0;
   padding: 0;
-  transition: transform .3s;
 }
 
 .tfw-view-icon.animate {

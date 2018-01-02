@@ -43,7 +43,6 @@ var Focusable = function( widget, onKeyDown ) {
     });
 
     DB.propBoolean( widget, 'focus' )(function(v) {
-        console.info("[tfw.focusable] v=", v);
         window.setTimeout(function() {
             if( v ) input.focus();
             else input.blur();

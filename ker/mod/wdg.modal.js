@@ -249,7 +249,6 @@ Modal.alert = function ( content, onOK ) {
  * If the user can scroll down, a thin bottom inset shadow is displayed.
  */
 function onScroll( body, evt ) {
-  console.info("[wdg.modal] evt=", evt);
   if( body.scrollTop > 0 ) {
     $.addClass( body, "top" );
   } else {
@@ -261,8 +260,6 @@ function onScroll( body, evt ) {
   } else {
     $.removeClass( body, "bottom" );
   }
-
-  console.info("[wdg.modal] body.scrollHeight, body.clientHeight=", body.scrollHeight, body.clientHeight);
 }
 
 
