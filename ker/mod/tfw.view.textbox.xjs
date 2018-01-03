@@ -22,7 +22,6 @@
           view.id: input
           value: {Bind value}
           focus: {Bind focus}
-          placeholder: {Bind label}
           style.width: {Bind width}}
       ]}
     {DIV view.id: foot, class: foot}
