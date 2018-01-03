@@ -318,16 +318,12 @@ PointerEvents.prototype.on = function(action, event) {
   if (action == 'wheel') {
     addEvent.call(that, this.element, WHEEL_EVENT, function(evt) {
       var rect = that.element.getBoundingClientRect();
-      slots.wheel({
-        //target: that.element,
-        target: G.bodyTarget,
-        action: 'wheel',
-        delta: evt.deltaY,
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top,
-        stopPropagation: evt.stopPropagation.bind( evt ),
-        preventDefault: evt.preventDefault.bind( evt )
-      });
+      evt.target = G.bodyTarget;
+      evt.action = "wheel";
+      evt.delta = evt.deltaY;
+      evt.x = evt.clientX - rect.left;
+      evt.y = evt.clientY - rect.top;
+      slots.wheel( evt );
     });
   }
   return this;
