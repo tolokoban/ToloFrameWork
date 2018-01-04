@@ -12,7 +12,6 @@
   display: block;
   margin: 0;
   border: none;
-  box-shadow: none;
   background: transparent;
 }
 
@@ -33,7 +32,8 @@
   text-align: left;
 }
 
-.tfw-view-cropped-image > div > img {
+.tfw-view-cropped-image > div > img,
+.tfw-view-cropped-image > div > canvas {
   position: absolute;
   left: 0;
   top: 0;
@@ -51,6 +51,7 @@
 }
 
 
-.tfw-view-cropped-image > div > div.tfw-view-file-input {
+.tfw-view-cropped-image div.tfw-view-file-input {
   display: none;
+  margin: 0;
 }

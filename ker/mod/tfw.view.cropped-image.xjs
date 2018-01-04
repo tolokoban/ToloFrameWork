@@ -25,10 +25,10 @@
           width: {Bind width}
           height: {Bind height}}
         {IMG view.id:img class:hide}
-        {tfw.view.file-input class:hide
-          view.id: input
-          on.file: onFileChanged
-          action: {Bind action}}
     ]}
+    {tfw.view.file-input class:hide
+      view.id: input
+      on.file: onFileChanged
+      action: {Bind action}}
   ]
 }
