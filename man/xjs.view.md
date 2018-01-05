@@ -20,6 +20,7 @@ Other objects, strings, numbers and so on are called __standard values__.
 * style.<name>: .
 * {Bind ...}: .
 * {Intl ...}: .
+* {List ...}: 
 * %macro%: .
 
 ### Code behind

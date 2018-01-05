@@ -267,10 +267,9 @@ function PointerEvents( element ) {
   addEvent.call(that, element, 'mousedown', function(evt) {
     if (G.touchDevice) return;
     var slots = that._slots;
-    var rect = element.getBoundingClientRect();
     G.target = that;
-    G.targetX = evt.clientX - rect.left;
-    G.targetY = evt.clientY - rect.top;
+    G.targetX = evt.pageX - element.offsetLeft;
+    G.targetY = evt.pageY - element.offsetTop;
     if (slots.down) {
       slots.down({
         action: 'down',
@@ -286,15 +285,11 @@ function PointerEvents( element ) {
   addEvent.call(that, element, 'mousemove', function(evt) {
     var slots = that._slots;
     if (slots.move) {
-      var rectA = element.getBoundingClientRect();
-      var rectB = evt.target.getBoundingClientRect();
       slots.move({
         target: element,
         action: 'move',
-        x: evt.clientX - rectA.left,
-        y: evt.clientY - rectA.top
-        //x: evt.clientX + rectB.left - rectA.left,
-        //y: evt.clientY + rectB.top - rectA.top
+        x: evt.pageX - element.offsetLeft,
+        y: evt.pageY - element.offsetTop
       });
     }
   });
@@ -317,11 +312,10 @@ PointerEvents.prototype.on = function(action, event) {
   }
   if (action == 'wheel') {
     addEvent.call(that, this.element, WHEEL_EVENT, function(evt) {
-      var rect = that.element.getBoundingClientRect();
       evt.target = G.bodyTarget;
       evt.action = 'wheel';
-      evt.x = evt.clientX - rect.left;
-      evt.y = evt.clientY - rect.top;
+      evt.x = evt.pageX - that.element.offsetLeft;
+      evt.y = evt.pageY - that.element.offsetTop;
       evt.delta = evt.deltaY;
       slots.wheel( evt );
     });

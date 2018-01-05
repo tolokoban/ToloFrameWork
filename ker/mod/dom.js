@@ -188,31 +188,15 @@ function removeAtt( element, attrib ) {
 function add( element ) {
   element = $(element);
   try {
-    var i, child;
+    var i, child, isValidArgument;
     for (i = 1 ; i < arguments.length ; i++) {
       child = arguments[i];
-      if( typeof child === 'string' || typeof child === 'number' ) {
-        child = '' + child;
-        if( child.substr( 0, 6 ).toLowerCase() == '<html>' ) {
-          // Text starting with '<html>' is HTML code to parse.
-          var html = child.substr( 6 );
-          child = $.tag('span');
-          child.innerHTML = html;
-        }
-        else if( RX_ENTITY.test( child ) ) {
-          // HTML entity, for instance: &amp;, &lt;, ...
-          var text = child;
-          child = $.tag('span');
-          child.innerHTML = text;
-        }
-        else {
-          child = document.createTextNode( child );
-        }
+      isValidArgument = addArray( element, child )
+        || addText( element, child )
+        || addNode( element, child );
+      if( !isValidArgument ) {
+        console.error("Argument #" + i + " of dom.add() is invalid!", arguments);
       }
-      else {
-        child = $(child);
-      }
-      element.appendChild( child );
     }
     return element;
   }
@@ -220,6 +204,46 @@ function add( element ) {
     console.error( "[DOM.add] arguments=", [].slice.call( arguments ) );
     throw Error( "[DOM.add] " + ex );
   }
+}
+
+function addNode( element, child ) {
+  child = $(child);
+  if( child instanceof Node ) {
+    element.appendChild( child );
+    return true;
+  }
+  return false;
+}
+
+function addText( element, child ) {
+  if( typeof child === 'number' ) child = '' + child;
+  if( typeof child !== 'string' ) return false;
+
+  if( child.substr( 0, 6 ).toLowerCase() == '<html>' ) {
+    // Text starting with '<html>' is HTML code to parse.
+    var html = child.substr( 6 );
+    child = $.tag('span');
+    child.innerHTML = html;
+  }
+  else if( RX_ENTITY.test( child ) ) {
+    // HTML entity, for instance: &amp;, &lt;, ...
+    var text = child;
+    child = $.tag('span');
+    child.innerHTML = text;
+  }
+  else {
+    child = document.createTextNode( child );
+  }
+  element.appendChild( child );
+  return true;
+}
+
+function addArray( element, array ) {
+  if( !Array.isArray( array ) ) return false;
+  array.forEach(function (child) {
+    add( element, child );
+  });
+  return true;
 }
 
 function off( element ) {

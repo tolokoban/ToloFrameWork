@@ -39,6 +39,7 @@ var CONVERTERS = {
       return list[idx];
     };
   },
+  array: function() { return arrayConverter; },
   unit: function() { return cssUnitConverter; },
   units: function() { return cssUnitsConverter; },
   isEmptyString: function() { return isEmptyStringConverter; },
@@ -97,6 +98,11 @@ function booleansConverter(v) {
 
 
 function notConverter(v) { return !booleanConverter( v ); }
+
+
+function arrayConverter(v) {
+  return Array.isArray( v ) ? v : [v];
+}
 
 
 function isEmptyStringConverter(v) {

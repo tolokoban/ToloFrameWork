@@ -11,6 +11,7 @@ exports.Tag = function(tagName, attribs) {
   Object.defineProperty(this, '$', {
     value: elem, writable: false, enumerable: true, configurable: false
   });
+  defineAttribContent.call( this, elem );
 
   if( Array.isArray(attribs) ) {
     var that = this;
@@ -42,6 +43,15 @@ function newTag( name ) {
   return $.tag( name );
 }
 
+
+function defineAttribContent( elem ) {
+  PM( this ).create('$content', {
+    get: function() { return elem.childNodes; },
+    set: function(v) {
+      $.clear( elem, v );
+    }
+  });  
+}
 
 function defineAttribValue( elem ) {
   var that = this;

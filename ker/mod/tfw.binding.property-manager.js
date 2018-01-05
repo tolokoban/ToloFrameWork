@@ -218,10 +218,10 @@ function createNewProperty( propertyName, options ) {
   if( typeof options.cast === 'function' ) {
     if( typeof options.set === 'function' ) {
       setter = function(v) {
-        options.set( options.cast( v ) );
+        options.set( options.cast( v, that ) );
       };
     } else {
-      setter = function(v) { value = options.cast(v); };
+      setter = function(v) { value = options.cast( v, that ); };
     }
   } else {
     setter = typeof options.set === 'function' ? options.set : function(v) { value = v; };
