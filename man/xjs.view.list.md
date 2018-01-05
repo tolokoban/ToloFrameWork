@@ -5,12 +5,12 @@
 ```
 {View UL
   view.attribs: {
-    children: {array []}
+    children: {list []}
   }
 
-  {List children
-    template: {LI}
-    map: { textcontent: item } 
+  view.children: {
+    list: children
+    template: {LI textcontent: {Item}} 
   }
 }
 ```

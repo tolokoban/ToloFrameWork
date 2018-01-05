@@ -1,7 +1,7 @@
 "use strict";
 
 var $ = require("$");
-
+var List = require("tfw.binding.list");
 
 var CONVERTERS = {
   boolean: function() { return booleanConverter; },
@@ -40,6 +40,7 @@ var CONVERTERS = {
     };
   },
   array: function() { return arrayConverter; },
+  list: function() { return listConverter; },
   unit: function() { return cssUnitConverter; },
   units: function() { return cssUnitsConverter; },
   isEmptyString: function() { return isEmptyStringConverter; },
@@ -128,4 +129,9 @@ function multilangConverter(v) {
     return def;
   }
   return v;
+}
+
+
+function listConverter( v ) {
+  return new List( v );
 }

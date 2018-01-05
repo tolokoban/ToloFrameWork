@@ -27,6 +27,8 @@ var ID = 0;
  * @param  {function=undefined} args.A.filter  -  Filter for  values
  * entering the source. If the filter returns `false` the value is not
  * set to the source.
+ * @param  {function=undefined} args.A.map  - Function  to execute  on
+ * each element of the value. Only if this value is an array.
  * @param   {string|array}  args.A.switch   -  Sometimes,   you  are
  * listening at  a property  A to  change, but  want to  propagate the
  * value  of  B. It  is  usefull  with  buttons which  provide  action
@@ -123,6 +125,7 @@ function actionChanged( src, dst, id, value, propertyName, container, wave ) {
     if( this.name ) console.log( "...has been FILTERED!" );
     return;
   }
+  value = processMap( value, src, dst );
 
   if( typeof dst.delay === 'number' ) {
     if( this.name ) console.log( "...has been DELAYED for " + dst.delay + " ms!" );
@@ -278,6 +281,25 @@ function processConverter( value, src, dst ) {
       console.error( ex );
       fail(
         "Error in converter of link "
+          + PropertyManager(src.obj) + "." + src.name
+          + " -> "
+          + PropertyManager(dst.obj) + "." + dst.name + "!"
+      );
+    }
+  }
+  return value;
+}
+
+
+function processMap( value, src, dst ) {
+  if( Array.isArray(value) && typeof dst.map === 'function' ) {
+    try {
+      return value.map( dst.map );
+    }
+    catch( ex ) {
+      console.error( ex );
+      fail(
+        "Error in map of link "
           + PropertyManager(src.obj) + "." + src.name
           + " -> "
           + PropertyManager(dst.obj) + "." + dst.name + "!"
