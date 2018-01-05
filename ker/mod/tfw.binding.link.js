@@ -292,7 +292,7 @@ function processConverter( value, src, dst ) {
 
 
 function processMap( value, src, dst ) {
-  if( Array.isArray(value) && typeof dst.map === 'function' ) {
+  if( value && typeof value.map === 'function' && typeof dst.map === 'function' ) {
     try {
       return value.map( dst.map );
     }
