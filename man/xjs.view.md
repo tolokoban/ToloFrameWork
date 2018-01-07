@@ -4,14 +4,15 @@ In all this document, we will call __special object__ any object with an implici
 That is any object with an attribute named __"0"__, like `{boolean init: true}` for instance.
 Other objects, strings, numbers and so on are called __standard values__.
 
-* [focus](xjs.view.focus.md): .
-* innerhtml: .
-* textcontent: .
-* value: .
-* view.attribs: .
+* [focus](xjs.view.focus.md): Bind the focus of an element to a linkableproperty.
+* innerhtml: Bind a property to the innerHTML of an element.
+* textcontent: Bind a property to the text content of an element.
+* value: To use with INPUT, TEXTAREA, ...
+* view.attribs: Define linkable attributes of the view.
 * view.debug: .
 * view.id: .
 * view.init: .
+* [view.children]{xjs.view.view.children}: Bind chldren of an element to an array or a list.
 * attrib.<names>: .
 * class.<names>: .
 * class.*: .
@@ -20,7 +21,6 @@ Other objects, strings, numbers and so on are called __standard values__.
 * style.<name>: .
 * {Bind ...}: .
 * {Intl ...}: .
-* {List ...}: 
 * %macro%: .
 
 ### Code behind
