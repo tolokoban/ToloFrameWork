@@ -30,7 +30,7 @@ This function is used to transform each item or the new array to a DOM element t
 ```
 
 Code behind:
-```
+```js
 var CODE_BEHIND = {
   makeListItem: function( text ) {
     var li = document.createElement( "li" );

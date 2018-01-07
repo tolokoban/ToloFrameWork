@@ -29,6 +29,16 @@ div.tfw-view-textbox textarea {
 div.tfw-view-textbox.focus input,
 div.tfw-view-textbox.focus textarea {
   color: #000;
+  border: 0;
+}
+
+
+div.tfw-view-textbox.focus input,
+div.tfw-view-textbox.focus textarea,
+div.tfw-view-textbox.focus input:focus,
+div.tfw-view-textbox.focus textarea:focus {
+  box-shadow: none;
+  outline: none;
 }
 
 div.tfw-view-textbox > div.body {

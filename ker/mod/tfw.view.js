@@ -76,21 +76,25 @@ function defineAttribFocus( elem ) {
 }
 
 function defineAttribTextContent( elem ) {
-  PM( this ).create('textContent', {
-    get: function() { return elem.textContent; },
-    set: function(v) {
-      elem.textContent = v;
-    }
-  });
+  ["textContent", "textcontent"].forEach(function (name) {
+    PM( this ).create(name, {
+      get: function() { return elem.textContent; },
+      set: function(v) {
+        elem.textContent = v;
+      }
+    });
+  }, this);
 }
 
 function defineAttribInnerHTML( elem ) {
-  PM( this ).create('innerHTML', {
-    get: function() { return elem.innerHTML; },
-    set: function(v) {
-      elem.innerHTML = v;
-    }
-  });
+  ["innerHTML", "innerhtml"].forEach(function (name) {
+    PM( this ).create(name, {
+      get: function() { return elem.innerHTML; },
+      set: function(v) {
+        elem.innerHTML = v;
+      }
+    });
+  }, this);
 }
 
 function defineStandardAttrib( elem, attName ) {
@@ -119,4 +123,20 @@ exports.Tag.prototype.applyClass = function( newClasses, id ) {
   }
   this._applyer[id] = newClasses;
   newClasses.forEach( $.addClass.bind( $, elem ) );
+};
+
+
+/**
+ * Check if all needed function from code behind are defined.
+ */
+exports.ensureCodeBehind = function( code_behind ) {
+  if( typeof code_behind === 'undefined' )
+    throw "Missing mandatory global variable CODE_BEHIND!";
+
+  var i, funcName;
+  for( i = 1; i < arguments.length ; i++ ) {
+    funcName = arguments[i];
+    if( typeof code_behind[funcName] !== 'function' )
+      throw "Expected CODE_BEHIND." + funcName + " to be a function!";
+  }
 };

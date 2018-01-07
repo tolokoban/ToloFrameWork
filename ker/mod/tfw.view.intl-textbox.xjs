@@ -1,0 +1,28 @@
+// tfw.view.textbox
+{View DIV
+  view.attribs: {
+    value: {multilang "" behind: onIntlValueChanged}
+    language: {string "" behind: onLanguageChanged}
+    label: {string ""}
+    focus: {boolean false}
+    visible: {boolean true}
+    width: {unit "8rem"}
+    list: {strings}
+  }
+
+  class: tfw-view-intl-textbox
+  class.|hide: {Bind visible}
+  style.width: {Bind width}
+  
+  [
+    {tfw.view.textbox
+      view.id:textbox
+      on.value: onValueChanged
+      label: {Bind label}
+      focus: {Bind focus}
+      width: {Bind width}
+      list: {Bind list}
+    }
+    {DIV class:lang textcontent:{Bind language} width: {Bind width}}
+  ]
+}

@@ -9,7 +9,7 @@
   }
 
   title: {Bind language-name}
-  textContent: {Bind language}
+  textcontent: {Bind language}
   
   event.tap: {Behind onTap}
   event.down: {Set pressed true}

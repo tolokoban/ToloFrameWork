@@ -17,7 +17,7 @@ Other objects, strings, numbers and so on are called __standard values__.
 * class.<names>: .
 * class.*: .
 * event.<event-name>: .
-* on.<attrib-name>: .
+* [on.<attrib-name>](xjs.view.on.md): Call a function from code behind as soon as the attribute's value changed.
 * style.<name>: .
 * {Bind ...}: .
 * {Intl ...}: .

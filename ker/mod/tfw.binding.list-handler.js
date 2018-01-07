@@ -75,9 +75,24 @@ Context.prototype.resetChildren = function() {
  */
 Context.prototype.onListChanged = function( changeType, args ) {
   console.log("onListChanged", changeType, args);
-  this.resetChildren();  // !!! No optimisations for now !!!
+
+  switch( changeType ) {
+  case 'push': return applyPush.call( this, args );
+  default: return this.resetChildren();
+  }
 };
 
+
+/**
+ * Optimization in case of `push()`.
+ */
+function applyPush( args ) {
+  var map = this.options.map;
+  var element = this.element;
+  args.forEach(function (item) {
+    $.add( element, map( item ) );
+  });
+}
 
 module.exports = function( view, element, listName, options ) {
   var context = new Context( view, element, listName, options );
