@@ -12,7 +12,7 @@ Other objects, strings, numbers and so on are called __standard values__.
 * view.debug: .
 * view.id: .
 * view.init: .
-* [view.children]{xjs.view.view.children}: Bind chldren of an element to an array or a list.
+* [view.children](xjs.view.view.children): Bind chldren of an element to an array or a list.
 * attrib.<names>: .
 * class.<names>: .
 * class.*: .
