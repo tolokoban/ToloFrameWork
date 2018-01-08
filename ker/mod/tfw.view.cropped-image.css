@@ -26,6 +26,12 @@
   overflow: hidden;
 }
 
+.tfw-view-cropped-image > .visual > canvas,
+.tfw-view-cropped-image > .visual > img {
+  margin: 0;
+}
+
+
 .tfw-view-cropped-image > .label {
   opacity: .5;
   font-size: .8em;

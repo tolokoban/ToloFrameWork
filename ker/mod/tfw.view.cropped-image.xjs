@@ -9,6 +9,8 @@
     canvas: {action}
     action: {action}
     wide: {boolean true}
+    // Becomes `true` if a new image has been choosen.
+    changed: {boolean false}
   }
 
   view.init: init

@@ -25,8 +25,15 @@ div.tfw-view-textarea textarea {
   color: rgba(0,0,0,.9);
 }
 
+div.tfw-view-textarea.focus textarea:focus {
+  box-shadow: none;
+  outline: none;
+}
+
 div.tfw-view-textarea.focus textarea {
   color: #000;
+  outline: none;
+  border: none;
 }
 
 div.tfw-view-textarea > div.body {
