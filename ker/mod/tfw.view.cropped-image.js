@@ -60,6 +60,7 @@ function onFileChanged( file ) {
   var reader = new FileReader();
   reader.addEventListener("load", function() {
     that.url = reader.result;
+    that.changed = true;
   });
   reader.readAsDataURL( file );
 }
