@@ -43,8 +43,8 @@ var CONVERTERS = {
   list: function() { return listConverter; },
   unit: function() { return cssUnitConverter; },
   units: function() { return cssUnitsConverter; },
-  isEmptyString: function() { return isEmptyStringConverter; },
-  isNotEmptyString: function() { return isEmptyStringConverter; }
+  isEmpty: function() { return isEmptyConverter; },
+  isNotEmpty: function() { return isEmptyConverter; }
 };
 
 exports.get = function( converterName ) {
@@ -106,13 +106,19 @@ function arrayConverter(v) {
 }
 
 
-function isEmptyStringConverter(v) {
-  return ("" + v).trim().length === 0;
+function isEmptyConverter(v) {
+  if( !v ) return true;
+  if( typeof v === 'string' ) {
+    return v.trim().length === 0;
+  }
+  if( typeof v.length === 'number' ) {
+    return v.length === 0;
+  }
+  return false;
 }
 
-
-function isNotEmptyStringConverter(v) {
-  return ("" + v).trim().length > 0;
+function isNotEmptyConverter(v) {
+  return !isEmptyConverter(v);
 }
 
 

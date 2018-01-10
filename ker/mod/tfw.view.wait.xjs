@@ -1,0 +1,17 @@
+{View DIV class:tfw-view-wait
+  view.attribs: {
+    icon: {string wait}
+    size: {unit "24px"}
+    content: {string ""}
+    visible: {boolean true}
+    wide: {boolean false}
+  }
+
+  class.|hide: {Bind visible}
+  class.wide: {Bind wide}
+  
+  [
+    {tfw.view.icon content:{Bind icon} animate:true}
+    {DIV innerhtml:{Bind content} class:hide {Bind content converter:isEmpty}}
+  ]
+}
