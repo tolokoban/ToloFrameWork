@@ -25,7 +25,7 @@ div.wdg-modal .cell > header {
   overflow: hidden;
   justify-content: start;
   align-items: center;
-  font-weight: bold;
+  font-weight: 300;
   font-size: 150%;
   line-height: 32px;
   height: 32px;

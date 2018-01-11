@@ -43,13 +43,14 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  text-align: center;
+  text-align: left;
   text-transform: uppercase;
   margin: 0 8px;
 }
 
 .tfw-view-button.inverted > div.text {
   order: -1;
+  text-align: right;
 }
 
 .tfw-view-button.no-text > div.text {
