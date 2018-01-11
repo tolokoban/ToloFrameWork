@@ -20,6 +20,13 @@ var List = require("tfw.binding.list");
  * @param {function=undefined}  options.map -  Function which  takes a
  * List's item  as input  and returns what  to add as  a child  of the
  * view.
+ * The first argument id the current value.
+ * The second argument is a set of attributes:
+ * * index: Index of the current value.
+ * * list: The list object itself.
+ * * context: An empty object the map can use.
+ * If the  `map` function  returns `null`  or `undefined`,  nothing is
+ * added. If it returns an array, all the elements are added.
  */
 var Context = function( view, element, listName, options ) {
   if( typeof options === 'undefined' ) options = {};
@@ -64,9 +71,16 @@ Context.prototype.attachEventListener = function() {
 Context.prototype.resetChildren = function() {
   var map = this.options.map;
   var element = this.element;
+  var list = this.list;
+  var context = {};
+  
   $.clear( element );
-  this.list.forEach(function (item) {
-    $.add( element, map( item ) );
+  list.forEach(function (item, index) {
+    $.add( element, map( item, {
+      index: index,
+      list: list,
+      context: context
+    } ) );
   });
 };
 
@@ -89,8 +103,15 @@ Context.prototype.onListChanged = function( changeType, args ) {
 function applyPush( args ) {
   var map = this.options.map;
   var element = this.element;
-  args.forEach(function (item) {
-    $.add( element, map( item ) );
+  var list = this.list;
+  var context = {};
+
+  args.forEach(function (item, index) {
+    $.add( element, map( item, {
+      index: index,
+      list: list,
+      context: context
+    } ) );
   });
 }
 
