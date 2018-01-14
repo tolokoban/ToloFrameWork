@@ -1,7 +1,7 @@
 "use strict";
 
 var Event = require("tfw.event");
-
+var List = require("tfw.binding.list");
 
 var ID = 0;
 
@@ -79,9 +79,26 @@ PropertyManager.prototype.change = function( propertyName, value, wave ) {
         // Fire change event.
         that.fire( propertyName, wave );
       });
+
+      manageListListener( propertyName, prop, currentValue, prop.get() );
     }
   }
 };
+
+/**
+ * If the property  `foobar` is a List, the  pseudo property `foobar*`
+ * can fire change event if the list has changed.
+ * When the property `foobar` is assigned a new value, we must release
+ * the last event listeners and attach new ones.
+ */
+function manageListListener( propertyName, prop, oldValue, newValue ) {
+  if( List.isList( oldValue ) ) {
+    oldValue.removeListener( prop.contentListener );
+  }
+  if( List.isList( newValue ) ) {
+    newValue.addListener( prop.contentListener );
+  }
+}
 
 /**
  * @class PropertyManager
@@ -234,6 +251,7 @@ function createNewProperty( propertyName, options ) {
     action: null,
     alwaysFired: options.alwaysFired ? true : false,
     timeout: 0,
+    contentListener: PropertyManager.prototype.fire.bind( this, propertyName + "*" ),
     get: typeof options.get === 'function' ? options.get : function() { return value; },
     set: setter
   };
