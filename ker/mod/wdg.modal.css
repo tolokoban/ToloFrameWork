@@ -26,11 +26,12 @@ div.wdg-modal .cell > header {
   justify-content: start;
   align-items: center;
   font-weight: 300;
-  font-size: 150%;
+  font-size: 120%;
   line-height: 32px;
   height: 32px;
   min-height: 32px;
   padding: 0 16px;
+  text-shadow: none;
 }
 
 div.wdg-modal .cell > footer {
