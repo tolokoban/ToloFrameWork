@@ -179,6 +179,7 @@ Object.defineProperty( List.prototype, "length", {
 
 
 function isList( candidate ) {
+  if( !candidate ) return false;
   return typeof candidate[ID] === 'number';
 }
 
