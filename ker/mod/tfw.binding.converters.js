@@ -4,12 +4,12 @@ var $ = require("$");
 var List = require("tfw.binding.list");
 
 var CONVERTERS = {
-  boolean: function() { return booleanConverter; },
-  booleans: function() { return booleansConverter; },
-  multilang: function() { return multilangConverter; },
-  not: function() { return notConverter; },
-  strings: function() { return stringsConverter; },
-  string: function() { return function(v) { return "" + v; }; },
+  boolean: booleanConverter,
+  booleans: booleansConverter,
+  multilang: multilangConverter,
+  not: notConverter,
+  strings: stringsConverter,
+  string: function(v) { return "" + v; },
   integer: function( valueForNaN ) {
     if( typeof valueForNaN === 'number' ) {
       return function(v) {
@@ -39,12 +39,13 @@ var CONVERTERS = {
       return list[idx];
     };
   },
-  array: function() { return arrayConverter; },
-  list: function() { return listConverter; },
-  unit: function() { return cssUnitConverter; },
-  units: function() { return cssUnitsConverter; },
-  isEmpty: function() { return isEmptyConverter; },
-  isNotEmpty: function() { return isEmptyConverter; }
+  array: arrayConverter,
+  list: listConverter,
+  unit: cssUnitConverter,
+  units: cssUnitsConverter,
+  length: lengthConverter,
+  isEmpty: isEmptyConverter,
+  isNotEmpty: isEmptyConverter
 };
 
 exports.get = function( converterName ) {
@@ -105,6 +106,16 @@ function arrayConverter(v) {
   return Array.isArray( v ) ? v : [v];
 }
 
+function lengthConverter(v) {
+  if( !v ) return true;
+  if( typeof v === 'string' ) {
+    return v.trim().length;
+  }
+  if( typeof v.length === 'number' ) {
+    return v.length;
+  }
+  return 0;
+}
 
 function isEmptyConverter(v) {
   if( !v ) return true;

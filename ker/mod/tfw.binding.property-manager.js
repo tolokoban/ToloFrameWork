@@ -230,6 +230,12 @@ function createNewProperty( propertyName, options ) {
       enumerable: true, configurable: false
     });
   }
+  if( propertyName.indexOf('*') === -1 ) {
+    // Create a pseudo-property to deal with content change.
+    // Useful for List.
+    this.create( propertyName + "*" );
+  }
+  
   var value = undefined;
   var setter;
   if( typeof options.cast === 'function' ) {
