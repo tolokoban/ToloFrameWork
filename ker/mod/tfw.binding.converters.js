@@ -103,6 +103,7 @@ function notConverter(v) { return !booleanConverter( v ); }
 
 
 function arrayConverter(v) {
+  if( List.isList( v ) ) return v.slice();
   return Array.isArray( v ) ? v : [v];
 }
 
@@ -150,5 +151,6 @@ function multilangConverter(v) {
 
 
 function listConverter( v ) {
-  return new List( v );
+  if( List.isList( v ) ) return v;
+  return new List( arrayConverter( v ) );
 }
