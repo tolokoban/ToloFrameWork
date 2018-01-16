@@ -54,7 +54,7 @@ PropertyManager.prototype.fire = function( propertyName, wave ) {
     // You can listen  on all the properties of  a PropertyManager using
     // the special property name `*`.
     var propContainer = this.create( '*' );
-    propContainer.event.fire( this._container, "*", this._container, wave );
+    propContainer.event.fire( this._container, propertyName, this._container, wave );
   }
 };
 
