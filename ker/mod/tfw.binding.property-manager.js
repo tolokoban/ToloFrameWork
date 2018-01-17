@@ -54,7 +54,7 @@ PropertyManager.prototype.fire = function( propertyName, wave ) {
     // You can listen  on all the properties of  a PropertyManager using
     // the special property name `*`.
     var propContainer = this.create( '*' );
-    propContainer.event.fire( this._container, "*", this._container, wave );
+    propContainer.event.fire( this._container, propertyName, this._container, wave );
   }
 };
 
@@ -230,6 +230,12 @@ function createNewProperty( propertyName, options ) {
       enumerable: true, configurable: false
     });
   }
+  if( propertyName.indexOf('*') === -1 ) {
+    // Create a pseudo-property to deal with content change.
+    // Useful for List.
+    this.create( propertyName + "*" );
+  }
+  
   var value = undefined;
   var setter;
   if( typeof options.cast === 'function' ) {
