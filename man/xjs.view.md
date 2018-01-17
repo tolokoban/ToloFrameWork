@@ -8,7 +8,7 @@ Other objects, strings, numbers and so on are called __standard values__.
 * innerhtml: Bind a property to the innerHTML of an element.
 * textcontent: Bind a property to the text content of an element.
 * value: To use with INPUT, TEXTAREA, ...
-* view.attribs: Define linkable attributes of the view.
+* [view.attribs](xjs.view.view.attribs.md): Define linkable attributes of the view.
 * view.debug: .
 * view.id: .
 * view.init: .
