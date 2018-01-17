@@ -116,7 +116,8 @@ exports.Tag.prototype.applyClass = function( newClasses, id ) {
   var elem = this.$;
   if( typeof id === 'undefined' ) id = 0;
   if( typeof this._applyer === 'undefined' ) this._applyer = {};
-
+  if( !Array.isArray( newClasses ) ) newClasses = [newClasses];
+  
   var oldClasses = this._applyer[id];
   if( Array.isArray( oldClasses ) ) {
     oldClasses.forEach( $.removeClass.bind( $, elem ) );
