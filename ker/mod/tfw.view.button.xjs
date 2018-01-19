@@ -37,6 +37,9 @@
   
   [
     {DIV class:icon [ {tfw.view.icon view.id:icon, content: {Bind icon}} ]}
-    {DIV view.id:text, class:text {Bind content}}
+    {DIV view.id:text
+      class:text
+      class.hide: {Bind content converter:isEmpty}
+      {Bind content}}
   ]
 }

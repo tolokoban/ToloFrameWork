@@ -37,6 +37,10 @@
   filter: saturate(100%) brightness(120%);
 }
 
+.tfw-view-button > div.text.hide {
+  display: none;
+}
+
 .tfw-view-button > div.text {
   flex-grow: 1;
   order: 1;
