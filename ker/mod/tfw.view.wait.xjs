@@ -12,6 +12,6 @@
   
   [
     {tfw.view.icon content:{Bind icon} animate:true}
-    {DIV innerhtml:{Bind content} class:hide {Bind content converter:isEmpty}}
+    {DIV innerhtml:{Bind content} class.hide:{Bind content converter:isEmpty}}
   ]
 }
