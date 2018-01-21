@@ -1,0 +1,9 @@
+{View DIV class:tfw-view-gravatar
+  view.attribs: {
+    value: {string "contact@trail-passion.net" behind:onChanged}
+    size: {integer 32 behind:onChanged}
+    theme: {["404" mm blank identicon monsterid wavatar retro] retro behind:onChanged}
+  }
+
+  [{IMG view.id:img}]
+}
