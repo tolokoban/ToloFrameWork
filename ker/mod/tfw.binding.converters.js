@@ -108,10 +108,7 @@ function arrayConverter(v) {
 }
 
 function lengthConverter(v) {
-  if( !v ) return true;
-  if( typeof v === 'string' ) {
-    return v.trim().length;
-  }
+  if( !v ) return 0;
   if( typeof v.length === 'number' ) {
     return v.length;
   }
