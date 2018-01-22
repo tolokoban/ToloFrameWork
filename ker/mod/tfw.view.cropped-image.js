@@ -93,10 +93,10 @@ function cropHorizontally( img ) {
   var zoom = this.height / img.height;
   var x = 0;
   if( this.cropping == 'body' ) {
-    x = 0.5 * (this.width - img.width);
+    x = 0.5 * (this.width - img.width * zoom);
   }
   else if( this.cropping == 'tail' ) {
-    x = this.width - img.width;
+    x = this.width - img.width * zoom;
   }
   draw.call( this, img, x, 0, zoom );
 }
@@ -109,10 +109,10 @@ function cropVertically( img ) {
   var zoom = this.width / img.width;
   var y = 0;
   if( this.cropping == 'body' ) {
-    y = 0.5 * (this.height - img.height);
+    y = 0.5 * (this.height - img.height * zoom);
   }
   else if( this.cropping == 'tail' ) {
-    y = this.height - img.height;
+    y = this.height - img.height * zoom;
   }
   draw.call( this, img, 0, y, zoom );
 }
