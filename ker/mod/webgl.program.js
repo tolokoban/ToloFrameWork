@@ -34,9 +34,16 @@ function Program( gl, codes, includes ) {
   this._typesNamesLookup = getTypesNamesLookup( gl );
 
   var shaderProgram = gl.createProgram();
-  gl.attachShader( shaderProgram, getVertexShader( gl, codes.vert ) );
-  gl.attachShader( shaderProgram, getFragmentShader( gl, codes.frag ) );
+  var shaderVert = getVertexShader( gl, codes.vert );
+  var shaderFrag = getFragmentShader( gl, codes.frag );
+  gl.attachShader( shaderProgram, shaderVert );
+  gl.attachShader( shaderProgram, shaderFrag );
   gl.linkProgram( shaderProgram );
+
+  gl.detachShader( shaderProgram, shaderVert );
+  gl.deleteShader( shaderVert );
+  gl.detachShader( shaderProgram, shaderFrag );
+  gl.deleteShader( shaderFrag );
 
   this.program = shaderProgram;
   Object.freeze( this.program );

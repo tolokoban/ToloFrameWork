@@ -150,8 +150,8 @@ exports.logout = function () {
   currentUser = null;
   delete config.usr;
   delete config.pwd;
-  changeEvent.fire();
   Storage.local.set( "nigolotua", null );
+  changeEvent.fire();
   return svc( "tfw.login.Logout" );
 };
 
