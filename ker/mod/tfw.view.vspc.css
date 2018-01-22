@@ -1,0 +1,11 @@
+div.tfw-view-vspc {
+  color: transparent;
+  display: inline-block;
+  margin: 0;
+  width: 100%;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  overflow: auto;
+}
