@@ -49,19 +49,7 @@ PropertyManager.prototype.propertyId = function( propertyName ) {
 
 PropertyManager.prototype.fire = function( propertyName, wave ) {
   var prop = this.create( propertyName );
-  var valueProp = prop;
-  if( isContentProperty( propertyName ) ) {
-    // Si on écoute "toto*", c'est quand  même la valeur de "toto" que
-    // l'on veut.
-    valueProp = this.create( removeLastChar( propertyName ) );
-  }
-  prop.event.fire( valueProp.get(), propertyName, this._container, wave );
-  if( propertyName !== '*' ) {
-    // You can listen  on all the properties of  a PropertyManager using
-    // the special property name `*`.
-    var propContainer = this.create( '*' );
-    propContainer.event.fire( this._container, propertyName, this._container, wave );
-  }
+  prop.event.fire( prop.get(), propertyName, this._container, wave );
 };
 
 PropertyManager.prototype.change = function( propertyName, value, wave ) {
@@ -74,20 +62,16 @@ PropertyManager.prototype.change = function( propertyName, value, wave ) {
     value = converter( value );
   }
 
-  if( propertyName === '*' ) {
-    exec(prop, applyAttributesToTarget.bind( this, value, this._container ) );
-  } else {
-    var currentValue = prop.get();
-    if( prop.alwaysFired || value !== currentValue ) {
-      prop.set( value );
-      var that = this;
-      exec(prop, function() {
-        // Fire change event.
-        that.fire( propertyName, wave );
-      });
+  var currentValue = prop.get();
+  if( prop.alwaysFired || areDifferent( value, currentValue ) ) {
+    prop.set( value );
+    var that = this;
+    exec(prop, function() {
+      // Fire change event.
+      that.fire( propertyName, wave );
+    });
 
-      manageListListener( propertyName, prop, currentValue, prop.get() );
-    }
+    manageListListener( propertyName, prop, currentValue, prop.get() );
   }
 };
 
@@ -229,19 +213,12 @@ function applyAttributesToTarget( source, target ) {
 function createNewProperty( propertyName, options ) {
   var that = this;
 
-  if( propertyName !== '*' ) {
-    Object.defineProperty(this._container, propertyName, {
-      get: that.get.bind( that, propertyName ),
-      set: that.change.bind( that, propertyName ),
-      enumerable: true, configurable: false
-    });
-  }
-  if( propertyName.indexOf('*') === -1 ) {
-    // Create a pseudo-property to deal with content change.
-    // Useful for List.
-    this.create( propertyName + "*" );
-  }
-  
+  Object.defineProperty(this._container, propertyName, {
+    get: that.get.bind( that, propertyName ),
+    set: that.change.bind( that, propertyName ),
+    enumerable: true, configurable: false
+  });
+
   var value = undefined;
   var setter;
   if( typeof options.cast === 'function' ) {
@@ -263,7 +240,7 @@ function createNewProperty( propertyName, options ) {
     action: null,
     alwaysFired: options.alwaysFired ? true : false,
     timeout: 0,
-    contentListener: PropertyManager.prototype.fire.bind( this, propertyName + "*" ),
+    contentListener: PropertyManager.prototype.fire.bind( this, propertyName ),
     get: typeof options.get === 'function' ? options.get : function() { return value; },
     set: setter
   };
@@ -324,15 +301,15 @@ function functionOrUndefined( f ) {
 }
 
 /**
- * A content property is a watcher of the content of a property. It is
- * used in List for example.
+ * A linkable property must link only if  we set a new value to it. If
+ * the value  is a  List, we need  to check if  they have  a different
+ * inner array because different Lists can share the same array and in
+ * this cas, we don't want to fire a changed event.
  */
-function isContentProperty( propertyName ) {
-  if( propertyName.length < 2 ) return false;
-  var lastCharIndex = propertyName.length - 1;
-  return propertyName.charAt( lastCharIndex ) == '*';
-}
-
-function removeLastChar( value ) {
-  return value.substr( 0, value.length - 1 );
+function areDifferent( oldValue, newValue ) {
+  if( List.isList( oldValue ) && List.isList( newValue ) ) {
+    // Both are Lists.
+    return oldValue._array !== newValue._array;
+  }
+  return oldValue !== newValue;
 }

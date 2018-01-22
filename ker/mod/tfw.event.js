@@ -51,7 +51,7 @@ Event.prototype.clear = function() {
  */
 Event.prototype.fire = function() {
     var i, listener,
-        args = [].slice.call( arguments );
+        args = Array.prototype.slice.call( arguments );
     for (i = 0 ; i < this._list.length ; i++) {
         listener = this._list[i];
         if (false === listener.apply(listener, args)) return false;
