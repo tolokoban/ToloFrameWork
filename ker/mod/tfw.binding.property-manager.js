@@ -49,7 +49,13 @@ PropertyManager.prototype.propertyId = function( propertyName ) {
 
 PropertyManager.prototype.fire = function( propertyName, wave ) {
   var prop = this.create( propertyName );
-  prop.event.fire( prop.get(), propertyName, this._container, wave );
+  var valueProp = prop;
+  if( isContentProperty( propertyName ) ) {
+    // Si on écoute "toto*", c'est quand  même la valeur de "toto" que
+    // l'on veut.
+    valueProp = this.create( removeLastChar( propertyName ) );
+  }
+  prop.event.fire( valueProp.get(), propertyName, this._container, wave );
   if( propertyName !== '*' ) {
     // You can listen  on all the properties of  a PropertyManager using
     // the special property name `*`.
@@ -315,4 +321,18 @@ function castPositiveInteger( v ) {
 function functionOrUndefined( f ) {
   if( typeof f === 'function' ) return f;
   return undefined;
+}
+
+/**
+ * A content property is a watcher of the content of a property. It is
+ * used in List for example.
+ */
+function isContentProperty( propertyName ) {
+  if( propertyName.length < 2 ) return false;
+  var lastCharIndex = propertyName.length - 1;
+  return propertyName.charAt( lastCharIndex ) == '*';
+}
+
+function removeLastChar( value ) {
+  return value.substr( 0, value.length - 1 );
 }
