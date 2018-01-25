@@ -254,7 +254,7 @@ if (tasks.length == 0) {
   }
 
   // Watch files?
-  if (args.indexOf("watch") > -1) {
+  if( parsedCommandLine.watch ) {
     if (!prj) return;
     console.log();
     var fringe = [Path.join(__dirname, "../ker"), prj.srcPath(), prj.srcPath("../package.json")];

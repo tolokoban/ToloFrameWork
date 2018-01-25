@@ -101,6 +101,13 @@ function addDestroyFunction( onSrcChanged, onDstChanged ) {
 }
 
 function actionChanged( src, dst, id, value, propertyName, container, wave ) {
+  if( hasAlreadyBeenHere( id, wave ) ) {
+    if( this.name ) {
+      console.log( "...has been BLOCKED by the wave! ", wave );
+    }
+    return;
+  }
+
   var that = this;
 
   var pmSrc = PropertyManager( src.obj );
@@ -111,13 +118,6 @@ function actionChanged( src, dst, id, value, propertyName, container, wave ) {
       src: src, dst: dst, id: id, value: value, propertyName: propertyName, container: container, wave: wave
     } );
   }
-  if( hasAlreadyBeenHere( id, wave ) ) {
-    if( this.name ) {
-      console.log( "...has been BLOCKED by the wave! ", wave );
-    }
-    return;
-  }
-
   value = processValue( value, src, dst );
   value = processSwitch( value, dst, pmSrc );
   value = processConverter( value, src, dst );

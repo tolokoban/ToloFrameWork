@@ -17,9 +17,10 @@ removeAt( index )
 mapInPlace( function(elem, index) )
 */
 
+var PM = require("tfw.binding.property-manager");
 var Listeners = require("tfw.listeners");
 
-var ID = "_tfw_binding_array_";
+var ID = "__tfw.binding.list__";
 var COUNT = 1;
 
 /**
@@ -54,11 +55,22 @@ List.prototype.fire = function( functionName, args, wave ) {
   if( !Array.isArray( wave ) ) wave = [id];
   else if( wave.indexOf( id ) === -1 ) wave.push( id );
 
+  // Listeners for content change.
   this._listeners.fire( functionName, args, wave );
+
+  // Two Lists are linked if and only if they share the same array.
   this._links.forEach(function (list) {
     if( wave.indexOf( list[ID] ) > -1 ) return;
     list.fire( functionName, args, wave );
   });
+
+  // The content  of the List  has changed.  We must fire  a 'changed'
+  // event on the manager if this list is linkable.
+  var manager = PM.getPropertyManager( this );
+  if( manager ) {
+    var name = PM.getPropertyName( this );
+    manager.fire( name );
+  }
 };
 
 List.prototype.addListener = function( listener ) {

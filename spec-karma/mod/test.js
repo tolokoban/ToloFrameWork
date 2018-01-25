@@ -1,0 +1,2 @@
+require("test",function(t,n,i){var e=function(){function n(){return e(i,arguments)}var i={en:{},fr:{}},e=t("$").intl;return n.all=i,n}(),r=t("tfw.binding.property-manager"),s=t("tfw.binding.list"),l=t("tfw.binding.link");i.start=function(){var t=new s([1,2]),n=new s([3,4]),i={},e={};r(i).create("list",{init:t}),r(e).create("list",{init:n}),new l({A:{obj:i,name:"list"},B:{obj:e,name:"list"}}),i.list.push(9),console.info("[test] obj2.list.slice()=",e.list.slice())},n.exports._=e});
+//# sourceMappingURL=test.js.map
