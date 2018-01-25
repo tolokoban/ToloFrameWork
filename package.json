@@ -7,8 +7,8 @@
   },
   "scripts": {
     "clean": "node bin/tfw.js clean",
-    "watch": "node bin/tfw.js build debug test watch",
-    "debug": "node bin/tfw.js build debug test",
+    "watch": "node bin/tfw.js build debug test -dir spec-jasmine watch",
+    "debug": "node bin/tfw.js build debug test -dir spec-jasmine",
     "release": "node bin/tfw.js build version clean",
     "test": "node node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
     "test:dbg": "devtool node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
