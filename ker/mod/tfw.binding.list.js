@@ -66,10 +66,11 @@ List.prototype.fire = function( functionName, args, wave ) {
 
   // The content  of the List  has changed.  We must fire  a 'changed'
   // event on the manager if this list is linkable.
-  var manager = PM.getPropertyManager( this );
-  if( manager ) {
-    var name = PM.getPropertyName( this );
-    manager.fire( name );
+  var properties = PM.getProperties( this );
+  if( Array.isArray( properties ) ) {
+    properties.forEach(function (prop) {
+      prop.manager.fire( prop.name );
+    });
   }
 };
 

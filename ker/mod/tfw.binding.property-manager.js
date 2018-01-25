@@ -167,23 +167,13 @@ module.exports.getAllAttributesNames = function( container ) {
 };
 
 /**
- * Return the manager of this linkable property, or `null`.
+ * Return the linkable properties which holds this value, or `null`.
  */
-module.exports.getPropertyManager = function( property ) {
-  var info = property[PROPERTY_SYMBOL];
-  if( !info ) return null;
-  return info.manager;
+module.exports.getProperties = function( property ) {
+  var properties = property[PROPERTY_SYMBOL];
+  if( !Array.isArray( properties ) ) return null;
+  return properties;
 };
-
-/**
- * Return the name of this linkable property, or `null`.
- */
-module.exports.getPropertyName = function( property ) {
-  var info = property[PROPERTY_SYMBOL];
-  if( !info ) return null;
-  return info.name;
-};
-
 
 /**
  * @export .create
@@ -230,7 +220,8 @@ function createNewProperty( propertyName, options ) {
     delay: castPositiveInteger( options.delay ),
     action: null,
     alwaysFired: options.alwaysFired ? true : false,
-    info: { manager: this, name: propertyName },
+    manager: this,
+    name: propertyName,
     timeout: 0
   };
   prop.get = createGetter( prop, options );
@@ -254,7 +245,7 @@ function createGetter( prop, options ) {
   if( typeof options.get === 'function' ) {
     return function(v) {
       var newValue = options.get( v );
-      setInfoToValue( prop.info, newValue );
+      addPropToValue( prop, newValue );
       return newValue;
     };
   }
@@ -268,32 +259,53 @@ function createSetter( prop, options, that, propertyName ) {
   if( typeof options.cast === 'function' ) {
     if( typeof options.set === 'function' ) {
       setter = function(v) {
+        removePropFromValue( prop, prop.get() );
         var castedValue = options.cast( v, that );
-        setInfoToValue( prop.info, prop.value );
+        addPropToValue( prop, prop.value );
         options.set( castedValue );
       };
     } else {
       setter = function(v) {
+        removePropFromValue( prop, prop.get() );
         prop.value = options.cast( v, that );
-        setInfoToValue( prop.info, prop.value );
+        addPropToValue( prop, prop.value );
       };
     }
   } else {
     setter = typeof options.set === 'function' ? options.set : function(v) {
+      removePropFromValue( prop, prop.get() );
       prop.value = v;
-      setInfoToValue( prop.info, prop.value );
+      addPropToValue( prop, prop.value );
     };
   }
   return setter;
 }
 
 /**
- * Add an `info` attribute to the property's value. This is usefull to
+ * Add an `info` attribute to the  property's value. This is useful to
  * find the container and the property name from the value.
  */
-function setInfoToValue( info, value ) {
+function addPropToValue( prop, value ) {
   if( value === undefined || value === null ) return;
-  value[PROPERTY_SYMBOL] = info;
+  if( typeof value === 'number' || typeof value === 'boolean' ) return;
+  var properties = value[PROPERTY_SYMBOL];
+  if( !Array.isArray( properties ) ) {
+    properties = [prop];
+  }
+  else if( properties.indexOf( prop ) === -1 ) {
+    properties.push( prop );
+  }
+  value[PROPERTY_SYMBOL] = properties;
+}
+
+function removePropFromValue( prop, value ) {
+  if( value === undefined || value === null ) return;
+  if( typeof value === 'object' || typeof value === 'boolean' ) return;
+  var properties = value[PROPERTY_SYMBOL];
+  if( !Array.isArray( properties ) ) return;
+  var pos = properties.indexOf( prop );
+  if( pos === -1 ) return;
+  properties.splice( pos, 1 );
 }
 
 /**

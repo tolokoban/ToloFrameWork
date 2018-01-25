@@ -19,6 +19,16 @@ exports.start = function() {
     B: { obj:obj2, name:'list' }
   });
 
-  obj1.list.push( 9 );
+  obj1.list.push( 10 );
+  console.info("[test] obj1.list.slice()=", obj1.list.slice());
+  console.info("[test] obj2.list.slice()=", obj2.list.slice());
+  obj1.list.push( 11 );
+  console.info("[test] obj1.list.slice()=", obj1.list.slice());
+  console.info("[test] obj2.list.slice()=", obj2.list.slice());
+  obj2.list.push( 12 );
+  console.info("[test] obj1.list.slice()=", obj1.list.slice());
+  console.info("[test] obj2.list.slice()=", obj2.list.slice());
+  obj1.list.push( 13 );
+  console.info("[test] obj1.list.slice()=", obj1.list.slice());
   console.info("[test] obj2.list.slice()=", obj2.list.slice());
 };
