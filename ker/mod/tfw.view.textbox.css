@@ -89,6 +89,7 @@ div.tfw-view-textbox.focus > footer > div.completion {
   overflow: auto;
   font: inherit;
   font-size: .85em;
+  max-height: 280px;
 }
 
 div.tfw-view-textbox.focus > footer > div.completion > div {

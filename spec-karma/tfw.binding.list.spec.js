@@ -64,13 +64,9 @@ describe('tfw.binding.list', function() {
         B: { obj:obj2, name:'size', converter: a => a.length }
       });
 
-      console.log("AAA");
       obj1.list.push( 6 );
-      console.log("BBB");
       obj1.list.push( 3 );
-      console.log("CCC");
       expect( obj2.size ).toBe( 2 );
-      console.log("DDD");
     });
 
   });

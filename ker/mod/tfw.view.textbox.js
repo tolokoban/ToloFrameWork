@@ -6,6 +6,7 @@ var CODE_BEHIND = {
   onValueChanged: onValueChanged
 };
 
+var MAX_AUTOCOMPLETION_SUGGESTIONS = 99;
 
 function onValueChanged( v ) {
   var that = this;
@@ -20,15 +21,15 @@ function onValueChanged( v ) {
     var pos = completionText.toLowerCase().indexOf( textToSearch );
     if( pos !== 0 ) return;
     elementsCount++;
-    if( elementsCount > 8 ) return;
+    if( elementsCount > MAX_AUTOCOMPLETION_SUGGESTIONS ) return;
     addCompletionItem.call( that, elemCompletion, completionText, pos, textToSearch.length );
   });
-  if( elementsCount < 8 ) {
+  if( elementsCount < MAX_AUTOCOMPLETION_SUGGESTIONS ) {
     list.forEach(function (completionText) {
       var pos = completionText.toLowerCase().indexOf( textToSearch );
       if( pos < 1 ) return;
       elementsCount++;
-      if( elementsCount > 8 ) return;
+      if( elementsCount > MAX_AUTOCOMPLETION_SUGGESTIONS ) return;
       addCompletionItem.call( that, elemCompletion, completionText, pos, textToSearch.length );
     });
   }
