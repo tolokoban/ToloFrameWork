@@ -42,9 +42,9 @@ var ID = 0;
  */
 var Link = function( args ) {
   try {
+    var id = ID++;
     checkArgs.call( this, args );
 
-    var id = ID++;
     var onChangedA = link.call( this, args, id, "A", "B" );
     var onChangedB = link.call( this, args, id, "B", "A" );
     addDestroyFunction.call( this, onChangedA, onChangedB );
@@ -101,8 +101,15 @@ function addDestroyFunction( onSrcChanged, onDstChanged ) {
 }
 
 function actionChanged( src, dst, id, value, propertyName, container, wave ) {
+  if( !Array.isArray( wave ) ) wave = [];
+  
+  if( this.debug ) {
+    console.log( "Link " + this.name + ": ", {
+      src: src, dst: dst, id: id, value: value, propertyName: propertyName, container: container, wave: wave
+    } );
+  }
   if( hasAlreadyBeenHere( id, wave ) ) {
-    if( this.name ) {
+    if( this.debug ) {
       console.log( "...has been BLOCKED by the wave! ", wave );
     }
     return;
@@ -113,38 +120,39 @@ function actionChanged( src, dst, id, value, propertyName, container, wave ) {
   var pmSrc = PropertyManager( src.obj );
   var pmDst = PropertyManager( dst.obj );
 
-  if( this.name ) {
-    console.log( "Link " + this.name + ": ", {
-      src: src, dst: dst, id: id, value: value, propertyName: propertyName, container: container, wave: wave
-    } );
-  }
   value = processValue( value, src, dst );
   value = processSwitch( value, dst, pmSrc );
   value = processConverter( value, src, dst );
   if( filterFailed( value, src, dst ) ) {
-    if( this.name ) console.log( "...has been FILTERED!" );
+    if( this.debug ) console.log( "...has been FILTERED!" );
     return;
   }
   value = processMap( value, src, dst );
 
   if( typeof dst.delay === 'number' ) {
-    if( this.name ) console.log( "...has been DELAYED for " + dst.delay + " ms!" );
+    if( this.debug ) console.log( "...has been DELAYED for " + dst.delay + " ms!" );
     clearTimeout( dst._id );
     dst._id = setTimeout(function() {
-      if( that.name ) {
+      if( that.debug ) {
         console.log( "Link " + that.name + " (after " + dst.delay + " ms): ", {
           src: src, dst: dst, id: id, value: value, propertyName: propertyName, wave: wave
         } );
         console.log("...try to change a value. ", {
-          propertyName: dst.name, value: value, target: Object.keys( dst.obj["__tfw.property-manager__"] )
+          target: pmDst,
+          propertyName: dst.name,
+          value: value,
+          wave: wave
         });
       }
       pmDst.change( dst.name, value, wave );
     }, dst.delay);
   } else {
-    if( this.name )
+    if( this.debug )
       console.log("...try to change a value. ", {
-        propertyName: dst.name, value: value, target: Object.keys( dst.obj["__tfw.property-manager__"] )
+        target: pmDst,
+        propertyName: dst.name,
+        value: value,
+        wave: wave
       });
     pmDst.change( dst.name, value, wave );
   }
@@ -153,15 +161,13 @@ function actionChanged( src, dst, id, value, propertyName, container, wave ) {
 
 function checkArgs( args ) {
   try {
+    if( typeof args.name === 'undefined' ) args.name = args.debug;
+    if( typeof args.name !== 'string' ) args.name = "Link#" + this.id;
     if( typeof args === 'undefined' ) fail("Missing mandatory argument!");
     if( typeof args.A === 'undefined' ) fail("Missing `args.A`!");
     if( !Array.isArray( args.A ) ) args.A = [args.A];
     if( typeof args.B === 'undefined' ) fail("Missing `args.B`!");
     if( !Array.isArray( args.B ) ) args.B = [args.B];
-
-    // If  a name  is given,  debug information  will be  showed in  the
-    // console.
-    this.name = args.name;
 
     var k;
     for( k = 0 ; k < args.A.length ; k++ ) {
@@ -170,6 +176,10 @@ function checkArgs( args ) {
     for( k = 0 ; k < args.B.length ; k++ ) {
       checkPod( args.B[k], k );
     }
+
+    // For debugging.
+    this.name = args.name;
+    this.debug = args.debug;
   }
   catch( ex ) {
     console.error("checkArgs( " + args + " )");

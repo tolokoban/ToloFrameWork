@@ -39,23 +39,38 @@ describe('tfw.binding.list', function() {
 
   describe('linking', function() {
     it('should propagate value when item is added to a List', function(){
-      var lst1 = new List([1,2]);
-      var lst2 = new List([3,4]);
       var obj1 = {};
+      PM( obj1 ).create( "list", {init: new List([1,2])} );
       var obj2 = {};
-      PM( obj1 ).create( "list", lst1 );
-      PM( obj2 ).create( "list", lst2 );
+      PM( obj2 ).create( "list", {init: new List([3,4])} );
       
       new Link({
         A: { obj:obj1, name:'list' },
         B: { obj:obj2, name:'list' }
       });
 
-      console.log("AAA");
       obj1.list.push( 9 );
-      console.log("BBB");
       expect( obj2.list.slice() ).toEqual([ 1,2,9 ]);
+    });
+
+    it('should propagate the length when an item is pushed', function(){
+      var obj1 = {};
+      PM( obj1 ).create( "list", {init: new List([])} );
+      var obj2 = {};
+      PM( obj2 ).create( "size", {init: 0} );
+      
+      new Link({ name: "<LINK>",
+        A: { obj:obj1, name:'list' },
+        B: { obj:obj2, name:'size', converter: a => a.length }
+      });
+
+      console.log("AAA");
+      obj1.list.push( 6 );
+      console.log("BBB");
+      obj1.list.push( 3 );
       console.log("CCC");
+      expect( obj2.size ).toBe( 2 );
+      console.log("DDD");
     });
 
   });

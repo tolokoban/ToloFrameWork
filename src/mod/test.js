@@ -7,28 +7,24 @@ var Link = require("tfw.binding.link");
 
 
 exports.start = function() {
-  var lst1 = new List( [1,2] );
-  var lst2 = new List( [3,4] );
   var obj1 = {};
+  PM( obj1 ).create( "list", {init: new List([])} );
   var obj2 = {};
-  PM( obj1 ).create( "list", { init: lst1 } );
-  PM( obj2 ).create( "list", { init: lst2 } );
+  PM( obj2 ).create( "size", {init: 0} );
 
-  new Link({
-    A: { obj:obj1, name:'list' },
-    B: { obj:obj2, name:'list' }
-  });
+  new Link({ debug: "<LINK>",
+             A: { obj:obj1, name:'list' },
+             B: { obj:obj2, name:'size', converter: lengthConverter }
+           });
 
-  obj1.list.push( 10 );
-  console.info("[test] obj1.list.slice()=", obj1.list.slice());
-  console.info("[test] obj2.list.slice()=", obj2.list.slice());
-  obj1.list.push( 11 );
-  console.info("[test] obj1.list.slice()=", obj1.list.slice());
-  console.info("[test] obj2.list.slice()=", obj2.list.slice());
-  obj2.list.push( 12 );
-  console.info("[test] obj1.list.slice()=", obj1.list.slice());
-  console.info("[test] obj2.list.slice()=", obj2.list.slice());
-  obj1.list.push( 13 );
-  console.info("[test] obj1.list.slice()=", obj1.list.slice());
-  console.info("[test] obj2.list.slice()=", obj2.list.slice());
+  console.log("AAA");
+  obj1.list.push( 6 );
+  console.log("BBB");
+  obj1.list.push( 3 );
+  console.log("CCC");
 };
+
+
+function lengthConverter(v) {
+  return v.length;
+}
