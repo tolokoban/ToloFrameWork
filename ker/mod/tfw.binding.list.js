@@ -149,8 +149,38 @@ List.prototype.mapInPlace = function( func ) {
   return this;
 };
 
+var DEFAULT_COMPARATOR = function(a,b) {
+  if( a == b ) return 0;
+  return a < b ? -1 : 1;
+};
+
+/**
+ * Sort and fire only if the array is not already in order.
+ */
+List.prototype.sort = function( comparator ) {
+  if( typeof comparator !== 'function' ) comparator = DEFAULT_COMPARATOR;
+  if( isAlreadySorted( this._array, comparator ) ) return this;
+  this._array.sort( comparator );
+  this.fire( "sort", comparator );
+  return this;
+};
+
+function isAlreadySorted( array, comparator ) {
+  if( array.length < 2 ) return true;
+
+  var previous = array[0];
+  var current;
+  
+  for( var k=1; k<array.length; k++ ) {
+    current = array[k];
+    if( comparator( previous, current ) > 0 ) return false;
+    previous = current;
+  }
+  return true;
+}
+
 [
-  "push", "pop", "shift", "unshift", "sort", "splice", "reverse"
+  "push", "pop", "shift", "unshift", "splice", "reverse"
 ]
   .forEach(function (funcName) {
     List.prototype[funcName] = function() {
