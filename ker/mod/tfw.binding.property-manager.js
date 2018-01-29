@@ -287,7 +287,7 @@ function createSetter( prop, options, that, propertyName ) {
  */
 function addPropToValue( prop, value ) {
   if( value === undefined || value === null ) return;
-  if( typeof value === 'number' || typeof value === 'boolean' ) return;
+  if( value.isContentChangeAware !== true ) return;
   var properties = value[PROPERTY_SYMBOL];
   if( !Array.isArray( properties ) ) {
     properties = [prop];
@@ -300,7 +300,7 @@ function addPropToValue( prop, value ) {
 
 function removePropFromValue( prop, value ) {
   if( value === undefined || value === null ) return;
-  if( typeof value === 'object' || typeof value === 'boolean' ) return;
+  if( value.isContentChangeAware !== true ) return;
   var properties = value[PROPERTY_SYMBOL];
   if( !Array.isArray( properties ) ) return;
   var pos = properties.indexOf( prop );
