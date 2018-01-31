@@ -6,6 +6,7 @@ var List = require("tfw.binding.list");
 var CONVERTERS = {
   boolean: booleanConverter,
   booleans: booleansConverter,
+  color: colorConverter,
   multilang: multilangConverter,
   not: notConverter,
   strings: stringsConverter,
@@ -98,6 +99,10 @@ function booleansConverter(v) {
   return v.map(booleanConverter);
 }
 
+function colorConverter(v) {
+  if( typeof v !== 'string' ) return '#000000';
+  return v;
+}
 
 function notConverter(v) { return !booleanConverter( v ); }
 

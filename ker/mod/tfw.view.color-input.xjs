@@ -1,20 +1,19 @@
-// tfw.view.textbox
 {View DIV
-  view.attribs: {
-    value: {string "" behind: onValueChanged}
+  view.attribs:{
+    value: {color "#fb7"}
     label: {string ""}
-    wide: {boolean false}
     focus: {boolean false}
+    wide: {boolean false}
     visible: {boolean true}
-    width: {unit auto}
-    list: {strings}
+    width: {unit "100%"}
   }
 
-  class: tfw-view-textbox
-  class.wide: {Bind wide} 
+  class: tfw-view-color-input
   class.focus: {Bind focus} 
+  class.wide: {Bind wide} 
   class.|hide: {Bind visible} 
   class.thm-bg3: {Bind focus back:false}
+
 
   [
     {DIV view.id: head, class: head {Bind label}}
@@ -24,10 +23,10 @@
           view.id: input
           value: {Bind value}
           focus: {Bind focus}
+          type: color
           style.width: {Bind width}}
       ]}
     {DIV view.id: foot, class: foot}
     {DIV view.id: bottom, class: "bottom thm-bgS"}
-    {FOOTER [{DIV view.id: completion, class: "completion thm-bg3 thm-ele4"}]}
   ]
 }

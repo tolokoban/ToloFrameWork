@@ -6,6 +6,10 @@ div.tfw-view-textbox {
   font: inherit;
 }
 
+div.tfw-view-textbox.wide {
+  display: block;
+}
+
 div.tfw-view-textbox.hide { display: none; }
 
 div.tfw-view-textbox.focus {
