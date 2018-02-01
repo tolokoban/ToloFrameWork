@@ -2,6 +2,7 @@
 
 var $ = require("$");
 var List = require("tfw.binding.list");
+var Color = require("tfw.color");
 
 var CONVERTERS = {
   boolean: booleanConverter,
@@ -100,8 +101,9 @@ function booleansConverter(v) {
 }
 
 function colorConverter(v) {
-  if( typeof v !== 'string' ) return '#000000';
-  return v;
+  if( typeof v !== 'string' ) return '#000';  
+  if( !Color.instance.parse( v ) ) return '#000';
+  return Color.instance.stringify();
 }
 
 function notConverter(v) { return !booleanConverter( v ); }
