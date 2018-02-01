@@ -71,10 +71,10 @@ function luminance() {
   return 0.2126 * this.R + 0.7152 * this.G + 0.0722 * this.B;
 }
 
-function stringify( red, green, blue, alpha ) {
-  var color = "#" + hexa2( red * 255 ) + green( red * 255 ) + blue( red * 255 );
-  if( alpha < 1 ) {
-    color += hexa2( alpha * 255 );
+function stringify() {
+  var color = "#" + hexa2( this.R * 255 ) + hexa2( this.G * 255 ) + hexa2( this.B * 255 );
+  if( this.A < 1 ) {
+    color += hexa2( this.A * 255 );
   }
   return color;
 }

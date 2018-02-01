@@ -1,6 +1,6 @@
 {View DIV
   view.attribs:{
-    value: {color "#fb7"}
+    value: {color "#fb7" behind:onValueChanged}
     label: {string ""}
     focus: {boolean false}
     wide: {boolean false}
@@ -19,11 +19,11 @@
     {DIV view.id: head, class: head {Bind label}}
     {DIV view.id: body, class: body
       [
-        {INPUT
-          view.id: input
-          value: {Bind value}
-          focus: {Bind focus}
-          type: color
+        {BUTTON view.id: button
+          class: thm-ele2
+          event.tap: onTap
+          textcontent:{Bind value}
+          style.background: {Bind value}
           style.width: {Bind width}}
       ]}
     {DIV view.id: foot, class: foot}
