@@ -29,8 +29,9 @@ div.tfw-view-color-input-dialog {
 div.tfw-view-color-input-dialog button {
   display: inline-block;
   width: 64px;
-  height: 32px;
+  height: 48px;
   margin: 2px;
+  font-size: 12px;
 }
 
 div.tfw-view-color-input button {

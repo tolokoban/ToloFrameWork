@@ -38,6 +38,10 @@ Color.prototype.parse = parse;
  * @return {Color} A clone of this object
  */
 Color.prototype.copy = copy;
+/**
+ * Read H,S,L and write R,G,B.
+ */
+Color.prototype.hsl2rgb = hsl2rgb;
 
 
 var instance = new Color();
@@ -63,6 +67,58 @@ Color.newRGBA = newRGBA;
 //    # Implementation #
 //    ##################
 
+
+/**
+ * @see https://en.wikipedia.org/wiki/HSL_and_HSV#Converting_to_RGB
+ */
+function hsl2rgb() {
+  var H = 6 * this.H;
+  var S = this.S;
+  var L = this.L;
+
+  var R, G, B;
+  
+  var chroma = ( 1 - Math.abs( 2 * L - 1 ) ) * S;
+  var x = chroma * ( 1 - Math.abs( H % 2 - 1 ) );
+  if( H < 3 ) {
+    if( H < 1 ) {    
+      R = chroma;
+      G = x;
+      B = 0;
+    }
+    else if( H === 1 ) {
+      R = x;
+      G = chroma;
+      B = 0;
+    }
+    else {
+      // H == 2.
+      R = 0;
+      G = chroma;
+      B = x;
+    }
+  }
+  else if( H === 3 ) {
+      R = 0;
+      G = x;
+      B = chroma;    
+  }
+  else if( H === 4 ) {
+      R = x;
+      G = 0;
+      B = chroma;    
+  }
+  else {
+      R = chroma;
+      G = 0;
+      B = x;    
+  }
+
+  var shift = L - chroma * 0.5;
+  this.R = R + shift;
+  this.G = G + shift;
+  this.B = B + shift;
+}
 
 /**
  * @see https://en.wikipedia.org/wiki/Grayscale

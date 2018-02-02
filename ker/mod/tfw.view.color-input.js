@@ -5,6 +5,8 @@ var CODE_BEHIND = {
   onTap: onTap
 };
 
+var CHROMATIC_REGIONS = 24;
+var INV_CHROMATIC_REGIONS = 1 / CHROMATIC_REGIONS;
 
 var $ = require("dom");
 var PM = require("tfw.binding.property-manager");
@@ -52,6 +54,36 @@ function onTap() {
   });
   PM( btnClose ).on( "action", dialog.detach.bind( dialog ) );
   dialog.attach();
+}
+
+function pageChromaticRegion( content ) {
+  return new Promise(function (resolve, reject) {
+    $.clear( content, $.tag("h2", [_('chromatic-region')]) );
+    var color = Color.instance;
+    var cssColor;
+    for( var k=0; k<CHROMATIC_REGIONS; k++ ) {
+      color.H = k * INV_CHROMATIC_REGIONS;
+      color.S = 1;
+      color.L = .8;
+      color.hsl2rgb();
+      cssColor = color.stringify();
+      $.add( content, createColorButton(
+        cssColor, resolve
+      ));
+    }
+  });
+}
+
+function createColorButton( background, onTap ) {
+  var foreground = textColor( background );
+  var btn = $.tag("button", "thm-ele2");
+  $.css( btn, {
+    background: background,
+    color: foreground
+  });
+  btn.textContent = background;
+  $.on( btn, onTap );
+  return btn;
 }
 
 
