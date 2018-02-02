@@ -31,7 +31,7 @@
   style.width: {Bind width}
 
   event.tap: {Set action {Bind tag}}
-  event.keyup: [{Set action {Bind tag}}{Set pressed false}]
+  event.keyup: onKeyUp
   event.down: {Set pressed true}
   event.up: {Set pressed false}
   

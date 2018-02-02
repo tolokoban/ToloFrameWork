@@ -2,7 +2,8 @@
 
 var CODE_BEHIND = {
   getClasses: getClasses,
-  onSmallChanged: onSmallChanged
+  onSmallChanged: onSmallChanged,
+  onKeyUp: onKeyUp
 };
 
 
@@ -41,3 +42,13 @@ function getClasses() {
 function onSmallChanged( isSmall ) {
   this.$elements.icon.size = isSmall ? 20 : 28;
 }
+
+
+function onKeyUp( evt ) {
+  if( evt.keyCode != 32 && evt.keyCode != 13 ) return;
+  evt.preventDefault();
+  evt.stopPropagation();
+  this.action = this.tag;
+  this.pressed = false;  
+}
+
