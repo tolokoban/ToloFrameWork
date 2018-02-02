@@ -44,6 +44,7 @@ div.tfw-view-color-input button {
   bottom: 0;
   height: 100%;
   width: 100%;
+  transition: background-color .6s, color .6s;
 }
 
 div.tfw-view-color-input button,

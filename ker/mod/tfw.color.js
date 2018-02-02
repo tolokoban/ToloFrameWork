@@ -42,10 +42,15 @@ Color.prototype.copy = copy;
  * Read H,S,L and write R,G,B.
  */
 Color.prototype.hsl2rgb = hsl2rgb;
+/**
+ * Read R,G,B and write H,S,L.
+ */
+Color.prototype.rgb2hsl = rgb2hsl;
 
 
 var instance = new Color();
 Color.instance = instance;
+Color.parse = staticParse;
 /**
  * @param {float} red - Red value between 0 and 1.
  * @param {float} green - Green value between 0 and 1.
@@ -67,6 +72,40 @@ Color.newRGBA = newRGBA;
 //    # Implementation #
 //    ##################
 
+var INV_6 = 1 / 6;
+
+function rgb2hsl() {
+  var R = this.R;
+  var G = this.G;
+  var B = this.B;
+
+  var min = Math.min( R, G, B );
+  var max = Math.max( R, G, B );
+  var delta = max - min;
+
+  this.L = 0.5 * (max + min);
+
+  if( delta < 0.000001 ) {
+    this.H = 0;
+    this.S = 0;
+  }
+  else {
+    this.S = delta / ( 1 - Math.abs( 2 * this.L - 1 ) );
+    if( max === R ) {
+      if( G >= B ) {
+        this.H = INV_6 * ((G - B) / delta);
+      } else {
+        this.H = 1 - INV_6 * ((B - G) / delta);
+      }
+    }
+    else if( max === G ) {
+        this.H = INV_6 * (2 + (B - R) / delta);
+    }
+    else {
+        this.H = INV_6 * (4 + (R - G) / delta);
+    }
+  }
+}
 
 /**
  * @see https://en.wikipedia.org/wiki/HSL_and_HSV#Converting_to_RGB
@@ -86,7 +125,7 @@ function hsl2rgb() {
       G = x;
       B = 0;
     }
-    else if( H === 1 ) {
+    else if( H < 2 ) {
       R = x;
       G = chroma;
       B = 0;
@@ -98,12 +137,12 @@ function hsl2rgb() {
       B = x;
     }
   }
-  else if( H === 3 ) {
+  else if( H < 4 ) {
       R = 0;
       G = x;
       B = chroma;    
   }
-  else if( H === 4 ) {
+  else if( H < 5 ) {
       R = x;
       G = 0;
       B = chroma;    
@@ -118,6 +157,16 @@ function hsl2rgb() {
   this.R = R + shift;
   this.G = G + shift;
   this.B = B + shift;
+
+  console.log(
+    Math.floor( 360 * this.H ),
+    Math.floor( 100 * this.S ),
+    Math.floor( 100 * this.L ),
+    " -> ",
+    Math.floor( 255 * this.R ),
+    Math.floor( 255 * this.G ),
+    Math.floor( 255 * this.B )
+  );
 }
 
 /**
@@ -136,7 +185,8 @@ function stringify() {
 }
 
 
-function parse( text ) {  
+function parse( text ) {
+  if( typeof text !== 'string' ) text = '#000';
   var input = text.trim().toUpperCase();
   if( parseHexa.call( this, input ) ) return true;
   if( parseRGB.call( this, input ) ) return true;
@@ -255,4 +305,11 @@ function clamp01( v ) {
   if( v < 0 ) return 0;
   if( v > 1 ) return 1;
   return v;
+}
+
+
+function staticParse( text ) {
+  var color = new Color();
+  color.parse( text );
+  return color;
 }
