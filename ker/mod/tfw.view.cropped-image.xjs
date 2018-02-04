@@ -1,8 +1,8 @@
 {View DIV class:tfw-view-cropped-image
   view.attribs: {
-    url: {string behind: onUrlChanged}
     width: {integer 800}
     height: {integer 400}
+    url: {string behind: onUrlChanged}
     label: {string {Intl label} behind: onLabelChanged}
     // `head` shows the top or the left of the image.
     cropping: {[head, body, tail] body}

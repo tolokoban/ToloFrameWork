@@ -157,16 +157,6 @@ function hsl2rgb() {
   this.R = R + shift;
   this.G = G + shift;
   this.B = B + shift;
-
-  console.log(
-    Math.floor( 360 * this.H ),
-    Math.floor( 100 * this.S ),
-    Math.floor( 100 * this.L ),
-    " -> ",
-    Math.floor( 255 * this.R ),
-    Math.floor( 255 * this.G ),
-    Math.floor( 255 * this.B )
-  );
 }
 
 /**

@@ -20,6 +20,7 @@
     {DIV view.id: body, class: body
       [
         {BUTTON view.id: button
+          focus:{Bind focus}
           class: thm-ele2
           event.tap: onTap
           textcontent:{Bind value}
