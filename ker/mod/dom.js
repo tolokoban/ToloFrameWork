@@ -261,6 +261,10 @@ function off( element ) {
   delete element[SYMBOL].events;
 }
 
+var NON_POINTER_EVENTS = [
+  'keyup', 'keydown', 'scroll', 'load', 'error'
+];
+
 function on( element, slots, extra ) {
   // If only a function is passed, we consider this is a Tap event.
   if( typeof slots === 'function' || slots === null ) slots = { tap: slots };
@@ -293,7 +297,7 @@ function on( element, slots, extra ) {
     } else {
       preview = false;
     }
-    if (key == 'keydown' || key == 'keyup') {
+    if( NON_POINTER_EVENTS.indexOf(key.toLowerCase()) > -1 ) {
       element.addEventListener( key, val, preview );
     } else {
       element[SYMBOL].events.on( key, val, preview );

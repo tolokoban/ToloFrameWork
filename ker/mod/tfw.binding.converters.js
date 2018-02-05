@@ -9,6 +9,7 @@ var CONVERTERS = {
   booleans: booleansConverter,
   color: colorConverter,
   multilang: multilangConverter,
+  intl: intlConverter,
   not: notConverter,
   strings: stringsConverter,
   string: function(v) { return "" + v; },
@@ -153,6 +154,17 @@ function multilangConverter(v) {
   return v;
 }
 
+function intlConverter(v) {
+  if( typeof v === 'string' ) return v;
+  var result = v[$.lang()];
+  if( !result ) {
+    for( var lang in v ) {
+      result = v[lang];
+      break;
+    }
+  }
+  return result;
+}
 
 function listConverter( v ) {
   if( List.isList( v ) ) return v;
