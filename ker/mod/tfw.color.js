@@ -51,6 +51,7 @@ Color.prototype.rgb2hsl = rgb2hsl;
 var instance = new Color();
 Color.instance = instance;
 Color.parse = staticParse;
+Color.luminance = staticLuminance;
 /**
  * @param {float} red - Red value between 0 and 1.
  * @param {float} green - Green value between 0 and 1.
@@ -302,4 +303,9 @@ function staticParse( text ) {
   var color = new Color();
   color.parse( text );
   return color;
+}
+
+function staticLuminance( text ) {
+  var color = staticParse( text );
+  return color.luminance();
 }
