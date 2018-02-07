@@ -344,3 +344,5 @@ function addEvent(element, event, listener, capture) {
 }
 
 module.exports = PointerEvents;
+
+

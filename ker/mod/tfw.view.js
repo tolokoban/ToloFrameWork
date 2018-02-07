@@ -2,6 +2,7 @@
 
 var $ = require("dom");
 var PM = require("tfw.binding.property-manager");
+var Hammer = require("external.hammer");
 var Converters = require('tfw.binding.converters');
 
 exports.Tag = function(tagName, attribs) {
@@ -139,5 +140,47 @@ exports.ensureCodeBehind = function( code_behind ) {
     funcName = arguments[i];
     if( typeof code_behind[funcName] !== 'function' )
       throw "Expected CODE_BEHIND." + funcName + " to be a function!";
+  }
+};
+
+
+var GESTURES = ["tap", "press", "pan", "swipe"];
+
+/**
+ * @param {function} event.tap
+ * @param {function} event.press
+ * @param {function} event.pan
+ * @param {function} event.swipe
+ * 
+ * @example
+ * ```
+ * var View = require("tfw.view");
+ * View.events( div, {
+ *   "tap": function( evt ) {...},
+ *   "press": function( evt ) {...}
+ * });
+ * ```
+ */
+exports.events = function( target, events ) {
+  var gestures = {};
+  var hasGestures = 0;
+  
+  Object.keys( events ).forEach(function (eventName) {
+    eventName = eventName.toLowerCase();
+    var eventSlot = events[eventName];
+    if( GESTURES.indexOf( eventName ) ) {
+      gestures[eventName] = eventSlot;
+      hasGestures = true;
+    } else {
+      target.addEventListener( eventName, eventSlot, false );
+    }
+  });
+
+  if( hasGestures ) {
+    var gestureHandler = new Hammer( target );
+    Object.keys( gestures ).forEach(function (eventName) {
+      var eventSlot = events[eventName];
+      gestureHandler.on( eventName, eventSlot );
+    });
   }
 };
