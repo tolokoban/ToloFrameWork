@@ -156,6 +156,7 @@ function multilangConverter(v) {
 
 function intlConverter(v) {
   if( typeof v === 'string' ) return v;
+  if( !v ) return "";
   var result = v[$.lang()];
   if( !result ) {
     for( var lang in v ) {
