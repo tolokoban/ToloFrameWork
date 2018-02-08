@@ -162,22 +162,23 @@ var GESTURES = ["tap", "press", "pan", "swipe"];
  * ```
  */
 exports.events = function( target, events ) {
+  var elem = $(target);
   var gestures = {};
   var hasGestures = 0;
   
   Object.keys( events ).forEach(function (eventName) {
     eventName = eventName.toLowerCase();
     var eventSlot = events[eventName];
-    if( GESTURES.indexOf( eventName ) ) {
+    if( GESTURES.indexOf( eventName ) > -1 ) {
       gestures[eventName] = eventSlot;
       hasGestures = true;
     } else {
-      target.addEventListener( eventName, eventSlot, false );
+      elem.addEventListener( eventName, eventSlot, false );
     }
   });
 
   if( hasGestures ) {
-    var gestureHandler = new Hammer( target );
+    var gestureHandler = new Hammer( elem );
     Object.keys( gestures ).forEach(function (eventName) {
       var eventSlot = events[eventName];
       gestureHandler.on( eventName, eventSlot );
