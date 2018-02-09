@@ -118,7 +118,7 @@ exports.Tag.prototype.applyClass = function( newClasses, id ) {
   if( typeof id === 'undefined' ) id = 0;
   if( typeof this._applyer === 'undefined' ) this._applyer = {};
   if( !Array.isArray( newClasses ) ) newClasses = [newClasses];
-  
+
   var oldClasses = this._applyer[id];
   if( Array.isArray( oldClasses ) ) {
     oldClasses.forEach( $.removeClass.bind( $, elem ) );
@@ -144,14 +144,20 @@ exports.ensureCodeBehind = function( code_behind ) {
 };
 
 
-var GESTURES = ["tap", "press", "pan", "swipe"];
+var GESTURES = [
+  "tap", "doubletap", "press",
+  'pan panstart panmove panup pandown panleft panright panend pancancel',
+  "swipe", "swipeleft", "swipteright", "swipetop", "swipebottom",
+  "pinch", "pinchin", "pinchout", "pinchstart", "pinchmove", "pinchend", "pinchcancel",
+  "rotate", "rotatestart", "rotatemove", "rotateend", "rotatecancel"
+];
 
 /**
  * @param {function} event.tap
  * @param {function} event.press
  * @param {function} event.pan
  * @param {function} event.swipe
- * 
+ *
  * @example
  * ```
  * var View = require("tfw.view");
@@ -165,14 +171,14 @@ exports.events = function( target, events ) {
   var elem = $(target);
   var gestures = {};
   var hasGestures = 0;
-  
+
   Object.keys( events ).forEach(function (eventName) {
     eventName = eventName.toLowerCase();
     var eventSlot = events[eventName];
     if( GESTURES.indexOf( eventName ) > -1 ) {
       gestures[eventName] = eventSlot;
       hasGestures = true;
-    } else {
+    } else {      
       elem.addEventListener( eventName, eventSlot, false );
     }
   });

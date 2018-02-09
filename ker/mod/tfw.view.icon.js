@@ -44,8 +44,8 @@ function onContentChanged( content ) {
 // 0 is black,  1 is white, P  is primary, S is secondary,  L is light
 // and D is dark.
 var FILL_COLORS_TO_CLASSES = {
-  '0': "fill0",
-  '1': "fill1",
+  '0': "thm-svg-fill0",
+  '1': "thm-svg-fill1",
   P:   "thm-svg-fill-P",
   PL:  "thm-svg-fill-PL",
   PD:  "thm-svg-fill-PD",
@@ -54,14 +54,14 @@ var FILL_COLORS_TO_CLASSES = {
   SD:  "thm-svg-fill-SD"
 };
 var STROKE_COLORS_TO_CLASSES = {
-  '0': "stroke0",
-  '1': "stroke1",
-  P:    "thm-svg-stroke-P",
-  PL:   "thm-svg-stroke-PL",
-  PD:   "thm-svg-stroke-PD",
-  S:    "thm-svg-stroke-S",
-  SL:   "thm-svg-stroke-SL",
-  SD:   "thm-svg-stroke-SD"
+  '0': "thm-svg-stroke0",
+  '1': "thm-svg-stroke1",
+  P:   "thm-svg-stroke-P",
+  PL:  "thm-svg-stroke-PL",
+  PD:  "thm-svg-stroke-PD",
+  S:   "thm-svg-stroke-S",
+  SL:  "thm-svg-stroke-SL",
+  SD:  "thm-svg-stroke-SD"
 };
 
 
