@@ -19,6 +19,7 @@ exports.apply = applyTheme;
 
 function registerTheme( themeName, style ) {
   style = completeWithDefaultValues( style );
+  console.info("[dom.theme] style=", style);
 
   var codeCSS = codeBackground( themeName, style );
   codeCSS += codeElevation( themeName, style );
@@ -43,16 +44,22 @@ function codeText( themeName, style ) {
   for( var depth = 1; depth <= 10; depth++ ) {
     THEME_COLOR_NAMES.forEach(function (colorName) {
       var bgClass = ".thm-bg" + colorName;
+      var fgClass = ".thm-fg" + colorName;
       for( var position = 1; position <= depth; position++ ) {
-        var pieces = [];
+        var piecesFG = [];
+        var piecesBG = [];
         for( var index = 1; index <= depth; index++ ) {
-          pieces.push( position === index ? bgClass : '*' );
+          piecesBG.push( position === index ? bgClass : '*' );
+          piecesFG.push( position === index ? fgClass : '*' );
         }
         codeCSS += "body.dom-theme-" + themeName + " "
-          + pieces.join( " > " )
+          + piecesBG.join( " > " )
           + " { color: " + style['fg' + colorName] + " }\n";
         codeCSS += "body.dom-theme-" + themeName + " "
-          + pieces.join( " > " )
+          + piecesFG.join( " > " )
+          + " { color: " + style['bg' + colorName] + " }\n";
+        codeCSS += "body.dom-theme-" + themeName + " "
+          + piecesBG.join( " > " )
           + " svg .thm-svg-fill0"
           + " { fill: " + style['fg' + colorName] + " }\n";
       }
@@ -126,15 +133,15 @@ function completeWithDefaultValues( style ) {
 
   if( typeof style.bgP !== 'string' ) style.bgP = "#3E50B4";
   if( typeof style.bgPD !== 'string' ) style.bgPD = dark( style.bgP );
-  if( typeof style.bgPL !== 'string' ) style.bgPL = dark( style.bgP );
+  if( typeof style.bgPL !== 'string' ) style.bgPL = light( style.bgP );
   if( typeof style.bgS !== 'string' ) style.bgS = "#FF3F80";
   if( typeof style.bgSD !== 'string' ) style.bgSD = dark( style.bgS );
-  if( typeof style.bgSL !== 'string' ) style.bgSL = dark( style.bgS );
+  if( typeof style.bgSL !== 'string' ) style.bgSL = light( style.bgS );
 
   THEME_COLOR_NAMES.forEach(function (name) {
-    var bg = style['fg' + name];
-    if( typeof bg === 'string' ) return;
+    var bg = style['bg' + name];
     var luminance = Color.luminance( bg );
+    console.info("[dom.theme] bg, luminance=", bg, luminance);
     style['fg' + name] = luminance < .6 ? '#fff' : '#000';
   });
 
@@ -143,18 +150,18 @@ function completeWithDefaultValues( style ) {
 
 function dark( color ) {
   var percent = .25;
-  var darkColor = color.copy();
+  var darkColor = new Color( color );
   darkColor.rgb2hsl();
   darkColor.L *= 1 - percent;
   darkColor.hsl2rgb();
-  return darkColor;
+  return darkColor.stringify();
 }
 
 function light( color ) {
   var percent = .4;
-  var lightColor = color.copy();
+  var lightColor = new Color( color );
   lightColor.rgb2hsl();
   lightColor.L = percent + (1 - percent) * lightColor.L;
   lightColor.hsl2rgb();
-  return lightColor;
+  return lightColor.stringify();
 }

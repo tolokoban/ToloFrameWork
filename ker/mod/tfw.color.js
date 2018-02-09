@@ -6,7 +6,7 @@
  * Attributes R  (red), G  (green), B  (blue), A  (alpha), H  (hue), S
  * (saturation), and L (luminance) are all floats between 0 and 1.
  */
-var Color = function() {
+var Color = function(code) {
   this.R = 0;
   this.G = 0;
   this.B = 0;
@@ -14,6 +14,10 @@ var Color = function() {
   this.H = 0;
   this.S = 0;
   this.L = 0;
+
+  if( typeof code === 'string' ) {
+    this.parse( code );
+  }
 };
 module.exports = Color;
 

@@ -46,19 +46,12 @@ function draw( d ) {
  * SVG tag `path`.
  */
 function path2( d ) {
-  return [ 'g', [
-    [ 'path', {
-      d: d,
-      stroke: 1,
-      fill: 'none',
-      'stroke-width': 12
-    } ],
-    [ 'path', {
+  return [
+    'path', {
       d: d,
       stroke: 'none',
       fill: 0
-    } ]
-  ] ];
+    }];
 };
 
 
