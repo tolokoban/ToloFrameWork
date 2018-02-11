@@ -4,6 +4,7 @@ div.tfw-view-color-input {
   border: none;
   border-bottom: 1px solid rgba(0,0,0,.5);
   font: inherit;
+  min-width: 64px;
 }
 
 div.tfw-view-color-input.wide {
@@ -24,6 +25,38 @@ div.tfw-view-color-input > div {
 div.tfw-view-color-input-dialog {
   width: 300px;
   text-align: center;
+}
+
+div.tfw-view-color-input-dialog div.expert {
+  text-align: left;
+}
+
+div.tfw-view-color-input-dialog div.expert > div.flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+div.tfw-view-color-input-dialog div.expert > div.flex > div {
+  flex: 1 0;
+}
+
+div.tfw-view-color-input-dialog div.expert >div.flex > div.pastille {
+  display: inline-block;
+  color: transparent;
+  font-size: 1px;
+  float: right;
+  background: #fff;
+  border-radius: 100%;
+  width: 32px;
+  height: 32px;
+  max-width: 32px;
+  border: 2px solid rgba(0,0,0,.6);
+}
+
+div.tfw-view-color-input-dialog div.expert .hint {
+  font-size: 80%;
+  opacity: .5;
 }
 
 div.tfw-view-color-input-dialog button {

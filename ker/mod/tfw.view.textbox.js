@@ -3,10 +3,16 @@
 var $ = require("dom");
 
 var CODE_BEHIND = {
+  onKeyUp: onKeyUp,
   onValueChanged: onValueChanged
 };
 
 var MAX_AUTOCOMPLETION_SUGGESTIONS = 99;
+
+
+function onKeyUp( evt ) {
+  if( evt.key === 'Enter' ) this.action = this.value;
+}
 
 function onValueChanged( v ) {
   var that = this;

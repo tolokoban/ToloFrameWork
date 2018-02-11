@@ -7,6 +7,7 @@
     focus: {boolean false}
     visible: {boolean true}
     width: {unit auto}
+    action: {action}
     list: {strings}
   }
 
@@ -22,6 +23,7 @@
       [
         {INPUT
           view.id: input
+          event.keyup: onKeyUp
           value: {Bind value}
           focus: {Bind focus}
           style.width: {Bind width}}

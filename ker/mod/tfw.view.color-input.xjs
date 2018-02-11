@@ -1,7 +1,7 @@
 {View DIV
   view.attribs:{
     value: {color "#fb7" behind:onValueChanged}
-    label: {string ""}
+    label: {string "Color"}
     focus: {boolean false}
     wide: {boolean false}
     visible: {boolean true}

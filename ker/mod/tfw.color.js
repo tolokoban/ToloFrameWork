@@ -51,11 +51,11 @@ Color.prototype.hsl2rgb = hsl2rgb;
  */
 Color.prototype.rgb2hsl = rgb2hsl;
 
-
 var instance = new Color();
 Color.instance = instance;
 Color.parse = staticParse;
 Color.luminance = staticLuminance;
+
 /**
  * @param {float} red - Red value between 0 and 1.
  * @param {float} green - Green value between 0 and 1.
@@ -77,7 +77,12 @@ Color.newRGBA = newRGBA;
 //    # Implementation #
 //    ##################
 
-var INV_6 = 1 / 6;
+var INV6 = 1 / 6;
+var INV15 = 1 / 15;
+var INV99 = 1 / 99;
+var INV255 = 1 / 255;
+var INV359 = 1 / 359;
+
 
 function rgb2hsl() {
   var R = this.R;
@@ -98,16 +103,16 @@ function rgb2hsl() {
     this.S = delta / ( 1 - Math.abs( 2 * this.L - 1 ) );
     if( max === R ) {
       if( G >= B ) {
-        this.H = INV_6 * ((G - B) / delta);
+        this.H = INV6 * ((G - B) / delta);
       } else {
-        this.H = 1 - INV_6 * ((B - G) / delta);
+        this.H = 1 - INV6 * ((B - G) / delta);
       }
     }
     else if( max === G ) {
-        this.H = INV_6 * (2 + (B - R) / delta);
+        this.H = INV6 * (2 + (B - R) / delta);
     }
     else {
-        this.H = INV_6 * (4 + (R - G) / delta);
+        this.H = INV6 * (4 + (R - G) / delta);
     }
   }
 }
@@ -186,12 +191,10 @@ function parse( text ) {
   if( parseHexa.call( this, input ) ) return true;
   if( parseRGB.call( this, input ) ) return true;
   if( parseRGBA.call( this, input ) ) return true;
+  if( parseHSL.call( this, input ) ) return true;
   // @TODO hsl and hsla.
   return false;
 }
-
-var INV15 = 1 / 15;
-var INV255 = 1 / 255;
 
 
 function parseHexa( text ) {
@@ -256,6 +259,19 @@ function parseRGBA( text ) {
   this.G = clamp01( parseInt( m[2] ) * INV255 );
   this.B = clamp01( parseInt( m[3] ) * INV255 );
   this.A = clamp01( parseFloat( m[4] ) );
+  return true;
+}
+
+var RX_HSL = /^HSL[\s\(]+([0-9]+)[^0-9]+([0-9]+)[^0-9]+([0-9]+)/;
+
+function parseHSL( text ) {
+  var m = RX_HSL.exec( text );
+  if( !m ) return false;
+  this.H = clamp01( parseInt( m[1] ) * INV359 );
+  this.S = clamp01( parseInt( m[2] ) * INV99 );
+  this.L = clamp01( parseInt( m[3] ) * INV99 );
+  this.A = 1;
+  this.hsl2rgb();
   return true;
 }
 

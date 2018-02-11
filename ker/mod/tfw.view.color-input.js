@@ -12,7 +12,9 @@ var $ = require("dom");
 var PM = require("tfw.binding.property-manager");
 var Color = require("tfw.color");
 var Dialog = require("wdg.modal");
+var Textbox = require("tfw.view.textbox");
 var ButtonFactory = require("tp.factory.button");
+
 
 function onValueChanged( cssColor ) {
   this.$elements.button.$.style.color = textColor( cssColor );
@@ -22,7 +24,19 @@ function onTap() {
   var that = this;
 
   var btnClose = ButtonFactory.cancel();
-  var content = $.div('tfw-view-color-input-dialog');
+  var palette = $.div();
+  var textbox = new Textbox({
+    wide: true, label: _("expert-label"), value: this.value, width: "240px"
+  });
+  var hint = $.div("hint", [_('expert-hint')]);
+  var pastille = $.div("pastille", ["X"]);
+  $.css( pastille, { background: this.value });
+  var expert = $.div( "expert", [
+    $.tag('hr'),
+    $.div("flex", [ textbox, pastille ]),
+    hint
+  ]);
+  var content = $.div( "tfw-view-color-input-dialog", [ palette, expert ] );
   var dialog = new Dialog({
     header: this.label,
     content: content,
@@ -37,19 +51,29 @@ function onTap() {
     }, 300);
   };
 
-  pageChromaticRegion( content )
+  pageChromaticRegion( palette )
     .then(function( color ) {
-      return pageHueSelection( content, color );
+      textbox.value = color;
+      return pageHueSelection( palette, color );
     })
     .then(function( color ) {
-      return pageLuminance( content, color );
+      textbox.value = color;
+      return pageLuminance( palette, color );
     })
     .then( done );
+
+  PM( textbox ).on( "action", function() {
+    done( Color.parse( textbox.value ).stringify() );
+  });
+  PM( textbox ).on( "value", function( v ) {
+    var color = Color.parse( textbox.value ).stringify();
+    $.css( pastille, { background: color });
+  });
 }
 
 function pageHueSelection( content, selectedCssColor ) {
   return new Promise(function (resolve, reject) {
-    $.clear( content, $.tag("h2", [_('hue-selection') + " - 2/3"]) );
+    $.clear( content, $.div([_('hue-selection') + " - 2/3"]) );
     var cssColor;
     var color = Color.instance;
     color.parse( selectedCssColor );
@@ -70,7 +94,7 @@ function pageHueSelection( content, selectedCssColor ) {
 
 function pageLuminance( content, selectedCssColor ) {
   return new Promise(function (resolve, reject) {
-    $.clear( content, $.tag("h2", [_('luminance') + " - 3/3"]) );
+    $.clear( content, $.div([_('luminance') + " - 3/3"]) );
     var cssColor;
     var color = Color.instance;
     color.parse( selectedCssColor );
@@ -91,7 +115,7 @@ function pageLuminance( content, selectedCssColor ) {
 
 function pageChromaticRegion( content ) {
   return new Promise(function (resolve, reject) {
-    $.clear( content, $.tag("h2", [_('chromatic-region') + " - 1/3"]) );
+    $.clear( content, $.div([_('chromatic-region') + " - 1/3"]) );
     var cssColor;
     var color = Color.instance;
     for( var k=0; k<CHROMATIC_REGIONS; k++ ) {
