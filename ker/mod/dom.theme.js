@@ -19,7 +19,6 @@ exports.apply = applyTheme;
 
 function registerTheme( themeName, style ) {
   style = completeWithDefaultValues( style );
-  console.info("[dom.theme] style=", style);
 
   var codeCSS = codeBackground( themeName, style );
   codeCSS += codeElevation( themeName, style );
@@ -28,8 +27,6 @@ function registerTheme( themeName, style ) {
   var styleElement = THEMES.css[themeName];
   if( !styleElement ) {
     styleElement = document.createElement("style");
-    console.info("[dom] document.body=", document.body);
-    console.info("[dom] document.querySelector['head']=", document.getElementsByTagName( 'head' )[0]);
     document.getElementsByTagName( 'head' )[0].appendChild( styleElement );
     THEMES.css[themeName] = styleElement;
   }
@@ -141,7 +138,6 @@ function completeWithDefaultValues( style ) {
   THEME_COLOR_NAMES.forEach(function (name) {
     var bg = style['bg' + name];
     var luminance = Color.luminance( bg );
-    console.info("[dom.theme] bg, luminance=", bg, luminance);
     style['fg' + name] = luminance < .6 ? '#fff' : '#000';
   });
 
