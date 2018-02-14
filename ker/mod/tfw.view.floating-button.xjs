@@ -1,3 +1,20 @@
-{View DIV class:tfw-view-floating-button
+{View DIV
+  view.attribs: {
+    icon: {string add}
+    action: {action}
+    tag: {any}
+    type: {[S SD SL P PD PL "0" "1" "2" "3"] S}
+    visible: {boolean true}
+  }
 
+  class:"tfw-view-floating-button thm-ele8"
+  class.|hide:{Bind visible}
+  event.tap: onTap
+  class.*: {[type] getClasses}
+ 
+  [
+    {DIV [
+      {tfw.view.icon content:{Bind icon} size:24}
+    ]}
+  ]
 }

@@ -1,0 +1,30 @@
+div.tfw-view-floating-button {
+    display: inline-table;
+    width: 56px;
+    height: 56px;
+    border-radius: 100%;
+    margin: 0;
+    transition: transform .3s;
+    transform: scale(1);
+    cursor: pointer;
+}
+
+div.tfw-view-floating-button.hide {
+    transition: transform 0s;
+    transform: scale(0);
+    display: none;
+}
+
+div.tfw-view-floating-button > div {
+    display: table-cell;
+    margin: 0;
+    text-align: center;
+    vertical-align: middle;
+}
+
+@media (max-width: 460px) {
+    div.tfw-view-floating-button {
+        width: 40px;
+        height: 40px;
+    }
+}
