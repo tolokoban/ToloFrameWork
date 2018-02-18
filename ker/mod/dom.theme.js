@@ -44,10 +44,16 @@ function codeText( themeName, style ) {
       var fgClass = ".thm-fg" + colorName;
       for( var position = 1; position <= depth; position++ ) {
         var piecesFG = [];
+        var piecesSVG = [];
         var piecesBG = [];
         for( var index = 1; index <= depth; index++ ) {
           piecesBG.push( position === index ? bgClass : '*' );
+          piecesSVG.push( position === index ? bgClass : '*' );
           piecesFG.push( position === index ? fgClass : '*' );
+          if( index === depth ) {
+            piecesBG.push( piecesBG.pop() + ".thm-fg" );
+            piecesFG.push( piecesFG.pop() + fgClass );
+          }
         }
         codeCSS += "body.dom-theme-" + themeName + " "
           + piecesBG.join( " > " )
@@ -56,7 +62,7 @@ function codeText( themeName, style ) {
           + piecesFG.join( " > " )
           + " { color: " + style['bg' + colorName] + " }\n";
         codeCSS += "body.dom-theme-" + themeName + " "
-          + piecesBG.join( " > " )
+          + piecesSVG.join( " > " )
           + " svg .thm-svg-fill0"
           + " { fill: " + style['fg' + colorName] + " }\n";
       }
