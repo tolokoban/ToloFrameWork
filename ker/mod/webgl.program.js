@@ -48,14 +48,14 @@ function Program( gl, codes, includes ) {
   this.program = shaderProgram;
   Object.freeze( this.program );
 
-  this.use = function () {
-    gl.useProgram( shaderProgram );
-  };
   this.use();
-
   createAttributes( this, gl, shaderProgram );
   createUniforms( this, gl, shaderProgram );
 }
+
+Program.prototype.use = function() {
+  this.gl.useProgram( this.program );
+};
 
 Program.prototype.getTypeName = function ( typeId ) {
   return this._typesNamesLookup[ typeId ];
