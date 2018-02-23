@@ -22,6 +22,10 @@ div.tfw-view-floating-button > div {
     vertical-align: middle;
 }
 
+div.tfw-view-floating-button > div > div {
+    margin: 0;
+}
+
 @media (max-width: 460px) {
     div.tfw-view-floating-button {
         width: 40px;

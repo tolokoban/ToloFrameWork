@@ -1,9 +1,9 @@
 /*
-The list handler is used to map a List into children of an element.
-With simple data binding, if you add  an item to the List, you have to
-clear the element and  add all the items of the  List again.  The list
-handler is able to add only the new items.
- */
+  The list handler is used to map a List into children of an element.
+  With simple data binding, if you add  an item to the List, you have to
+  clear the element and  add all the items of the  List again.  The list
+  handler is able to add only the new items.
+*/
 "use strict";
 
 var $ = require("dom");
@@ -48,7 +48,7 @@ var Context = function( view, element, listName, options ) {
 Context.prototype.attachEventListener = function() {
   var that = this;
   var onListChanged = that.onListChanged.bind( that );
-  
+
   PM( this.view ).on( this.listName, function( newList ) {
     if( !List.isList( newList ) ) {
       console.error({
@@ -58,7 +58,7 @@ Context.prototype.attachEventListener = function() {
         newList: newList
       });
       throw Error("[tfw.binding.list-handler] Property \"" + that.listName + "\" must be of type List!");
-    }    
+    }
     if( that.list ) {
       that.list.removeListener( onListChanged );
     }
@@ -73,14 +73,15 @@ Context.prototype.resetChildren = function() {
   var element = this.element;
   var list = this.list;
   var context = {};
-  
+
   $.clear( element );
   list.forEach(function (item, index) {
-    $.add( element, map( item, {
+    var child = map( item, {
       index: index,
       list: list,
       context: context
-    } ) );
+    } );
+    if( child ) $.add( element, child );
   });
 };
 
