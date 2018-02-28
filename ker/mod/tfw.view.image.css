@@ -1,0 +1,9 @@
+img.tfw-view-image {
+    transition: opacity .3s;
+    opacity: 1;
+}
+
+img.tfw-view-image.hide {
+    transition: opacity 0;
+    opacity: 0;
+}

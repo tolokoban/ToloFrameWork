@@ -6,7 +6,9 @@ var CODE_BEHIND = {
 };
 
 
-function onTap() {
+function onTap( evt ) {
+  console.info("[tfw.view.floating-button] evt=", evt);
+  evt.srcEvent.stopPropagation();
   this.action = this.tag;
 }
 

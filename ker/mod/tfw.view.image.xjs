@@ -1,0 +1,14 @@
+{View IMG class:tfw-view-image
+  view.attribs: {
+    src: {string "" behind:onSrcChanged}
+    crossorigin: {string anonymous}
+    loaded: {boolean false}
+    failed: {boolean false}
+  }
+
+  src: {Bind src}
+  crossorigin: {Bind crossorigin}
+  
+  event.load: onLoad
+  event.error: onError
+}
