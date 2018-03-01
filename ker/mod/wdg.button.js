@@ -40,7 +40,10 @@ var Button = function ( opts ) {
 
   DB.prop( this, 'value' );
   DB.propEnum( TYPES )( this, 'type' );
-  DB.prop( this, 'icon' );
+  DB.prop( this, 'icon' )( function ( v ) {
+    touchable.enabled = v;
+    refresh();
+  } );
   DB.propBoolean( this, 'responsive' );
   DB.propBoolean( this, 'anim' );
   DB.propBoolean( this, 'wait' );
@@ -134,7 +137,7 @@ Button.Delete = function ( opts ) {
   return genericButton({ text: _('delete'), type: 'secondary', icon: 'delete' }, opts);
 };
 Button.No = function ( opts ) {
-  return genericButton({ text: _('no'), flat: true }, opts);
+  return genericButton({ text: _('no'), icon: "cancel", flat: true }, opts);
 };
 Button.Ok = function ( opts ) {
   return genericButton({ text: _('ok'), flat: true }, opts);
