@@ -268,8 +268,9 @@ function PointerEvents( element ) {
     if (G.touchDevice) return;
     var slots = that._slots;
     G.target = that;
-    G.targetX = evt.pageX - element.offsetLeft;
-    G.targetY = evt.pageY - element.offsetTop;
+    var rect = element.getBoundingClientRect();
+    G.targetX = evt.pageX - rect.left;
+    G.targetY = evt.pageY - rect.top;
     if (slots.down) {
       slots.down({
         action: 'down',
@@ -285,11 +286,12 @@ function PointerEvents( element ) {
   addEvent.call(that, element, 'mousemove', function(evt) {
     var slots = that._slots;
     if (slots.move) {
+      var rect = element.getBoundingClientRect();
       slots.move({
         target: element,
         action: 'move',
-        x: evt.pageX - element.offsetLeft,
-        y: evt.pageY - element.offsetTop
+        x: evt.pageX - rect.left,
+        y: evt.pageY - rect.top
       });
     }
   });
@@ -314,8 +316,9 @@ PointerEvents.prototype.on = function(action, event) {
     addEvent.call(that, this.element, WHEEL_EVENT, function(evt) {
       evt.target = G.bodyTarget;
       evt.action = 'wheel';
-      evt.x = evt.pageX - that.element.offsetLeft;
-      evt.y = evt.pageY - that.element.offsetTop;
+      var rect = that.element.getBoundingClientRect();      
+      evt.x = evt.pageX - rect.left;
+      evt.y = evt.pageY - rect.top;
       evt.delta = evt.deltaY;
       slots.wheel( evt );
     });

@@ -12,7 +12,16 @@ var CONVERTERS = {
   intl: intlConverter,
   not: notConverter,
   strings: stringsConverter,
-  string: function(v) { return "" + v; },
+  string: function(v) {
+    if( typeof v === 'object' ) {
+      if( Array.isArray( v ) ) {
+        return JSON.stringify( v );
+      } else {
+        return intlConverter( v );
+      }
+    }
+    return "" + v;
+  },
   integer: function( valueForNaN ) {
     if( typeof valueForNaN === 'number' ) {
       return function(v) {

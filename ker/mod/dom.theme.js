@@ -105,7 +105,7 @@ function codeElevation( themeName, style ) {
   var codeCSS = '';
   [0,1,2,3,4,6,8,9,12,16,24].forEach(function (elevation) {
     codeCSS += "body.dom-theme-" + themeName + " .thm-ele" + elevation + " {\n"
-      + "  box-shadow: 0 " + elevation + "px " + (2 * elevation) + "px " + elevationColor + "\n"
+      + "  box-shadow: 0 " + elevation + "px " + (2 * elevation) + "px " + elevationColor + ";\n"
       + "  transition: box-shadow .2s;\n"
       + "}\n";
   });

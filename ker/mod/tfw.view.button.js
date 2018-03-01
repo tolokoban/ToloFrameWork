@@ -3,10 +3,22 @@
 var CODE_BEHIND = {
   getClasses: getClasses,
   onSmallChanged: onSmallChanged,
-  onKeyUp: onKeyUp
+  onKeyUp: onKeyUp,
+  onTap: onTap
 };
 
 
+function onTap() {
+  if( this.href.length > 0 ) {
+    if( this.target.length > 0 ) {
+      window.open( this.href, this.target );
+    } else {
+      window.location = this.href;
+    }
+  } else {
+    this.action = this.tag;
+  }
+}
 
 function getClasses() {
   var classes = [];

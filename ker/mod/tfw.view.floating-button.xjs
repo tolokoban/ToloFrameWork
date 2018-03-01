@@ -12,9 +12,5 @@
   event.tap: onTap
   class.*: {[type] getClasses}
  
-  [
-    {DIV [
-      {tfw.view.icon content:{Bind icon} size:24}
-    ]}
-  ]
+  [{tfw.view.icon content:{Bind icon} size:24}]
 }

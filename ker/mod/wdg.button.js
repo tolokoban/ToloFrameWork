@@ -122,10 +122,10 @@ function genericButton( base, opts ) {
 }
 
 Button.Cancel = function ( opts ) {
-  return genericButton({ text: _('cancel'), flat: true }, opts);
+  return genericButton({ text: _('cancel'), icon: 'cancel', flat: true }, opts);
 };
 Button.Close = function ( opts ) {
-  return genericButton({ text: _('close'), flat: true }, opts);
+  return genericButton({ text: _('close'), icon: 'close', flat: true }, opts);
 };
 Button.GotIt = function ( opts ) {
   return genericButton({ text: _('gotit'), flat: true }, opts);

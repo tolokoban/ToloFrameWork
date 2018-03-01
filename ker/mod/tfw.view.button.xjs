@@ -5,6 +5,8 @@
     tag: {string ACTION} // The value `action` will take on every tap.
     icon: ""
     content: {string "Click me!"}
+    href: {string ""}
+    target: {string ""}
     pressed: {boolean false}
     flat: {boolean false}
     type: {[default primary secondary] primary}
@@ -30,7 +32,7 @@
 
   style.width: {Bind width}
 
-  event.tap: {Set action {Bind tag}}
+  event.tap: onTap
   event.keyup: onKeyUp
   event.down: {Set pressed true}
   event.up: {Set pressed false}

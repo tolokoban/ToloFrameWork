@@ -1,5 +1,6 @@
 div.tfw-view-floating-button {
-    display: inline-table;
+    position: relative;
+    display: inline-block;
     width: 56px;
     height: 56px;
     border-radius: 100%;
@@ -7,6 +8,8 @@ div.tfw-view-floating-button {
     transition: transform .3s;
     transform: scale(1);
     cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
 }
 
 div.tfw-view-floating-button.hide {
@@ -15,15 +18,11 @@ div.tfw-view-floating-button.hide {
     display: none;
 }
 
-div.tfw-view-floating-button > div {
-    display: table-cell;
-    margin: 0;
-    text-align: center;
-    vertical-align: middle;
-}
-
-div.tfw-view-floating-button > div > div {
-    margin: 0;
+div.tfw-view-floating-button > svg.tfw-view-icon.view {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -12px -12px;
 }
 
 @media (max-width: 460px) {
