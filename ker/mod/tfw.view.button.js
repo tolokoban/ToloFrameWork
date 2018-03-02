@@ -4,22 +4,28 @@ var CODE_BEHIND = {
   getClasses: getClasses,
   onSmallChanged: onSmallChanged,
   onKeyUp: onKeyUp,
-  onTap: onTap,
-  on: on
+  on: on,
+  fire: fire
 };
 
 var PM = require("tfw.binding.property-manager");
 
 /**
- * Prototype for the Button.
+ * @member on
+ * Set a event listener to the button.
  * @param {function} slot - function to call when the button is tapped.
  */
 function on( slot ) {
   PM( this ).on( "action", slot );
 }
 
-
-function onTap() {
+/**
+ * @member fire
+ * Fire the tap event.
+ * @param {any=undefined} tag - If defined, set `this.tag` to it.
+ */
+function fire( tag ) {
+  if( typeof tag !== 'undefined' ) this.tag = tag;
   if( this.href.length > 0 ) {
     if( this.target.length > 0 ) {
       window.open( this.href, this.target );

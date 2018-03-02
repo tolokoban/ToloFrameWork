@@ -9,10 +9,10 @@
  */
 require("polyfill.promise");
 var $ = require("dom");
-var T = require("wdg.text");
-var B = require("wdg.button");
+var T = require("tfw.view.textbox");
+var B = require("tfw.view.button");
 var WS = require("tfw.web-service");
-var DB = require("tfw.data-binding");
+var PM = require("tfw.binding.property-manager");
 var Msg = require("tfw.message");
 var Modal = require("wdg.modal");
 
@@ -24,14 +24,12 @@ module.exports = function(opts) {
   return new Promise(function (resolve, reject) {
     var lastLogin = WS.config('usr');
     var inpLogin = new T({
-      value: lastLogin || '',
       label: _('login'),
       type: 'email',
       placeholder: _('login'),
       validator: "admin|test|[^ \t@]+@[^ \t@]+",
       wide: true
     });
-    //var lastPassword = WS.config('pwd');
     var inpPassword = new T({
       //value: lastPassword || '',
       type: "password",
@@ -40,11 +38,11 @@ module.exports = function(opts) {
       wide: true
     });
     var btnCancel = new B({
-      text: _('cancel'),
+      content: _('cancel'),
       flat: true
     });
     var btnOK = new B({
-      text: _('ok'),
+      content: _('ok'),
       flat: true
     });
     var row = $.div( 'row', [btnCancel, btnOK]);
@@ -56,10 +54,8 @@ module.exports = function(opts) {
       content: $.div( 'tfw-login-content', [inpLogin, inpPassword, row, hint] ),
       footer: [btnCancel, btnOK]
     });
-    modal.attach();
-    inpLogin.focus = true;
 
-    DB.bind( btnCancel, 'action', function() {
+    btnCancel.on(function() {
       modal.detach();
       reject( CANCEL );
     });
@@ -90,8 +86,16 @@ module.exports = function(opts) {
         );
       }
     };
-    DB.bind( btnOK, 'action', onLogin );
-    DB.bind( inpPassword, 'action', onLogin );
-    DB.bind( inpLogin, 'action', function() { inpPassword.focus = true; } );
+    btnOK.on( onLogin );
+    PM( inpPassword ).on( 'action', onLogin );
+    PM( inpLogin ).on( 'action', function() { inpPassword.focus = true; } );
+    PM( inpLogin ).on( 'valid', function( isValid ) {
+      btnOK.enabled = isValid;
+    });
+
+    //------------------------------------------------
+    modal.attach();
+    inpLogin.value = lastLogin || '',
+    inpLogin.focus = true;
   });
 };

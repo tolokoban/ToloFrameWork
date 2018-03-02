@@ -40,8 +40,8 @@ div.selected::after {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -6px;
-  height: 6px;
+  bottom: -8px;
+  height: 8px;
   background: #fff;
   z-index: 2;
 }

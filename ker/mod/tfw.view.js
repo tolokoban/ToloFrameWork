@@ -5,6 +5,7 @@ var PM = require("tfw.binding.property-manager");
 var Hammer = require("external.hammer");
 var Converters = require('tfw.binding.converters');
 
+
 exports.Tag = function(tagName, attribs) {
   tagName = tagName.trim().toLowerCase();
 
@@ -146,7 +147,7 @@ exports.ensureCodeBehind = function( code_behind ) {
 
 var GESTURES = [
   "tap", "doubletap", "press",
-  'pan panstart panmove panup pandown panleft panright panend pancancel',
+  "pan", "panstart", "panmove", "panup", "pandown", "panleft", "panright", "panend", "pancancel",
   "swipe", "swipeleft", "swipteright", "swipetop", "swipebottom",
   "pinch", "pinchin", "pinchout", "pinchstart", "pinchmove", "pinchend", "pinchcancel",
   "rotate", "rotatestart", "rotatemove", "rotateend", "rotatecancel"
@@ -178,7 +179,8 @@ exports.events = function( target, events ) {
     if( GESTURES.indexOf( eventName ) > -1 ) {
       gestures[eventName] = eventSlot;
       hasGestures = true;
-    } else {      
+    } else {
+      
       elem.addEventListener( eventName, eventSlot, false );
     }
   });

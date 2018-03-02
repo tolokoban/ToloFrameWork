@@ -19,7 +19,7 @@
     small: {boolean false, behind: onSmallChanged}
   }
 
-  view.prototype: on
+  view.prototype: [on, fire]
   
   class: "tfw-view-button"
   class.flat: {Bind flat}
@@ -34,7 +34,7 @@
 
   style.width: {Bind width}
 
-  event.tap: onTap
+  event.tap: fire
   event.keyup: onKeyUp
   event.down: {Set pressed true}
   event.up: {Set pressed false}

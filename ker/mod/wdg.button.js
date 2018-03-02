@@ -1,5 +1,8 @@
 "use strict";
 
+var Button = require("tfw.view.button");
+
+/*
 require("font.roboto");
 var $ = require( "dom" );
 var DB = require( "tfw.data-binding" );
@@ -7,6 +10,7 @@ var Icon = require( "wdg.icon" );
 var Touchable = require( "tfw.touchable" );
 
 var TYPES = [ 'undef', 'default', 'standard', 'primary', 'secondary' ];
+*/
 
 /**
  * Liste des classes CSS applicables sur un bouton :
@@ -27,6 +31,7 @@ var TYPES = [ 'undef', 'default', 'standard', 'primary', 'secondary' ];
  * var instance = new Button();
  * @class Button
  */
+/*
 var Button = function ( opts ) {
   var that = this;
 
@@ -92,20 +97,22 @@ var Button = function ( opts ) {
   } );
   touchable.tap.add( that.fire.bind( that ) );
 };
-
+*/
 /**
  * @class Button
  * @function on
  * @param {function} slot - Function to call when `action` has changed.
  */
+/*
 Button.prototype.on = function ( slot ) {
   DB.bind( this, 'action', slot );
   return this;
 };
-
+*/
 /**
  * Simulate a click on the button if it is enabled.
  */
+/*
 Button.prototype.fire = function () {
   if ( this.enabled ) {
     var href = this.href;
@@ -118,6 +125,7 @@ Button.prototype.fire = function () {
     }
   }
 };
+*/
 
 function genericButton( base, opts ) {
   if( typeof opts === 'undefined' ) opts = {};
@@ -153,13 +161,14 @@ Button.Yes = function ( opts ) {
 };
 
 Button.default = {
-  caption: "OK",
+  content: "OK",
+  icon: null,
   type: null
 };
 
 module.exports = Button;
 
-
+/*
 function setStyle( children ) {
   this.element.className = 'wdg-button';
 
@@ -222,3 +231,4 @@ function setStyle( children ) {
   if( this.wide ) $.addClass( this, 'wide' );
   if( !this.inverted ) $.addClass( this, 'iconToLeft' );
 }
+*/

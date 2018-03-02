@@ -15,6 +15,15 @@ function onKeyUp( evt ) {
 }
 
 function onValueChanged( v ) {
+  manageValidator.call( this, v );
+  manageAutoCompletion.call( this, v );
+}
+
+function manageValidator( v ) {
+  this.valid = this.validator( v );
+}
+
+function manageAutoCompletion( v ) {
   var that = this;
   var list = this.list;
   if( !Array.isArray( list ) || list.length === 0 ) return;
