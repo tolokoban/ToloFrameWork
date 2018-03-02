@@ -1,32 +1,40 @@
 // tfw.view.textbox
 {View DIV
   view.attribs: {
-    value: {string "" behind: onValueChanged}
     label: {string ""}
+    type: {string "text"}
     wide: {boolean false}
     focus: {boolean false}
     visible: {boolean true}
     width: {unit auto}
     action: {action}
     list: {strings}
+    validator: {validator ""}
+    valid: {boolean false}
+    value: {string "" behind: onValueChanged}
   }
 
   class: tfw-view-textbox
   class.wide: {Bind wide} 
   class.focus: {Bind focus} 
-  class.|hide: {Bind visible} 
+  class.|hide: {Bind visible}
+  class.|invalid: {Bind valid}
   class.thm-bg3: {Bind focus back:false}
 
   [
-    {DIV view.id: head, class: head {Bind label}}
-    {DIV view.id: body, class: body
+    {DIV view.id: head
+         class: head
+         textcontent: {Bind label}}
+    {DIV view.id: body
+         class: body    
+         style.width: {Bind width}
       [
         {INPUT
           view.id: input
+          type: {Bind type}
           event.keyup: onKeyUp
-          value: {Bind value}
-          focus: {Bind focus}
-          style.width: {Bind width}}
+          value: {Bind value -delay: 350}          
+          focus: {Bind focus}}
       ]}
     {DIV view.id: foot, class: foot}
     {DIV view.id: bottom, class: "bottom thm-bgS"}

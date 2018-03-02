@@ -4,6 +4,8 @@
     crossorigin: {string anonymous}
     loaded: {boolean false}
     failed: {boolean false}
+    width: {unit auto behind:onWidthChanged}
+    height: {unit auto behind:onHeightChanged}
   }
 
   src: {Bind src}

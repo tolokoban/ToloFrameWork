@@ -27,8 +27,13 @@ div.tfw-view-textbox input {
   background: transparent;
   font: inherit;
   color: rgba(0,0,0,.9);
+  width: 100%;
 }
 
+div.tfw-view-textbox.invalid > div > input {
+    color: #f00;
+}
+    
 div.tfw-view-textbox.focus input {
   color: #000;
   outline: none;

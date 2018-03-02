@@ -3,7 +3,9 @@
 var CODE_BEHIND = {
   onSrcChanged: onSrcChanged,
   onLoad: onLoad,
-  onError: onError
+  onError: onError,
+  onWidthChanged: onWidthChanged,
+  onHeightChanged: onHeightChanged
 };
 
 
@@ -26,4 +28,16 @@ function onLoad() {
 function onError() {
   this.loaded = false;
   this.failed = true;
+}
+
+
+function onWidthChanged( unit ) {
+  if( unit == 'auto' ) return;
+  $.css({ width: unit });
+}
+
+
+function onHeightChanged( unit ) {
+  if( unit == 'auto' ) return;
+  $.css({ height: unit });
 }

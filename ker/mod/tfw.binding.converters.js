@@ -57,7 +57,8 @@ var CONVERTERS = {
   units: cssUnitsConverter,
   length: lengthConverter,
   isEmpty: isEmptyConverter,
-  isNotEmpty: isEmptyConverter
+  isNotEmpty: isEmptyConverter,
+  validator: validatorConverter
 };
 
 exports.get = function( converterName ) {
@@ -87,6 +88,24 @@ function cssUnitConverter(v) {
   var unit = m[2];
   if( unit.length < 1 ) unit = "px";
   return scalar + unit;
+}
+
+var TRUE_FUNC = function() { return true; };
+
+function validatorConverter( v ) {
+  switch( typeof v ) {
+  case 'string':
+    if( v.trim().length === 0 ) return TRUE_FUNC;
+    var rx = new RegExp( v );
+    return function( text ) {
+      return rx.test( text );
+    };
+  case 'function':
+    return function( value ) {
+      return booleansConverter( v( value ) );
+    };
+  }
+  return TRUE_FUNC;
 }
 
 function cssUnitsConverter(v) {
