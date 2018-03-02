@@ -18,6 +18,8 @@
     responsive: {boolean false}
     small: {boolean false, behind: onSmallChanged}
   }
+
+  view.prototype: on
   
   class: "tfw-view-button"
   class.flat: {Bind flat}

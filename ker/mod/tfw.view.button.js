@@ -4,8 +4,19 @@ var CODE_BEHIND = {
   getClasses: getClasses,
   onSmallChanged: onSmallChanged,
   onKeyUp: onKeyUp,
-  onTap: onTap
+  onTap: onTap,
+  on: on
 };
+
+var PM = require("tfw.binding.property-manager");
+
+/**
+ * Prototype for the Button.
+ * @param {function} slot - function to call when the button is tapped.
+ */
+function on( slot ) {
+  PM( this ).on( "action", slot );
+}
 
 
 function onTap() {
