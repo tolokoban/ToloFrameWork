@@ -13,6 +13,7 @@ var CONVERTERS = {
   not: notConverter,
   strings: stringsConverter,
   string: function(v) {
+    if( v === null || v === undefined ) return "";
     if( typeof v === 'object' ) {
       if( Array.isArray( v ) ) {
         return JSON.stringify( v );
@@ -184,7 +185,8 @@ function multilangConverter(v) {
 
 function intlConverter(v) {
   if( typeof v === 'string' ) return v;
-  if( !v ) return "";
+  if( typeof v === 'undefined' ) return "";
+  if( v === null ) return "";
   var result = v[$.lang()];
   if( !result ) {
     for( var lang in v ) {
@@ -192,6 +194,7 @@ function intlConverter(v) {
       break;
     }
   }
+  if( typeof result !== 'string' ) return "";
   return result;
 }
 
