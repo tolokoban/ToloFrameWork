@@ -33,11 +33,11 @@ function onError() {
 
 function onWidthChanged( unit ) {
   if( unit == 'auto' ) return;
-  $.css({ width: unit });
+  $.css(this, { width: unit });
 }
 
 
 function onHeightChanged( unit ) {
   if( unit == 'auto' ) return;
-  $.css({ height: unit });
+  $.css(this, { height: unit });
 }
