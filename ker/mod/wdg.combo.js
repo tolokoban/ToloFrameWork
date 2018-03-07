@@ -133,7 +133,7 @@ Combo.prototype.fire = function() {
   modal.attach();
 
   var close = modal.detach.bind( modal );
-  DB.bind(btnCancel, 'action', close);
+  btnCancel.on( close );
 
   var key, val, container;
   for( key in this._children ) {

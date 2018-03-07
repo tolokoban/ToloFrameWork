@@ -12,6 +12,7 @@
     validator: {validator ""}
     valid: {boolean false}
     value: {string "" behind: onValueChanged}
+    max-length: {integer 999}
   }
 
   class: tfw-view-textbox
@@ -33,6 +34,7 @@
           view.id: input
           type: {Bind type}
           event.keyup: onKeyUp
+          maxLength: {Bind max-length}
           value: {Bind value -delay: 350}          
           focus: {Bind focus}}
       ]}
