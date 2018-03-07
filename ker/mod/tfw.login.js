@@ -38,11 +38,11 @@ module.exports = function(opts) {
       wide: true
     });
     var btnCancel = new B({
-      content: _('cancel'),
+      text: _('cancel'),
       flat: true
     });
     var btnOK = new B({
-      content: _('ok'),
+      text: _('ok'),
       flat: true
     });
     var row = $.div( 'row', [btnCancel, btnOK]);

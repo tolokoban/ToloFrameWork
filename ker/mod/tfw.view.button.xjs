@@ -4,7 +4,7 @@
     action: {action}    
     tag: {string ACTION} // The value `action` will take on every tap.
     icon: ""
-    content: {string "Click me!"}
+    text: {string "Click me!"}
     href: {string ""}
     target: {string ""}
     pressed: {boolean false}
@@ -43,7 +43,7 @@
     {DIV class:icon [ {tfw.view.icon view.id:icon, content: {Bind icon}} ]}
     {DIV view.id:text
       class:text
-      class.hide: {Bind content converter:isEmpty}
-      {Bind content}}
+      class.hide: {Bind text converter:isEmpty}
+      {Bind text}}
   ]
 }

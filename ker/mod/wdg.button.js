@@ -146,35 +146,35 @@ function genericButton( base, opts ) {
 }
 
 Button.Cancel = function ( opts ) {
-  return genericButton({ content: _('cancel'), icon: 'cancel', flat: true }, opts);
+  return genericButton({ text: _('cancel'), icon: 'cancel', flat: true }, opts);
 };
 Button.Close = function ( opts ) {
-  return genericButton({ content: _('close'), icon: 'close', flat: true }, opts);
+  return genericButton({ text: _('close'), icon: 'close', flat: true }, opts);
 };
 Button.GotIt = function ( opts ) {
-  return genericButton({ content: _('gotit'), flat: true }, opts);
+  return genericButton({ text: _('gotit'), flat: true }, opts);
 };
 Button.Delete = function ( opts ) {
-  return genericButton({ content: _('delete'), type: 'secondary', icon: 'delete' }, opts);
+  return genericButton({ text: _('delete'), type: 'secondary', icon: 'delete' }, opts);
 };
 Button.No = function ( opts ) {
-  return genericButton({ content: _('no'), icon: "cancel", flat: true }, opts);
+  return genericButton({ text: _('no'), icon: "cancel", flat: true }, opts);
 };
 Button.Ok = function ( opts ) {
-  return genericButton({ content: _('ok'), flat: true }, opts);
+  return genericButton({ text: _('ok'), icon: "ok", flat: true }, opts);
 };
 Button.Edit = function ( opts ) {
-  return genericButton({ content: _('edit'), type: 'primary', icon: 'edit' }, opts);
+  return genericButton({ text: _('edit'), type: 'primary', icon: 'edit' }, opts);
 };
 Button.Save = function ( opts ) {
-  return genericButton({ content: _('save'), type: 'primary', icon: 'save' }, opts);
+  return genericButton({ text: _('save'), type: 'primary', icon: 'save' }, opts);
 };
 Button.Yes = function ( opts ) {
-  return genericButton({ content: _('yes'), flat: true }, opts);
+  return genericButton({ text: _('yes'), flat: true }, opts);
 };
 
 Button.default = {
-  content: "OK",
+  text: "OK",
   icon: null,
   type: null
 };
