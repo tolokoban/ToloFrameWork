@@ -5,7 +5,9 @@
     url: {string behind: onUrlChanged}
     label: {string {Intl label} behind: onLabelChanged}
     // `head` shows the top or the left of the image.
-    cropping: {[head, body, tail] body}
+    cropping: {[cover contain ask] contain}
+    align-x: {[start middle end ask] middle}
+    align-y: {[start middle end ask] middle}
     canvas: {action}
     action: {action}
     wide: {boolean true}
