@@ -2,32 +2,31 @@
   view.attribs: {
     width: {integer 800}
     height: {integer 400}
-    url: {string behind: onUrlChanged}
-    label: {string {Intl label} behind: onLabelChanged}
-    // `head` shows the top or the left of the image.
-    cropping: {[head, body, tail] body}
-    canvas: {action}
+    src: {string}
+    label: {string {Intl label}}
+    // `ask` means we have to ask the user.
+    cropping: {[cover contain ask] contain}
+    align-x: {[start middle end ask] middle}
+    align-y: {[start middle end ask] middle}
     action: {action}
     wide: {boolean true}
     // Becomes `true` if a new image has been choosen.
     changed: {boolean false}
   }
 
-  view.init: init
+  view.prototype: toDataURL
   class.wide: {Bind wide}
   
   [
-    {DIV class:label view.id:label}
-    {DIV class:"visual thm-ele2"
+    {DIV view.id:label
+      class:label
+      textcontent:{Bind label}
+      class.hide:{Bind label converter:isEmpty}}
+    {DIV class:"visual thm-ele4"
       style.width: {Bind width converter: unit}
       style.height: {Bind height converter: unit}
       event.tap: {Set action true}
-      [
-        {CANVAS view.id:canvas
-          width: {Bind width}
-          height: {Bind height}}
-        {IMG view.id:img class:hide}
-    ]}
+      [{tfw.view.image view.id:img width:{Bind width} height:{Bind height} src:{Bind src}}]}
     {tfw.view.file-input class:hide
       view.id: input
       on.file: onFileChanged
