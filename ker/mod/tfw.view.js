@@ -180,7 +180,7 @@ exports.events = function( target, events ) {
       gestures[eventName] = eventSlot;
       hasGestures = true;
     } else {
-      
+
       elem.addEventListener( eventName, eventSlot, false );
     }
   });

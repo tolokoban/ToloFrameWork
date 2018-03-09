@@ -199,12 +199,12 @@ var WysiwygEditor = function( opts ) {
           var icon = new Icon({ size: '2rem', content: itm.icon });
           var tip = itm.tip;
           if ( tip && tip != 'icon-' + itm.id ) {
-            icon.element.setAttribute( 'title', tip );
+            icon.$.setAttribute( 'title', tip );
           }
-          $.addClass( icon.element, 'icon' );
-          $.on(icon.element, {
-            down: $.addClass.bind( $, icon.element, 'down' ),
-            up: $.removeClass.bind( $, icon.element, 'down' ),
+          $.addClass( icon, 'icon' );
+          $.on(icon, {
+            down: $.addClass.bind( $, icon, 'down' ),
+            up: $.removeClass.bind( $, icon, 'down' ),
             tap: onMenu.bind( that, itm )
           });
           $.add( menu, icon );
