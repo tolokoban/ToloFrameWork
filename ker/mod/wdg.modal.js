@@ -46,6 +46,12 @@ function Modal( opts ) {
     laterScroll();
   } );
   DB.prop( this, 'header' )( function ( v ) {
+    if( !v || (typeof v === 'string' && v.trim().length === 0) ) {
+      $.addClass( header, "hide" );
+      return;
+    } else {
+      $.removeClass( header, "hide" );
+    }
     $.clear( header );
     if ( Array.isArray( v ) ) {
       v.forEach( function ( itm ) {
@@ -93,7 +99,7 @@ function Modal( opts ) {
 
   opts = DB.extend( {
     visible: false,
-    header: [],
+    header: null,
     content: [],
     footer: [],
     padding: true,

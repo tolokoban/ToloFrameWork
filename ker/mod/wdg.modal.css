@@ -20,6 +20,10 @@ div.wdg-modal .cell {
   justify-content: space-between;
 }
 
+div.wdg-modal .cell > header.hide {
+  display: none;
+}
+
 div.wdg-modal .cell > header {
   white-space: nowrap;
   overflow: hidden;
