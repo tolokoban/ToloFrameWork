@@ -264,7 +264,7 @@ exports.get = function ( name, args, url ) {
   );
 };
 
-exports.isAdmin = function ( role ) {
+exports.isAdmin = function () {
   return exports.hasRole( 'ADMIN' );
 };
 
