@@ -5,56 +5,57 @@ div.wdg-flex {
 }
 
 div.wdg-flex.H {
-  flex-direction: row;
+    flex-direction: row;
 }
 
 div.wdg-flex.V {
-  flex-direction: column;
-  height: 100%;
+    flex-direction: column;
+    height: 100%;
 }
 
 @media (orientation: portrait) {
-  div.wdg-flex.N {
-    flex-direction: row;
-  }
+    div.wdg-flex.N {
+        flex-direction: row;
+    }
 
-  div.wdg-flex.W {
-    flex-direction: column;  
-  }
+    div.wdg-flex.W {
+        flex-direction: column;
+    }
 }
 
 @media (orientation: landscape) {
-  div.wdg-flex.W {
-    flex-direction: row;
-  }
+    div.wdg-flex.W {
+        flex-direction: row;
+    }
 
-  div.wdg-flex.N {
-    flex-direction: column;  
-  }
+    div.wdg-flex.N {
+        flex-direction: column;
+    }
 }
 
 div.wdg-flex.justify-center {
-  justify-content: center;
+    justify-content: center;
 }
 
 div.wdg-flex.justify-flex-end {
-  justify-content: flex-end;
+    justify-content: flex-end;
 }
 
 div.wdg-flex.justify-flex-start {
-  justify-content: flex-start;
+    justify-content: flex-start;
 }
 
 div.wdg-flex.justify-space-around {
-  justify-content: space-around;
+    justify-content: space-around;
 }
 
 div.wdg-flex.justify-space-between {
-  justify-content: space-between;
+    justify-content: space-between;
 }
 
 div.wdg-flex.wide {
     display: flex;
+    flex-wrap: wrap;
 }
 
 div.wdg-flex.default > * {
