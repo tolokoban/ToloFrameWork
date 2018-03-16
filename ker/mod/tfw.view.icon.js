@@ -1,5 +1,7 @@
 "use strict";
 
+require("polyfill.object.values");
+
 var $ = require( "dom" );
 var Icons = require("tfw.icons");
 
@@ -155,6 +157,8 @@ function checkDefinitionSyntax( def ) {
 }
 
 function updatePen( penIndex, penColor ) {
+  if( typeof penColor === 'undefined' ) return;
+
   var elementsToFill = this._content.elementsToFillPerColor[penIndex];
   if( !Array.isArray(elementsToFill) ) elementsToFill = [];
   var elementsToStroke = this._content.elementsToStrokePerColor[penIndex];

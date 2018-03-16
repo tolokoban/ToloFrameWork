@@ -6,7 +6,7 @@ var CODE_BEHIND = {
   onFileChanged: onFileChanged
 };
 
-
+require("polyfill.promise");
 var $ = require("dom");
 
 
