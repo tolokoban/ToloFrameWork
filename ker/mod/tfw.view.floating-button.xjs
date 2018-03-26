@@ -2,14 +2,21 @@
   view.attribs: {
     icon: {string add}
     action: {action}
+    small: {boolean false}
     tag: {any}
     type: {[S SD SL P PD PL "0" "1" "2" "3"] S}
     visible: {boolean true}
+    href: {string ""}
+    target: {string ""}
   }
 
+  view.prototype: [on, fire]
+  
   class:"tfw-view-floating-button thm-ele8"
   class.|hide:{Bind visible}
-  event.tap: onTap
+  class.small:{Bind small}
+  event.tap: fire
+  event.keyup: onKeyUp
   class.*: {[type] getClasses}
  
   [{tfw.view.icon content:{Bind icon} size:24}]

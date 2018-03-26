@@ -80,4 +80,3 @@ function onKeyUp( evt ) {
   this.action = this.tag;
   this.pressed = false;  
 }
-

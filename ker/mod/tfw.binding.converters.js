@@ -11,6 +11,7 @@ var CONVERTERS = {
   multilang: multilangConverter,
   intl: intlConverter,
   not: notConverter,
+  keys: keysConverter,
   strings: stringsConverter,
   string: function(v) {
     if( v === null || v === undefined ) return "";
@@ -123,6 +124,13 @@ function booleanConverter(v) {
   default:
     return v ? true : false;
   }
+}
+
+function keysConverter(v) {
+  if( !v ) return [];
+  var keys = [];
+  for( var key in v ) keys.push( key );
+  return keys;
 }
 
 function booleansConverter(v) {

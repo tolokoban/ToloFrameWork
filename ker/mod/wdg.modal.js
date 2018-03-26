@@ -49,9 +49,8 @@ function Modal( opts ) {
     if( !v || (typeof v === 'string' && v.trim().length === 0) ) {
       $.addClass( header, "hide" );
       return;
-    } else {
-      $.removeClass( header, "hide" );
     }
+    $.removeClass( header, "hide" );
     $.clear( header );
     if ( Array.isArray( v ) ) {
       v.forEach( function ( itm ) {
@@ -63,12 +62,11 @@ function Modal( opts ) {
     laterScroll();
   } );
   DB.prop( this, 'footer' )( function ( v ) {
-    if ( typeof v === 'undefined' || v === null || v.length === 0 ) {
-      $.addClass( footer, 'hide' );
+    if( !v || (typeof v === 'string' && v.trim().length === 0) ) {
+      $.addClass( footer, "hide" );
       return;
     }
-    
-    $.removeClass( footer, 'hide' );
+    $.removeClass( footer, "hide" );
     $.clear( footer );    
     if ( Array.isArray( v ) ) {
       v.forEach( function ( itm ) {
@@ -101,7 +99,7 @@ function Modal( opts ) {
     visible: false,
     header: null,
     content: [],
-    footer: [],
+    footer: null,
     padding: true,
     scroll: true,
     wide: false,

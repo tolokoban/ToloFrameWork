@@ -1,33 +1,38 @@
 div.tfw-view-floating-button {
-    position: relative;
-    display: inline-block;
-    width: 56px;
-    height: 56px;
-    border-radius: 100%;
-    margin: 0;
-    transition: transform .3s;
-    transform: scale(1);
-    cursor: pointer;
-    text-align: center;
-    vertical-align: middle;
+  position: relative;
+  display: inline-block;
+  width: 56px;
+  height: 56px;
+  border-radius: 100%;
+  margin: 0;
+  transition: transform .3s;
+  transform: scale(1);
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
 }
 
 div.tfw-view-floating-button.hide {
-    transition: transform 0s;
-    transform: scale(0);
-    display: none;
+  transition: transform 0s;
+  transform: scale(0);
+  display: none;
 }
 
 div.tfw-view-floating-button > svg.tfw-view-icon.view {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin: -12px -12px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -12px -12px;
+}
+
+div.tfw-view-floating-button.small {
+  width: 40px;
+  height: 40px;
 }
 
 @media (max-width: 460px) {
-    div.tfw-view-floating-button {
-        width: 40px;
-        height: 40px;
-    }
+  div.tfw-view-floating-button {
+    width: 40px;
+    height: 40px;
+  }
 }
