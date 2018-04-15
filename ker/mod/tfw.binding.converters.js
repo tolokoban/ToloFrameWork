@@ -12,6 +12,7 @@ var CONVERTERS = {
   intl: intlConverter,
   not: notConverter,
   keys: keysConverter,
+  sortedKeys: sortedKeysConverter,
   strings: stringsConverter,
   string: function(v) {
     if( v === null || v === undefined ) return "";
@@ -131,6 +132,11 @@ function keysConverter(v) {
   var keys = [];
   for( var key in v ) keys.push( key );
   return keys;
+}
+
+function sortedKeysConverter(v) {
+  var keys = keysConverter(v);
+  return keys.sort();
 }
 
 function booleansConverter(v) {
