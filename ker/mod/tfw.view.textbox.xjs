@@ -5,6 +5,7 @@
     type: {string "text"}
     wide: {boolean false}
     focus: {boolean false}
+    enabled: {boolean true}
     visible: {boolean true}
     width: {unit auto}
     action: {action}
@@ -16,11 +17,12 @@
   }
 
   class: tfw-view-textbox
+  class.thm-ele2: {Bind enabled} 
   class.wide: {Bind wide} 
+  class.thm-bgSL|thm-bg2: {Bind focus back:false} 
   class.focus: {Bind focus} 
   class.|hide: {Bind visible}
   class.|invalid: {Bind valid}
-  class.thm-bg3: {Bind focus back:false}
 
   [
     {DIV view.id: head
@@ -39,7 +41,7 @@
           focus: {Bind focus}}
       ]}
     {DIV view.id: foot, class: foot}
-    {DIV view.id: bottom, class: "bottom thm-bgS"}
+    {DIV view.id: bottom, class: "bottom thm-bgSD"}
     {FOOTER [{DIV view.id: completion, class: "completion thm-bg3 thm-ele4"}]}
   ]
 }
