@@ -41,18 +41,18 @@ var ID = 0;
  * accepted by `A`.
  */
 var Link = function( args ) {
-    try {
-        var id = ID++;
-        checkArgs.call( this, args );
+  try {
+    var id = ID++;
+    checkArgs.call( this, args );
 
-        var onChangedA = link.call( this, args, id, "A", "B" );
-        var onChangedB = link.call( this, args, id, "B", "A" );
-        addDestroyFunction.call( this, onChangedA, onChangedB );
-    }
-    catch( ex ) {
-        console.error("new Link( " + args + " )");
-        fail( ex, "new Link( <args> ) " + (this.name || "") );
-    }
+    var onChangedA = link.call( this, args, id, "A", "B" );
+    var onChangedB = link.call( this, args, id, "B", "A" );
+    addDestroyFunction.call( this, onChangedA, onChangedB );
+  }
+  catch( ex ) {
+    console.error("new Link( " + args + " )");
+    fail( ex, "new Link( <args> ) " + (this.name || "") );
+  }
 
 };
 
@@ -61,244 +61,244 @@ module.exports = Link;
 
 
 function link( args, id, emitterKey, receiverKey ) {
-    var that = this;
+  var that = this;
 
-    var onChanged = [];
-    args[receiverKey].forEach(function (receiver, receiverIndex) {
-        if( !receiver.open ) return;
-        var pmReceiver = PropertyManager( receiver.obj );
-        args[emitterKey].forEach(function (emitter, emitterIndex) {
-            if( typeof emitter.name === 'string'
-                && typeof receiver.name === 'string'
-                && emitter.obj === receiver.obj
-                && emitter.name === receiver.name )
-            {
-                console.error(
-                    "It is forbidden to bind a property on itself! ("
-                        + emitterIndex + " -> " + receiverIndex + ")"
-                );
-                console.info("[tfw.binding.link] args=", args);
-                return;
-            }
-            var pmEmitter = PropertyManager( emitter.obj );
-            var slot = actionChanged.bind( that, emitter, receiver, id );
-            pmEmitter.on( emitter.name, slot );
-            onChanged.push({ pm: pmEmitter, name: emitter.name, slot: slot });
-        });
+  var onChanged = [];
+  args[receiverKey].forEach(function (receiver, receiverIndex) {
+    if( !receiver.open ) return;
+    var pmReceiver = PropertyManager( receiver.obj );
+    args[emitterKey].forEach(function (emitter, emitterIndex) {
+      if( typeof emitter.name === 'string'
+          && typeof receiver.name === 'string'
+          && emitter.obj === receiver.obj
+          && emitter.name === receiver.name )
+      {
+        console.error(
+          "It is forbidden to bind a property on itself! ("
+            + emitterIndex + " -> " + receiverIndex + ")"
+        );
+        console.info("[tfw.binding.link] args=", args);
+        return;
+      }
+      var pmEmitter = PropertyManager( emitter.obj );
+      var slot = actionChanged.bind( that, emitter, receiver, id );
+      pmEmitter.on( emitter.name, slot );
+      onChanged.push({ pm: pmEmitter, name: emitter.name, slot: slot });
     });
-    return onChanged;
+  });
+  return onChanged;
 }
 
 function addDestroyFunction( onSrcChanged, onDstChanged ) {
-    this.destroy = function() {
-        onSrcChanged.forEach(function (item) {
-            item.pm.off( item.name, item.slot );
-        });
-        onDstChanged.forEach(function (item) {
-            item.pm.off( item.name, item.slot );
-        });
-    };
+  this.destroy = function() {
+    onSrcChanged.forEach(function (item) {
+      item.pm.off( item.name, item.slot );
+    });
+    onDstChanged.forEach(function (item) {
+      item.pm.off( item.name, item.slot );
+    });
+  };
 }
 
 function actionChanged( src, dst, id, value, propertyName, container, wave ) {
-    if( !Array.isArray( wave ) ) wave = [];
+  if( !Array.isArray( wave ) ) wave = [];
 
-    if( this.debug ) {
-        console.log( "Link " + this.name + ": ", {
-            src: src, dst: dst, id: id, value: value, propertyName: propertyName, container: container, wave: wave
+  if( this.dbg ) {
+    console.log( "Link " + this.dbg + ": ", {
+      src: src, dst: dst, id: id, value: value, propertyName: propertyName, container: container, wave: wave
+    } );
+  }
+  if( hasAlreadyBeenHere( id, wave ) ) {
+    if( this.dbg ) {
+      console.log( "...has been BLOCKED by the wave! ", wave );
+    }
+    return;
+  }
+
+  var that = this;
+
+  var pmSrc = PropertyManager( src.obj );
+  var pmDst = PropertyManager( dst.obj );
+
+  value = processValue( value, src, dst );
+  value = processSwitch( value, dst, pmSrc );
+  value = processConverter( value, src, dst );
+  if( filterFailed( value, src, dst ) ) {
+    if( this.dbg ) console.log( "...has been FILTERED!" );
+    return;
+  }
+  value = processFormat( value, src, dst );
+  value = processMap( value, src, dst );
+
+  if( typeof dst.delay === 'number' ) {
+    if( this.debug ) console.log( "...has been DELAYED for " + dst.delay + " ms!" );
+    clearTimeout( dst._id );
+    dst._id = setTimeout(function() {
+      if( that.dbg ) {
+        console.log( "Link " + that.dbg + " (after " + dst.delay + " ms): ", {
+          src: src, dst: dst, id: id, value: value, propertyName: propertyName, wave: wave
         } );
-    }
-    if( hasAlreadyBeenHere( id, wave ) ) {
-        if( this.debug ) {
-            console.log( "...has been BLOCKED by the wave! ", wave );
-        }
-        return;
-    }
-
-    var that = this;
-
-    var pmSrc = PropertyManager( src.obj );
-    var pmDst = PropertyManager( dst.obj );
-
-    value = processValue( value, src, dst );
-    value = processSwitch( value, dst, pmSrc );
-    value = processConverter( value, src, dst );
-    if( filterFailed( value, src, dst ) ) {
-        if( this.debug ) console.log( "...has been FILTERED!" );
-        return;
-    }
-    value = processFormat( value, src, dst );
-    value = processMap( value, src, dst );
-
-    if( typeof dst.delay === 'number' ) {
-        if( this.debug ) console.log( "...has been DELAYED for " + dst.delay + " ms!" );
-        clearTimeout( dst._id );
-        dst._id = setTimeout(function() {
-            if( that.debug ) {
-                console.log( "Link " + that.name + " (after " + dst.delay + " ms): ", {
-                    src: src, dst: dst, id: id, value: value, propertyName: propertyName, wave: wave
-                } );
-                console.log("...try to change a value. ", {
-                    target: pmDst,
-                    propertyName: dst.name,
-                    value: value,
-                    wave: wave
-                });
-            }
-            pmDst.change( dst.name, value, wave );
-        }, dst.delay);
-    } else {
-        if( this.debug )
-            console.log("...try to change a value. ", {
-                target: pmDst,
-                propertyName: dst.name,
-                value: value,
-                wave: wave
-            });
-        pmDst.change( dst.name, value, wave );
-    }
+        console.log("...try to change a value. ", {
+          target: pmDst,
+          propertyName: dst.name,
+          value: value,
+          wave: wave
+        });
+      }
+      pmDst.change( dst.name, value, wave );
+    }, dst.delay);
+  } else {
+    if( this.debug )
+      console.log("...try to change a value. ", {
+        target: pmDst,
+        propertyName: dst.name,
+        value: value,
+        wave: wave
+      });
+    pmDst.change( dst.name, value, wave );
+  }
 }
 
 
 function checkArgs( args ) {
-    try {
-        if( typeof args.name === 'undefined' ) args.name = args.debug;
-        if( typeof args.name !== 'string' ) args.name = "Link#" + this.id;
-        if( typeof args === 'undefined' ) fail("Missing mandatory argument!");
-        if( typeof args.A === 'undefined' ) fail("Missing `args.A`!");
-        if( !Array.isArray( args.A ) ) args.A = [args.A];
-        if( typeof args.B === 'undefined' ) fail("Missing `args.B`!");
-        if( !Array.isArray( args.B ) ) args.B = [args.B];
+  try {
+    if( typeof args.name === 'undefined' ) args.name = args.debug;
+    if( typeof args.name !== 'string' ) args.name = "Link#" + this.id;
+    if( typeof args === 'undefined' ) fail("Missing mandatory argument!");
+    if( typeof args.A === 'undefined' ) fail("Missing `args.A`!");
+    if( !Array.isArray( args.A ) ) args.A = [args.A];
+    if( typeof args.B === 'undefined' ) fail("Missing `args.B`!");
+    if( !Array.isArray( args.B ) ) args.B = [args.B];
 
-        var k;
-        for( k = 0 ; k < args.A.length ; k++ ) {
-            checkPod( args.A[k], k );
-        }
-        for( k = 0 ; k < args.B.length ; k++ ) {
-            checkPod( args.B[k], k );
-        }
+    var k;
+    for( k = 0 ; k < args.A.length ; k++ ) {
+      checkPod( args.A[k], k );
+    }
+    for( k = 0 ; k < args.B.length ; k++ ) {
+      checkPod( args.B[k], k );
+    }
 
-        // For debugging.
-        this.name = args.name;
-        this.debug = args.debug;
-    }
-    catch( ex ) {
-        console.error("checkArgs( " + args + " )");
-        fail( ex, "checkArgs( <args> )" );
-    }
+    // For debugging.
+    this.name = args.name;
+    this.debug = args.debug;
+  }
+  catch( ex ) {
+    console.error("checkArgs( " + args + " )");
+    fail( ex, "checkArgs( <args> )" );
+  }
 }
 
 function checkPod( pod, index ) {
-    try {
-        if( !pod.action ) {
-            if( typeof pod.obj === 'undefined' ) fail("Missing `[" + index + "].obj`!");
-            if( typeof pod.name === 'undefined' ) pod.name = "*";
-            // Check if the attribute exists.
-            if( !PropertyManager.isLinkable( pod.obj, pod.name ) )
-                throw "`" + pod.name + "` is not a linkable attribute.\n"
-                + "Valid linkable attributes are: "
-                + PropertyManager.getAllAttributesNames( pod.obj ).join(", ") + ".";
-        }
-        else if ( typeof pod.action !== 'function' ) {
-            throw "Attribute `[" + index + "].action` must be a function!";
-        }
-        else {
-            if( typeof pod.obj !== 'undefined' )
-                throw "[" + index + "].action cannot be defined in the same time of ["
-                + index + "].obj! They are exclusive attributes.";
-            if( typeof pod.name !== 'undefined' )
-                throw "[" + index + "].action cannot be defined in the same time of ["
-                + index + "].name! They are exclusive attributes.";
+  try {
+    if( !pod.action ) {
+      if( typeof pod.obj === 'undefined' ) fail("Missing `[" + index + "].obj`!");
+      if( typeof pod.name === 'undefined' ) pod.name = "*";
+      // Check if the attribute exists.
+      if( !PropertyManager.isLinkable( pod.obj, pod.name ) )
+        throw "`" + pod.name + "` is not a linkable attribute.\n"
+        + "Valid linkable attributes are: "
+        + PropertyManager.getAllAttributesNames( pod.obj ).join(", ") + ".";
+    }
+    else if ( typeof pod.action !== 'function' ) {
+      throw "Attribute `[" + index + "].action` must be a function!";
+    }
+    else {
+      if( typeof pod.obj !== 'undefined' )
+        throw "[" + index + "].action cannot be defined in the same time of ["
+        + index + "].obj! They are exclusive attributes.";
+      if( typeof pod.name !== 'undefined' )
+        throw "[" + index + "].action cannot be defined in the same time of ["
+        + index + "].name! They are exclusive attributes.";
 
-            // An action is emulated by a hollow object.
-            var hollowObject = {};
-            PropertyManager( hollowObject ).create("<action>", {
-                set: pod.action
-            });
-            pod.obj = hollowObject;
-            pod.name = "<action>";
-        }
-        if( typeof pod.open === 'undefined' ) pod.open = true;
+      // An action is emulated by a hollow object.
+      var hollowObject = {};
+      PropertyManager( hollowObject ).create("<action>", {
+        set: pod.action
+      });
+      pod.obj = hollowObject;
+      pod.name = "<action>";
     }
-    catch( ex ) {
-        console.error("checkpod(", pod, ", ", index, ")");
-        fail( ex, "checkpod( <pod>, " + index + ")" );
-    }
+    if( typeof pod.open === 'undefined' ) pod.open = true;
+  }
+  catch( ex ) {
+    console.error("checkpod(", pod, ", ", index, ")");
+    fail( ex, "checkpod( <pod>, " + index + ")" );
+  }
 }
 
 
 function fail( msg, source ) {
-    if( typeof source === 'undefined' ) {
-        source = "";
-    } else {
-        source = "::" + source;
-    }
-    throw msg + "\n" + "[tfw.binding.link" + source + "]";
+  if( typeof source === 'undefined' ) {
+    source = "";
+  } else {
+    source = "::" + source;
+  }
+  throw msg + "\n" + "[tfw.binding.link" + source + "]";
 }
 
 
 function hasAlreadyBeenHere( id, wave ) {
-    if( Array.isArray( wave ) ) {
-        if( wave.indexOf( id ) < 0 ) {
-            // Remember we took this path.
-            wave.push( id );
-        } else {
-            // We already took this link in this wave.
-            return true;
-        }
+  if( Array.isArray( wave ) ) {
+    if( wave.indexOf( id ) < 0 ) {
+      // Remember we took this path.
+      wave.push( id );
+    } else {
+      // We already took this link in this wave.
+      return true;
     }
-    return false;
+  }
+  return false;
 }
 
 
 function filterFailed(value, src, dst) {
-    if( typeof dst.filter === 'function' ) {
-        try {
-            if( !dst.filter( value ) ) return true;
-        }
-        catch( ex ) {
-            console.error( ex );
-            fail(
-                "Error in filter of link "
-                    + PropertyManager(src.obj) + "." + src.name
-                    + " -> "
-                    + PropertyManager(dst.obj) + "." + dst.name + "!"
-            );
-        }
+  if( typeof dst.filter === 'function' ) {
+    try {
+      if( !dst.filter( value ) ) return true;
     }
-    return false;
+    catch( ex ) {
+      console.error( ex );
+      fail(
+        "Error in filter of link "
+          + PropertyManager(src.obj) + "." + src.name
+          + " -> "
+          + PropertyManager(dst.obj) + "." + dst.name + "!"
+      );
+    }
+  }
+  return false;
 }
 
 
 function processSwitch( value, dst, pmSrc ) {
-    if( typeof dst.switch === 'string' ) {
-        return pmSrc.get( dst.switch );
-    }
-    else if( Array.isArray( dst.switch ) ) {
-        return dst.switch.map(function(name) {
-            return pmSrc.get( name );
-        });
-    }
-    return value;
+  if( typeof dst.switch === 'string' ) {
+    return pmSrc.get( dst.switch );
+  }
+  else if( Array.isArray( dst.switch ) ) {
+    return dst.switch.map(function(name) {
+      return pmSrc.get( name );
+    });
+  }
+  return value;
 }
 
 
 function processConverter( value, src, dst ) {
-    if( typeof dst.converter === 'function' ) {
-        try {
-            return dst.converter( value );
-        }
-        catch( ex ) {
-            console.error( ex );
-            fail(
-                "Error in converter of link "
-                    + PropertyManager(src.obj) + "." + src.name
-                    + " -> "
-                    + PropertyManager(dst.obj) + "." + dst.name + "!"
-            );
-        }
+  if( typeof dst.converter === 'function' ) {
+    try {
+      return dst.converter( value );
     }
-    return value;
+    catch( ex ) {
+      console.error( ex );
+      fail(
+        "Error in converter of link "
+          + PropertyManager(src.obj) + "." + src.name
+          + " -> "
+          + PropertyManager(dst.obj) + "." + dst.name + "!"
+      );
+    }
+  }
+  return value;
 }
 
 
@@ -309,65 +309,65 @@ function processConverter( value, src, dst ) {
  * result will be the transformed value.
  */
 function processFormat( value, src, dst ) {
-    if( !dst.format ) return value;
-    try {
-        if( !Array.isArray( dst.format ) )
-            throw "Must be an array with two elements!";
-        var intlFunc = dst.format[0];
-        if( typeof intlFunc !== 'function' )
-            throw "First element of the array must be a function!";
-        var intlId = dst.format[1];
-        if( typeof intlId !== 'string' )
-            throw "Second element of the array must be a string!";
-        return intlFunc( intlId, value );
-    }
-    catch( ex ) {
-        console.error( ex );
-        fail(
-            "Error in format of link "
-                + PropertyManager(src.obj) + "." + src.name
-                + " -> "
-                + PropertyManager(dst.obj) + "." + dst.name + "!\n"
-                + ex
-        );
-    }
+  if( !dst.format ) return value;
+  try {
+    if( !Array.isArray( dst.format ) )
+      throw "Must be an array with two elements!";
+    var intlFunc = dst.format[0];
+    if( typeof intlFunc !== 'function' )
+      throw "First element of the array must be a function!";
+    var intlId = dst.format[1];
+    if( typeof intlId !== 'string' )
+      throw "Second element of the array must be a string!";
+    return intlFunc( intlId, value );
+  }
+  catch( ex ) {
+    console.error( ex );
+    fail(
+      "Error in format of link "
+        + PropertyManager(src.obj) + "." + src.name
+        + " -> "
+        + PropertyManager(dst.obj) + "." + dst.name + "!\n"
+        + ex
+    );
+  }
 }
 
 
 function processMap( value, src, dst ) {
-    if( value && typeof value.map === 'function' && typeof dst.map === 'function' ) {
-        try {
-            return value.map( dst.map );
-        }
-        catch( ex ) {
-            console.error( ex );
-            fail(
-                "Error in map of link "
-                    + PropertyManager(src.obj) + "." + src.name
-                    + " -> "
-                    + PropertyManager(dst.obj) + "." + dst.name + "!"
-            );
-        }
+  if( value && typeof value.map === 'function' && typeof dst.map === 'function' ) {
+    try {
+      return value.map( dst.map );
     }
-    return value;
+    catch( ex ) {
+      console.error( ex );
+      fail(
+        "Error in map of link "
+          + PropertyManager(src.obj) + "." + src.name
+          + " -> "
+          + PropertyManager(dst.obj) + "." + dst.name + "!"
+      );
+    }
+  }
+  return value;
 }
 
 
 function processValue( value, src, dst ) {
-    if( typeof dst.value === 'undefined' ) return value;
-    if( typeof dst.value === 'function' ) {
-        try {
-            return dst.value( src.name );
-        }
-        catch( ex ) {
-            console.error( ex );
-            fail(
-                "Error in value(" + src.name + ") of link "
-                    + PropertyManager(src.obj) + "." + src.name
-                    + " -> "
-                    + PropertyManager(dst.obj) + "." + dst.name + "!"
-            );
-        }
+  if( typeof dst.value === 'undefined' ) return value;
+  if( typeof dst.value === 'function' ) {
+    try {
+      return dst.value( src.name );
     }
-    return dst.value;
+    catch( ex ) {
+      console.error( ex );
+      fail(
+        "Error in value(" + src.name + ") of link "
+          + PropertyManager(src.obj) + "." + src.name
+          + " -> "
+          + PropertyManager(dst.obj) + "." + dst.name + "!"
+      );
+    }
+  }
+  return dst.value;
 }

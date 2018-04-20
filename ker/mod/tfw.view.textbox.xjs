@@ -1,4 +1,3 @@
-// tfw.view.textbox
 {View DIV
   view.attribs: {
     label: {string ""}

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 "use strict";
 
@@ -60,7 +60,7 @@ function svc( name, args, url ) {
             reject( {
               id: exports.BAD_ROLE,
               err: Error( "Service \"" + name + "\" needs role \"" +
-                value.substr( 1 ) + "\"!" )
+                          value.substr( 1 ) + "\"!" )
             } );
           }
           var valueObject;
@@ -71,7 +71,7 @@ function svc( name, args, url ) {
             reject( {
               id: exports.BAD_TYPE,
               err: Error( "Service \"" + name +
-                "\" should return a valid JSON!\n" + ex )
+                          "\" should return a valid JSON!\n" + ex )
             } );
           }
           resolve( valueObject );
@@ -181,14 +181,15 @@ exports.login = function ( usr, pwd ) {
         .then(
           function ( code ) {
             // Hashage du mot de passe à l'aide du code.
-            var output = [ 0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0
-              ],
-              i, j = 0,
-              pass = [],
-              k1, k2, k3;
+            var output = [
+              0, 0, 0, 0,
+              0, 0, 0, 0,
+              0, 0, 0, 0,
+              0, 0, 0, 0
+            ],
+                i, j = 0,
+                pass = [],
+                k1, k2, k3;
             for ( i = 0; i < pwd.length; i++ ) {
               pass.push( pwd.charCodeAt( i ) );
             }
@@ -228,7 +229,8 @@ exports.login = function ( usr, pwd ) {
             } else {
               currentUser = null;
               reject( {
-                id: exports.UNKNOWN_USER
+                id: exports.UNKNOWN_USER,
+                err: "Unknown user '" + usr + "'!"
               } );
             }
           },

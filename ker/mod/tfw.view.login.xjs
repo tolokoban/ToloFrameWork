@@ -1,0 +1,44 @@
+{View DIV class:tfw-view-login
+  view.attribs: {
+    valid: {boolean false}
+    usr: {string ""}
+    pwd: {string ""}
+    focus: {boolean false}
+    on-new-account: {action}
+    on-lost-password: {action}
+    on-connection: {action}
+  }
+
+  [
+    {tfw.view.textbox
+      view.id: usr
+      focus: {Bind focus back: false}
+      value: {Bind usr}
+      valid: {Bind valid}
+      type: email
+      wide: true
+      tag: true
+      validator: "admin|test|[^ \t@]+@[^ \t@]+"
+      placeholder:{Intl login}
+      label:{Intl login}}
+    {tfw.view.textbox
+      focus: {Bind "usr/action" converter:notEmpty}
+      value: {Bind pwd}
+      type: password
+      wide: true
+      action: {Bind on-connection}
+      placeholder:{Intl pwd}
+      label:{Intl pwd}}
+
+    {tfw.view.button
+      text:{Intl on-new-account}
+      icon: user
+      flat:true wide:true
+      action:{Bind on-new-account}}
+    {tfw.view.button    
+      text:{Intl on-lost-password}
+      icon: refresh
+      flat:true wide:true
+      action:{Bind on-lost-password}}
+  ]
+}
