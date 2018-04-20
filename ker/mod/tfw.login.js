@@ -49,7 +49,7 @@ module.exports = function(opts) {
       }
       modal.detach();
       if (view.pwd == '') {
-        WS.get('tp4.NewAccount', {mail: view.usr, from: window.location}).then(
+        WS.get('tp4.NewAccount', {mail: view.usr, from: window.location.href}).then(
           function( user ) {
             message(  _('email') );
           },
