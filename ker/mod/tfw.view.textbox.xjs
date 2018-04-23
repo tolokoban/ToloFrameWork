@@ -1,32 +1,46 @@
-// tfw.view.textbox
 {View DIV
   view.attribs: {
-    value: {string "" behind: onValueChanged}
     label: {string ""}
+    type: {string "text"}
+    wide: {boolean false}
     focus: {boolean false}
+    enabled: {boolean true}
     visible: {boolean true}
-    width: {unit "8rem"}
+    width: {unit auto}
+    action: {action}
     list: {strings}
+    validator: {validator ""}
+    valid: {boolean false}
+    value: {string "" behind: onValueChanged}
+    max-length: {integer 999}
   }
 
   class: tfw-view-textbox
+  class.thm-ele2: {Bind enabled} 
+  class.wide: {Bind wide} 
+  class.thm-bgSL|thm-bg2: {Bind focus back:false} 
   class.focus: {Bind focus} 
-  class.|hide: {Bind visible} 
-  class.thm-bg3: {Bind focus back:false}
+  class.|hide: {Bind visible}
+  class.|invalid: {Bind valid}
 
   [
-    {DIV view.id: head, class: head {Bind label}}
-    {DIV view.id: body, class: body
+    {DIV view.id: head
+         class: head
+         textcontent: {Bind label}}
+    {DIV view.id: body
+         class: body    
+         style.width: {Bind width}
       [
         {INPUT
           view.id: input
-          value: {Bind value}
-          focus: {Bind focus}
-          placeholder: {Bind label}
-          style.width: {Bind width}}
+          type: {Bind type}
+          event.keyup: onKeyUp
+          maxLength: {Bind max-length}
+          value: {Bind value -delay: 350}          
+          focus: {Bind focus}}
       ]}
     {DIV view.id: foot, class: foot}
-    {DIV view.id: bottom, class: "bottom thm-bgS"}
+    {DIV view.id: bottom, class: "bottom thm-bgSD"}
     {FOOTER [{DIV view.id: completion, class: "completion thm-bg3 thm-ele4"}]}
   ]
 }

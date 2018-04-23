@@ -17,7 +17,7 @@ var Icon = require("wdg.icon");
  */
 var Wait = function(opts) {
     var text = $.div();
-    var icon = new Icon({ content: 'wait', rotate: true });
+    var icon = new Icon({ content: 'wait', animate: true });
     var elem = $.elem( this, 'div', 'wdg-wait', [icon, text] );
     
     DB.propRemoveClass( this, 'visible', 'hide' );

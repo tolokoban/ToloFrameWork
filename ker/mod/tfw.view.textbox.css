@@ -4,6 +4,11 @@ div.tfw-view-textbox {
   border: none;
   border-bottom: 1px solid rgba(0,0,0,.5);
   font: inherit;
+  padding: 0 4px 4px 4px;
+}
+
+div.tfw-view-textbox.wide {
+  display: block;
 }
 
 div.tfw-view-textbox.hide { display: none; }
@@ -17,18 +22,28 @@ div.tfw-view-textbox > div {
   margin: 0;
 }
 
-div.tfw-view-textbox input,
-div.tfw-view-textbox textarea {
+div.tfw-view-textbox input {
   border: 0;
   margin: 0;
   background: transparent;
   font: inherit;
   color: rgba(0,0,0,.9);
+  width: 100%;
 }
 
-div.tfw-view-textbox.focus input,
-div.tfw-view-textbox.focus textarea {
+div.tfw-view-textbox.invalid > div > input {
+    color: #f00;
+}
+    
+div.tfw-view-textbox.focus input {
   color: #000;
+  outline: none;
+  border: none;
+}
+
+div.tfw-view-textbox.focus input:focus {
+  box-shadow: none;
+  outline: none;
 }
 
 div.tfw-view-textbox > div.body {
@@ -84,6 +99,7 @@ div.tfw-view-textbox.focus > footer > div.completion {
   overflow: auto;
   font: inherit;
   font-size: .85em;
+  max-height: 280px;
 }
 
 div.tfw-view-textbox.focus > footer > div.completion > div {

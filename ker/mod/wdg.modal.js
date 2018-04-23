@@ -29,7 +29,7 @@ function Modal( opts ) {
       onScroll( body );
     });
   };
-  var header = $.tag( 'header' );  //, 'thm-ele8', 'thm-bgPD' );
+  var header = $.tag( 'header', 'thm-ele8', 'thm-bgPD' );
   var footer = $.tag( 'footer' );
   var cell = $.div( 'cell', 'thm-ele24', 'thm-bg0', [ header, body, footer ] );
   var elem = $.elem( this, 'div', 'wdg-modal', [ $.div([cell]) ] );
@@ -46,6 +46,11 @@ function Modal( opts ) {
     laterScroll();
   } );
   DB.prop( this, 'header' )( function ( v ) {
+    if( !v || (typeof v === 'string' && v.trim().length === 0) ) {
+      $.addClass( header, "hide" );
+      return;
+    }
+    $.removeClass( header, "hide" );
     $.clear( header );
     if ( Array.isArray( v ) ) {
       v.forEach( function ( itm ) {
@@ -57,12 +62,11 @@ function Modal( opts ) {
     laterScroll();
   } );
   DB.prop( this, 'footer' )( function ( v ) {
-    if ( typeof v === 'undefined' || v === null || v.length === 0 ) {
-      $.addClass( footer, 'hide' );
+    if( !v || (typeof v === 'string' && v.trim().length === 0) ) {
+      $.addClass( footer, "hide" );
       return;
     }
-    
-    $.removeClass( footer, 'hide' );
+    $.removeClass( footer, "hide" );
     $.clear( footer );    
     if ( Array.isArray( v ) ) {
       v.forEach( function ( itm ) {
@@ -93,9 +97,9 @@ function Modal( opts ) {
 
   opts = DB.extend( {
     visible: false,
-    header: [],
+    header: null,
     content: [],
-    footer: [],
+    footer: null,
     padding: true,
     scroll: true,
     wide: false,

@@ -51,7 +51,7 @@ Listeners.prototype.clear = function() {
  */
 Listeners.prototype.fire = function() {
     var i, listener, obj, x,
-        args = [].slice.call( arguments );
+        args = Array.prototype.slice.call( arguments );
     for (i = 0 ; i < this._list.length ; i++) {
         x = this._list[i];
         listener = x[0];

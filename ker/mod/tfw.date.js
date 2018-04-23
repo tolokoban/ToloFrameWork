@@ -87,7 +87,16 @@ exports.diff = function(a, b) {
 };
 
 
-exports.parseYMD = function(text) {
+exports.parseYMD = function( input ) {
+  var text = '';
+  var c;
+  for( var i = 0; i < input.length; i++ ) {
+    c = input.charAt( i );
+    if( c < '0' || c > '9' ) continue;
+    text += c;
+  }
+  console.info("[tfw.date] input, text=", input, text);
+  
   var YY = parseInt(text.substr(0, 4));
   var MM = text.length > 5 ? parseInt(text.substr(4, 2)) - 1 : 0;
   var DD = text.length > 7 ? parseInt(text.substr(6, 2)) : 0;

@@ -2,7 +2,7 @@
 {View SVG  
   view.attribs: {
     visible: {boolean true}
-    content: {string ok behind: onContentChanged}
+    content: {any ok behind: onContentChanged}
     size: {unit 28}
     animate: {boolean false}
     flip-h: {boolean false}

@@ -1,0 +1,47 @@
+div.tfw-view-tabstrip {
+  position: relative;
+  z-index: 0;
+  margin: .5rem;
+  padding: 0;
+}
+
+div.tfw-view-tabstrip > div {  
+  margin: 0;
+}
+
+div.tfw-view-tabstrip > div:first-child > div {  
+  position: relative;
+  display: inline-block;
+  line-height: 32px;
+  padding: 0 16px;
+  z-index: 1;
+  cursor: pointer;
+}
+
+div.tfw-view-tabstrip > div:last-child > div.hide {
+  display: none;
+}
+
+div.tfw-view-tabstrip > div:last-child {
+  position: relative;
+  padding: 16px;
+  z-index: 0;
+}
+
+div.tfw-view-tabstrip > div:first-child > div.selected {  
+  box-shadow: 0 2px 4px rgba(0,0,0,.5);
+  background: #fff;
+  cursor: default;
+}
+
+div.selected::after {
+  content: ".";
+  font-size: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 8px;
+  background: #fff;
+  z-index: 2;
+}

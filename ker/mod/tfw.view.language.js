@@ -21,7 +21,7 @@ function onTap( evt ) {
   if( evt && evt.keyCode === 9 ) return;
   
   var content = $.div();
-  var btnClose = new Button({ content: Button._("close"), flat: true });
+  var btnClose = new Button({ text: Button._("close"), flat: true });
   var dialog = new Modal({
     header: _("title"),
     content: content,
@@ -89,7 +89,7 @@ function fillContentWithUsedLanguages( content, detach, currentlyUsedLanguageCod
   currentlyUsedLanguageCodes.forEach(function (code) {
     var languageName = findLanguageNameFromCode( code );
     var button = new Button({
-      content: languageName,
+      text: languageName,
       icon: "flag-" + code,
       flat: false,
       type: "primary"
@@ -111,7 +111,7 @@ function createDivWithAllLanguages() {
     var code = language[0];
     var languageName = language[1];
     var button = new Button({
-      content: languageName,
+      text: languageName,
       icon: "flag-" + code,
       flat: true,
       small: true,

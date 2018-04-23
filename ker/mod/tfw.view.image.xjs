@@ -1,0 +1,14 @@
+{View IMG class:tfw-view-image
+  view.attribs: {
+    src: {string "" behind:onSrcChanged}
+    loaded: {boolean false}
+    failed: {boolean false}
+    width: {unit auto behind:onWidthChanged}
+    height: {unit auto behind:onHeightChanged}
+  }
+
+  src: {Bind src}
+  
+  event.load: onLoad
+  event.error: onError
+}

@@ -1,0 +1,12 @@
+{View DIV class:tfw-view-tabstrip
+  view.attribs: {
+    headers: {array []}
+    bodies: {array []}
+    value: {integer 0 behind:onValueChanged}
+  }
+
+  [
+    {DIV view.id: headers view.children:{Bind headers map:mapHeader}}
+    {DIV class:"thm-bg3 thm-ele2" view.id: bodies view.children:{Bind bodies}}
+  ]
+}

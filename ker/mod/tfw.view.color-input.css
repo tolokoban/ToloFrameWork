@@ -1,0 +1,147 @@
+div.tfw-view-color-input {
+  position: relative;
+  display: inline-block;
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,.5);
+  font: inherit;
+  min-width: 64px;
+}
+
+div.tfw-view-color-input.wide {
+  display: block;
+}
+
+div.tfw-view-color-input.hide { display: none; }
+
+div.tfw-view-color-input.focus {
+  z-index: 999999;
+}
+
+
+div.tfw-view-color-input > div {
+  margin: 0;
+}
+
+div.tfw-view-color-input-dialog {
+  width: 300px;
+  text-align: center;
+}
+
+div.tfw-view-color-input-dialog div.expert {
+  text-align: left;
+}
+
+div.tfw-view-color-input-dialog div.expert > div.flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+div.tfw-view-color-input-dialog div.expert > div.flex > div {
+  flex: 1 0;
+}
+
+div.tfw-view-color-input-dialog div.expert >div.flex > div.pastille {
+  display: inline-block;
+  color: transparent;
+  font-size: 1px;
+  float: right;
+  background: #fff;
+  border-radius: 100%;
+  width: 32px;
+  height: 32px;
+  max-width: 32px;
+  border: 2px solid rgba(0,0,0,.6);
+}
+
+div.tfw-view-color-input-dialog div.expert .hint {
+  font-size: 80%;
+  opacity: .5;
+}
+
+div.tfw-view-color-input-dialog button {
+  display: inline-block;
+  width: 64px;
+  height: 48px;
+  margin: 2px;
+  font-size: 12px;
+}
+
+div.tfw-view-color-input button {
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  transition: background-color .6s, color .6s;
+}
+
+div.tfw-view-color-input button,
+div.tfw-view-color-input-dialog button {
+  border-radius: 4px;
+  font-family: monospace;
+  border: 0;
+  cursor: pointer;
+}
+
+
+
+
+div.tfw-view-color-input.focus button:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+div.tfw-view-color-input > div.body {
+  padding: 0;
+  margin: 0 0 4px 0;
+  height: 24px;
+  position: relative;
+}
+
+div.tfw-view-color-input > div.head,
+div.tfw-view-color-input > div.foot {
+  opacity: .5;
+  font-size: .8em;
+}
+
+
+div.tfw-view-color-input > div.bottom {
+  content: ".";
+  font-size: 0;
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: right top;
+  transition: transform .6s;
+}
+
+div.tfw-view-color-input.focus > div.bottom {
+  transform: scaleX(1);
+  transform-origin: left top;
+  transition: transform .6s;
+}
+
+div.tfw-view-color-input > footer {
+  display: none;
+  position: absolute;
+  bottom: -4px;
+  right: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  padding: 0;
+  z-index: 2;
+  overflow: show;
+}
+div.tfw-view-color-input.focus > footer {
+  display: block;
+}

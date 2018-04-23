@@ -1,6 +1,6 @@
 {View DIV
   view.attribs: {
-    content: {string}
+    text: {string}
     type: {[default, primary, secondary] default}
     action: {string behind:onAction}
     file: {any}
@@ -13,7 +13,7 @@
         icon: import
         flat: true
         wide: true
-        content: {Bind content}
+        text: {Bind text}
         action: {Bind action}}
     ]}
     {DIV [

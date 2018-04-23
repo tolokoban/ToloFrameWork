@@ -2,6 +2,7 @@
   padding: 0;
   position: relative;
   display: inline-block;
+  background: transparent;
 }
 
 .tfw-view-cropped-image.wide {
@@ -12,8 +13,6 @@
   display: block;
   margin: 0;
   border: none;
-  box-shadow: none;
-  background: transparent;
 }
 
 .tfw-view-cropped-image > .visual {
@@ -25,7 +24,16 @@
   border-radius: 8px;
   cursor: pointer;
   overflow: hidden;
+  background-repeat:   repeat;
+  background-image:    url(tfw.view.cropped-image/back.jpg);
 }
+
+.tfw-view-cropped-image > .visual > canvas,
+.tfw-view-cropped-image > .visual > img {
+  margin: 0;
+  background: transparent;
+}
+
 
 .tfw-view-cropped-image > .label {
   opacity: .5;
@@ -33,7 +41,8 @@
   text-align: left;
 }
 
-.tfw-view-cropped-image > div > img {
+.tfw-view-cropped-image > div > img,
+.tfw-view-cropped-image > div > canvas {
   position: absolute;
   left: 0;
   top: 0;
@@ -51,6 +60,7 @@
 }
 
 
-.tfw-view-cropped-image > div > div.tfw-view-file-input {
+.tfw-view-cropped-image div.tfw-view-file-input {
   display: none;
+  margin: 0;
 }

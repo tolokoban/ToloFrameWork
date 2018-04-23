@@ -1,0 +1,7 @@
+// Vertical space.
+{View DIV class:tfw-view-vspc
+  view.attribs:{
+    size: {unit "1em"}
+  }
+  style.height: {Bind size}
+}

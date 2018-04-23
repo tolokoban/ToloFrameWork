@@ -267,10 +267,10 @@ function PointerEvents( element ) {
   addEvent.call(that, element, 'mousedown', function(evt) {
     if (G.touchDevice) return;
     var slots = that._slots;
-    var rect = element.getBoundingClientRect();
     G.target = that;
-    G.targetX = evt.clientX - rect.left;
-    G.targetY = evt.clientY - rect.top;
+    var rect = element.getBoundingClientRect();
+    G.targetX = evt.pageX - rect.left;
+    G.targetY = evt.pageY - rect.top;
     if (slots.down) {
       slots.down({
         action: 'down',
@@ -286,15 +286,12 @@ function PointerEvents( element ) {
   addEvent.call(that, element, 'mousemove', function(evt) {
     var slots = that._slots;
     if (slots.move) {
-      var rectA = element.getBoundingClientRect();
-      var rectB = evt.target.getBoundingClientRect();
+      var rect = element.getBoundingClientRect();
       slots.move({
         target: element,
         action: 'move',
-        x: evt.clientX - rectA.left,
-        y: evt.clientY - rectA.top
-        //x: evt.clientX + rectB.left - rectA.left,
-        //y: evt.clientY + rectB.top - rectA.top
+        x: evt.pageX - rect.left,
+        y: evt.pageY - rect.top
       });
     }
   });
@@ -317,17 +314,13 @@ PointerEvents.prototype.on = function(action, event) {
   }
   if (action == 'wheel') {
     addEvent.call(that, this.element, WHEEL_EVENT, function(evt) {
-      var rect = that.element.getBoundingClientRect();
-      slots.wheel({
-        //target: that.element,
-        target: G.bodyTarget,
-        action: 'wheel',
-        delta: evt.deltaY,
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top,
-        stopPropagation: evt.stopPropagation.bind( evt ),
-        preventDefault: evt.preventDefault.bind( evt )
-      });
+      evt.target = G.bodyTarget;
+      evt.action = 'wheel';
+      var rect = that.element.getBoundingClientRect();      
+      evt.x = evt.pageX - rect.left;
+      evt.y = evt.pageY - rect.top;
+      evt.delta = evt.deltaY;
+      slots.wheel( evt );
     });
   }
   return this;
@@ -354,3 +347,5 @@ function addEvent(element, event, listener, capture) {
 }
 
 module.exports = PointerEvents;
+
+

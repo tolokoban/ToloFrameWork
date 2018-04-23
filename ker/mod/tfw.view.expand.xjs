@@ -1,0 +1,20 @@
+{View DIV class:tfw-view-expand
+  view.attribs: {
+    label: {string label}
+    content: {any}
+    value: {boolean false}
+  }
+
+  class.expand: {Bind value}
+  
+  [
+    {DIV class:head event.tap:{Toggle value} [
+      {DIV class:icons [
+        {tfw.view.icon content:plus-o size:24}
+        {tfw.view.icon content:minus-o size:24}
+      ]}
+      {DIV textcontent:{Bind label}}
+    ]}
+    {DIV class:body {Bind content}}
+  ]
+}

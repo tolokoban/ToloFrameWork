@@ -1,0 +1,28 @@
+.tfw-view-wait {
+  display: inline-table;
+}
+
+.tfw-view-wait.hide {
+  display: none;
+}
+
+.tfw-view-wait.wide {
+  display: table;
+}
+
+.tfw-view-wait > div {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.tfw-view-wait > div:last-child {
+  padding-left: 1em;
+}
+
+.tfw-view-wait.hide {
+  display: none;
+}
+
+.tfw-view-wait > .hide {
+  display: none;
+}

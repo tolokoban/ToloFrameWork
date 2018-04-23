@@ -1,65 +1,31 @@
 "use strict";
 
+
+var CODE_BEHIND = {
+  toDataURL: toDataURL,
+  onFileChanged: onFileChanged
+};
+
+require("polyfill.promise");
 var $ = require("dom");
 
 
-var CODE_BEHIND = {
-  init: init,
-  onUrlChanged: onUrlChanged,
-  onFileChanged: onFileChanged,
-  onLabelChanged: onLabelChanged
-};
-
-
-function init() {
-  var that = this;
-
-  this.canvas = this.$elements.canvas.$;
-  clearCanvas.call( this );
-
-  var screen = this.$elements.img.$;
-  screen.crossOrigin = "anonymous";
-  screen.onload = function() {
-    $.removeClass( screen, "hide" );
-
-    var img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = onImageToPutIntoCanvasLoaded.bind( that, img );
-    img.onerror = function( err ) {
-      console.error( "Unable to load image from URL: ", img.src );
-      console.error( err );
-    };
-    img.src = that._newUrl;
-    that._newUrl = null;
-  };
+function toDataURL(type, encoderOptions) {
+  var canvas = createCanvas.call( this );
+  var ctx = canvas.getContext( "2d" );
+  ctx.drawImage( this.$elements.img.$, 0, 0 );
+  return canvas.toDataURL( type, encoderOptions );
 }
-
-function onLabelChanged( textContent ) {
-  var label = this.$elements.label;
-
-  textContent = textContent.trim();
-  if( textContent.length === 0 ) {
-    $.addClass( label, "hide" );
-    return;
-  }
-
-  $.removeClass( label, "hide" );
-  label.$.textContent = textContent;
-}
-
-function onUrlChanged( newUrl ) {
-  var that = this;
-  this._newUrl = newUrl;
-  this.$elements.img.$.src = this.$elements.canvas.$.toDataURL();
-}
-
 
 function onFileChanged( file ) {
   var that = this;
 
   var reader = new FileReader();
   reader.addEventListener("load", function() {
-    that.url = reader.result;
+    adjustSizeAndAlignment.call( that, reader.result ).then(function(url) {
+      that.src = url;
+      that.changed = true;
+    });
   });
   reader.readAsDataURL( file );
 }
@@ -92,10 +58,10 @@ function cropHorizontally( img ) {
   var zoom = this.height / img.height;
   var x = 0;
   if( this.cropping == 'body' ) {
-    x = 0.5 * (this.width - img.width);
+    x = 0.5 * (this.width - img.width * zoom);
   }
   else if( this.cropping == 'tail' ) {
-    x = this.width - img.width;
+    x = this.width - img.width * zoom;
   }
   draw.call( this, img, x, 0, zoom );
 }
@@ -108,18 +74,17 @@ function cropVertically( img ) {
   var zoom = this.width / img.width;
   var y = 0;
   if( this.cropping == 'body' ) {
-    y = 0.5 * (this.height - img.height);
+    y = 0.5 * (this.height - img.height * zoom);
   }
   else if( this.cropping == 'tail' ) {
-    y = this.height - img.height;
+    y = this.height - img.height * zoom;
   }
   draw.call( this, img, 0, y, zoom );
 }
 
 
 function draw( img, x, y, zoom ) {
-  var ctx = this.$elements.canvas.$.getContext( "2d" );
-  clearCanvas.call( this );
+  var ctx = clearCanvas.call( this );
   var w = img.width;
   var h = img.height;
   ctx.drawImage( img, 0, 0, w, h, x, y, w * zoom, h * zoom );
@@ -128,6 +93,121 @@ function draw( img, x, y, zoom ) {
 
 function clearCanvas() {
   var ctx = this.canvas.getContext("2d");
-  ctx.fillStyle = "#fff";
-  ctx.fillRect( 0, 0, this.canvas.width, this.canvas.height );
+  ctx.clearRect( 0, 0, this.canvas.width, this.canvas.height );
+  return ctx;
+}
+
+
+function adjustSizeAndAlignment( url ) {
+  var that = this;
+
+  return new Promise(function (resolve, reject) {
+    var img = new Image();
+    img.onload = function() {
+      var w = img.width;
+      var h = img.height;
+      getCroppingOptions.call(that, img).then(function(options) {
+        var canvas = createCanvas.call( that );
+        var ctx = canvas.getContext("2d");
+        options.containerWidth = that.width;
+        options.containerHeight = that.height;
+        var transfo = options.cropping === 'cover' ? getCoverZoom( options ) : getContainZoom( options );
+        var x = transfo.x;
+        var y = transfo.y;
+        var zoom = transfo.zoom;
+        ctx.drawImage( img, 0, 0, w, h, x, y, w * zoom, h * zoom);
+        resolve( canvas.toDataURL() );
+      }).catch( reject );
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+
+function getCroppingOptions( img ) {
+  var that = this;
+
+  return new Promise(function (resolve, reject) {
+    resolve({
+      cropping: that.cropping,
+      alignX: that.alignX,
+      alignY: that.alignY,
+      imageWidth: img.width,
+      imageHeight: img.height
+    });
+  });
+}
+
+/**
+ * @param {number} opt.imageWidth
+ * @param {number} opt.imageHeight
+ * @param {number} opt.containerWidth
+ * @param {number} opt.containerHeight
+ * @return {number} Zoom factor to apply to the image dimensions.
+ */
+function getCoverZoom( opt ) {
+  var imageRatio = opt.imageWidth / opt.imageHeight;
+  var containerRatio = opt.containerWidth / opt.containerHeight;
+  var x = 0, y = 0, zoom;
+  
+  if( imageRatio < containerRatio ) {
+    zoom = opt.containerWidth / opt.imageWidth;
+    if( opt.alignY === 'middle' ) {
+      y = 0.5 * (opt.containerHeight - opt.imageHeight * zoom);
+    }
+    else if( opt.alignY === 'end' ) {
+      y = opt.containerHeight - opt.imageHeight * zoom;
+    }
+  } else {
+    zoom = opt.containerHeight / opt.imageHeight;
+    if( opt.alignX === 'middle' ) {
+      x = 0.5 * (opt.containerWidth - opt.imageWidth * zoom);
+    }
+    else if( opt.alignX === 'end' ) {
+      x = opt.containerWidth - opt.imageWidth * zoom;
+    }
+  }
+
+  return { x: x, y: y, zoom: zoom };
+}
+
+/**
+ * @param {number} opt.imageWidth
+ * @param {number} opt.imageHeight
+ * @param {number} opt.containerWidth
+ * @param {number} opt.containerHeight
+ * @return {number} Zoom factor to apply to the image dimensions.
+ */
+function getContainZoom( opt ) {
+  var imageRatio = opt.imageWidth / opt.imageHeight;
+  var containerRatio = opt.containerWidth / opt.containerHeight;
+  var x = 0, y = 0, zoom;
+  
+  if( imageRatio > containerRatio ) {
+    zoom = opt.containerWidth / opt.imageWidth;
+    if( opt.alignY === 'middle' ) {
+      y = 0.5 * (opt.containerHeight - opt.imageHeight * zoom);
+    }
+    else if( opt.alignY === 'end' ) {
+      y = opt.containerHeight - opt.imageHeight * zoom;
+    }
+  } else {
+    zoom = opt.containerHeight / opt.imageHeight;
+    if( opt.alignX === 'middle' ) {
+      x = 0.5 * (opt.containerWidth - opt.imageWidth * zoom);
+    }
+    else if( opt.alignX === 'end' ) {
+      x = opt.containerWidth - opt.imageWidth * zoom;
+    }
+  }
+
+  return { x: x, y: y, zoom: zoom };
+}
+
+function createCanvas() {
+  var canvas = document.createElement("canvas");
+  canvas.setAttribute( "width", this.width );
+  canvas.setAttribute( "height", this.height );
+  return canvas;
 }

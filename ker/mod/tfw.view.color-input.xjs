@@ -1,0 +1,33 @@
+{View DIV
+  view.attribs:{
+    value: {color "#fb7" behind:onValueChanged}
+    label: {string "Color"}
+    focus: {boolean false}
+    wide: {boolean false}
+    visible: {boolean true}
+    width: {unit "100%"}
+  }
+
+  class: tfw-view-color-input
+  class.focus: {Bind focus} 
+  class.wide: {Bind wide} 
+  class.|hide: {Bind visible} 
+  class.thm-bg3: {Bind focus back:false}
+
+
+  [
+    {DIV view.id: head, class: head {Bind label}}
+    {DIV view.id: body, class: body
+      [
+        {BUTTON view.id: button
+          focus:{Bind focus}
+          class: thm-ele2
+          event.tap: onTap
+          textcontent:{Bind value}
+          style.background: {Bind value}
+          style.width: {Bind width}}
+      ]}
+    {DIV view.id: foot, class: foot}
+    {DIV view.id: bottom, class: "bottom thm-bgS"}
+  ]
+}

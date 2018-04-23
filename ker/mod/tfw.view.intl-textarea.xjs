@@ -1,0 +1,26 @@
+// tfw.view.textarea
+{View DIV
+  view.attribs: {
+    value: {multilang "" behind: onIntlValueChanged}
+    language: {string "" behind: onLanguageChanged}
+    label: {string ""}
+    focus: {boolean false}
+    visible: {boolean true}
+    width: {unit "8rem"}
+  }
+
+  class: tfw-view-intl-textarea
+  class.|hide: {Bind visible}
+  style.width: {Bind width}
+  
+  [
+    {tfw.view.textarea
+      view.id:textbox
+      on.value: onValueChanged
+      label: {Bind label}
+      focus: {Bind focus}
+      width: {Bind width}
+    }
+    {DIV class:lang textcontent:{Bind language} width: {Bind width}}
+  ]
+}

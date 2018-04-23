@@ -27,6 +27,8 @@ var ID = 0;
  * @param  {function=undefined} args.A.filter  -  Filter for  values
  * entering the source. If the filter returns `false` the value is not
  * set to the source.
+ * @param  {function=undefined} args.A.map  - Function  to execute  on
+ * each element of the value. Only if this value is an array.
  * @param   {string|array}  args.A.switch   -  Sometimes,   you  are
  * listening at  a property  A to  change, but  want to  propagate the
  * value  of  B. It  is  usefull  with  buttons which  provide  action
@@ -40,9 +42,9 @@ var ID = 0;
  */
 var Link = function( args ) {
   try {
+    var id = ID++;
     checkArgs.call( this, args );
 
-    var id = ID++;
     var onChangedA = link.call( this, args, id, "A", "B" );
     var onChangedB = link.call( this, args, id, "B", "A" );
     addDestroyFunction.call( this, onChangedA, onChangedB );
@@ -99,49 +101,59 @@ function addDestroyFunction( onSrcChanged, onDstChanged ) {
 }
 
 function actionChanged( src, dst, id, value, propertyName, container, wave ) {
-  var that = this;
+  if( !Array.isArray( wave ) ) wave = [];
 
-  var pmSrc = PropertyManager( src.obj );
-  var pmDst = PropertyManager( dst.obj );
-
-  if( this.name ) {
-    console.log( "Link " + this.name + ": ", {
+  if( this.dbg ) {
+    console.log( "Link " + this.dbg + ": ", {
       src: src, dst: dst, id: id, value: value, propertyName: propertyName, container: container, wave: wave
     } );
   }
   if( hasAlreadyBeenHere( id, wave ) ) {
-    if( this.name ) {
+    if( this.dbg ) {
       console.log( "...has been BLOCKED by the wave! ", wave );
     }
     return;
   }
 
+  var that = this;
+
+  var pmSrc = PropertyManager( src.obj );
+  var pmDst = PropertyManager( dst.obj );
+
   value = processValue( value, src, dst );
   value = processSwitch( value, dst, pmSrc );
   value = processConverter( value, src, dst );
   if( filterFailed( value, src, dst ) ) {
-    if( this.name ) console.log( "...has been FILTERED!" );
+    if( this.dbg ) console.log( "...has been FILTERED!" );
     return;
   }
+  value = processFormat( value, src, dst );
+  value = processMap( value, src, dst );
 
   if( typeof dst.delay === 'number' ) {
-    if( this.name ) console.log( "...has been DELAYED for " + dst.delay + " ms!" );
+    if( this.debug ) console.log( "...has been DELAYED for " + dst.delay + " ms!" );
     clearTimeout( dst._id );
     dst._id = setTimeout(function() {
-      if( that.name ) {
-        console.log( "Link " + that.name + " (after " + dst.delay + " ms): ", {
+      if( that.dbg ) {
+        console.log( "Link " + that.dbg + " (after " + dst.delay + " ms): ", {
           src: src, dst: dst, id: id, value: value, propertyName: propertyName, wave: wave
         } );
         console.log("...try to change a value. ", {
-          propertyName: dst.name, value: value, target: Object.keys( dst.obj["__tfw.property-manager__"] )
+          target: pmDst,
+          propertyName: dst.name,
+          value: value,
+          wave: wave
         });
       }
       pmDst.change( dst.name, value, wave );
     }, dst.delay);
   } else {
-    if( this.name )
+    if( this.debug )
       console.log("...try to change a value. ", {
-        propertyName: dst.name, value: value, target: Object.keys( dst.obj["__tfw.property-manager__"] )
+        target: pmDst,
+        propertyName: dst.name,
+        value: value,
+        wave: wave
       });
     pmDst.change( dst.name, value, wave );
   }
@@ -150,15 +162,13 @@ function actionChanged( src, dst, id, value, propertyName, container, wave ) {
 
 function checkArgs( args ) {
   try {
+    if( typeof args.name === 'undefined' ) args.name = args.debug;
+    if( typeof args.name !== 'string' ) args.name = "Link#" + this.id;
     if( typeof args === 'undefined' ) fail("Missing mandatory argument!");
     if( typeof args.A === 'undefined' ) fail("Missing `args.A`!");
     if( !Array.isArray( args.A ) ) args.A = [args.A];
     if( typeof args.B === 'undefined' ) fail("Missing `args.B`!");
     if( !Array.isArray( args.B ) ) args.B = [args.B];
-
-    // If  a name  is given,  debug information  will be  showed in  the
-    // console.
-    this.name = args.name;
 
     var k;
     for( k = 0 ; k < args.A.length ; k++ ) {
@@ -167,6 +177,10 @@ function checkArgs( args ) {
     for( k = 0 ; k < args.B.length ; k++ ) {
       checkPod( args.B[k], k );
     }
+
+    // For debugging.
+    this.name = args.name;
+    this.debug = args.debug;
   }
   catch( ex ) {
     console.error("checkArgs( " + args + " )");
@@ -278,6 +292,57 @@ function processConverter( value, src, dst ) {
       console.error( ex );
       fail(
         "Error in converter of link "
+          + PropertyManager(src.obj) + "." + src.name
+          + " -> "
+          + PropertyManager(dst.obj) + "." + dst.name + "!"
+      );
+    }
+  }
+  return value;
+}
+
+
+/**
+ * `format` is used  with an intl function.  It must  be an array with
+ * two elements: a function and a string.  The function will be called
+ * with the  string as first argument  and the `value` as  second. The
+ * result will be the transformed value.
+ */
+function processFormat( value, src, dst ) {
+  if( !dst.format ) return value;
+  try {
+    if( !Array.isArray( dst.format ) )
+      throw "Must be an array with two elements!";
+    var intlFunc = dst.format[0];
+    if( typeof intlFunc !== 'function' )
+      throw "First element of the array must be a function!";
+    var intlId = dst.format[1];
+    if( typeof intlId !== 'string' )
+      throw "Second element of the array must be a string!";
+    return intlFunc( intlId, value );
+  }
+  catch( ex ) {
+    console.error( ex );
+    fail(
+      "Error in format of link "
+        + PropertyManager(src.obj) + "." + src.name
+        + " -> "
+        + PropertyManager(dst.obj) + "." + dst.name + "!\n"
+        + ex
+    );
+  }
+}
+
+
+function processMap( value, src, dst ) {
+  if( value && typeof value.map === 'function' && typeof dst.map === 'function' ) {
+    try {
+      return value.map( dst.map );
+    }
+    catch( ex ) {
+      console.error( ex );
+      fail(
+        "Error in map of link "
           + PropertyManager(src.obj) + "." + src.name
           + " -> "
           + PropertyManager(dst.obj) + "." + dst.name + "!"

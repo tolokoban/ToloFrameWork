@@ -37,19 +37,24 @@
   filter: saturate(100%) brightness(120%);
 }
 
+.tfw-view-button > div.text.hide {
+  display: none;
+}
+
 .tfw-view-button > div.text {
   flex-grow: 1;
   order: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  text-align: center;
+  text-align: left;
   text-transform: uppercase;
   margin: 0 8px;
 }
 
 .tfw-view-button.inverted > div.text {
   order: -1;
+  text-align: right;
 }
 
 .tfw-view-button.no-text > div.text {
@@ -69,10 +74,10 @@
   pointer-event: none;
   text-decoration: none;
   cursor: default;
-  background: rgba(128,128,128,.5);
+  filter: saturate(0);
   text-shadow: none;
   box-shadow: none;
-  font-style: italic;
+  opacity: .5;
 }
 
 .tfw-view-button:focus {

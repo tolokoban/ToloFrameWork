@@ -3,11 +3,27 @@
 var $ = require("dom");
 
 var CODE_BEHIND = {
+  onKeyUp: onKeyUp,
   onValueChanged: onValueChanged
 };
 
+var MAX_AUTOCOMPLETION_SUGGESTIONS = 99;
+
+
+function onKeyUp( evt ) {
+  if( evt.key === 'Enter' ) this.action = this.value;
+}
 
 function onValueChanged( v ) {
+  manageValidator.call( this, v );
+  manageAutoCompletion.call( this, v );
+}
+
+function manageValidator( v ) {
+  this.valid = this.validator( v );
+}
+
+function manageAutoCompletion( v ) {
   var that = this;
   var list = this.list;
   if( !Array.isArray( list ) || list.length === 0 ) return;
@@ -20,15 +36,15 @@ function onValueChanged( v ) {
     var pos = completionText.toLowerCase().indexOf( textToSearch );
     if( pos !== 0 ) return;
     elementsCount++;
-    if( elementsCount > 8 ) return;
+    if( elementsCount > MAX_AUTOCOMPLETION_SUGGESTIONS ) return;
     addCompletionItem.call( that, elemCompletion, completionText, pos, textToSearch.length );
   });
-  if( elementsCount < 8 ) {
+  if( elementsCount < MAX_AUTOCOMPLETION_SUGGESTIONS ) {
     list.forEach(function (completionText) {
       var pos = completionText.toLowerCase().indexOf( textToSearch );
       if( pos < 1 ) return;
       elementsCount++;
-      if( elementsCount > 8 ) return;
+      if( elementsCount > MAX_AUTOCOMPLETION_SUGGESTIONS ) return;
       addCompletionItem.call( that, elemCompletion, completionText, pos, textToSearch.length );
     });
   }

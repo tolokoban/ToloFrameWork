@@ -1,7 +1,0 @@
-{"View" DIV class: test [
-  {SECTION
-    [{tp.view.tourism.edit}]
-  }
-  {SECTION [{showcase.icon}]}
-  {SECTION [{showcase.button}]}
-]}

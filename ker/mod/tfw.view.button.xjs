@@ -4,7 +4,9 @@
     action: {action}    
     tag: {string ACTION} // The value `action` will take on every tap.
     icon: ""
-    content: {string "Click me!"}
+    text: {string "Click me!"}
+    href: {string ""}
+    target: {string ""}
     pressed: {boolean false}
     flat: {boolean false}
     type: {[default primary secondary] primary}
@@ -16,6 +18,8 @@
     responsive: {boolean false}
     small: {boolean false, behind: onSmallChanged}
   }
+
+  view.prototype: [on, fire]
   
   class: "tfw-view-button"
   class.flat: {Bind flat}
@@ -30,13 +34,16 @@
 
   style.width: {Bind width}
 
-  event.tap: {Set action {Bind tag}}
-  event.keyup: [{Set action {Bind tag}}{Set pressed false}]
+  event.tap: fire
+  event.keyup: onKeyUp
   event.down: {Set pressed true}
   event.up: {Set pressed false}
   
   [
     {DIV class:icon [ {tfw.view.icon view.id:icon, content: {Bind icon}} ]}
-    {DIV view.id:text, class:text {Bind content}}
+    {DIV view.id:text
+      class:text
+      class.hide: {Bind text converter:isEmpty}
+      {Bind text}}
   ]
 }

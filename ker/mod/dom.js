@@ -10,6 +10,7 @@
  * var mod = require('dom');
  */
 require("polyfill.classList");
+var Theme = require("dom.theme");
 var PointerEvents = require("tfw.pointer-events");
 
 var $ = function(dom) {
@@ -31,7 +32,6 @@ var $ = function(dom) {
 };
 
 module.exports = $;
-
 
 // Used to store data on the DOM element without colliding with existing attributes.
 var SYMBOL = '@dom' + Date.now();
@@ -73,6 +73,27 @@ $.removeClass = removeClass;
 $.toggleClass = toggleClass;
 $.saveStyle = saveStyle;
 $.restoreStyle = restoreStyle;
+/**
+ * @param {string} name - Name of this theme.
+ * @param {object} style - Colors.
+ * @param {string} style.bg0 - [optional] Background level 0.
+ * @param {string} style.bg1 - [optional] Background level 1.
+ * @param {string} style.bg2 - [optional] Background level 2.
+ * @param {string} style.bg3 - [optional] Background level 3.
+ * @param {string} style.bgP - [optional] Primary color.
+ * @param {string} style.bgPD - [optional] Primary color (dark version).
+ * @param {string} style.bgPL - [optional] Primary color (light version).
+ * @param {string} style.bgS - [optional] Accent color.
+ * @param {string} style.bgSD - [optional] Accent color (dark version).
+ * @param {string} style.bgSL - [optional] Accent color (light version).
+ * @param  {string} style.fg*  - [optional]  To each  background color
+ * (bg) correspond a text color (fg).
+ */
+$.registerTheme = Theme.register.bind($);
+/**
+ * @param {string} name - Name of the heme to apply.
+ */
+$.applyTheme = Theme.apply.bind($);
 /**
  * @param newElem {Element} - Replacement element.
  * @param oldElem {Element} - Element to replace.
@@ -188,31 +209,15 @@ function removeAtt( element, attrib ) {
 function add( element ) {
   element = $(element);
   try {
-    var i, child;
+    var i, child, isValidArgument;
     for (i = 1 ; i < arguments.length ; i++) {
       child = arguments[i];
-      if( typeof child === 'string' || typeof child === 'number' ) {
-        child = '' + child;
-        if( child.substr( 0, 6 ).toLowerCase() == '<html>' ) {
-          // Text starting with '<html>' is HTML code to parse.
-          var html = child.substr( 6 );
-          child = $.tag('span');
-          child.innerHTML = html;
-        }
-        else if( RX_ENTITY.test( child ) ) {
-          // HTML entity, for instance: &amp;, &lt;, ...
-          var text = child;
-          child = $.tag('span');
-          child.innerHTML = text;
-        }
-        else {
-          child = document.createTextNode( child );
-        }
+      isValidArgument = addArray( element, child )
+        || addText( element, child )
+        || addNode( element, child );
+      if( !isValidArgument ) {
+        console.error("Argument #" + i + " of dom.add() is invalid!", arguments);
       }
-      else {
-        child = $(child);
-      }
-      element.appendChild( child );
     }
     return element;
   }
@@ -220,6 +225,46 @@ function add( element ) {
     console.error( "[DOM.add] arguments=", [].slice.call( arguments ) );
     throw Error( "[DOM.add] " + ex );
   }
+}
+
+function addNode( element, child ) {
+  child = $(child);
+  if( child instanceof Node ) {
+    element.appendChild( child );
+    return true;
+  }
+  return false;
+}
+
+function addText( element, child ) {
+  if( typeof child === 'number' ) child = '' + child;
+  if( typeof child !== 'string' ) return false;
+
+  if( child.substr( 0, 6 ).toLowerCase() == '<html>' ) {
+    // Text starting with '<html>' is HTML code to parse.
+    var html = child.substr( 6 );
+    child = $.tag('span');
+    child.innerHTML = html;
+  }
+  else if( RX_ENTITY.test( child ) ) {
+    // HTML entity, for instance: &amp;, &lt;, ...
+    var text = child;
+    child = $.tag('span');
+    child.innerHTML = text;
+  }
+  else {
+    child = document.createTextNode( child );
+  }
+  element.appendChild( child );
+  return true;
+}
+
+function addArray( element, array ) {
+  if( !Array.isArray( array ) ) return false;
+  array.forEach(function (child) {
+    add( element, child );
+  });
+  return true;
 }
 
 function off( element ) {
@@ -236,6 +281,10 @@ function off( element ) {
   pe.off();
   delete element[SYMBOL].events;
 }
+
+var NON_POINTER_EVENTS = [
+  'keyup', 'keydown', 'scroll', 'load', 'error'
+];
 
 function on( element, slots, extra ) {
   // If only a function is passed, we consider this is a Tap event.
@@ -269,7 +318,7 @@ function on( element, slots, extra ) {
     } else {
       preview = false;
     }
-    if (key == 'keydown' || key == 'keyup') {
+    if( NON_POINTER_EVENTS.indexOf(key.toLowerCase()) > -1 ) {
       element.addEventListener( key, val, preview );
     } else {
       element[SYMBOL].events.on( key, val, preview );
@@ -504,4 +553,4 @@ function restoreStyle( elements ) {
       }
     }
   });
-}
+};
