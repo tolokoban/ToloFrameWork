@@ -9,6 +9,7 @@ div.tfw-view-textbox {
 
 div.tfw-view-textbox.wide {
   display: block;
+  width: 100%;
 }
 
 div.tfw-view-textbox.hide { display: none; }

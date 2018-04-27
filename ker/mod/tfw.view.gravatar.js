@@ -13,8 +13,15 @@ function onChanged() {
   var img = this.$elements.img.$;
   
   $.addClass( img, "hide" );
-  img.onLoad = function() {
+  $.css( this, {
+    width: this.size + "px",
+    height: this.size + "px"
+  });
+  img.onload = function() {
     $.removeClass( img, "hide" );
+  };
+  img.onerror = function() {
+    console.error("Unable to load Gravatar image:", img.src);
   };
   var md5 = this.value;
   if( md5.indexOf('@') > -1 ) {
