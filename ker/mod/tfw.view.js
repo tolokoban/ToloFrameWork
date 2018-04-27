@@ -82,7 +82,12 @@ function defineAttribTextContent( elem ) {
     PM( this ).create(name, {
       get: function() { return elem.textContent; },
       set: function(v) {
-        elem.textContent = v;
+        if( typeof v !== 'string' ) v = "" + v;
+        
+        if( v.substr(0, 6) === '<html>' )
+          elem.innerHTML = v.substr(6);
+        else
+          elem.textContent = v;
       }
     });
   }, this);
