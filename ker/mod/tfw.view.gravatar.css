@@ -1,15 +1,15 @@
 div.tfw-view-gravatar {
-    padding: 0:
-    position: relative;
+  padding: 0;
+  position: relative;
 }
 
 div.tfw-view-gravatar > img {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }

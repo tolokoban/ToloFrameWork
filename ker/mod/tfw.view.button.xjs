@@ -10,7 +10,7 @@
     pressed: {boolean false}
     flat: {boolean false}
     type: {[default primary secondary] primary}
-    enabled: {boolean true}
+    enabled: {boolean true behind:onEnabledChanged}
     inverted: {boolean false}
     visible: {boolean true}
     width: {unit auto}
@@ -19,6 +19,7 @@
     small: {boolean false, behind: onSmallChanged}
   }
 
+  view.init: init
   view.prototype: [on, fire]
   
   class: "tfw-view-button"
@@ -34,7 +35,6 @@
 
   style.width: {Bind width}
 
-  event.tap: fire
   event.keyup: onKeyUp
   event.down: {Set pressed true}
   event.up: {Set pressed false}

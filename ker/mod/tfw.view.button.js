@@ -3,12 +3,15 @@
 var CODE_BEHIND = {
   getClasses: getClasses,
   onSmallChanged: onSmallChanged,
+  onEnabledChanged: onEnabledChanged,
   onKeyUp: onKeyUp,
   on: on,
-  fire: fire
+  fire: fire,
+  init: init
 };
 
 var PM = require("tfw.binding.property-manager");
+var Touchable = require("tfw.touchable");
 
 /**
  * @member on
@@ -79,4 +82,15 @@ function onKeyUp( evt ) {
   evt.stopPropagation();
   this.action = this.tag;
   this.pressed = false;  
+}
+
+function init() {
+  this._touchable = new Touchable( this.$ );
+  this._touchable.tap.add( this.fire.bind( this ) );
+  this._touchable.enabled = this.enabled;
+}
+
+function onEnabledChanged( v ) {
+  if( !this._touchable ) return;
+  this._touchable.enabled = v;
 }
