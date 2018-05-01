@@ -29,7 +29,7 @@ var Touchable = function ( elem, opts ) {
   if ( typeof opts.enabled === 'undefined' ) opts.enabled = true;
   elem = $( elem );
   this.enabled = opts.enabled;
-  this.color = opts.color || "#fd8";
+  this.color = opts.color || "#333";
   this.classToAdd = opts.classToAdd;
   this.opacity = opts.opacity || 0.4;
   this.element = $( elem );
