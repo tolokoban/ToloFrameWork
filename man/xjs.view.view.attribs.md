@@ -20,11 +20,14 @@ view.attribs: {
 ```
 
 Here is how to define an attribute:
-* *0*: Attribute type.
-* *1*: Default value.
-* *behind*: Name of the code-behind function to call when the value has changed. The argument of the function is the value and the `this` operator is set to the view object.
-* *debug*: If defined, a call to `console.info` will be made at each new value received by this attribute.
-* *nan*: Only for _integer_ and _float_. If the value to convert is not a number (nan), use this value. 
+* __0__: Attribute type.
+    * `boolean`, `string`, `integer`, `float`: ensure any value set will have this type.
+    * `action`: any value you set to such an attribute, a _changed_ event will be fired with the value, even if the same value was already set before.
+    * `[...]`: array of strings representing an enumerate. After setting any value to this attribute, you will always get an item of this array and nothing else. Setting a value that is not part of the defined array is the same as setting the first element of the array. The setting is case insensitive, but the getting is not.
+* __1__: Default value.
+* __behind__: Name of the code-behind function to call when the value has changed. The argument of the function is the value and the `this` operator is set to the view object.
+* __debug__: If defined, a call to `console.info` will be made at each new value received by this attribute.
+* __nan__: Only for _integer_ and _float_. If the value to convert is not a number (NaN), use this value. 
 
 ----
 [Back](xjs.view.md)
