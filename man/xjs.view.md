@@ -16,10 +16,10 @@ Other objects, strings, numbers and so on are called __standard values__.
 * attrib.<names>: .
 * class.<names>: .
 * class.*: .
-* [event.<event-name>]({xjs.view.event.md}): Adding events and gestures handlers.
+* [event.<event-name>](xjs.view.event.md): Adding events and gestures handlers.
 * [on.<attrib-name>](xjs.view.on.md): Call a function from code behind as soon as the attribute's value changed.
 * style.<name>: .
-* {Bind ...}: .
+* [{Bind ...}](xjs.view.bind.md): .
 * {Intl ...}: .
 * %macro%: .
 
