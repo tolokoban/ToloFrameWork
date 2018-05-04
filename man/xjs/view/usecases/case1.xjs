@@ -1,0 +1,43 @@
+{View DIV
+  view.attribs: {
+    title: {string "Hello"}
+    actionSave: {action}
+    weapons: {List []}
+    weapons-per-page: {integer 5}
+  }
+  
+  [
+    {layout.row [
+      {SPAN textContent:{Bind title}}
+      {tfw.view.button text:{Intl save} icon:save}
+    ]}
+    {layout.tabstrip [
+      {DIV $tabstrip.header:{Intl attributes} [
+        {tfw.view.textbox label:{Intl name}}
+        {tfw.view.textarea label:{Intl desc}}
+      ]}
+      {DIV $tabstrip.header:{Intl markers} [
+        {H1 textContent:{Bind weapons converter:{
+          Pipe length {Switch {
+            0:{Intl zero-weapon} 1:{Intl one-weapon} *:{Intl many-weapons}
+          }}
+        }}}
+        {UL {Bind weapons converter:{Map view.weapon #map-weapons
+          name:$itm.name index:$idx
+          {
+            filter: {$itm.disabled converter:not}
+            sort: {Behind sortWeapons}
+            page: {Bin page}
+            limit: {Bind weapons-per-page}
+          }
+        }}}
+        {layout.row {Bind weapons converter:{Map view.page.button
+          text: $idx
+          {
+            filter: {}
+          }
+        }}}
+      ]}
+    ]}
+  ]
+}
