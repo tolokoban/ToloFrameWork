@@ -51,10 +51,19 @@ For instance, if you _push_ an item into a list, the display will change, wherea
 Here is an example of function provided in the code behind as a map:
 ```js
 var CODE_BEHIND = {
-  makeStudentItem: function( student ) {
+  makeStudentItem: function( student, more ) {
+    if( more.context.lastGroup != student.group ) {
+      var grp = document.createElement( "li" );
+      grp.textContent = student.group;
+      more.context.lastGroup = student.group;
+      var content = document.createElement( "ul" );
+      more.context.content = content;
+      grp.appendChid( content );
+      return grp;
+    }
     var li = document.createElement( "li" );
-    li.textContent = text;
-    return li;
+    li.textContent = student.name;
+    more.context.content.appendChild( li );
   }
 };
 ```
