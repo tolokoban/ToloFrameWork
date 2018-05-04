@@ -39,12 +39,12 @@ function Program( gl, codes, includes ) {
   gl.attachShader( shaderProgram, shaderVert );
   gl.attachShader( shaderProgram, shaderFrag );
   gl.linkProgram( shaderProgram );
-
+/*  Si on exécute les 4 lignes suivantes, on ne peut pas debugger les shaders.
   gl.detachShader( shaderProgram, shaderVert );
   gl.deleteShader( shaderVert );
   gl.detachShader( shaderProgram, shaderFrag );
   gl.deleteShader( shaderFrag );
-
+*/
   this.program = shaderProgram;
   Object.freeze( this.program );
 

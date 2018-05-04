@@ -82,12 +82,13 @@ exports.set = function( converterName, converter ) {
 var RX_CSS_UNIT = /^(-?[.0-9]+)[ \n\r]*([a-z%]*)/;
 function cssUnitConverter(v) {
   if( typeof v === 'number' ) return v + "px";
+  if( typeof v !== 'string' ) return "0";
   v = ("" + v).trim().toLowerCase();
   if( v === 'auto' || v === 'inherit' ) return v;
   var m = RX_CSS_UNIT.exec( v );
   if( !m ) return "0";
   var scalar = parseFloat( m[1] );
-  if( isNaN( scalar ) ) return "0";
+  if( isNaN( scalar ) || scalar == 0 ) return "0";
   var unit = m[2];
   if( unit.length < 1 ) unit = "px";
   return scalar + unit;
