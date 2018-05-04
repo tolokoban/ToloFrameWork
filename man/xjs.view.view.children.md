@@ -25,17 +25,25 @@ This function is used to transform each item or the new array to a DOM element t
   view.attribs: {
     children: {list}
   }
-  [ {UL view.children: {List children map:makeListItem}} ]
+  [ {UL view.children: {List children map:makeListItem before:beforeList after:afterList}} ]
 }
 ```
 
 Code behind:
 ```js
 var CODE_BEHIND = {
-  makeListItem: function( text ) {
+  makeListItem: function( text, more ) {
     var li = document.createElement( "li" );
     li.textContent = text;
     return li;
+  },
+  beforeList: function( context, list ) {
+    list.sort();
+  },
+  beforeList: function( context, list ) {
+    var txt = document.createElement( "p" );
+    txt.textContent = "Count: " + list.length;
+    return txt;
   }
 };
 ```
