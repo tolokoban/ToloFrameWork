@@ -45,3 +45,16 @@ In this case, the elements children can be recreated event if the content of the
 
 
 For instance, if you _push_ an item into a list, the display will change, whereas the action in a _{Bind...}_ syntax does not change the display because the array is not a new one, it has just changed.
+
+## Map function
+
+Here is an example of function provided in the code behind as a map:
+```js
+var CODE_BEHIND = {
+  makeStudentItem: function( student ) {
+    var li = document.createElement( "li" );
+    li.textContent = text;
+    return li;
+  }
+};
+```
