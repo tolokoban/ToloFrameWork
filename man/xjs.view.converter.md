@@ -1,8 +1,22 @@
 # Converters
 A __converter__ is a function which transforms its unique argument.
 
+## Const converter
+This is a function which always return a constant, no matter what input it receives.
 
-### Simple converter
+```
+view.attribs: { fire: {action} }
+{tfw.view.button view.id:btn action:{Bind fire back.converter:{Const "FIRED!"}}}
+{DIV textContent:{Bind btn/action}}
+{DIV textContent:{Bind btn/action converter:{Const "Got it!"}}
+```
+
+## Simple converter
+
+```
+view.attribs: { enabled: {boolean false} }
+{tfw.view.button enabled:{Bind input/value converter:boolean}}
+```
 
 Toloframework provides a bunch of simple converters. You can use one of them by just providing its name.
 
