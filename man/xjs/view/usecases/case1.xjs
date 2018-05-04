@@ -22,21 +22,7 @@
             0:{Intl zero-weapon} 1:{Intl one-weapon} *:{Intl many-weapons}
           }}
         }}}
-        {UL {Bind weapons converter:{Map view.weapon #map-weapons
-          name:$itm.name index:$idx
-          {
-            filter: {$itm.disabled converter:not}
-            sort: {Behind sortWeapons}
-            page: {Bin page}
-            limit: {Bind weapons-per-page}
-          }
-        }}}
-        {layout.row {Bind weapons converter:{Map view.page.button
-          text: $idx
-          {
-            filter: {}
-          }
-        }}}
+        {UL view.children: {List weapons map:addWeaponView}}
       ]}
     ]}
   ]
