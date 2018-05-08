@@ -12,7 +12,6 @@ describe('Module "dependencies-finder"', function() {
     });
   };
   describe('should find requires', function() {
-    debugger;
     check( "x-widget", ['dom', 'tfw.data-binding'] );
     //check( "strings", ["A", "C'est", "EF"] );
     check( "comments", ['YoMan'] );
