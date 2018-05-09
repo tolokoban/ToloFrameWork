@@ -48,6 +48,7 @@ var CONVERTERS = {
     }
   },
   enum: function( list ) {
+    list = arrayConverter( list );
     var caseInsensitiveList = list.map(function(x) { return x.toLowerCase(); });
     return function(v) {
       var idx = Math.max( 0, caseInsensitiveList.indexOf( ("" + v).toLowerCase() ) );
