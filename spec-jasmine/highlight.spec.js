@@ -38,7 +38,6 @@ describe('Highlight', function() {
       chk( "// C'est beau.", span('comment', "// C'est beau. ") );
     });
     it('should deal with comments before lines', function() {
-      debugger;
       chk( "// Temps en millisecondes.\nuniform float uniTime;", 
         span('comment', "// Temps en millisecondes.") + "\n" +
         span('identifier', 'uniform') + " " +

@@ -26,6 +26,19 @@ describe('Module boilerplate.util', function() {
     });
   });
 
+  describe('Function isJavascriptIdentifier()', function() {
+    ["foo", "bar", "$", "_", "jedi26", "jedi_26", "Crum$ble"].forEach(function (name) {
+      it( `"${name}" should return true`, function() {
+        expect( Util.isJavascriptIdentifier( name ) ).toBe( true );
+      });
+    });
+    ["!foo", "", "bar.", "garçon", "2hip"].forEach(function (name) {
+      it( `"${name}" should return false`, function() {
+        expect( Util.isJavascriptIdentifier( name ) ).toBe( false );
+      });
+    });
+  });
+  
   describe('Function isSpecial()', function() {
     [
       {toto: 666, 0: "a"},

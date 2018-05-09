@@ -28,8 +28,9 @@ button.tfw-view-checkbox > div.txt {
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;  
-  flex-grow: 1;
+  flex-grow: 1;  
   text-align: left;
+  transition: opacity .2s;
 }
 button.tfw-view-checkbox.inverted > div.txt {
   order: -1;

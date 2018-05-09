@@ -217,13 +217,14 @@ function add( element ) {
         || addNode( element, child );
       if( !isValidArgument ) {
         console.error("Argument #" + i + " of dom.add() is invalid!", arguments);
+        debugger;
       }
     }
     return element;
   }
   catch( ex ) {
     console.error( "[DOM.add] arguments=", [].slice.call( arguments ) );
-    throw Error( "[DOM.add] " + ex );
+    console.error( "[DOM.add] exception=", ex );
   }
 }
 
