@@ -13,9 +13,8 @@ div.tfw-view-floating-button {
 }
 
 div.tfw-view-floating-button.hide {
-  transition: transform 0s;
+  transition: transform .3s;
   transform: scale(0);
-  display: none;
 }
 
 div.tfw-view-floating-button > svg.tfw-view-icon.view {

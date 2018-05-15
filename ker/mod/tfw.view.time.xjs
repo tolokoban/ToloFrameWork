@@ -1,0 +1,6 @@
+{View DIV class:tfw-view-time
+  view.attribs: {
+    value: {time 0}
+    label: {string ""}
+  }
+}

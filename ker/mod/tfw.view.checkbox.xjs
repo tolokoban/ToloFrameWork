@@ -8,6 +8,9 @@
     content: Checkbox
   }
 
+  view.init: init
+  view.prototype: [on]
+
   class: tfw-view-checkbox
   class.ok: {Bind value}
   class.inverted: {Bind inverted}
