@@ -3,6 +3,7 @@
     icon: {string add}
     action: {action}
     small: {boolean false}
+    enabled: {boolean true behind:onEnabledChanged}
     tag: {any}
     type: {[S SD SL P PD PL "0" "1" "2" "3"] S}
     visible: {boolean true}
@@ -10,12 +11,13 @@
     target: {string ""}
   }
 
+  view.init: init
   view.prototype: [on, fire]
   
   class:"tfw-view-floating-button thm-ele8"
   class.|hide:{Bind visible}
+  class.|disabled:{Bind enabled}
   class.small:{Bind small}
-  event.tap: fire
   event.keyup: onKeyUp
   class.*: {[type] getClasses}
  

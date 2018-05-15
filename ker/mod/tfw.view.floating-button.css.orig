@@ -14,8 +14,12 @@ div.tfw-view-floating-button {
 }
 
 div.tfw-view-floating-button.hide {
+<<<<<<< HEAD
   transition: transform .3s;
   transform: scale(0);
+=======
+  display: none;
+>>>>>>> 0194f79da2d8312b9d1cb3480542b41bf2489456
 }
 
 div.tfw-view-floating-button.disabled {
