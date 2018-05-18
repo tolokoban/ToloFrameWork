@@ -20,6 +20,7 @@ var Touchable = require("tfw.touchable");
  */
 function on( slot ) {
   PM( this ).on( "action", slot );
+  return this;
 }
 
 /**
@@ -80,13 +81,15 @@ function onKeyUp( evt ) {
   if( evt.keyCode != 32 && evt.keyCode != 13 ) return;
   evt.preventDefault();
   evt.stopPropagation();
-  this.action = this.tag;
+  fire.call( this );
   this.pressed = false;  
 }
 
 function init() {
+  var that = this;
+
   this._touchable = new Touchable( this.$ );
-  this._touchable.tap.add( this.fire.bind( this ) );
+  this._touchable.tap.add(function() { fire.call( that ); });
   this._touchable.enabled = this.enabled;
 }
 

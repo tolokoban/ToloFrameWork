@@ -26,6 +26,7 @@ function getClasses() {
  */
 function on( slot ) {
   PM( this ).on( "action", slot );
+  return this;
 }
 
 /**

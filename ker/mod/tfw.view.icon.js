@@ -76,11 +76,12 @@ function createSvgFromDefinition( def ) {
   } );
 
   // Store elements with special colors  in order to update them later
-  // if needed. We can have up to 8 colors numbered from 0 to 5.
+  // if needed. We can have up to 8 colors numbered from 0 to 7.
   var elementsToFillPerColor = [[], [], [], [], [], [], [], []];
   var elementsToStrokePerColor = [[], [], [], [], [], [], [], []];
 
   var svgRootGroup = addChild( this.$, elementsToFillPerColor, elementsToStrokePerColor, def );
+
   $.att( svgRootGroup, {
     'stroke-width': 6,
     fill: "none",
@@ -126,25 +127,25 @@ function addChild( parent, elementsToFillPerColor, elementsToStrokePerColor, def
 
 function setAttributesAndRegisterElementsWithSpecialColors(
   node, elementsToFillPerColor, elementsToStrokePerColor, attribs ) {
-    var attName, attValue, valueAsIndex, elementsPerColor;
+  var attName, attValue, valueAsIndex, elementsPerColor;
 
-    for( attName in attribs ) {
-      attValue = attribs[attName];
-      if( attName === 'fill' || attName === 'stroke' ) {
-        valueAsIndex = parseInt( attValue );
-        if( isNaN( valueAsIndex ) ) {
-          // Straigth attribute.
-          $.att( node, attName, attValue );
-        } else {
-          elementsPerColor = attName === 'fill' ? elementsToFillPerColor : elementsToStrokePerColor;
-          valueAsIndex = clamp(valueAsIndex, 0, elementsPerColor.length - 1 );
-          elementsPerColor[ valueAsIndex ].push( node );
-        }
-      } else {
+  for( attName in attribs ) {
+    attValue = attribs[attName];
+    if( attName === 'fill' || attName === 'stroke' ) {
+      valueAsIndex = parseInt( attValue );
+      if( isNaN( valueAsIndex ) ) {
+        // Straigth attribute.
         $.att( node, attName, attValue );
+      } else {
+        elementsPerColor = attName === 'fill' ? elementsToFillPerColor : elementsToStrokePerColor;
+        valueAsIndex = clamp(valueAsIndex, 0, elementsPerColor.length - 1 );
+        elementsPerColor[ valueAsIndex ].push( node );
       }
+    } else {
+      $.att( node, attName, attValue );
     }
   }
+}
 
 function checkDefinitionSyntax( def ) {
   if( !Array.isArray( def ) ) {
@@ -157,7 +158,7 @@ function checkDefinitionSyntax( def ) {
 }
 
 function updatePen( penIndex, penColor ) {
-  if( typeof penColor === 'undefined' ) return;
+  if( typeof penColor === 'undefined' ) penColor = "0";
 
   var elementsToFill = this._content.elementsToFillPerColor[penIndex];
   if( !Array.isArray(elementsToFill) ) elementsToFill = [];
