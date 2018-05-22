@@ -13,8 +13,8 @@
     enabled: {boolean true behind:onEnabledChanged}
     inverted: {boolean false}
     visible: {boolean true}
-    width: {unit auto}
     wide: {boolean false}
+    width: {unit "inherit" behind: onWidthChanged}
     responsive: {boolean false}
     small: {boolean false, behind: onSmallChanged}
   }
@@ -32,8 +32,6 @@
   class.small: {Bind small}
 
   attrib.|disabled: {Bind enabled}
-
-  style.width: {Bind width}
 
   event.keyup: onKeyUp
   event.down: {Set pressed true}

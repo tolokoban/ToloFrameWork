@@ -2,6 +2,7 @@
 
 var CODE_BEHIND = {
   getClasses: getClasses,
+  onWidthChanged: onWidthChanged,
   onSmallChanged: onSmallChanged,
   onEnabledChanged: onEnabledChanged,
   onKeyUp: onKeyUp,
@@ -21,6 +22,14 @@ var Touchable = require("tfw.touchable");
 function on( slot ) {
   PM( this ).on( "action", slot );
   return this;
+}
+
+function onWidthChanged( v ) {
+  if( this.wide ) {
+    delete this.$.style.width;
+  } else {
+    this.$.style.width = v;
+  }
 }
 
 /**
