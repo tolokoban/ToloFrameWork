@@ -14,7 +14,7 @@
     inverted: {boolean false}
     visible: {boolean true}
     wide: {boolean false}
-    width: {unit "inherit" behind: onWidthChanged}
+    width: {unit "auto" behind: onWidthChanged}
     responsive: {boolean false}
     small: {boolean false, behind: onSmallChanged}
   }
