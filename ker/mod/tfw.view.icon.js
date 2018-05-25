@@ -175,15 +175,18 @@ function updateColor( elementsToFill, elementsToStroke, color ) {
 
 function updateColorForType( attName, elements, classes, color ) {
   var className = classes[color];
+  elements.forEach(function (element) {
+    Object.values( classes ).forEach(function (classNameToRemove) {
+      $.removeClass( element, classNameToRemove );
+    });
+  });
+  
   if( typeof className === 'undefined' ) {
     elements.forEach(function (element) {
       $.att( element, attName, color );
     });
   } else {
     elements.forEach(function (element) {
-      Object.values( classes ).forEach(function (classNameToRemove) {
-        $.removeClass( element, classNameToRemove );
-      });
       $.addClass( element, className );
       $.removeAtt( element, attName );
     });
