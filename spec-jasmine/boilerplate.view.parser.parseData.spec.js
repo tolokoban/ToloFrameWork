@@ -22,6 +22,8 @@ describe('Module `boilerplate.view.parser.parseData`', function() {
     var parser = new Parser();
     var result = parser.parseData( input );
     console.log("============================================================");
+    console.log(JSON.stringify( input ));
+    console.log("============================================================");
     console.log("Expected: ");
     console.log(JSON.stringify( expected, null, '  ' ));
     console.log("------------------------------------------------------------");
@@ -34,40 +36,41 @@ describe('Module `boilerplate.view.parser.parseData`', function() {
   }
 
   debugger;
-  checkDebug(
-    { in: { bar: {$f: [{foo: "Foo", cor: []}]}, tor: 666}, ex: [
-      "{",[
-        "bar:{", [
-          "$f:[", [
-            "{", [
-              'foo:"Foo",',
-              'cor:[]'
-            ],
-            "}"
-          ],
-        ],
-        "},",
-        "tor:666"
-      ],
-      "}"] }
-  );
+  //checkDebug({ in: { bar: {$f: [{foo: "Foo", cor: []}]}, tor: 666}, ex: [
 
+  describe('{intl ...}', function() {
+    [
+      { in: {0: "intl", 1: "title"}, ex: "_(\"title\")" },
+      { in: {0: "intl", 1: "button/title"}, ex: "this.$elements.button._(\"title\")" },
+      { in: {0: "intl", 1: "foo-bar/title"}, ex: "this.$elements[\"foo-bar\"]._(\"title\")" }
+    ].forEach( check );
+  });
+  
   describe('object', function() {
     [
       //{ in: [], ex: [] },
       { in: {}, ex: ["{}"] },
       { in: {a:27}, ex: ["{a:27}"] },
+      { in: {a:[27]}, ex: ["{a:[27]}"] },
+      { in: {a:27, b:18}, ex: ["{", ["a:27,", "b:18", ], "}"] },
       { in: { bar: {$f: [{foo: "Foo", cor: []}]}, tor: 666}, ex: [
-        "{",[
-          "bar:{", [
-            "{$f:[", [
-
+        "{",
+        [
+          "bar:{$f:[",
+          [
+            "{",
+            [
+              "foo:\"Foo\",",
+              "cor:[]"
             ],
-            "]"
+            "}"
           ],
+          "]},",
           "tor:666"
         ],
-        "}"] },
+        "}"
+      ]
+      },
       { in: {foo:[18,27],"6":666}, ex: [
         "{", [
           '"6":666,',

@@ -39,6 +39,20 @@ describe('Module boilerplate.util', function() {
     });
   });
   
+  describe('Function att()', function() {
+    [
+      ["toto", ".toto"],
+      ["foo-bar", "[\"foo-bar\"]"],
+      [27, "[27]"]
+    ].forEach(function (testCase) {
+      var inp = testCase[0];
+      var exp = testCase[1];
+      it(`att("${inp}") should return "${exp}"`, function() {
+        expect( Util.att( inp ) ).toBe( exp );
+      });
+    });
+  });
+  
   describe('Function isSpecial()', function() {
     [
       {toto: 666, 0: "a"},
