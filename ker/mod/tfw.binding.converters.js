@@ -15,7 +15,7 @@ var CONVERTERS = {
   integer: integerConverter,
   intl: intlConverter,
   isEmpty: isEmptyConverter,
-  isNotEmpty: isEmptyConverter,
+  isNotEmpty: isNotEmptyConverter,
   keys: keysConverter,
   length: lengthConverter,
   list: listConverter,
