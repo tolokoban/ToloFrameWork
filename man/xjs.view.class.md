@@ -63,8 +63,9 @@ var CODE_BEHIND: {
 ```
 
 Then you get this:
+
 || Trigger || Applied classes ||
-| flat := false | |
+| flat := false | --- |
 | pressed := true | pressed |
 | flat := true | flat pressed |
 | pressed := false | flat |
