@@ -1,8 +1,8 @@
 # Preprocessed macros
 
 Expand variables and return the resulting object.
-A  variable is  writtent like  this `%VarName%`.
-And it  set like this: `%VarName%: "blabla"`.
+
+A  variable is  written like  this `%VarName%`, and it is set like this: `%VarName%: "blabla"`.
 The value of a variable can be of any type.
 Variables defined  in the  value of  another variables  are expanded only when the parent variable is expanded.
 
@@ -16,7 +16,7 @@ Variables defined  in the  value of  another variables  are expanded only when t
   ]}
 ```
 
-It also possible to concatenate variables:
+It also possible to concatenate variables with the "`+`" syntax:
 ```js
 view.attribs: {
   duration: {String}
