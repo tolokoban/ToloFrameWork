@@ -14,14 +14,14 @@ Other objects, strings, numbers and so on are called __standard values__.
 * view.init: .
 * [view.children](xjs.view.view.children.md): Bind children of an element to an array or a list.
 * attrib.<names>: .
-* [class.<names>](xjs.view.class): Add a CSS class depending on the value of a bound boolean.
-* [class.*](xjs.view.class): Add CSS classes depending on values of a bound booleans.
+* [class.<names>](xjs.view.class.md): Add a CSS class depending on the value of a bound boolean.
+* [class.*](xjs.view.class.md): Add CSS classes depending on values of a bound booleans.
 * [event.<event-name>](xjs.view.event.md): Adding events and gestures handlers.
 * [on.<attrib-name>](xjs.view.on.md): Call a function from code behind as soon as the attribute's value changed.
 * style.<name>: .
 * [{Bind ...}](xjs.view.bind.md): .
 * {Intl ...}: .
-* %macro%: .
+* [%macro%](xjs.view.macro.md): Preprocessed macros.
 
 ### Code behind
 Even if XJS.View has been made as powerful as possible, there are still cases where Javascript code is needed.
