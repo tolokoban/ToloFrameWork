@@ -64,11 +64,12 @@ var CODE_BEHIND: {
 
 Then you get this:
 
-|| Trigger || Applied classes ||
-| flat := false | --- |
-| pressed := true | pressed |
-| flat := true | flat pressed |
-| pressed := false | flat |
+| Trigger          | Applied classes |
+| ---------------- | --------------- |
+| flat := false    |                 |
+| pressed := true  | pressed         |
+| flat := true     | flat pressed    |
+| pressed := false | flat            |
 
 You're probably surprised to get `flat` in the last row of this table.
 In fact, the algorithm is as follows:
