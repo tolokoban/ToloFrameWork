@@ -3,7 +3,6 @@
  */
 
 var Marked = require("./marked");
-var S = require("string");
 
 exports.tags = ["x-md"];
 exports.priority = 0;
