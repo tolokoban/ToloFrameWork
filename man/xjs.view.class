@@ -1,8 +1,10 @@
 # CSS Classes manipulation
+
 You can set CSS classes in a static way:
 ```
 {DIV class: "elevation-8 round"}
 ```
+
 or in a bounded way:
 ```
 {DIV class: {Bind style}}
@@ -54,8 +56,8 @@ And the JS code:
 ```js
 var CODE_BEHIND: {
   computeClasses: function() {
-    if( !this.pressed ) return [];
-    return this.flat ? ["flat", "pressed"] : ["pressed"];
+    if( !this.pressed ) return;
+    return this.flat ? ["flat", "pressed"] : "pressed";
   }
 };
 ```
@@ -66,5 +68,11 @@ Then you get this:
 | pressed := true | pressed |
 | flat := true | flat pressed |
 | pressed := false | flat |
+
+You're probably surprised to get `flat` in the last row of this table.
+In fact, the algorithm is as follows:
+* If this is not the first time the current attribute triggers the `computeClasses` function  then
+  * Remove the CSS classes previously added.
+* Add the CSS classes in the returned array.
 
 
