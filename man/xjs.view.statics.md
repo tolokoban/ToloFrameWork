@@ -2,21 +2,21 @@
 
 Define static functions on the view.
 
-*`my-view.xjs`*
+**`my-view.xjs`**:
 ```js
 {View DIV
   view.statics: getName
 }
 ```
 
-*`my-view.js`*
+**`my-view.js`**:
 ```js
 var CODE_BEHIND = {
   getName: function() { return "My-View"; }
 }
 ```
 
-*`test.js`*
+**`test.js`**:
 ```js
 var View = require("my-view");
 console.log( "Name", View.getName() );
@@ -28,3 +28,6 @@ If you have several static functions, you can provide an array:
   view.statics: [getName, incCounter]
 }
 ```
+
+----
+[Back](xjs.view.md)
