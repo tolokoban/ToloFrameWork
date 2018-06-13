@@ -2,7 +2,7 @@
 
 * [{View ...}](xjs.view.md)
 
-## Introduction
+## Overview
 
 In all XJS documentation we will call __special object__ any object with an implicit attribute name.
 That is any object with an attribute named __"0"__, like `{boolean init: true}` for instance.
