@@ -6,7 +6,49 @@ var Hammer = require("external.hammer");
 var Converters = require('tfw.binding.converters');
 
 
-exports.Tag = function(tagName, attribs) {
+/**
+ * @class Tag
+ * @param {string} tagName - For instance DIV, SPAN, BUTTON, ...
+ * @param {object} attribs - Attributes of this HTML element.
+ */
+exports.Tag = Tag;
+/**
+ * @param {object} CODE_BEHIND
+ * @param {string...} functionName - Name of a function that must be defined in the code behind.
+ */
+exports.ensureCodeBehind = ensureCodeBehind;
+/**
+ * @param {object} element
+ * @param {function} events.tap
+ * @param {function} events.press
+ * @param {function} events.pan
+ * @param {function} events.swipe
+ *
+ * @example
+ * ```
+ * var View = require("tfw.view");
+ * View.events( div, {
+ *   "tap": function( evt ) {...},
+ *   "press": function( evt ) {...}
+ * });
+ * ```
+ */
+exports.events = events;
+/**
+ * Assign default values.
+ * @param {object} target
+ * @param {object} args - Already defined arguments (with their values) on `target`.
+ * @param {object} defaultValues - Map of default values to apply if they don't exist in `args`.
+ */
+exports.defVal = defVal;
+exports.addClassIfTrue = addClassIfTrue;
+exports.addClassIfFalse = addClassIfFalse;
+exports.addAttribIfTrue = addAttribIfTrue;
+exports.addAttribIfFalse = addAttribIfFalse;
+
+
+
+function Tag(tagName, attribs) {
   tagName = tagName.trim().toLowerCase();
 
   var elem = tagName === 'svg' ? $.svgRoot() : newTag(tagName);
@@ -35,7 +77,26 @@ exports.Tag = function(tagName, attribs) {
       }
     });
   }
+}
+
+/**
+ * Apply a  set of CSS  classes after removing the  previously applied
+ * one for the same `id`.
+ */
+Tag.prototype.applyClass = function( newClasses, id ) {
+  var elem = this.$;
+  if( typeof id === 'undefined' ) id = 0;
+  if( typeof this._applyer === 'undefined' ) this._applyer = {};
+  if( !Array.isArray( newClasses ) ) newClasses = [newClasses];
+
+  var oldClasses = this._applyer[id];
+  if( Array.isArray( oldClasses ) ) {
+    oldClasses.forEach( $.removeClass.bind( $, elem ) );
+  }
+  this._applyer[id] = newClasses;
+  newClasses.forEach( $.addClass.bind( $, elem ) );
 };
+
 
 
 var SVG_TAGS = ["g", "rect", "circle", "line", "path", "defs"];
@@ -83,7 +144,7 @@ function defineAttribTextContent( elem ) {
       get: function() { return elem.textContent; },
       set: function(v) {
         if( typeof v !== 'string' ) v = "" + v;
-        
+
         if( v.substr(0, 6) === '<html>' )
           elem.innerHTML = v.substr(6);
         else
@@ -116,28 +177,9 @@ function defineStandardAttrib( elem, attName ) {
 }
 
 /**
- * Apply a  set of CSS  classes after removing the  previously applied
- * one for the same `id`.
- */
-exports.Tag.prototype.applyClass = function( newClasses, id ) {
-  var elem = this.$;
-  if( typeof id === 'undefined' ) id = 0;
-  if( typeof this._applyer === 'undefined' ) this._applyer = {};
-  if( !Array.isArray( newClasses ) ) newClasses = [newClasses];
-
-  var oldClasses = this._applyer[id];
-  if( Array.isArray( oldClasses ) ) {
-    oldClasses.forEach( $.removeClass.bind( $, elem ) );
-  }
-  this._applyer[id] = newClasses;
-  newClasses.forEach( $.addClass.bind( $, elem ) );
-};
-
-
-/**
  * Check if all needed function from code behind are defined.
  */
-exports.ensureCodeBehind = function( code_behind ) {
+function ensureCodeBehind( code_behind ) {
   if( typeof code_behind === 'undefined' )
     throw "Missing mandatory global variable CODE_BEHIND!";
 
@@ -173,7 +215,7 @@ var GESTURES = [
  * });
  * ```
  */
-exports.events = function( target, events ) {
+function events( target, events ) {
   var elem = $(target);
   var gestures = {};
   var hasGestures = 0;
@@ -198,3 +240,39 @@ exports.events = function( target, events ) {
     });
   }
 };
+
+/**
+ * Assign default values.
+ */
+function defVal(target, args, defaultValues) {
+  var key, val;
+  for( key in defaultValues ) {
+    val = defaultValues[key];
+    if( typeof args[key] === 'undefined' ) {
+      target[key] = val;
+    } else {
+      target[key] = args[key];
+    }
+  }
+};
+
+
+function addClassIfTrue(element, className, value) {
+  if( value ) $.addClass(element, className);
+  else $.removeClass(element, className);
+}
+
+function addClassIfFalse(element, className, value) {
+  if( value ) $.removeClass(element, className);
+  else $.addClass(element, className);
+}
+
+function addAttribIfTrue(element, attribName, value) {
+  if( value ) $.att(element, attribName);
+  else $.removeAtt(element, attribName);
+}
+
+function addAttribIfFalse(element, attribName, value) {
+  if( value ) $.removeAtt(element, attribName);
+  else $.att(element, attribName);
+}
