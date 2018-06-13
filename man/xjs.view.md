@@ -12,6 +12,7 @@ Other objects, strings, numbers and so on are called __standard values__.
 * `view.debug`: Boolean used to activate/deactivate the debug mode.
 * `view.id`: .
 * `view.init`: .
+* [`view.statics`](xjs.view.statics.md): Define static functions on the View.
 * [`view.children`](xjs.view.view.children.md): Bind children of an element to an array or a list.
 * `attrib.<names>`: .
 * [`class.<names>`](xjs.view.class.md): Add a CSS class depending on the value of a bound boolean.
