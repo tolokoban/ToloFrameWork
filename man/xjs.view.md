@@ -14,14 +14,14 @@ Other objects, strings, numbers and so on are called __standard values__.
 * view.init: .
 * [view.children](xjs.view.view.children.md): Bind children of an element to an array or a list.
 * attrib.<names>: .
-* class.<names>: .
-* class.*: .
+* [class.<names>](xjs.view.class.md): Add a CSS class depending on the value of a bound boolean.
+* [class.*](xjs.view.class.md): Add CSS classes depending on values of a bound booleans.
 * [event.<event-name>](xjs.view.event.md): Adding events and gestures handlers.
 * [on.<attrib-name>](xjs.view.on.md): Call a function from code behind as soon as the attribute's value changed.
 * style.<name>: .
 * [{Bind ...}](xjs.view.bind.md): .
 * {Intl ...}: .
-* %macro%: .
+* [%macro%](xjs.view.macro.md): Preprocessed macros.
 
 ### Code behind
 Even if XJS.View has been made as powerful as possible, there are still cases where Javascript code is needed.
@@ -64,41 +64,3 @@ __foobar.xjs__
 
 #### Events
 
-#### CSS Classes manipulation
-You can set CSS classes in a static way:
-```
-{DIV class: "elevation-8 round"}
-```
-or in a bounded way:
-```
-{DIV class: {Bind style}}
-```
-
-You can also bind the existence of a given class to a boolean property:
-```
-// Add class `elevation-8` if and only if `pressed === true`.
-{DIV class.elevation-8: {Bind pressed}}
-```
-```
-// Add class `highlight` if and only if `pressed === false`.
-{DIV class.|highlight: {Bind pressed}}
-```
-```
-// If `pressed === true`, add class `elevation-8`, otherwise add class 'elevation-2'.
-{DIV class.elevation-8|elevation-2: {Bind pressed}}
-```
-
-And if you need a more complex logic to set classes, you can use code behind:
-```
-// As soon as `flat` or `pressed` has changed, call teh code behind function
-// `computeClass()` to return an array of classes to set.
-{DIV class.*: {Bind [flat, pressed] computeClasses}}
-```
-
-It is possible to define a list of functions:
-```
-{DIV class.*: [
-  {Bind [flat, pressed] computeClassesWhenPressed}
-  {Bind [flat, enabled] computeClassesWhenEnabled}
-]}
-```
