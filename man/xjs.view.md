@@ -11,8 +11,9 @@ Other objects, strings, numbers and so on are called __standard values__.
 * [`view.attribs`](xjs.view.view.attribs.md): Define linkable attributes of the view.
 * `view.debug`: Boolean used to activate/deactivate the debug mode.
 * `view.id`: .
-* `view.init`: .
+* `view.init`: The function (defined in the code behind) to call just after construction.
 * [`view.statics`](xjs.view.statics.md): Define static functions on the View.
+* [`view.prototype`](xjs.view.prototype.md): Define member functions on the View.
 * [`view.children`](xjs.view.view.children.md): Bind children of an element to an array or a list.
 * `attrib.<names>`: .
 * [`class.<names>`](xjs.view.class.md): Add a CSS class depending on the value of a bound boolean.
