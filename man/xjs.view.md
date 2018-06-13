@@ -22,8 +22,7 @@ Other objects, strings, numbers and so on are called __standard values__.
 * [`on.<attrib-name>`](xjs.view.on.md): Call a function from code behind as soon as the attribute's value changed.
 * `style.<name>`: .
 * [`{Bind ...}`](xjs.view.bind.md): .
-* `{Intl ...}`: .
-* [`%macro%`](xjs.view.macro.md): Preprocessed macros.
+* `{Intl ...}`: Get internaTionalisazion string.
 
 ### Code behind
 Even if XJS.View has been made as powerful as possible, there are still cases where Javascript code is needed.
