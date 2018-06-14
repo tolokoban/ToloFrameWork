@@ -20,7 +20,7 @@ var List = require("tfw.binding.list");
  * @param {function=undefined}  options.map -  Function which  takes a
  * List's item  as input  and returns what  to add as  a child  of the
  * view.
- * The first argument id the current value.
+ * The first argument is the current value.
  * The second argument is a set of attributes:
  * * index: Index of the current value.
  * * list: The list object itself.
@@ -70,11 +70,18 @@ Context.prototype.attachEventListener = function() {
 
 Context.prototype.resetChildren = function() {
   var map = this.options.map;
+  var before = this.options.before;
+  var after = this.options.after;
   var element = this.element;
   var list = this.list;
   var context = {};
+  var child;
 
   $.clear( element );
+  if( typeof before === 'function' ) {
+    child = before( context, list );
+    if( child ) $.add( element, child );
+  }
   list.forEach(function (item, index) {
     var child = map( item, {
       index: index,
@@ -83,6 +90,10 @@ Context.prototype.resetChildren = function() {
     } );
     if( child ) $.add( element, child );
   });
+  if( typeof after === 'function' ) {
+    child = after( context, list );
+    if( child ) $.add( element, child );
+  }
 };
 
 /**
@@ -90,31 +101,8 @@ Context.prototype.resetChildren = function() {
  */
 Context.prototype.onListChanged = function( changeType, args ) {
   console.log("onListChanged", changeType, args);
-
-  switch( changeType ) {
-  case 'push': return applyPush.call( this, args );
-  default: return this.resetChildren();
-  }
+  return this.resetChildren();
 };
-
-
-/**
- * Optimization in case of `push()`.
- */
-function applyPush( args ) {
-  var map = this.options.map;
-  var element = this.element;
-  var list = this.list;
-  var context = {};
-
-  args.forEach(function (item, index) {
-    $.add( element, map( item, {
-      index: index,
-      list: list,
-      context: context
-    } ) );
-  });
-}
 
 module.exports = function( view, element, listName, options ) {
   var context = new Context( view, element, listName, options );

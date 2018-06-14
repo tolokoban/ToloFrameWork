@@ -1,22 +1,17 @@
 "use strict";
 
 var CODE_BEHIND = {
-  onTap: onTap,
   getClasses: getClasses,
   onKeyUp: onKeyUp,
+  onEnabledChanged: onEnabledChanged,
+  init: init,
   on: on,
   fire: fire
 };
 
 
 var PM = require("tfw.binding.property-manager");
-
-
-function onTap( evt ) {
-  console.info("[tfw.view.floating-button] evt=", evt);
-  evt.srcEvent.stopPropagation();
-  this.action = this.tag;
-}
+var Touchable = require("tfw.touchable");
 
 
 function getClasses() {
@@ -31,6 +26,7 @@ function getClasses() {
  */
 function on( slot ) {
   PM( this ).on( "action", slot );
+  return this;
 }
 
 /**
@@ -39,6 +35,7 @@ function on( slot ) {
  * @param {any=undefined} tag - If defined, set `this.tag` to it.
  */
 function fire( tag ) {
+  if( !this.enabled ) return;
   if( typeof tag !== 'undefined' ) this.tag = tag;
   if( this.href.length > 0 ) {
     if( this.target.length > 0 ) {
@@ -52,9 +49,20 @@ function fire( tag ) {
 }
 
 function onKeyUp( evt ) {
+  if( !this.enabled ) return;
   if( evt.keyCode != 32 && evt.keyCode != 13 ) return;
   evt.preventDefault();
   evt.stopPropagation();
   this.action = this.tag;
 }
 
+function init() {
+  this._touchable = new Touchable( this.$ );
+  this._touchable.tap.add( this.fire.bind( this, undefined ) );
+  this._touchable.enabled = this.enabled;
+}
+
+function onEnabledChanged( v ) {
+  if( !this._touchable ) return;
+  this._touchable.enabled = v;
+}

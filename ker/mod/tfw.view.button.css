@@ -19,7 +19,7 @@
   font-weight: bold;
 }
 
-.tfw-view-button.wide {
+button.tfw-view-button.wide {
   width: calc(100% - 16px);
   display: flex;
 }

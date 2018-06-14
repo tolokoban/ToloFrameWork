@@ -1,41 +1,42 @@
 {
-    "name": "{{name}}",
-    "author": "{{author}}",
-    "description": "{{desc}}",
-    "repository": {
-        "type": "git",
-        "url": "{{url}}"
+  "name": "{{name}}",
+  "author": "{{author}}",
+  "description": "{{desc}}",
+  "repository": {
+    "type": "git",
+    "url": "{{url}}"
+  },
+  "homepage": "{{homepage}}",
+  "license": "GPL-3.0",
+  "scripts": {
+    "test": "node node_modules/karma/bin/karma start karma.conf.js",
+    "test:dbg": "node --debug-brk node_modules/karma/bin/karma start karma.conf.js",
+    "debug": "node node_modules/toloframework/bin/tfw.js build debug test php",
+    "watch": "node node_modules/toloframework/bin/tfw.js build debug test php watch",
+    "clean": "node node_modules/toloframework/bin/tfw.js clean",
+    "release": "node node_modules/toloframework/bin/tfw.js build version php clean"
+  },
+  "bugs": {
+    "url": "{{bugs}}"
+  },
+  "tfw": {
+    "resources": [],
+    "modules": [],
+    "compile": {
+      "type": "{{type}}",
+      "files": [ "\\.html$" ]
     },
-    "homepage": "{{homepage}}",
-    "license": "GPL-3.0",
-    "scripts": {
-        "test": "node node_modules/karma/bin/karma start karma.conf.js",
-        "test:dbg": "node --debug-brk node_modules/karma/bin/karma start karma.conf.js",
-        "debug": "node node_modules/toloframework/bin/tfw.js build debug test php",
-        "watch": "node node_modules/toloframework/bin/tfw.js build debug test php watch",
-        "clean": "node node_modules/toloframework/bin/tfw.js clean",
-        "release": "node node_modules/toloframework/bin/tfw.js build version php clean"
-    },
-    "bugs": {
-        "url": "{{bugs}}"
-    },
-    "tfw": {
-        "resources": [],
-        "modules": [],
-        "compile": {
-            "type": "{{type}}",
-            "files": [ "\\.html$" ]
-        },
-        "output": "www"
-    },
-    "version": "0.0.1",
-    "reservedModules": [],
-    "dependencies": {
-        "jasmine-core": "^2.4",
-        "karma": "^0.13",
-        "karma-chrome-launcher": "^0.2",
-        "karma-firefox-launcher": "^0.1",
-        "karma-jasmine": "^0.3.6",
-        "toloframework": "^{{version}}"
-    }
+    "output": "www"
+  },
+  "version": "0.0.1",
+  "reservedModules": [],
+  "dependencies": {
+    "jasmine": "^2.99.0",
+    "jasmine-core": "^2.99.1",
+    "karma": "^2.0.2",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-jasmine": "^1.1.2"
+    "toloframework": "^{{version}}"
+  }
 }

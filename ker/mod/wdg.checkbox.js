@@ -15,7 +15,7 @@ var Checkbox = function(opts) {
   var btn = $.div( 'btn', 'thm-ele2' );
   var bar = $.div( 'bar' );
   var text = $.div();
-  var elem = $.elem( this, 'button', 'wdg-checkbox', [$.div([bar, btn]), text] );
+  var elem = $.elem( this, 'button', 'wdg-checkbox', [$.div([btn, bar]), text] );
 
   var refresh = function() {
     if( typeof that.text !== 'string' || that.text.trim().length === 0 ) {
@@ -59,7 +59,7 @@ var Checkbox = function(opts) {
   DB.extend({
     value: false,
     text: "checked",
-    inverted: true,
+    inverted: false,
     wide: false,
     visible: true
   }, opts, this, refresh);

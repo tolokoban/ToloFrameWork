@@ -63,8 +63,12 @@ function codeText( themeName, style ) {
           + " { color: " + style['bg' + colorName] + " }\n";
         codeCSS += "body.dom-theme-" + themeName + " "
           + piecesSVG.join( " > " )
-          + " svg .thm-svg-fill0"
+          + " .thm-svg-fill0"
           + " { fill: " + style['fg' + colorName] + " }\n";
+        codeCSS += "body.dom-theme-" + themeName + " "
+          + piecesSVG.join( " > " )
+          + " .thm-svg-stroke0"
+          + " { stroke: " + style['fg' + colorName] + " }\n";
       }
     });
   }
@@ -92,8 +96,11 @@ function codeBackground( themeName, style ) {
       + style['bg' + colorName] + ",transparent) }\n";
     
     if( !isNaN(parseInt(colorName)) ) return;
-    codeCSS += "body.dom-theme-" + themeName + " svg .thm-svg-fill" + colorName
+    codeCSS += "body.dom-theme-" + themeName + " .thm-svg-fill" + colorName
       + " { fill: "
+      + style['bg' + colorName] + " }\n";
+    codeCSS += "body.dom-theme-" + themeName + " .thm-svg-stroke" + colorName
+      + " { stroke: "
       + style['bg' + colorName] + " }\n";
   });
   return codeCSS;

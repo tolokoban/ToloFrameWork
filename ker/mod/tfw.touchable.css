@@ -7,7 +7,16 @@
     user-select: none;
 }
 
-.tfw-touchable > div.tfw-touchable-shadow {
+.tfw-touchable > div.tfw-touchable-container {
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+    
+.tfw-touchable > div.tfw-touchable-container > div.tfw-touchable-shadow {
     content: '.';
     font-size: 0;
     color: transparent;

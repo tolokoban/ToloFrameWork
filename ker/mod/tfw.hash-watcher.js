@@ -24,12 +24,7 @@ module.exports = function ( onChange ) {
           currentHash = currentHash.substr( 1 );
         }
         hash = currentHash;
-        while ( currentHash.charAt( 0 ) == '/' ) {
-          currentHash = currentHash.substr( 1 );
-        }
-        args = currentHash.split( "/" ).map( function ( item ) {
-          return decodeURI( item );
-        } );
+        args = currentHash.split( "/" ).map( decodeURI );
         listeners.fire( args, window.location.hash );
       },
       50

@@ -6,20 +6,7 @@
  * Attributes R  (red), G  (green), B  (blue), A  (alpha), H  (hue), S
  * (saturation), and L (luminance) are all floats between 0 and 1.
  */
-var Color = function(code) {
-  this.R = 0;
-  this.G = 0;
-  this.B = 0;
-  this.A = 0;
-  this.H = 0;
-  this.S = 0;
-  this.L = 0;
-
-  if( typeof code === 'string' ) {
-    this.parse( code );
-  }
-};
-module.exports = Color;
+var Color = Color_constructor;
 
 /**
  * Uses R, G and B.
@@ -76,6 +63,20 @@ Color.newRGBA = newRGBA;
 //    ##################
 //    # Implementation #
 //    ##################
+
+function Color_constructor(code) {
+  this.R = 0;
+  this.G = 0;
+  this.B = 0;
+  this.A = 0;
+  this.H = 0;
+  this.S = 0;
+  this.L = 0;
+
+  if( typeof code === 'string' ) {
+    this.parse( code );
+  }
+};
 
 var INV6 = 1 / 6;
 var INV15 = 1 / 15;
@@ -186,7 +187,7 @@ function stringify() {
 
 
 function parse( text ) {
-  if( typeof text !== 'string' ) text = '#000';
+  if( typeof text !== 'string' ) text = '#000000';
   var input = text.trim().toUpperCase();
   if( parseHexa.call( this, input ) ) return true;
   if( parseRGB.call( this, input ) ) return true;
@@ -329,3 +330,6 @@ function staticLuminance( text ) {
   var color = staticParse( text );
   return color.luminance();
 }
+
+
+module.exports = Color;

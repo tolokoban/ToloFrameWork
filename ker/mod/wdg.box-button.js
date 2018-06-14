@@ -27,58 +27,51 @@ var Touchable = require("tfw.touchable");
  * @class BoxButton
  */
 var BoxButton = function(opts) {
-    var that = this;
+  var that = this;
 
-    var elem = $.elem( this, 'div', 'wdg-box-button', 'theme-elevation-2' );
+  var elem = $.elem( this, 'div', 'wdg-box-button', 'thm-ele2' );
 
-    // Animate the pressing.
-    var touchable = new Touchable( elem, {
-        classToAdd: 'theme-elevation-8',
-        color: "#777"
+  // Animate the pressing.
+  var touchable = new Touchable( elem );
+  touchable.tap.add( this.fire.bind( this ) );
+
+  var refresh = function() {
+    $.removeClass( elem, 'thm-bgSL', 'thm-bg0', 'thm-bg3' );
+    touchable.enabled = that.enabled;
+    if (!that.enabled) {
+      $.addClass( elem, 'thm-bg0' );
+    }
+    else if (that.selected) {
+      $.addClass( elem, 'thm-bgSL' );
+    }
+    else {
+      $.addClass( elem, 'pointer', 'thm-bg3' );
+    }
+  };
+
+  DB.prop(this, 'value');
+  DB.propBoolean(this, 'enabled')(refresh);
+  DB.propBoolean(this, 'selected')(refresh);
+  DB.prop(this, 'content')(function(v) {
+    $.clear(elem);
+    if (!Array.isArray(v)) v = [v];
+    v.forEach(function (itm) {
+      $.add(elem, itm);
     });
-    touchable.tap.add( this.fire.bind( this ) );
-    
-    var refresh = function() {
-        $.removeClass( 
-            elem, 'theme-color-bg-4', 'theme-color-bg-B0', 'theme-color-bg-B5'
-        );
-        touchable.enabled = that.enabled;
-        if (!that.enabled) {
-            $.addClass( elem, 'theme-color-bg-B5' );
-        }
-        else if (that.selected) {
-            $.addClass( elem, 'theme-color-bg-4' );
-            touchable.color = "#fff";
-        }
-        else {
-            $.addClass( elem, 'pointer', 'theme-color-bg-B0' );
-            touchable.color = "#9cd";
-        }
-    };
+  });
+  DB.prop(this, 'action', 0);
+  DB.propAddClass(this, 'wide');
+  DB.propRemoveClass(this, 'visible', 'hide');
 
-    DB.prop(this, 'value');
-    DB.propBoolean(this, 'enabled')(refresh);
-    DB.propBoolean(this, 'selected')(refresh);
-    DB.prop(this, 'content')(function(v) {
-        $.clear(elem);
-        if (!Array.isArray(v)) v = [v];
-        v.forEach(function (itm) {
-            $.add(elem, itm);            
-        });
-    });
-    DB.prop(this, 'action', 0);
-    DB.propAddClass(this, 'wide');
-    DB.propRemoveClass(this, 'visible', 'hide');
-
-    opts = DB.extend({
-        content: [],
-        value: "action",
-        action: 0,
-        enabled: true,
-        selected: false,
-        wide: false,
-        visible: true
-    }, opts, this);
+  opts = DB.extend({
+    content: [],
+    value: "action",
+    action: 0,
+    enabled: true,
+    selected: false,
+    wide: false,
+    visible: true
+  }, opts, this);
 };
 
 /**
@@ -87,16 +80,16 @@ var BoxButton = function(opts) {
  * @param {function} slot - Function to call when `action` has changed.
  */
 BoxButton.prototype.on = function(slot) {
-    return DB.bind( this, 'action', slot );
+  return DB.bind( this, 'action', slot );
 };
 
 /**
  * Simulate a click on the button if it is enabled.
  */
 BoxButton.prototype.fire = function() {
-    if (this.enabled) {
-        DB.fire( this, 'action', this.value );
-    }
+  if (this.enabled) {
+    DB.fire( this, 'action', this.value );
+  }
 };
 
 

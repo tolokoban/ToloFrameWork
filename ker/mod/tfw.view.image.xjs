@@ -5,6 +5,8 @@
     failed: {boolean false}
     width: {unit auto behind:onWidthChanged}
     height: {unit auto behind:onHeightChanged}
+    max-width: {unit auto behind:onMaxWidthChanged}
+    max-height: {unit auto behind:onMaxHeightChanged}
   }
 
   src: {Bind src}

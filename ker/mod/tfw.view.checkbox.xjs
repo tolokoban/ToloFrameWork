@@ -8,6 +8,9 @@
     content: Checkbox
   }
 
+  view.init: init
+  view.prototype: [on]
+
   class: tfw-view-checkbox
   class.ok: {Bind value}
   class.inverted: {Bind inverted}
@@ -19,8 +22,8 @@
 
   [
     {DIV class:pin [
-      {DIV class:"bar thm-ele2", view.id: bar, class.thm-bgSL|thm-bg2: {Bind value} }
-      {DIV class:"btn thm-ele2", view.id: btn, class.thm-bgS|thm-bg1: {Bind value} }
+      {DIV class:"bar thm-ele2", view.id: bar, class.thm-bgSL|thm-bg0: {Bind value} }
+      {DIV class:"btn thm-ele2", view.id: btn, class.thm-bgS|thm-bg0: {Bind value} }
     ]}
     {DIV class:txt {Bind content}}    
   ]

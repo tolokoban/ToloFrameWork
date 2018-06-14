@@ -2,13 +2,17 @@
 
 var CODE_BEHIND = {
   getClasses: getClasses,
+  onWidthChanged: onWidthChanged,
   onSmallChanged: onSmallChanged,
+  onEnabledChanged: onEnabledChanged,
   onKeyUp: onKeyUp,
   on: on,
-  fire: fire
+  fire: fire,
+  init: init
 };
 
 var PM = require("tfw.binding.property-manager");
+var Touchable = require("tfw.touchable");
 
 /**
  * @member on
@@ -17,6 +21,15 @@ var PM = require("tfw.binding.property-manager");
  */
 function on( slot ) {
   PM( this ).on( "action", slot );
+  return this;
+}
+
+function onWidthChanged( v ) {
+  if( this.wide ) {
+    delete this.$.style.width;
+  } else {
+    this.$.style.width = v;
+  }
 }
 
 /**
@@ -77,6 +90,19 @@ function onKeyUp( evt ) {
   if( evt.keyCode != 32 && evt.keyCode != 13 ) return;
   evt.preventDefault();
   evt.stopPropagation();
-  this.action = this.tag;
+  fire.call( this );
   this.pressed = false;  
+}
+
+function init() {
+  var that = this;
+
+  this._touchable = new Touchable( this.$ );
+  this._touchable.tap.add(function() { fire.call( that ); });
+  this._touchable.enabled = this.enabled;
+}
+
+function onEnabledChanged( v ) {
+  if( !this._touchable ) return;
+  this._touchable.enabled = v;
 }

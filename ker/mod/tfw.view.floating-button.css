@@ -10,12 +10,21 @@ div.tfw-view-floating-button {
   cursor: pointer;
   text-align: center;
   vertical-align: middle;
+  transition: all .2s;
 }
 
 div.tfw-view-floating-button.hide {
-  transition: transform 0s;
+  transition: transform .3s;
   transform: scale(0);
-  display: none;
+}
+
+div.tfw-view-floating-button.disabled {
+  filter: saturate(0);
+  transition: all .2s;
+}
+
+div.tfw-view-floating-button.disabled > svg.tfw-view-icon.view {
+  opacity: .5;
 }
 
 div.tfw-view-floating-button > svg.tfw-view-icon.view {

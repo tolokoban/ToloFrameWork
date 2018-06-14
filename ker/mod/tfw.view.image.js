@@ -5,7 +5,9 @@ var CODE_BEHIND = {
   onLoad: onLoad,
   onError: onError,
   onWidthChanged: onWidthChanged,
-  onHeightChanged: onHeightChanged
+  onHeightChanged: onHeightChanged,
+  onMaxWidthChanged: onMaxWidthChanged,
+  onMaxHeightChanged: onMaxHeightChanged
 };
 
 
@@ -40,4 +42,15 @@ function onWidthChanged( unit ) {
 function onHeightChanged( unit ) {
   if( unit == 'auto' ) return;
   $.css(this, { height: unit });
+}
+
+function onMaxWidthChanged( unit ) {
+  if( unit == 'auto' ) return;
+  $.css(this, { "max-width": unit });
+}
+
+
+function onMaxHeightChanged( unit ) {
+  if( unit == 'auto' ) return;
+  $.css(this, { "max-height": unit });
 }

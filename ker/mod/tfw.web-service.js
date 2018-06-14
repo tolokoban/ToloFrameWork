@@ -1,16 +1,88 @@
+"use strict";
+
+exports.BAD_ROLE = -1;
+exports.BAD_TYPE = -2;
+exports.CONNECTION_FAILURE = -3;
+exports.MISSING_AUTOLOGIN = -4;
+exports.UNKNOWN_USER = -5;
+exports.HTTP_ERROR = -6;
+
 /**
+ * Call a webservice.
+ * @param {string} name - Service's name.
+ * @param {object} args - Service's arguments.
+ * @param {string=undefined} url - You can define your own URL to your `svc.php` file.
+ */
+exports.get = callWebService;
+/**
+ * @return {boolean}
+ */
+exports.isAdmin = isAdmin;
+/**
+ * @param {string} role - Role's name.
+ * @return {boolean}
+ */
+exports.hasRole = hasRole;
+/**
+ * @return Current user.
+ */
+exports.user = user;
+/*
+ * Load a JSON file and return a Promise.
+ * @param {string} path Local path relative to the current HTML page.
+ */
+exports.loadJSON = loadJSON;
+/**
+ * Event fired when login status has changed.
+ * @type {tfw.listeners}
+ */
+exports.eventChange = new (require( "tfw.listeners" ))();
+exports.changeEvent = exports.eventChange;
+/**
+ * @return If there is a user connected or not.
+ */
+exports.isLogged = isLogged;
+/**
+ * Disconnect current user.
+ * @return {Promise} A _thenable_ object resolved as soon as the server answered.
+ */
+exports.logout = logout;
+/**
+ * Try to connect a user.
+ * @param {string} usr Login name.
+ * @param {string} pwd Password.
+ * @return {Promise}
  *
  */
-"use strict";
+exports.login = login;
+/**
+ * @param {string} key
+ * @param {any} val
+ */
+exports.config = configGetSet;
+
+
+Object.defineProperty( exports, 'userData', {
+  get: function () {
+    if ( currentUser ) return currentUser.data || {};
+    return {};
+  },
+  set: function () {},
+  configurable: true,
+  enumerable: true
+} );
+
+
+
+
+
 
 require( "polyfill.promise" );
 var Cfg = require( "$" ).config;
 
 var Storage = require( "tfw.storage" );
-var Listeners = require( "tfw.listeners" );
 
 var currentUser = null;
-var changeEvent = new Listeners();
 var config = {
   // In `package.json`, you can override the services URL.
   // { "tfw": { "consts": { "debug": "tfw", "release": "http://tolokoban.org/tfw" } } }
@@ -21,13 +93,6 @@ if ( Array.isArray( saved ) ) {
   config.usr = saved[ 0 ];
   config.pwd = saved[ 1 ];
 }
-
-exports.BAD_ROLE = -1;
-exports.BAD_TYPE = -2;
-exports.CONNECTION_FAILURE = -3;
-exports.MISSING_AUTOLOGIN = -4;
-exports.UNKNOWN_USER = -5;
-exports.HTTP_ERROR = -6;
 
 function svc( name, args, url ) {
   console.info( "[tfw.web-service]", name, args );
@@ -105,7 +170,7 @@ function svc( name, args, url ) {
  * Load a JSON file and return a Promise.
  * @param {string} path Local path relative to the current HTML page.
  */
-exports.loadJSON = function ( path ) {
+function loadJSON( path ) {
   return new Promise( function ( resolve, reject ) {
     var xhr = new XMLHttpRequest( {
       mozSystem: true
@@ -127,17 +192,11 @@ exports.loadJSON = function ( path ) {
   } );
 };
 
-/**
- * Event fired when login status has changed.
- * @type {tfw.listeners}
- */
-exports.changeEvent = changeEvent;
-exports.eventChange = changeEvent;
 
 /**
  * @return If there is a user connected or not.
  */
-exports.isLogged = function () {
+function isLogged() {
   if ( !currentUser ) return false;
   return true;
 };
@@ -146,12 +205,12 @@ exports.isLogged = function () {
  * Disconnect current user.
  * @return {Promise} A _thenable_ object resolved as soon as the server answered.
  */
-exports.logout = function () {
+function logout() {
   currentUser = null;
   delete config.usr;
   delete config.pwd;
   Storage.local.set( "nigolotua", null );
-  changeEvent.fire();
+  exports.eventChange.fire();
   return svc( "tfw.login.Logout" );
 };
 
@@ -162,7 +221,7 @@ exports.logout = function () {
  * @return {Promise}
  *
  */
-exports.login = function ( usr, pwd ) {
+function login( usr, pwd ) {
   if ( typeof usr === 'undefined' ) usr = config.usr;
   if ( typeof pwd === 'undefined' ) pwd = config.pwd;
 
@@ -224,7 +283,7 @@ exports.login = function ( usr, pwd ) {
                 }
               };
               Storage.local.set( "nigolotua", [ usr, pwd ] );
-              changeEvent.fire();
+              exports.eventChange.fire();
               resolve( user );
             } else {
               currentUser = null;
@@ -243,7 +302,7 @@ exports.login = function ( usr, pwd ) {
 /**
  * Call a webservice.
  */
-exports.get = function ( name, args, url ) {
+function callWebService( name, args, url ) {
   return new Promise(
     function ( resolve, reject ) {
       svc( name, args, url ).then(
@@ -251,7 +310,7 @@ exports.get = function ( name, args, url ) {
         function ( err ) {
           if ( typeof err === 'object' && err.id == exports.BAD_ROLE ) {
             // Echec de connexion, on retente de se connecter avant d'abandonner.
-            exports.login().then(
+            login().then(
               function () {
                 svc( name, args, url ).then( resolve, reject );
               },
@@ -266,28 +325,18 @@ exports.get = function ( name, args, url ) {
   );
 };
 
-exports.isAdmin = function () {
-  return exports.hasRole( 'ADMIN' );
+function isAdmin() {
+  return hasRole( 'ADMIN' );
 };
 
-exports.hasRole = function ( role ) {
+function hasRole( role ) {
   if ( !currentUser ) return false;
   return currentUser.hasRole( role );
 };
-exports.user = function () {
-  return currentUser;
-};
-Object.defineProperty( exports, 'userData', {
-  get: function () {
-    if ( currentUser ) return currentUser.data || {};
-    return {};
-  },
-  set: function () {},
-  configurable: true,
-  enumerable: true
-} );
 
-exports.config = function ( key, val ) {
+function user () { return currentUser; };
+
+function configGetSet( key, val ) {
   if ( typeof val === 'undefined' ) {
     return config[ key ];
   }
