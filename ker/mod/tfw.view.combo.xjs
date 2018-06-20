@@ -1,0 +1,16 @@
+{View DIV class:tfw-view-combo
+  view.attribs: {
+    value: {string "" behind:onValueChange}
+    label: {string ""}
+    items: {any behind:onItemsChange}
+    expanded: {boolean false behind:onExpandedChange}
+  }
+
+  [
+    {HEADER textcontent:{Bind label}}
+    {BUTTON view.id:button class.show|hide:{Bind expanded} class:thm-ele2 [
+      {DIV view.id:screen class:screen event.tap:{Set expanded false}}
+      {DIV view.id:list class:list class:"list thm-ele8"}
+    ]}
+  ]
+}
