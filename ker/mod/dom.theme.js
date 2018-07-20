@@ -2,6 +2,12 @@
 /**
  * Manage material design like CSS styles.
  */
+exports.register = registerTheme;
+exports.apply = applyTheme;
+
+
+//################################################################################
+
 
 var Color = require("tfw.color");
 
@@ -11,10 +17,6 @@ var THEMES = {
   current: null
 };
 
-
-
-exports.register = registerTheme;
-exports.apply = applyTheme;
 
 
 function registerTheme( themeName, style ) {
@@ -108,7 +110,7 @@ function codeBackground( themeName, style ) {
 
 function codeElevation( themeName, style ) {
   var luminance = Color.luminance( style.bg2 );
-  var elevationColor = luminance < .6 ? '#fff' + Math.ceil(10 * luminance) : '#0006';
+  var elevationColor = luminance < .6 ? style.white + Math.ceil(10 * luminance) : '#0006';
   var codeCSS = '';
   [0,1,2,3,4,6,8,9,12,16,24].forEach(function (elevation) {
     codeCSS += "body.dom-theme-" + themeName + " .thm-ele" + elevation + " {\n"
@@ -148,10 +150,14 @@ function completeWithDefaultValues( style ) {
   if( typeof style.bgSD !== 'string' ) style.bgSD = dark( style.bgS );
   if( typeof style.bgSL !== 'string' ) style.bgSL = light( style.bgS );
 
+  if( typeof style.white === 'undefined' ) style.white = '#fff';
+  if( typeof style.black === 'undefined' ) style.white = '#000';
+
+
   THEME_COLOR_NAMES.forEach(function (name) {
     var bg = style['bg' + name];
     var luminance = Color.luminance( bg );
-    style['fg' + name] = luminance < .6 ? '#fff' : '#000';
+    style['fg' + name] = luminance < .6 ? style.white : style.black;
   });
 
   return style;
