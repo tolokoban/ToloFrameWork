@@ -17,6 +17,7 @@
     width: {unit "auto" behind: onWidthChanged}
     responsive: {boolean false}
     small: {boolean false, behind: onSmallChanged}
+    wait: {boolean false behind:onEnabledChanged}
   }
 
   view.init: init
@@ -24,6 +25,7 @@
   
   class: "tfw-view-button"
   class.flat: {Bind flat}
+  class.wait: {Bind wait}
   class.*: {[flat,type,pressed] getClasses}
   class.inverted: {Bind inverted}
   class.|hide: {Bind visible}
@@ -31,16 +33,14 @@
   class.responsive: {Bind responsive}
   class.small: {Bind small}
 
-  attrib.|disabled: {Bind enabled}
-
   event.keyup: onKeyUp
   event.down: {Set pressed true}
   event.up: {Set pressed false}
   
   [
-    {DIV class:icon [ {tfw.view.icon view.id:icon, content: {Bind icon}} ]}
+    {DIV class:icon [ {tfw.view.icon view.id:icon content: {Bind icon} animate:{Bind wait}} ]}
     {DIV view.id:text
-      class:text
+      class: "text thm-fg"
       class.hide: {Bind text converter:isEmpty}
       {Bind text}}
   ]

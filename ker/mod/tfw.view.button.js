@@ -11,6 +11,7 @@ var CODE_BEHIND = {
   init: init
 };
 
+var $ = require("dom");
 var PM = require("tfw.binding.property-manager");
 var Touchable = require("tfw.touchable");
 
@@ -102,7 +103,13 @@ function init() {
   this._touchable.enabled = this.enabled;
 }
 
-function onEnabledChanged( v ) {
+function onEnabledChanged() {  
   if( !this._touchable ) return;
-  this._touchable.enabled = v;
+  var enabled = this.enabled && !this.wait;
+  this._touchable.enabled = enabled;
+  if( enabled ) {
+    $.removeAtt( this, "disabled" );
+  } else {
+    $.att( this, { disabled: true } );
+  }
 }

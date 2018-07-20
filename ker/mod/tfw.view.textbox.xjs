@@ -18,14 +18,14 @@
   class: tfw-view-textbox
   class.thm-ele2: {Bind enabled} 
   class.wide: {Bind wide} 
-  class.thm-bgSL|thm-bg2: {Bind focus back:false} 
+  class.thm-bgSL|thm-bg3: {Bind focus back:false} 
   class.focus: {Bind focus} 
   class.|hide: {Bind visible}
   class.|invalid: {Bind valid}
 
   [
     {DIV view.id: head
-         class: head
+         class: "head thm-fg"
          textcontent: {Bind label}}
     {DIV view.id: body
          class: body    
@@ -33,6 +33,7 @@
       [
         {INPUT
           view.id: input
+          class: thm-fg
           type: {Bind type}
           event.keyup: onKeyUp
           maxLength: {Bind max-length}
@@ -41,6 +42,6 @@
       ]}
     {DIV view.id: foot, class: foot}
     {DIV view.id: bottom, class: "bottom thm-bgSD"}
-    {FOOTER [{DIV view.id: completion, class: "completion thm-bg3 thm-ele4"}]}
+    {FOOTER [{DIV view.id: completion, class: "completion thm-fg thm-bg2 thm-ele4"}]}    
   ]
 }

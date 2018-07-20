@@ -29,7 +29,7 @@ function Modal( opts ) {
       onScroll( body );
     });
   };
-  var header = $.tag( 'header', 'thm-ele8', 'thm-bgPD' );
+  var header = $.tag( 'header', 'thm-fg', 'thm-ele8', 'thm-bgPD' );
   var footer = $.tag( 'footer' );
   var cell = $.div( 'cell', 'thm-ele24', 'thm-bg0', [ header, body, footer ] );
   var elem = $.elem( this, 'div', 'wdg-modal', [ $.div([cell]) ] );

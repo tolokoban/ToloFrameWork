@@ -80,6 +80,8 @@ function codeText( themeName, style ) {
 function codeBackground( themeName, style ) {
   var codeCSS = '';
   THEME_COLOR_NAMES.forEach(function (colorName) {
+    codeCSS += "body.dom-theme-" + themeName + ".thm-bg" + colorName
+      + " { background-color: " + style['bg' + colorName] + " }\n";
     codeCSS += "body.dom-theme-" + themeName + " .thm-fg" + colorName
       + " { color: " + style['fg' + colorName] + " }\n";
     codeCSS += "body.dom-theme-" + themeName + " .thm-bg" + colorName
@@ -110,12 +112,12 @@ function codeBackground( themeName, style ) {
 
 function codeElevation( themeName, style ) {
   var luminance = Color.luminance( style.bg2 );
-  var elevationColor = luminance < .6 ? style.white + Math.ceil(10 * luminance) : '#0006';
+  var elevationColor = luminance < .6
+        ? addAlpha(style.white, Math.ceil(10 * luminance)) : addAlpha(style.black, '6');
   var codeCSS = '';
   [0,1,2,3,4,6,8,9,12,16,24].forEach(function (elevation) {
     codeCSS += "body.dom-theme-" + themeName + " .thm-ele" + elevation + " {\n"
-      + "  box-shadow: 0 " + elevation + "px " + (2 * elevation) + "px " + elevationColor + ";\n"
-      + "  transition: box-shadow .2s;\n"
+      + "  box-shadow: 0 " + elevation + "px " + (2 * elevation) + "px " + elevationColor + "\n"
       + "}\n";
   });
   return codeCSS;
@@ -179,4 +181,14 @@ function light( color ) {
   lightColor.L = percent + (1 - percent) * lightColor.L;
   lightColor.hsl2rgb();
   return lightColor.stringify();
+}
+
+
+/**
+ * @param {string} color - RGB color in format #xxx or #xxxxxx.
+ * @param {string} alpha - Single char between 0 and F.
+ */
+function addAlpha( color, alpha ) {
+  if( color.length < 5 ) return color + alpha;
+  return color + alpha + alpha;
 }

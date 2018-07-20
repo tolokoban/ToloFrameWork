@@ -27,8 +27,8 @@
 }
 
 .tfw-view-icon.animate {
-  animation: wdg-icon-rotation 1.5s linear infinite;
-  -webkit-animation: wdg-icon-rotation 1.5s linear infinite;
+  animation: tfw-view-icon-rotation 1.5s linear infinite;
+  -webkit-animation: tfw-view-icon-rotation 1.5s linear infinite;
 }
 
 .tfw-view-icon.flipH { transform: scaleX(-1) }
