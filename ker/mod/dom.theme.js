@@ -153,7 +153,7 @@ function completeWithDefaultValues( style ) {
   if( typeof style.bgSL !== 'string' ) style.bgSL = light( style.bgS );
 
   if( typeof style.white === 'undefined' ) style.white = '#fff';
-  if( typeof style.black === 'undefined' ) style.white = '#000';
+  if( typeof style.black === 'undefined' ) style.black = '#000';
 
 
   THEME_COLOR_NAMES.forEach(function (name) {

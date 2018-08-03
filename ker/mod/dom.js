@@ -558,6 +558,6 @@ function restoreStyle( elements ) {
 };
 
 function registerAndApplyTheme( name, styles ) {
-  Theme.register( name, styles );
-  Theme.apply( name );
+  Theme.register.call( this, name, styles );
+  Theme.apply.call( this,  name );
 }
