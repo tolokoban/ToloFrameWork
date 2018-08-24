@@ -15,7 +15,7 @@ Two syntaxes are accepted: `{Bind...}` or `{List...}`.
 
 As soon as a new array is assigned to the linkable property, the children of the element are recreated.
 If `map` is defined, it will be the name of a mapping function from code behind.
-This function is used to transform each item or the new array to a DOM element to add.
+This function is used to transform each item of the new array to a DOM element to add.
 
 
 ## view.children: {List...}
@@ -60,7 +60,7 @@ The map function takes 2 arguments:
 * __more__: An object for more control.
     * __more.index__: INdex of the current element (starting at 0).
     * __more.list__: The whole list/array you are iterating on.
-    * __more_context__: A object to use to keep things between two elements of he loop.
+    * __more.context__: A object to use to keep things between two elements of he loop.
     
 If the function returns `null`or `undefined`, nothing is added.
 It the function returns an array, each element of this array will be added.
