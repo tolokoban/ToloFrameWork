@@ -96,7 +96,7 @@ var students = [
   {name: "Uma", group: "Female"}
 ]
 ```
-You will get somwthing like this:
+You will get something like this:
 * Male
     * Joe
     * John
