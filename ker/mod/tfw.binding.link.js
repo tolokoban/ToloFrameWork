@@ -29,6 +29,12 @@ var ID = 0;
  * set to the source.
  * @param  {function=undefined} args.A.map  - Function  to execute  on
  * each element of the value. Only if this value is an array.
+ * @param  {function=undefined} args.A.header  -  Function to  execute
+ * before the array will be parsed. Only if this value is an array and
+ * the property `map` is set.
+ * @param  {function=undefined} args.A.footer  -  Function to  execute
+ * after the array will be parsed. Only  if this value is an array and
+ * the property `map` is set.
  * @param   {string|array}  args.A.switch   -  Sometimes,   you  are
  * listening at  a property  A to  change, but  want to  propagate the
  * value  of  B. It  is  usefull  with  buttons which  provide  action
@@ -337,7 +343,64 @@ function processFormat( value, src, dst ) {
 function processMap( value, src, dst ) {
   if( value && typeof value.map === 'function' && typeof dst.map === 'function' ) {
     try {
-      return value.map( dst.map );
+      var result = [];
+      var more = {
+        context: {},
+        list: value,
+        index: 0
+      };
+      if( typeof dst.header === 'function' ) {
+        try {
+          result.push(dst.header( value, more.context ));
+        }
+        catch( ex ) {
+          console.error("[tfw.binding.link/processMap] Exception while calling a header function: ", ex);
+          console.error({
+            value: value,
+            src: src,
+            dst: dst,
+            more: more
+          });
+        }
+      }
+      value.forEach(function (itm, idx) {
+        more.index = idx;
+        try {
+          result.push( dst.map( itm, more ) );
+        }
+        catch( ex ) {
+          console.error("[tfw.binding.link/processMap] Exception while calling a map function: ", ex);
+          console.error({
+            item: itm,
+            index: idx,
+            value: value,
+            src: src,
+            dst: dst,
+            result: result,
+            more: more
+          });
+        }
+      });
+
+      if( typeof dst.footer === 'function' ) {
+        try {
+          result.push(dst.header( value, more.context ));
+        }
+        catch( ex ) {
+          console.error("[tfw.binding.link/processMap] Exception while calling a footer function: ", ex);
+          console.error({
+            value: value,
+            src: src,
+            dst: dst,
+            result: result,
+            more: more
+          });
+        }
+      }
+      
+      return result.filter(function( item ) {
+        return item != null;
+      });
     }
     catch( ex ) {
       console.error( ex );
