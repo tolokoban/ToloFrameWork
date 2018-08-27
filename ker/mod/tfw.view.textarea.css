@@ -2,8 +2,8 @@ div.tfw-view-textarea {
   position: relative;
   display: inline-block;
   border: none;
-  border-bottom: 1px solid rgba(0,0,0,.5);
-  font: inherit;
+  border-bottom: 1px solid rgba(0,0,0,.5);  
+  font-family: monospace;
 }
 
 div.tfw-view-textarea.hide { display: none; }
