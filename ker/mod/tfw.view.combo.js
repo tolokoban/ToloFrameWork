@@ -29,11 +29,15 @@ function onItemsChange( items ) {
     var touchable = new Touchable( item );
     touchable.tap.add( onItemTap.bind( that, item, list, index, button ) );
   });
+
+  if( !this.index ) this.index = 0;
 }
 
 
 function onItemTap( item, list, index, button ) {
-  console.info("[tfw.view.combo] this.expanded=", this.expanded);
+  var itemsCount = getLength.call( this, this.items );
+  if( itemsCount < 2 ) return;
+  
   if( this.expanded ) {
     // List is expanded.
     $.css( list, {
@@ -44,7 +48,7 @@ function onItemTap( item, list, index, button ) {
   } else {
     // List is collapsed.
     $.addClass( item, 'thm-bgSL' );
-    if( getLength.call( this, this.items ) === 2 ) {
+    if( itemsCount === 2 ) {
       this.index = 1 - this.index;
       return;
     }
@@ -81,7 +85,9 @@ function onIndexChange( index ) {
 
 
 function hasKeys() {
-  return getLength.call( this, this.keys ) === getLength.call( this, this.items );
+  var keysCount = getLength.call( this, this.keys );
+  if( keysCount < 1 ) return false;
+  return keysCount === getLength.call( this, this.items );
 }
 
 

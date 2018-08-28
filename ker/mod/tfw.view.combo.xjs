@@ -1,5 +1,6 @@
-{View DIV class:tfw-view-combo
+{View DIV class:"tfw-view-combo thm-ele2 thm-bg2"
   view.attribs: {
+    wide: {boolean false}
     label: {string ""}
     items: {array [] behind:onItemsChange}
     keys: {array [] behind:onKeysChange}
@@ -8,9 +9,11 @@
     value: {string "" behind:onValueChange}
   }
 
+  class.wide:{Bind wide}
+  
   [
     {HEADER textcontent:{Bind label}}
-    {DIV view.id:button class.show|hide:{Bind expanded} class:"thm-ele2 button" [
+    {DIV view.id:button class.show|hide:{Bind expanded} class:"button" [
       {DIV view.id:screen class:screen event.tap:{Set expanded false}}
       {DIV view.id:list class:list class:"list thm-ele8"}
     ]}
