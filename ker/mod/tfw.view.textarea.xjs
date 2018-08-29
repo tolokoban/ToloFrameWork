@@ -16,6 +16,8 @@
   class.|hide: {Bind visible}
   class.thm-bg3: {Bind focus back:false}
 
+  view.prototype: gotoLine
+  
   [
     {DIV view.id: head, class: head {Bind label}}
     {DIV view.id: body, class: body

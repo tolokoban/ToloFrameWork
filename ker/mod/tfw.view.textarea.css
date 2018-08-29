@@ -1,68 +1,74 @@
 div.tfw-view-textarea {
-  position: relative;
-  display: inline-block;
-  border: none;
-  border-bottom: 1px solid rgba(0,0,0,.5);  
-  font-family: monospace;
+    position: relative;
+    display: inline-block;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,.5);
+    font-family: monospace;
 }
 
 div.tfw-view-textarea.hide { display: none; }
 
 div.tfw-view-textarea.focus {
-  z-index: 999999;
+    z-index: 999999;
 }
 
 
 div.tfw-view-textarea > div {
-  margin: 0;
+    margin: 0;
 }
 
 div.tfw-view-textarea textarea {
-  border: 0;
-  margin: 0;
-  background: transparent;
-  font: inherit;
-  color: rgba(0,0,0,.9);
+    border: 0;
+    margin: 0;
+    background: transparent;
+    font: inherit;
+    color: rgba(0,0,0,.9);
+    height: 100%;
 }
 
 div.tfw-view-textarea.focus textarea:focus {
-  box-shadow: none;
-  outline: none;
+    box-shadow: none;
+    outline: none;
 }
 
 div.tfw-view-textarea.focus textarea {
-  color: #000;
-  outline: none;
-  border: none;
+    color: #000;
+    outline: none;
+    border: none;
 }
 
 div.tfw-view-textarea > div.body {
-  padding: 0;
+    padding: 0;
+    height: 100%;
+    height: calc(100% - 16px);
 }
 
 div.tfw-view-textarea > div.head,
 div.tfw-view-textarea > div.foot {
-  opacity: .5;
-  font-size: .8em;
+    opacity: .5;
+    font-size: .8em;
+    height: 16px;
+    line-height: 16px;
+    white-space: nowrap;
 }
 
 
 div.tfw-view-textarea > div.bottom {
-  content: ".";
-  font-size: 0;
-  position: absolute;
-  bottom: -2px;
-  right: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  transform: scaleX(0);
-  transform-origin: right top;
-  transition: transform .6s;
+    content: ".";
+    font-size: 0;
+    position: absolute;
+    bottom: -2px;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: right top;
+    transition: transform .6s;
 }
 
 div.tfw-view-textarea.focus > div.bottom {
-  transform: scaleX(1);
-  transform-origin: left top;
-  transition: transform .6s;
+    transform: scaleX(1);
+    transform-origin: left top;
+    transition: transform .6s;
 }
