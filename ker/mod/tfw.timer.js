@@ -1,6 +1,22 @@
 require("polyfill.promise");
 
-exports.later = function(delay) {
+/**
+ * @param {function} action -  Action to call. Two consecutive actions cannot be  called if there is
+ * less than `delay` ms between them.
+ * @param {number} delay - Number of milliseconds.
+ */
+exports.debounce = debounce;
+
+exports.later = later;
+exports.laterPromise = laterPromise;
+exports.laterAction = laterAction;
+exports.longAction = longAction;
+
+
+//############################################################
+
+
+function later(delay) {
     if (typeof delay === 'undefined') delay = 1;
     return new Promise(
         function(resolve, reject) {
@@ -121,7 +137,7 @@ LongAction.prototype.fire = function(action, duration) {
 /**
  * @param action A function returning a Promise.
  */
-exports.laterPromise = function(action, delay) {
+function laterPromise(action, delay) {
     return new ActionPromise(
         function() {
             return new Promise(action);
@@ -133,11 +149,47 @@ exports.laterPromise = function(action, delay) {
 /**
  * @param action A function to execute.
  */
-exports.laterAction = function(action, delay) {
+function laterAction(action, delay) {
     return new Action(action, delay);
 };
 
 
-exports.longAction = function() {
+function longAction() {
   return new LongAction();
+}
+
+
+function debounce( action, delay ) {
+  if( typeof action !== 'function' ) throw "[tfw.timer/debounce] First param must be a function!";
+  if( typeof delay !== 'number' ) delay = 300;
+
+  var params = null;
+  var timer = 0;
+
+  return function() {
+    params = Array.prototype.slice.call( arguments );
+    if( timer ) clearTimeout( timer );
+    timer = setTimeout(function() {
+      timer = 0;
+      action.apply( null, params );      
+    }, delay);
+  };
+}
+
+
+function throttling( action, delay ) {
+  if( typeof action !== 'function' ) throw "[tfw.timer/throttling] First param must be a function!";
+  if( typeof delay !== 'number' ) delay = 300;
+
+  var params = null;
+  var timer = 0;
+
+  return function() {
+    params = Array.prototype.slice.call( arguments );
+    if( timer ) return;
+    timer = setTimeout(function() {
+      timer = 0;
+      action.apply( null, params );      
+    }, delay);
+  };
 }
