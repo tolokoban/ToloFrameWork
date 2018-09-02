@@ -22,7 +22,8 @@ var THEMES = {
 function registerTheme( themeName, style ) {
   style = completeWithDefaultValues( style );
 
-  var codeCSS = codeBackground( themeName, style );
+  var codeCSS = codeVariables( themeName, style );
+  codeCSS += codeBackground( themeName, style );
   codeCSS += codeElevation( themeName, style );
   codeCSS += codeText( themeName, style );
 
@@ -77,6 +78,16 @@ function codeText( themeName, style ) {
   return codeCSS;
 }
 
+function codeVariables( themeName, style ) {
+  var codeCSS = "body.dom-theme-" + themeName + '{\n';
+  THEME_COLOR_NAMES.forEach(function (colorName) {
+    codeCSS += "  --thm-bg" + colorName + ": " + style['bg' + colorName] + ";\n";
+  });
+  codeCSS += "}\n";
+  return codeCSS;
+}
+
+
 function codeBackground( themeName, style ) {
   var codeCSS = '';
   THEME_COLOR_NAMES.forEach(function (colorName) {
@@ -98,7 +109,7 @@ function codeBackground( themeName, style ) {
     codeCSS += "body.dom-theme-" + themeName + " .thm-bg" + colorName + "-right"
       + " { background: linear-gradient(to left,"
       + style['bg' + colorName] + ",transparent) }\n";
-    
+
     if( !isNaN(parseInt(colorName)) ) return;
     codeCSS += "body.dom-theme-" + themeName + " .thm-svg-fill" + colorName
       + " { fill: "
