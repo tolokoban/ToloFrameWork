@@ -291,7 +291,9 @@ function PointerEvents( element ) {
         target: element,
         action: 'move',
         x: evt.pageX - rect.left,
-        y: evt.pageY - rect.top
+        y: evt.pageY - rect.top,
+        stopPropagation: evt.stopPropagation.bind( evt ),
+        preventDefault: evt.preventDefault.bind( evt )
       });
     }
   });
