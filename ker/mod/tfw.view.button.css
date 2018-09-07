@@ -89,7 +89,15 @@ button.tfw-view-button.wide {
 /* On small screen, responsive mode hides the text when there is an icon. */
 @media (max-width: 480px) {
   .tfw-view-button.responsive > div.text { display: none; }
-  .tfw-view-button.responsive { max-width: 32px; min-width: 32px; margin: 0; }
+  .tfw-view-button.responsive {
+      max-width: 36px;
+      min-width: 36px;
+      width: 36px;
+      width: 36px;
+      margin: 0;
+      border-radius: 100%;
+      overflow: hidden;
+  }
 }
 
 /* Small version */
