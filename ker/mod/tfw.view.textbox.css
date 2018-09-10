@@ -1,4 +1,4 @@
-ssdiv.tfw-view-textbox {
+div.tfw-view-textbox {
   position: relative;
   display: inline-block;
   border: none;
@@ -68,6 +68,9 @@ div.tfw-view-textbox > div.head {
   height: 16px;
 }
 
+div.tfw-view-textbox.no-label > div.head {
+  display: none;
+}
 
 div.tfw-view-textbox > div.bottom {
   content: ".";

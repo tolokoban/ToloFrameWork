@@ -20,6 +20,7 @@
   class.wide: {Bind wide} 
   class.thm-bgSL|thm-bg3: {Bind focus back:false} 
   class.focus: {Bind focus} 
+  class.no-label: {Bind label converter:isEmpty} 
   class.|hide: {Bind visible}
   class.|invalid: {Bind valid}
 
