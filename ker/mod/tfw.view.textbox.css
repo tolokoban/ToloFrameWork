@@ -7,6 +7,11 @@ div.tfw-view-textbox {
   padding: 0 4px 4px 4px;
 }
 
+div.tfw-view-textbox.disabled {
+    border: none;
+    box-shadow: none;
+}
+
 div.tfw-view-textbox.wide {
   display: block;
   width: 100%;
@@ -32,6 +37,7 @@ div.tfw-view-textbox input {
   padding: 0 8px;
   line-height: 24px;
   height: 24px;
+  border: none;
   -webkit-text-fill-color: inherit !important;
   -webkit-box-shadow: none !important;
 }

@@ -20,7 +20,8 @@
   class.wide: {Bind wide} 
   class.thm-bgSL|thm-bg3: {Bind focus back:false} 
   class.focus: {Bind focus} 
-  class.no-label: {Bind label converter:isEmpty} 
+  class.no-label: {Bind label converter:isEmpty}
+  class.|disabled: {Bind enabled}
   class.|hide: {Bind visible}
   class.|invalid: {Bind valid}
 
@@ -34,6 +35,7 @@
       [
         {INPUT
           view.id: input
+          attrib.|disabled:{Bind enabled}
           class: thm-fg
           type: {Bind type}
           event.keyup: onKeyUp
