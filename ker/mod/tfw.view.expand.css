@@ -1,6 +1,10 @@
 .tfw-view-expand {
     display: block;
     padding: 0 16px;
+    height: 32px;
+}
+.tfw-view-expand.expand {
+    height: auto;
 }
 
 .tfw-view-expand > div.head {
@@ -56,23 +60,19 @@
 
 
 .tfw-view-expand > div.body {
-    display: none;
+    display: block;
+    visibility: collapse;
     padding: 8px 0 8px 32px;
     margin: 0;
+    transition: none;
+    transform: translateX(100px);
+    opacity: 0;
 }
 
 .tfw-view-expand.expand > div.body {
     display: block;
-}
-
-.tfw-view-expand > div.body > div {
-    transition: all 2s;
-    transform: translateX(100%);
-    opacity: 0;
-}
-
-.tfw-view-expand.expand > div.body > div {
-    transition: all 2s;
+    visibility: visible;
+    transition: all .2s;
     transform: translateX(0);
     opacity: 1;
 }
