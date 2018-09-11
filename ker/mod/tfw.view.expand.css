@@ -66,10 +66,13 @@
 }
 
 .tfw-view-expand > div.body > div {
+    transition: all 2s;
+    transform: translateX(100%);
     opacity: 0;
 }
 
 .tfw-view-expand.expand > div.body > div {
     transition: all 2s;
+    transform: translateX(0);
     opacity: 1;
 }
