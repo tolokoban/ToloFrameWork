@@ -18,8 +18,11 @@
     responsive: {boolean false}
     small: {boolean false, behind: onSmallChanged}
     wait: {boolean false behind:onEnabledChanged}
+    focus: {boolean false}
   }
 
+  focus: {Bind focus}
+  
   view.init: init
   view.prototype: [on, fire]
   

@@ -5,7 +5,7 @@
     inverted: {boolean false},
     visible: {boolean true},
     wide: {boolean true},
-    content: Checkbox
+    content: {string Checkbox}
   }
 
   view.init: init

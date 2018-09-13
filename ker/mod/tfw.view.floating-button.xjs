@@ -5,7 +5,7 @@
     small: {boolean false}
     enabled: {boolean true behind:onEnabledChanged}
     tag: {any true}  // Value used in action attribute.
-    type: {[S SD SL P PD PL "0" "1" "2" "3"] S}
+    type: [S SD SL P PD PL "0" "1" "2" "3"]
     visible: {boolean true}
     href: {string ""}
     target: {string ""}

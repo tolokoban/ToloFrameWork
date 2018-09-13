@@ -27,6 +27,7 @@ function onContentChanged( content ) {
     }
 
     this._content = createSvgFromDefinition.call( this, content );
+    if( !this._content ) return;
     $.clear( this, this._content.svgRootGroup );
 
     // Update pens' colors.
@@ -81,7 +82,8 @@ function createSvgFromDefinition( def ) {
   var elementsToStrokePerColor = [[], [], [], [], [], [], [], []];
 
   var svgRootGroup = addChild( this.$, elementsToFillPerColor, elementsToStrokePerColor, def );
-
+  if( !svgRootGroup ) return null;
+  
   $.att( svgRootGroup, {
     'stroke-width': 6,
     fill: "none",
@@ -107,7 +109,8 @@ function createSvgFromDefinition( def ) {
 function addChild( parent, elementsToFillPerColor, elementsToStrokePerColor, def ) {
   if( typeof def === 'string' )
     return $.add( parent, def );
-  checkDefinitionSyntax( def );
+  if( !checkDefinitionSyntax( def ) ) return null;
+  
   var elementName = def[0];
   var element = $.svg( elementName );
 
@@ -148,6 +151,8 @@ function setAttributesAndRegisterElementsWithSpecialColors(
 }
 
 function checkDefinitionSyntax( def ) {
+  if( typeof def === 'undefined' ) return false;
+
   if( !Array.isArray( def ) ) {
     throw "Definition of SVG elements must be arrays!\n"
       + JSON.stringify( def );
@@ -155,6 +160,7 @@ function checkDefinitionSyntax( def ) {
   var svgElementTagName = def[0];
   if( typeof svgElementTagName !== 'string' )
     throw "The first item of a SVG element must be a string!\n" + svgElementTagName;
+  return true;
 }
 
 function updatePen( penIndex, penColor ) {
