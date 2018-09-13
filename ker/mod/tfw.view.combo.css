@@ -24,7 +24,9 @@ div.tfw-view-combo > header {
     padding: 0 0 0 8px;
     margin: 0;
 }
+
 div.tfw-view-combo > .button  {
+    position: relative;
     flex: 1 1;
     background: #fff;
     height: 32px;
@@ -72,4 +74,12 @@ div.tfw-view-combo > .button > div.list > div {
     padding: 0 8px;
     cursor: pointer;
     box-shadow: 0 1px rgba(0,0,0,.1);
+}
+
+div.tfw-view-combo > .button > .tfw-view-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 999998;
+    pointer-events: none;
 }

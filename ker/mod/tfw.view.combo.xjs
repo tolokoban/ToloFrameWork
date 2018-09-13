@@ -12,10 +12,11 @@
   class.wide:{Bind wide}
   
   [
-    {HEADER textcontent:{Bind label}}
+    {HEADER textcontent:{Bind label}}    
     {DIV view.id:button class.show|hide:{Bind expanded} class:"button" [
       {DIV view.id:screen class:screen event.tap:{Set expanded false}}
       {DIV view.id:list class:list class:"list thm-ele8"}
+      {tfw.view.icon content:down size:32}
     ]}
   ]
 }

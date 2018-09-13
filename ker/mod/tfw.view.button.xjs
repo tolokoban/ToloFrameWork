@@ -2,14 +2,14 @@
 {View BUTTON view.debug: false
   view.attribs: {
     action: {action}    
-    tag: {string ACTION} // The value `action` will take on every tap.
-    icon: ""
+    tag: {string ACTION} // The value that `action` will take on every tap.
+    icon: {string ""}
     text: {string "Click me!"}
     href: {string ""}
     target: {string ""}
     pressed: {boolean false}
     flat: {boolean false}
-    type: {[default primary secondary] primary}
+    type: [primary default secondary]
     enabled: {boolean true behind:onEnabledChanged}
     inverted: {boolean false}
     visible: {boolean true}

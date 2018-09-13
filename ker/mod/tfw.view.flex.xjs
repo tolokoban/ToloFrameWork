@@ -1,0 +1,12 @@
+{View DIV class:tfw-view-flex
+  view.attribs: {
+    content: {array []}
+    justify-content: [
+      space-between space-around center start end flex-start flex-end left right stretch
+      space-evently normal baseline
+    ]
+  }
+
+  style.justify-content: {Bind justify-content}
+  view.children: {Bind content}
+}
