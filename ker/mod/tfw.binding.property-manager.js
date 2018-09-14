@@ -1,5 +1,25 @@
 "use strict";
 
+/**
+ * @export
+ * @function
+ * @param {object} container - Object which will hold properties.
+ */
+module.exports = constructor;
+/**
+ * @export .isLinkable
+ * Look if an object  has a property manager assigned to  it and own a
+ * property which name is `propertyName`.
+ */
+module.exports.isLinkable = isLinkable;
+module.exports.getAllAttributesNames = getAllAttributesNames;
+/**
+ * Return the linkable properties which holds this value, or `null`.
+ */
+module.exports.getProperties = getProperties;
+
+
+
 var Event = require("tfw.event");
 
 var ID = 0;
@@ -36,6 +56,17 @@ function PropertyManager( container ) {
  */
 PropertyManager.prototype.set = function( propertyName, value ) {
   this.create( propertyName ).set( value );
+};
+
+/**
+ * Look if `propertyName` is a linkable property of this object.
+ */
+PropertyManager.prototype.isLinkable = function( propertyName ) {
+  var container = this._container;
+  if( !container ) return false;  
+  if( typeof container[CONTAINER_SYMBOL] === 'undefined' ) return false;
+  return typeof container[CONTAINER_SYMBOL]._props[propertyName] !== 'undefined';
+
 };
 
 /**
@@ -138,7 +169,7 @@ PropertyManager.prototype.off = function( propertyName, action ) {
  * @function
  * @param {object} container - Object which will hold properties.
  */
-module.exports = function( container ) {
+function constructor( container ) {
   if( typeof container === 'undefined' )
     fail("Argument `container` is mandatory!");
 
@@ -155,13 +186,13 @@ module.exports = function( container ) {
  * Look if an object  has a property manager assigned to  it and own a
  * property which name is `propertyName`.
  */
-module.exports.isLinkable = function( container, propertyName ) {
+function isLinkable( container, propertyName ) {
   if( container[CONTAINER_SYMBOL] === undefined ) return false;
   if( typeof propertyName !== 'string' ) return true;
   return container[CONTAINER_SYMBOL]._props[propertyName] !== undefined;
 };
 
-module.exports.getAllAttributesNames = function( container ) {
+function getAllAttributesNames( container ) {
   if( container[CONTAINER_SYMBOL] === undefined ) return [];
   return Object.keys( container[CONTAINER_SYMBOL]._props );
 };
@@ -169,7 +200,7 @@ module.exports.getAllAttributesNames = function( container ) {
 /**
  * Return the linkable properties which holds this value, or `null`.
  */
-module.exports.getProperties = function( property ) {
+function getProperties( property ) {
   var properties = property[PROPERTY_SYMBOL];
   if( !Array.isArray( properties ) ) return null;
   return properties;
