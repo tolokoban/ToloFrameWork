@@ -10,8 +10,11 @@
  * var mod = require('dom');
  */
 require("polyfill.classList");
+
 var Theme = require("dom.theme");
-var PointerEvents = require("tfw.pointer-events");
+//var PointerEvents = require("tfw.pointer-events");
+var Gestures = require("tfw.gestures");
+
 
 var $ = function(dom) {
   if( dom instanceof Node ) return dom;
@@ -308,7 +311,7 @@ function on( element, slots, extra ) {
   element = $(element);
   if( typeof element[SYMBOL] === 'undefined' ) element[SYMBOL] = {};
   if( typeof element[SYMBOL].events === 'undefined' ) {
-    element[SYMBOL].events = new PointerEvents( element );
+    element[SYMBOL].events = Gestures( element );
   }
 
   var key, val, preview;

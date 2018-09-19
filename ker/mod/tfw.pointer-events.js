@@ -23,9 +23,8 @@ var G = {
   touchDevice: false,
   // When a DOM element is touched, `target` holds it.
   // Then we can track mouse events on __body__ using capture.
-  target: null,
-  // Coords of _down_ on target.
-  targetX: 0, targetY: 0,
+  // Items are objects: { element:..., x:..., y:..., time:... }
+  target: [],
   // Coords of _down_ on body.
   bodyDownX: 0, bodyDownY: 0,
   // Current mouse position on body.
@@ -52,7 +51,9 @@ var onDocumentMouseDown = function(evt) {
 
 var onDocumentMouseMove = function(evt) {
   if (G.touchDevice) return;
-  if( !G.target ) return;
+  var target = getCurrentTarget( 'drag' );
+  if (!target) return;
+
   evt.stopPropagation();
   evt.preventDefault();
 
@@ -61,18 +62,13 @@ var onDocumentMouseMove = function(evt) {
   G.bodyMoveX = evt.pageX; // + rectB.left;
   G.bodyMoveY = evt.pageY; // + rectB.top;
 
-  if (!G.target) return;
-
-  var slots = G.target._slots;
-  if (typeof slots.drag !== 'function') return;
-
-  slots.drag({
+  target.element.slots.drag({
     action: 'drag',
-    target: G.target.element,
-    x0: G.targetX,
-    y0: G.targetY,
-    x: G.targetX + G.bodyMoveX - G.bodyDownX,
-    y: G.targetY + G.bodyMoveY - G.bodyDownY,
+    target: target.element,
+    x0: target.x,
+    y0: target.y,
+    x: target.x + G.bodyMoveX - G.bodyDownX,
+    y: target.y + G.bodyMoveY - G.bodyDownY,
     dx: G.bodyMoveX - G.bodyDownX,
     dy: G.bodyMoveY - G.bodyDownY,
     vx: G.bodyMoveX - G.bodyMoveLastX,
@@ -83,16 +79,21 @@ var onDocumentMouseMove = function(evt) {
 
 var onDocumentMouseUp = function(evt) {
   if( G.touchDevice ) return;
-  if( !G.target ) return;
+  var target = getCurrentTarget();
+  if (!target) return;
+  
   evt.stopPropagation();
   evt.preventDefault();
 
+  console.log("DocumentMouseUp: ", G.target);
+  
   var time = Date.now();
-  var slots = G.target._slots;
   var dx = evt.pageX - G.bodyDownX;
   var dy = evt.pageY - G.bodyDownY;
-  if (slots.up) {
-    slots.up({
+
+  target = getCurrentTarget( "up" );
+  if( target ) {
+    target.element.slots.up({
       action: 'up',
       //target: G.target.element,
       target: G.bodyTarget,
@@ -268,6 +269,7 @@ function PointerEvents( element ) {
     if (G.touchDevice) return;
     var slots = that._slots;
     G.target = that;
+    console.log("Mousedown target: ", that);
     var rect = element.getBoundingClientRect();
     G.targetX = evt.pageX - rect.left;
     G.targetY = evt.pageY - rect.top;
@@ -346,6 +348,25 @@ PointerEvents.prototype.off = function() {
 function addEvent(element, event, listener, capture) {
   element.addEventListener( event, listener, capture );
   this._eventListeners.push([element, event, listener, capture]);
+}
+
+function addTarget( element, x, y ) {
+  G.target.push({ element: element, x: x, y: y, time: Date.now() });
+}
+/**
+ * Return the first taget listening on this `slot`.
+ */
+function getCurrentTarget( slot ) {
+  if( !G.target ) return null;
+  for( var i = 0 ; i < G.target.length ; i++ ) {
+    var target = G.target[i];
+    if( !slot || typeof target.slots[slot] === 'function' ) return target;
+  }
+  return null;
+}
+
+function clearCurrentTarget() {
+  G.target = [];
 }
 
 module.exports = PointerEvents;

@@ -1,0 +1,22 @@
+{View BUTTON class:tfw-view-tapable
+  view.attribs: {
+    action: {action}
+    tag: {string ACTION} // The value that `action` will take on every tap.
+    content: {any}
+    pressed: {boolean false}
+    focus: {boolean false}
+    href: {string ""}
+    target: {string ""}
+    enabled: {boolean true behind:onEnabledChanged}
+  }
+
+  focus: {Bind focus}
+  
+  view.children:{Bind content}
+  view.init: init
+  view.prototype: [on, fire]
+  
+  event.keyup: onKeyUp
+  event.down: {Set pressed true}
+  event.up: {Set pressed false}  
+}

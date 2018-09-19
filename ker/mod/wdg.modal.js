@@ -33,11 +33,6 @@ function Modal( opts ) {
   var footer = $.tag( 'footer' );
   var cell = $.div( 'cell', 'thm-ele24', 'thm-bg0', [ header, body, footer ] );
   var elem = $.elem( this, 'div', 'wdg-modal', [ $.div([cell]) ] );
-  $.on( elem, {
-    mousedown: function( evt ) {
-      console.info("[wdg.modal] evt=", evt);
-    }
-  });
   DB.prop( this, 'content' )( function ( v ) {
     $.clear( body );
     if ( Array.isArray( v ) ) {
