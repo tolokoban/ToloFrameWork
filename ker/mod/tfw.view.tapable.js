@@ -4,7 +4,8 @@ var CODE_BEHIND = {
   onKeyUp: onKeyUp,
   on: on,
   fire: fire,
-  init: init
+  init: init,
+  onEnabledChanged: onEnabledChanged
 };
 
 var $ = require("dom");
@@ -55,3 +56,13 @@ function init() {
   this._touchable.enabled = this.enabled;
 }
 
+function onEnabledChanged() {  
+  if( !this._touchable ) return;
+  var enabled = this.enabled && !this.wait;
+  this._touchable.enabled = enabled;
+  if( enabled ) {
+    $.removeAtt( this, "disabled" );
+  } else {
+    $.att( this, { disabled: true } );
+  }
+}
