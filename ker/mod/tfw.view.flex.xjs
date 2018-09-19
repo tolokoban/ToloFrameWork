@@ -5,8 +5,11 @@
       space-between space-around center start end flex-start flex-end left right stretch
       space-evently normal baseline
     ]
+    flex-wrap: [nowrap wrap wrap-reverse]
   }
 
   style.justify-content: {Bind justify-content}
+  style.flex-wrap: {Bind flex-wrap}
+  
   view.children: {Bind content}
 }
