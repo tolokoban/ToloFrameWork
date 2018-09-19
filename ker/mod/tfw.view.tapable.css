@@ -1,0 +1,16 @@
+button.tfw-view-tapable {
+    cursor: pointer;
+    padding: 0;
+    display: inline-block;
+    border: none;
+    box-shadow: none;
+    background: none;
+}
+
+button.tfw-view-tapable > * {
+    pointer-events: none;
+}
+
+button.tfw-view-tapable:focus {
+    outline: 1px dotted rgba(0,0,0,.5);
+}

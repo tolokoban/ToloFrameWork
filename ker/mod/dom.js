@@ -10,8 +10,11 @@
  * var mod = require('dom');
  */
 require("polyfill.classList");
+
 var Theme = require("dom.theme");
 var PointerEvents = require("tfw.pointer-events");
+var Gestures = require("tfw.gestures");
+
 
 var $ = function(dom) {
   if( dom instanceof Node ) return dom;

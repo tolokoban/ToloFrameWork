@@ -12,8 +12,9 @@ var $ = require("dom");
 var PM = require("tfw.binding.property-manager");
 var Color = require("tfw.color");
 var Dialog = require("wdg.modal");
+var Tapable = require("tfw.view.tapable");
 var Textbox = require("tfw.view.textbox");
-var ButtonFactory = require("tp.factory.button");
+var ButtonFactory = require("tfw.factory.button");
 
 
 function onValueChanged( cssColor ) {
@@ -143,8 +144,9 @@ function createColorButton( background, onTap ) {
     color: foreground
   });
   btn.textContent = background;
-  $.on( btn, onTap );
-  return btn;
+  var tapable = new Tapable({ content: btn });
+  tapable.on( onTap );
+  return tapable;
 }
 
 
