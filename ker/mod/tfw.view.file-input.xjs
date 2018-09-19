@@ -2,7 +2,7 @@
   view.attribs: {
     text: {string}
     type: {[default, primary, secondary] default}
-    action: {string behind:onAction}
+    action: {action behind:onAction}
     file: {any}
   }
 

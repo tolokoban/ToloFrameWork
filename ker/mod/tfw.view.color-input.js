@@ -13,7 +13,7 @@ var PM = require("tfw.binding.property-manager");
 var Color = require("tfw.color");
 var Dialog = require("wdg.modal");
 var Textbox = require("tfw.view.textbox");
-var ButtonFactory = require("tp.factory.button");
+var ButtonFactory = require("tfw.factory.button");
 
 
 function onValueChanged( cssColor ) {
