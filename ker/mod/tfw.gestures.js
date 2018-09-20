@@ -3,31 +3,36 @@
 /**
  * @param {dom} element
  * @param {function} events - Shortcut for `{ tap: ... }`.
- * @param {function} events.tap
- * evt.x, evt.y
- * @param {function} events.doubletap
- * evt.x, evt.y
- * @param {function} events.drag
- * evt.x, evt.y - Starting position.
- * evt.dx, evt.dy - Distance from the start.
+ * @param {function} events.tap { x, y }
+ * @param {function} events.doubletap { x, y }
+ * @param {function} events.drag {x, y, dx, dy }
+ * @param {function} events.wheel {x, y, delta }
  */
 module.exports = getGesture;
 
 //============================================================
-
-var SYMBOL = '__tfw.gestures__';
-
-
-var Hammer = require("external.hammer");
-
 
 var HANDLERS = {
   tap: onTap,
   doubletap: onDoubletap,
   drag: onDrag,
   down: onDown,
-  up: onUp
+  up: onUp,
+  wheel: onWheel
 };
+
+var SYMBOL = '__tfw.gestures__';
+// Webkit and Opera still use 'mousewheel' event type.
+var WHEEL_EVENT = "onwheel" in document.createElement("div") ? "wheel" :
+      // Modern browsers support "wheel"
+      document.onmousewheel !== undefined ? "mousewheel" :
+      // Webkit and IE support at least "mousewheel"
+      "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
+
+
+var Hammer = require("external.hammer");
+
+
 var SUPPORTED_EVENTS = Object.keys( HANDLERS );
 
 
@@ -139,24 +144,29 @@ function ensureDom( dom ) {
 };
 
 
-function setXY( elem, evt ) {
+function setHammerXY( elem, evt ) {
   var x, y;
-  if( evt.center ) {
-    // Hammer's attributes.
-    x = evt.center.x;
-    y = evt.center.y;
-  }
-  else {
-    x = evt.clientX;
-    y = evt.clientY;
-  }
+  // Hammer's attributes.
+  x = evt.center.x;
+  y = evt.center.y;
   var rect = elem.getBoundingClientRect();
   evt.x = x - rect.left;
   evt.y = y - rect.top;
 }
 
+function setXY( elem, evt ) {
+  var x, y;
+  // Browser's attributes.
+  x = evt.clientX;
+  y = evt.clientY;
+  var rect = elem.getBoundingClientRect();
+  return {
+    x: x - rect.left,
+    y: y - rect.top
+  };
+}
 
-function setDxDy( elem, evt ) {
+function setHammerDxDy( elem, evt ) {
   evt.dx = evt.deltaX;
   evt.dy = evt.deltaY;
 }
@@ -167,12 +177,11 @@ function onTap( register, slot, args ) {
 
   register( 'hammer.tap', function( evt ) {
     if( evt.tapCount !== 1 ) return false;
-    setXY( that.$, evt );
+    setHammerXY( that.$, evt );
     slot({
       x: evt.x,
       y: evt.y,
-      preventDefault: evt.preventDefault,
-      stopPropagation: evt.stopPropagation
+      preventDefault: evt.preventDefault.bind( evt )
     });
     return true;
   });
@@ -183,31 +192,40 @@ function onDoubletap( register, slot, args ) {
 
   register( 'hammer.tap', function( evt ) {
     if( evt.tapCount !== 2 ) return false;
-    setXY( that.$, evt );
+    setHammerXY( that.$, evt );
     slot({
       x: evt.x,
       y: evt.y,
-      preventDefault: evt.preventDefault,
-      stopPropagation: evt.stopPropagation
+      preventDefault: evt.preventDefault.bind( evt )
     });
     return true;
   });
 }
 
+function onWheel( register, slot, args ) {
+  var that = this;
+  register( WHEEL_EVENT, function( evt ) {
+    var newEvt = setXY( that.$, evt );
+    newEvt.delta = evt.deltaY;
+    newEvt.preventDefault = evt.preventDefault.bind( evt );
+    newEvt.stopPropagation = evt.stopPropagation.bind( evt );    
+    slot( newEvt );
+  });
+}
 
 function onDrag( register, slot, args ) {
   var that = this;
 
   register( 'hammer.pan', function( evt ) {
-    setXY( that.$, evt );
-    setDxDy( that.$, evt );
+    console.info("[tfw.gestures] hammer.pan=", evt);
+    setHammerXY( that.$, evt );
+    setHammerDxDy( that.$, evt );
     slot({
       x: evt.x,
       y: evt.y,
       dx: evt.dx,
       dy: evt.dy,
-      preventDefault: evt.preventDefault,
-      stopPropagation: evt.stopPropagation
+      preventDefault: evt.preventDefault.bind( evt )
     });
     return true;
   });
@@ -224,8 +242,8 @@ function onDown( register, slot, args ) {
       slot({
         x: touch.clientX - rect.left,
         y: touch.clientY - rect.top,
-        preventDefault: evt.preventDefault,
-        stopPropagation: evt.stopPropagation
+        preventDefault: evt.preventDefault.bind( evt ),
+        stopPropagation: evt.stopPropagation.bind( evt )
       });
     }
     catch( ex ) {
@@ -245,8 +263,8 @@ function onDown( register, slot, args ) {
       slot({
         x: evt.clientX - rect.left,
         y: evt.clientY - rect.top,
-        preventDefault: evt.preventDefault,
-        stopPropagation: evt.stopPropagation
+        preventDefault: evt.preventDefault.bind( evt ),
+        stopPropagation: evt.stopPropagation.bind( evt )
       });
     }
     catch( ex ) {
@@ -268,8 +286,8 @@ function onUp( register, slot, args ) {
       slot({
         x: touch.clientX - rect.left,
         y: touch.clientY - rect.top,
-        preventDefault: evt.preventDefault,
-        stopPropagation: evt.stopPropagation
+        preventDefault: evt.preventDefault.bind( evt ),
+        stopPropagation: evt.stopPropagation.bind( evt )
       });
     }
     catch( ex ) {
@@ -289,8 +307,8 @@ function onUp( register, slot, args ) {
       slot({
         x: evt.clientX - rect.left,
         y: evt.clientY - rect.top,
-        preventDefault: evt.preventDefault,
-        stopPropagation: evt.stopPropagation
+        preventDefault: evt.preventDefault.bind( evt ),
+        stopPropagation: evt.stopPropagation.bind( evt )
       });
     }
     catch( ex ) {
