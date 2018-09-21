@@ -116,10 +116,8 @@ var Touchable = function ( elem, opts ) {
     },
     tap: function ( evt ) {
       if ( !that.enabled ) {
-        console.log("[tfw.touchable] DISABLED!");
         return;
       }
-      console.log( '[tfw.touchable] TAP', evt );
       that.tap.fire( evt );
     }
   } );
@@ -127,29 +125,3 @@ var Touchable = function ( elem, opts ) {
 
 
 module.exports = Touchable;
-
-
-
-/*
-  https://jsfiddle.net/mzmaczdn/7/
-
-
-  var div = document.createElement('div');
-  div.className = 'shadow';
-
-  var btn = document.querySelector('button');
-  btn.addEventListener('mousedown', function(evt) {
-  btn.className = "press";
-  btn.appendChild( div );
-  div.style.left = evt.offsetX + "px";
-  div.style.top = evt.offsetY + "px";
-  window.setTimeout(function() {
-  div.style.transform = "scale(1)";
-  });
-  });
-
-  btn.addEventListener('mouseup', function(evt) {
-  div.style.transform = "scale(0)";
-  btn.removeChild(div);
-  });
-*/

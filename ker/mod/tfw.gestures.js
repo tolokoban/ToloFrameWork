@@ -103,6 +103,8 @@ function register( event, responsible ) {
   var hammerEvent = getEventNameForPrefix( event, "hammer." );
   if( hammerEvent && !this._hammer ) {
     this._hammer = new Hammer( this.$ );
+    // To get domEvents.stopPropagation() available.
+    this._hammer.domEvents = true;
   }
 
   var eventDef = this._events[event];
@@ -215,10 +217,11 @@ function onDoubletap( register, slot, args ) {
 function onWheel( register, slot, args ) {
   var that = this;
   register( WHEEL_EVENT, function( evt ) {
+    console.info("[tfw.gestures] evt=", evt);
     var newEvt = setXY( that.$, evt );
     newEvt.delta = evt.deltaY;
     newEvt.preventDefault = evt.preventDefault.bind( evt );
-    newEvt.stopPropagation = evt.stopPropagation.bind( evt );    
+    newEvt.stopPropagation = evt.stopPropagation.bind( evt );
     slot( newEvt );
   });
 }
@@ -237,6 +240,7 @@ function onDrag( register, slot, args ) {
   var that = this;
 
   register( 'hammer.pan', function( evt ) {
+    if( evt.isFinal ) return;
     setHammerXY( that.$, evt );
     if( typeof that._dragX === 'undefined' ) {
       that._dragX = evt.x;
@@ -244,6 +248,7 @@ function onDrag( register, slot, args ) {
       that._dragStart = true;
     }
     setHammerVxVy.call( that, that.$, evt );
+    var domEvt = evt.srcEvent;
     slot({
       x: evt.x,
       y: evt.y,
@@ -251,7 +256,9 @@ function onDrag( register, slot, args ) {
       y0: evt.y0,
       vx: evt.vx,
       vy: evt.vy,
-      preventDefault: evt.preventDefault.bind( evt )
+      target: evt.target,
+      preventDefault: domEvt.preventDefault.bind( domEvt ),
+      stopPropagation: domEvt.stopImmediatePropagation.bind( domEvt )
     });
     return true;
   });
@@ -261,16 +268,18 @@ function onDrag( register, slot, args ) {
 function onDragEnd( register, slot, args ) {
   var that = this;
 
-  register( 'hammer.pan', function( evt ) {
-    if( !evt.isFinal ) return false;
+  register( 'hammer.panend', function( evt ) {
     setHammerXY( that.$, evt );
     setHammerVxVy.call( that, that.$, evt );
+    var domEvt = evt.srcEvent;
     slot({
       x: evt.x,
       y: evt.y,
       x0: evt.x0,
       y0: evt.y0,
-      preventDefault: evt.preventDefault.bind( evt )
+      target: evt.target,
+      preventDefault: domEvt.preventDefault.bind( domEvt ),
+      stopPropagation: domEvt.stopImmediatePropagation.bind( domEvt )
     });
     delete that._dragX;
     delete that._dragY;
@@ -282,13 +291,16 @@ function onDragEnd( register, slot, args ) {
 function onDragStart( register, slot, args ) {
   var that = this;
 
-  register( 'hammer.pan', function( evt ) {
-    if( !that._dragStart && typeof that._dragX !== 'undefined' ) return false;
+  register( 'hammer.panstart', function( evt ) {
+    console.log("START");
     setHammerXY.call( that, that.$, evt );
+    var domEvt = evt.srcEvent;
     slot({
       x: evt.x,
       y: evt.y,
-      preventDefault: evt.preventDefault.bind( evt )
+      target: evt.target,
+      preventDefault: domEvt.preventDefault.bind( domEvt ),
+      stopPropagation: domEvt.stopImmediatePropagation.bind( domEvt )
     });
     return true;
   });
