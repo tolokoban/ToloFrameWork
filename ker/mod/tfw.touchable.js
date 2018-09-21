@@ -116,6 +116,7 @@ var Touchable = function ( elem, opts ) {
     },
     tap: function ( evt ) {
       if ( !that.enabled ) {
+        console.log("DISABLED!");
         return;
       }
       that.tap.fire( evt );

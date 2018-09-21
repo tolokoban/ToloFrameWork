@@ -8,7 +8,6 @@
  * @param {function} events.drag { x, y, x0, y0, vx, vy }
  * @param {function} events.dragstart { x, y }
  * @param {function} events.dragend { x, y, x0, y0 }
- * @param {function} events.drag { x, y, x0, y0, vx, vy }
  * @param {function} events.wheel { x, y, delta }
  */
 module.exports = getGesture;
@@ -193,6 +192,7 @@ function onTap( register, slot, args ) {
     slot({
       x: evt.x,
       y: evt.y,
+      target: evt.target,
       preventDefault: evt.preventDefault.bind( evt )
     });
     return true;
@@ -208,6 +208,7 @@ function onDoubletap( register, slot, args ) {
     slot({
       x: evt.x,
       y: evt.y,
+      target: evt.target,
       preventDefault: evt.preventDefault.bind( evt )
     });
     return true;
@@ -244,7 +245,7 @@ function onDrag( register, slot, args ) {
   var that = this;
 
   register( 'hammer.pan', function( evt ) {
-    if( evt.isFinal ) return;
+    if( evt.isFinal ) return false;
     setHammerXY( that.$, evt );
     if( typeof that._dragX === 'undefined' ) {
       that._dragX = evt.x;
@@ -260,6 +261,8 @@ function onDrag( register, slot, args ) {
       y0: evt.y0,
       vx: evt.vx,
       vy: evt.vy,
+      sx: evt.velocityX,
+      sy: evt.velocityY,
       target: evt.target,
       preventDefault: domEvt.preventDefault.bind( domEvt ),
       stopPropagation: domEvt.stopImmediatePropagation.bind( domEvt )
@@ -267,7 +270,6 @@ function onDrag( register, slot, args ) {
     return true;
   });
 }
-
 
 function onDragEnd( register, slot, args ) {
   var that = this;

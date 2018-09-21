@@ -1,4 +1,4 @@
-div.tfw-view-floating-button {
+button.tfw-view-floating-button {
   position: relative;
   display: inline-block;
   width: 56px;
@@ -11,36 +11,37 @@ div.tfw-view-floating-button {
   text-align: center;
   vertical-align: middle;
   transition: all .2s;
+  border: none;
 }
 
-div.tfw-view-floating-button.hide {
+button.tfw-view-floating-button.hide {
   transition: transform .3s;
   transform: scale(0);
 }
 
-div.tfw-view-floating-button.disabled {
+button.tfw-view-floating-button.disabled {
   filter: saturate(0);
   transition: all .2s;
 }
 
-div.tfw-view-floating-button.disabled > svg.tfw-view-icon.view {
+button.tfw-view-floating-button.disabled > svg.tfw-view-icon.view {
   opacity: .5;
 }
 
-div.tfw-view-floating-button > svg.tfw-view-icon.view {
+button.tfw-view-floating-button > svg.tfw-view-icon.view {
   position: absolute;
   left: 50%;
   top: 50%;
   margin: -12px -12px;
 }
 
-div.tfw-view-floating-button.small {
+button.tfw-view-floating-button.small {
   width: 40px;
   height: 40px;
 }
 
 @media (max-width: 460px) {
-  div.tfw-view-floating-button {
+  button.tfw-view-floating-button {
     width: 40px;
     height: 40px;
   }
