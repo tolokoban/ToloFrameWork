@@ -220,6 +220,10 @@ function onWheel( register, slot, args ) {
     console.info("[tfw.gestures] evt=", evt);
     var newEvt = setXY( that.$, evt );
     newEvt.delta = evt.deltaY;
+    if( typeof newEvt.delta !== 'number' ) {
+      // IE 11.
+      newEvt.delta = -evt.wheelDelta;
+    }
     newEvt.preventDefault = evt.preventDefault.bind( evt );
     newEvt.stopPropagation = evt.stopPropagation.bind( evt );
     slot( newEvt );
