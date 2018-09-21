@@ -12,7 +12,7 @@
   [
     {tfw.view.textbox
       view.id: usr
-      focus: {Bind focus back: false}
+      focus: {Bind focus back:false}
       value: {Bind usr}
       valid: {Bind valid}
       type: email
@@ -22,7 +22,7 @@
       placeholder:{Intl login}
       label:{Intl login}}
     {tfw.view.textbox
-      focus: {Bind "usr/action" converter:notEmpty}
+      focus: {Bind "usr/action" converter:notEmpty back:false}
       value: {Bind pwd}
       type: password
       wide: true
