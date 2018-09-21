@@ -5,8 +5,11 @@
  * @param {function} events - Shortcut for `{ tap: ... }`.
  * @param {function} events.tap { x, y }
  * @param {function} events.doubletap { x, y }
- * @param {function} events.drag {x, y, dx, dy }
- * @param {function} events.wheel {x, y, delta }
+ * @param {function} events.drag { x, y, x0, y0, vx, vy }
+ * @param {function} events.dragstart { x, y }
+ * @param {function} events.dragend { x, y, x0, y0 }
+ * @param {function} events.drag { x, y, x0, y0, vx, vy }
+ * @param {function} events.wheel { x, y, delta }
  */
 module.exports = getGesture;
 
@@ -16,6 +19,9 @@ var HANDLERS = {
   tap: onTap,
   doubletap: onDoubletap,
   drag: onDrag,
+  dragstart: onDragStart,
+  dragend: onDragEnd,
+  move: onMove,
   down: onDown,
   up: onUp,
   wheel: onWheel
@@ -166,9 +172,13 @@ function setXY( elem, evt ) {
   };
 }
 
-function setHammerDxDy( elem, evt ) {
-  evt.dx = evt.deltaX;
-  evt.dy = evt.deltaY;
+function setHammerVxVy( elem, evt ) {
+  evt.vx = evt.x - this._dragX;
+  evt.vy = evt.y - this._dragY;
+  evt.x0 = evt.x - evt.deltaX;
+  evt.y0 = evt.y - evt.deltaY;
+  this._dragX = evt.x;
+  this._dragY = evt.y;
 }
 
 
@@ -213,18 +223,71 @@ function onWheel( register, slot, args ) {
   });
 }
 
+function onMove( register, slot ) {
+  var that = this;
+  register( 'mousemove', function( evt ) {
+    var newEvt = setXY( that.$, evt );
+    newEvt.preventDefault = evt.preventDefault.bind( evt );
+    newEvt.stopPropagation = evt.stopPropagation.bind( evt );    
+    slot( newEvt );
+  });
+}
+
 function onDrag( register, slot, args ) {
   var that = this;
 
   register( 'hammer.pan', function( evt ) {
-    console.info("[tfw.gestures] hammer.pan=", evt);
     setHammerXY( that.$, evt );
-    setHammerDxDy( that.$, evt );
+    if( typeof that._dragX === 'undefined' ) {
+      that._dragX = evt.x;
+      that._dragY = evt.y;
+      that._dragStart = true;
+    }
+    setHammerVxVy.call( that, that.$, evt );
     slot({
       x: evt.x,
       y: evt.y,
-      dx: evt.dx,
-      dy: evt.dy,
+      x0: evt.x0,
+      y0: evt.y0,
+      vx: evt.vx,
+      vy: evt.vy,
+      preventDefault: evt.preventDefault.bind( evt )
+    });
+    return true;
+  });
+}
+
+
+function onDragEnd( register, slot, args ) {
+  var that = this;
+
+  register( 'hammer.pan', function( evt ) {
+    if( !evt.isFinal ) return false;
+    setHammerXY( that.$, evt );
+    setHammerVxVy.call( that, that.$, evt );
+    slot({
+      x: evt.x,
+      y: evt.y,
+      x0: evt.x0,
+      y0: evt.y0,
+      preventDefault: evt.preventDefault.bind( evt )
+    });
+    delete that._dragX;
+    delete that._dragY;
+    return true;
+  });
+}
+
+
+function onDragStart( register, slot, args ) {
+  var that = this;
+
+  register( 'hammer.pan', function( evt ) {
+    if( !that._dragStart && typeof that._dragX !== 'undefined' ) return false;
+    setHammerXY.call( that, that.$, evt );
+    slot({
+      x: evt.x,
+      y: evt.y,
       preventDefault: evt.preventDefault.bind( evt )
     });
     return true;
