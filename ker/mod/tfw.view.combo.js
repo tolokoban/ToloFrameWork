@@ -37,16 +37,31 @@ function onItemsChange( items ) {
 function onItemTap( item, list, index, button ) {
   var itemsCount = getLength.call( this, this.items );
   if( itemsCount < 2 ) return;
+
+  var listContainer = this.$elements.listContainer;
   
   if( this.expanded ) {
-    // List is expanded.
+    // List is expanded, we need to collapse it.
+    $(list).scrollTop = 0;
+    $.detach( list );
+    $.add( listContainer, list );
+    $.css( listContainer, {
+      width: "auto"
+    });
+    
     $.css( list, {
       transform: "translateY(-" + 32*index + "px)",
       left: 0, top: 0,
       height: "auto"
     });
   } else {
-    // List is collapsed.
+    // List is collapsed, we need to expand it.
+    $.css( listContainer, {
+      width: $(list).clientWidth + "px"
+    });
+    $.detach( list );
+    $.add( document.body, list );
+    
     $.addClass( item, 'thm-bgSL' );
     if( itemsCount === 2 ) {
       this.index = 1 - this.index;

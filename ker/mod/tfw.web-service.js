@@ -222,8 +222,8 @@ function logout() {
  *
  */
 function login( usr, pwd ) {
-  if ( typeof usr === 'undefined' ) usr = config.usr;
-  if ( typeof pwd === 'undefined' ) pwd = config.pwd;
+  if ( typeof usr === 'undefined' ) usr = config.usr || '';
+  if ( typeof pwd === 'undefined' ) pwd = config.pwd || '';
 
   return new Promise(
     function ( resolve, reject ) {
@@ -232,8 +232,8 @@ function login( usr, pwd ) {
         if ( !Array.isArray( autologin ) ) return reject( {
           id: exports.MISSING_AUTOLOGIN
         } );
-        usr = autologin[ 0 ];
-        pwd = autologin[ 1 ];
+        usr = autologin[ 0 ] || '';
+        pwd = autologin[ 1 ] || '';
       }
       Storage.local.set( "nigolotua", null );
       svc( "tfw.login.Challenge", usr )

@@ -40,29 +40,33 @@ div.tfw-view-combo > .button  {
 div.tfw-view-combo > .button.hide {
     overflow: hidden;
 }
-div.tfw-view-combo > .button.hide > div.list {
+div.tfw-view-combo > .button.hide > div.list-container > div.tfw-view-combo-list {
     overflow: hidden;
 }
 div.tfw-view-combo > .button.show {
     overflow: show;
-    z-index: 999998;
+    z-index: 9999998;
 }
-div.tfw-view-combo > .button.show > div.list {
+body > div.tfw-view-combo-list {
     position: fixed;
-    z-index: 999999;
+    z-index: 9999999;
+    background: #fff;
+    overflow: auto;
+    max-height: calc(100vh - 64px);
 }
 div.tfw-view-combo > .button.show > div.screen {
     position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: transparent; cursor: forbiden;
 }
 
-div.tfw-view-combo > .button > div.list {
+div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list {
     background: #fff;
     transition: transform .2s;
     transform: translateY(0);
     overflow: auto;
     max-height: calc(100vh - 64px);
 }
-div.tfw-view-combo > .button > div.list > div {
+body > div.tfw-view-combo-list > div,
+div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list > div {
     position: static;
     display: flex;
     flex-direction: column;
@@ -74,6 +78,10 @@ div.tfw-view-combo > .button > div.list > div {
     padding: 0 8px;
     cursor: pointer;
     box-shadow: 0 1px rgba(0,0,0,.1);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: calc(100vw - 64px);
 }
 
 div.tfw-view-combo > .button > .tfw-view-icon {
