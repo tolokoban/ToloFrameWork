@@ -8,7 +8,7 @@ Packages to install:
 to end recording and `Ctrl-x e` to execute it.
 * __language-toloframework-xjs__: Grammar for XJS files.
 
-Then go to he menu `Packages -> Macros -> Edit macro definitions` and put this in the opened file:
+Then go to he menu `Packages -> Macros -> Edit macro definitions` and put this in the opened file (backticks are mandatory to insert Javascript into CoffeeScript):
 ```coffee
 `
 function getActivePathAndExtension() {
