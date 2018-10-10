@@ -11,7 +11,7 @@
     curly: 0
     dot-location: 0
     eol-last: 0    # We don't need an extra EOL at the end of file.
-    func-names: [1, 'as-needed']
+    func-names: 0
     func-style: 0
     id-length: 0
     keyword-spacing: 0
@@ -22,15 +22,12 @@
     multiline-ternary: 0
     new-cap: 1    # Functions must not start with a capital letter.
     no-console: [1, { allow: ["warn", "error"] }]
-    no-continue: 0
     no-extra-parens: [1, 'all', { nestedBinaryExpressions: false }]
     no-implicit-globals: 0 # Because we always work in modules.
     no-magic-numbers: [1, { "ignore": [0, 1] }]
     no-negated-condition: 0
     no-plusplus: 0  # I want to be able to use i++.
-    no-sync: 1
     no-ternary: 0
-    no-underscore-dangle: 0
     no-use-before-define: [2, { functions: false, classes: true }]
     object-curly-spacing: 0
     object-shorthand: 1    # Can't do this becaue of IE11
@@ -52,4 +49,3 @@
     exports: false
     module: false
     require: false
-    __dirname: false
