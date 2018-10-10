@@ -16,7 +16,7 @@ exports.lang = function lang( _lang ) {
                 }
             }
         }
-        language = lang.substr( 0, 2 ).toLowerCase();
+        language = language.substr( 0, 2 ).toLowerCase();
     }
     currentLang = language;
     if ( window.localStorage ) {
