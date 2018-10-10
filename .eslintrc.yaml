@@ -8,6 +8,7 @@
     array-element-newline: 0
     capitalized-comments: 0
     computed-property-spacing: 0
+    curly: 0
     dot-location: 0
     eol-last: 0    # We don't need an extra EOL at the end of file.
     func-names: [1, 'as-needed']
@@ -21,6 +22,7 @@
     multiline-ternary: 0
     new-cap: 1    # Functions must not start with a capital letter.
     no-console: [1, { allow: ["warn", "error"] }]
+    no-continue: 0
     no-extra-parens: [1, 'all', { nestedBinaryExpressions: false }]
     no-implicit-globals: 0 # Because we always work in modules.
     no-magic-numbers: [1, { "ignore": [0, 1] }]
