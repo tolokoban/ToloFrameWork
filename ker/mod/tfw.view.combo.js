@@ -1,6 +1,6 @@
 "use strict";
 
-var CODE_BEHIND = {
+const CODE_BEHIND = {
   onIndexChange: onIndexChange,
   onKeysChange: onKeysChange,
   onItemsChange: onItemsChange,
@@ -8,9 +8,10 @@ var CODE_BEHIND = {
   onExpandedChange: onExpandedChange
 };
 
-var $ = require("dom");
-var PM = require("tfw.binding.property-manager");
-var Touchable = require("tfw.touchable");
+const
+    $ = require("dom"),
+    PM = require("tfw.binding.property-manager"),
+    Touchable = require("tfw.touchable");
 
 
 function onItemsChange( items ) {
@@ -37,9 +38,13 @@ function onItemsChange( items ) {
 function onItemTap( item, list, index, button ) {
   var itemsCount = getLength.call( this, this.items );
   if( itemsCount < 2 ) return;
+  if( itemsCount === 2 ) {
+      this.index = 1 - this.index;
+      return;
+  }
 
   var listContainer = this.$elements.listContainer;
-  
+
   if( this.expanded ) {
     // List is expanded, we need to collapse it.
     $(list).scrollTop = 0;
@@ -48,7 +53,7 @@ function onItemTap( item, list, index, button ) {
     $.css( listContainer, {
       width: "auto"
     });
-    
+
     $.css( list, {
       transform: "translateY(-" + 32*index + "px)",
       left: 0, top: 0,
@@ -61,7 +66,7 @@ function onItemTap( item, list, index, button ) {
     });
     $.detach( list );
     $.add( document.body, list );
-    
+
     $.addClass( item, 'thm-bgSL' );
     if( itemsCount === 2 ) {
       this.index = 1 - this.index;

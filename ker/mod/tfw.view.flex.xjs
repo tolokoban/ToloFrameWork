@@ -7,7 +7,7 @@
     ]
     flex-wrap: [nowrap wrap wrap-reverse]
     align-items: [
-      normal flex-start flex-end center start end self-start self-end
+      center normal flex-start flex-end start end self-start self-end
       baseline "first baseline" "last baseline" stretch
     ]
   }
@@ -15,6 +15,6 @@
   style.justify-content: {Bind justify-content}
   style.flex-wrap: {Bind flex-wrap}
   style.align-items: {Bind align-items}
-  
+
   view.children: {Bind content}
 }
