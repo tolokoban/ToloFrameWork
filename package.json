@@ -12,13 +12,14 @@
     "clean": "node bin/tfw.js clean",
     "watch": "node bin/tfw.js build debug test -dir spec-karma watch",
     "debug": "node bin/tfw.js build debug test -dir spec-karma",
+    "debug": "node --inspect-brk bin/tfw.js build debug test -dir spec-karma",
     "release": "node bin/tfw.js build version clean",
     "test": "node node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
-    "test:dbg": "devtool node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
+    "test:dbg": "node --inspect-brk node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
     "jasmine": "node node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
-    "jasmine:dbg": "devtool node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
+    "jasmine:dbg": "node --inspect-brk node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
     "karma": "node node_modules/karma/bin/karma start karma.conf.js",
-    "karma:dbg": "devtool node_modules/karma/bin/karma start karma.conf.js"
+    "karma:dbg": "node --inspect-brk node_modules/karma/bin/karma start karma.conf.js"
   },
   "repository": {
     "type": "git",
