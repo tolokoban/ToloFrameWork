@@ -1,6 +1,6 @@
 {
   "name": "toloframework",
-  "version": "0.46.0",
+  "version": "0.46.1",
   "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
   "bin": {
     "tfw": "bin/tfw.js"
@@ -11,7 +11,6 @@
   "scripts": {
     "clean": "node bin/tfw.js clean",
     "watch": "node bin/tfw.js build debug test -dir spec-karma watch",
-    "debug": "node bin/tfw.js build debug test -dir spec-karma",
     "debug": "node --inspect-brk bin/tfw.js build debug test -dir spec-karma",
     "release": "node bin/tfw.js build version clean",
     "test": "node node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
