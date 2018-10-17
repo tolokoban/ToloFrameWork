@@ -1,6 +1,6 @@
 "use strict";
 
-let currentLang = null;
+const ZERO_CHAR_CODE = '0'.chatCodeAt(0);
 
 exports.lang = function lang(_lang) {
     let language = _lang;
@@ -19,7 +19,6 @@ exports.lang = function lang(_lang) {
         }
         language = language.substr(0, 2).toLowerCase();
     }
-    currentLang = language;
     if (window.localStorage) {
         window.localStorage.setItem("Language", language);
     }
@@ -28,10 +27,10 @@ exports.lang = function lang(_lang) {
 
 exports.intl = function intl(words, params) {
     let dic = words[exports.lang()];
-    const k = params[0];
 
-    let defLang = '';
-    for (defLang in words) break;
+    const
+        k = params[0],
+        defLang = Object.keys(words)[0];
     if (!defLang) return k;
 
     if (!dic) {
@@ -66,9 +65,9 @@ function processArguments(txt, params) {
             if (c === '$') {
                 newTxt += txt.substring(lastIdx, i);
                 i++;
-                const pos = txt.charCodeAt(i) - 48;
+                const pos = txt.charCodeAt(i) - ZERO_CHAR_CODE;
                 if (pos < 0 || pos >= params.length) {
-                    newTxt += `\$${txt.charAt(i)}`;
+                    newTxt += `$${txt.charAt(i)}`;
                 } else {
                     newTxt += params[pos];
                 }
