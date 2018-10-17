@@ -19,6 +19,7 @@
     max-len: [1, { code: 120 }]
     max-params: [1, {max: 6}]
     max-statements: [2, {max: 20}]
+    multiline-comment-style: 0
     multiline-ternary: 0
     new-cap: 1    # Functions must not start with a capital letter.
     no-console: [1, { allow: ["warn", "error"] }]
@@ -28,6 +29,7 @@
     no-negated-condition: 0
     no-plusplus: 0  # I want to be able to use i++.
     no-ternary: 0
+    no-underscore-dangle: [1, { "allowAfterThis": true }]
     no-use-before-define: [2, { functions: false, classes: true }]
     object-curly-spacing: 0
     object-shorthand: 1    # Can't do this becaue of IE11
@@ -49,3 +51,4 @@
     exports: false
     module: false
     require: false
+    _: false
