@@ -205,6 +205,12 @@ function isAlreadySorted(array, comparator) {
     };
 });
 
+if (!Array.prototype.includes) {
+    // Polyfill for IE11.
+    Array.prototype.includes = function(item) {
+        return this.indexOf(item) !== -1;
+    }
+}
 List.prototype.includes = function(item) {
     return Array.prototype.includes.call(this._array, item);
 };
