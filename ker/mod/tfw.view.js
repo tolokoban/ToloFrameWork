@@ -1,10 +1,9 @@
 "use strict";
 
 const
-    $ = require( "dom" ),
-    PM = require( "tfw.binding.property-manager" ),
-    Hammer = require( "external.hammer" ),
-    Converters = require( 'tfw.binding.converters' );
+    $ = require("dom"),
+    PM = require("tfw.binding.property-manager"),
+    Converters = require('tfw.binding.converters');
 
 
 /**
@@ -52,37 +51,37 @@ exports.addAttribIfTrue = addAttribIfTrue;
 exports.addAttribIfFalse = addAttribIfFalse;
 
 
-function Tag( tagName, attribs ) {
+function Tag(tagName, attribs) {
     tagName = tagName.trim().toLowerCase();
 
-    var elem = tagName === 'svg' ? $.svgRoot() : newTag( tagName );
-    Object.defineProperty( this, '$', {
+    var elem = tagName === 'svg' ? $.svgRoot() : newTag(tagName);
+    Object.defineProperty(this, '$', {
         value: elem,
         writable: false,
         enumerable: true,
         configurable: false
-    } );
+    });
 
-    if ( Array.isArray( attribs ) ) {
+    if (Array.isArray(attribs)) {
         var that = this;
-        attribs.forEach( function ( attName ) {
-            switch ( attName.toLowerCase() ) {
-            case 'value':
-                defineAttribValue.call( that, elem );
-                break;
-            case 'focus':
-                defineAttribFocus.call( that, elem );
-                break;
-            case 'textcontent':
-                defineAttribTextContent.call( that, elem );
-                break;
-            case 'innerhtml':
-                defineAttribInnerHTML.call( that, elem );
-                break;
-            default:
-                defineStandardAttrib.call( that, elem, attName );
+        attribs.forEach(function(attName) {
+            switch (attName.toLowerCase()) {
+                case 'value':
+                    defineAttribValue.call(that, elem);
+                    break;
+                case 'focus':
+                    defineAttribFocus.call(that, elem);
+                    break;
+                case 'textcontent':
+                    defineAttribTextContent.call(that, elem);
+                    break;
+                case 'innerhtml':
+                    defineAttribInnerHTML.call(that, elem);
+                    break;
+                default:
+                    defineStandardAttrib.call(that, elem, attName);
             }
-        } );
+        });
     }
 }
 
@@ -90,113 +89,113 @@ function Tag( tagName, attribs ) {
  * Apply a  set of CSS  classes after removing the  previously applied
  * one for the same `id`.
  */
-Tag.prototype.applyClass = function ( newClasses, id ) {
+Tag.prototype.applyClass = function(newClasses, id) {
     var elem = this.$;
-    if ( typeof id === 'undefined' ) id = 0;
-    if ( typeof this._applyer === 'undefined' ) this._applyer = {};
-    if ( !Array.isArray( newClasses ) ) newClasses = [ newClasses ];
+    if (typeof id === 'undefined') id = 0;
+    if (typeof this._applyer === 'undefined') this._applyer = {};
+    if (!Array.isArray(newClasses)) newClasses = [newClasses];
 
-    var oldClasses = this._applyer[ id ];
-    if ( Array.isArray( oldClasses ) ) {
-        oldClasses.forEach( $.removeClass.bind( $, elem ) );
+    var oldClasses = this._applyer[id];
+    if (Array.isArray(oldClasses)) {
+        oldClasses.forEach($.removeClass.bind($, elem));
     }
-    this._applyer[ id ] = newClasses;
-    newClasses.forEach( $.addClass.bind( $, elem ) );
+    this._applyer[id] = newClasses;
+    newClasses.forEach($.addClass.bind($, elem));
 };
 
 
 
-var SVG_TAGS = [ "g", "rect", "circle", "line", "path", "defs" ];
+const SVG_TAGS = ["g", "rect", "circle", "line", "path", "defs"];
 
-function newTag( name ) {
-    if ( SVG_TAGS.indexOf( name.toLowerCase() ) !== -1 ) return $.svg( name );
-    return $.tag( name );
+function newTag(name) {
+    if (SVG_TAGS.indexOf(name.toLowerCase()) !== -1) return $.svg(name);
+    return $.tag(name);
 }
 
 
-function defineAttribValue( elem ) {
+function defineAttribValue(elem) {
     var that = this;
 
     var lastSettedValue = null;
-    PM( this ).create( 'value', {
-        get: function () { return lastSettedValue; },
-        set: function ( v ) {
+    PM(this).create('value', {
+        get: function() { return lastSettedValue; },
+        set: function(v) {
             elem.value = v;
             lastSettedValue = v;
         }
-    } );
-    elem.addEventListener( "input", function ( evt ) {
-        PM( that ).change( 'value', evt.target.value );
-    }, false );
+    });
+    elem.addEventListener("input", function(evt) {
+        PM(that).change('value', evt.target.value);
+    }, false);
 }
 
-function defineAttribFocus( elem ) {
+function defineAttribFocus(elem) {
     var that = this;
-    PM( this ).create( 'focus', {
-        cast: Converters.get( 'boolean' )(),
+    PM(this).create('focus', {
+        cast: Converters.get('boolean')(),
         delay: 1
-    } );
-    PM( this ).on( "focus", function ( v ) {
-        if ( v ) elem.focus();
+    });
+    PM(this).on("focus", function(v) {
+        if (v) elem.focus();
         else elem.blur();
-    } );
-    elem.addEventListener( "focus", function () {
+    });
+    elem.addEventListener("focus", function() {
         that.focus = true;
-    }, false );
-    elem.addEventListener( "blur", function () {
+    }, false);
+    elem.addEventListener("blur", function() {
         that.focus = false;
-    }, false );
+    }, false);
 }
 
-function defineAttribTextContent( elem ) {
-  [ "textContent", "textcontent" ].forEach( function ( name ) {
-        PM( this ).create( name, {
-            get: function () { return elem.textContent; },
-            set: function ( v ) {
-                if ( typeof v !== 'string' ) v = "" + v;
+function defineAttribTextContent(elem) {
+  ["textContent", "textcontent"].forEach(function(name) {
+        PM(this).create(name, {
+            get: function() { return elem.textContent; },
+            set: function(v) {
+                if (typeof v !== 'string') v = "" + v;
 
-                if ( v.substr( 0, 6 ) === '<html>' )
-                    elem.innerHTML = v.substr( 6 );
+                if (v.substr(0, 6) === '<html>')
+                    elem.innerHTML = v.substr(6);
                 else
                     elem.textContent = v;
             }
-        } );
-    }, this );
+        });
+    }, this);
 }
 
-function defineAttribInnerHTML( elem ) {
-  [ "innerHTML", "innerhtml" ].forEach( function ( name ) {
-        PM( this ).create( name, {
-            get: function () { return elem.innerHTML; },
-            set: function ( v ) {
+function defineAttribInnerHTML(elem) {
+  ["innerHTML", "innerhtml"].forEach(function(name) {
+        PM(this).create(name, {
+            get: function() { return elem.innerHTML; },
+            set: function(v) {
                 elem.innerHTML = v;
             }
-        } );
-    }, this );
+        });
+    }, this);
 }
 
-function defineStandardAttrib( elem, attName ) {
-    PM( this ).create( attName, {
-        get: function () {
-            return elem.getAttribute( attName );
+function defineStandardAttrib(elem, attName) {
+    PM(this).create(attName, {
+        get: function() {
+            return elem.getAttribute(attName);
         },
-        set: function ( v ) {
-            elem.setAttribute( attName, v );
+        set: function(v) {
+            elem.setAttribute(attName, v);
         }
-    } );
+    });
 }
 
 /**
  * Check if all needed function from code behind are defined.
  */
-function ensureCodeBehind( code_behind ) {
-    if ( typeof code_behind === 'undefined' )
+function ensureCodeBehind(code_behind) {
+    if (typeof code_behind === 'undefined')
         throw "Missing mandatory global variable CODE_BEHIND!";
 
     var i, funcName;
-    for ( i = 1; i < arguments.length; i++ ) {
-        funcName = arguments[ i ];
-        if ( typeof code_behind[ funcName ] !== 'function' )
+    for (i = 1; i < arguments.length; i++) {
+        funcName = arguments[i];
+        if (typeof code_behind[funcName] !== 'function')
             throw "Expected CODE_BEHIND." + funcName + " to be a function!";
     }
 };
@@ -226,8 +225,8 @@ var GESTURES = [
  * });
  * ```
  */
-function events( target, events ) {
-    $.on( target, events );
+function events(target, events) {
+    $.on(target, events);
     /*
     var elem = $( target );
     var gestures = {};
@@ -257,35 +256,35 @@ function events( target, events ) {
 /**
  * Assign default values.
  */
-function defVal( target, args, defaultValues ) {
+function defVal(target, args, defaultValues) {
     var key, val;
-    for ( key in defaultValues ) {
-        val = defaultValues[ key ];
-        if ( typeof args[ key ] === 'undefined' ) {
-            target[ key ] = val;
+    for (key in defaultValues) {
+        val = defaultValues[key];
+        if (typeof args[key] === 'undefined') {
+            target[key] = val;
         } else {
-            target[ key ] = args[ key ];
+            target[key] = args[key];
         }
     }
 };
 
 
-function addClassIfTrue( element, className, value ) {
-    if ( value ) $.addClass( element, className );
-    else $.removeClass( element, className );
+function addClassIfTrue(element, className, value) {
+    if (value) $.addClass(element, className);
+    else $.removeClass(element, className);
 }
 
-function addClassIfFalse( element, className, value ) {
-    if ( value ) $.removeClass( element, className );
-    else $.addClass( element, className );
+function addClassIfFalse(element, className, value) {
+    if (value) $.removeClass(element, className);
+    else $.addClass(element, className);
 }
 
-function addAttribIfTrue( element, attribName, value ) {
-    if ( value ) $.att( element, attribName );
-    else $.removeAtt( element, attribName );
+function addAttribIfTrue(element, attribName, value) {
+    if (value) $.att(element, attribName);
+    else $.removeAtt(element, attribName);
 }
 
-function addAttribIfFalse( element, attribName, value ) {
-    if ( value ) $.removeAtt( element, attribName );
-    else $.att( element, attribName );
+function addAttribIfFalse(element, attribName, value) {
+    if (value) $.removeAtt(element, attribName);
+    else $.att(element, attribName);
 }
