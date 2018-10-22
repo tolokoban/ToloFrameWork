@@ -10,15 +10,17 @@
   }
 
   class.wide:{Bind wide}
-  
+  event.tap:{Set expanded true}
+
   [
-    {HEADER textcontent:{Bind label}}    
-    {DIV view.id:button class.show|hide:{Bind expanded} class:"button" [
-      {DIV view.id:screen class:screen event.tap:{Set expanded false}}
-      {DIV view.id:list-container class:list-container [
-        {DIV view.id:list class:"tfw-view-combo-list thm-ele8"}
-      ]}
-      {tfw.view.icon content:down size:32}
+    {HEADER textcontent:{Bind label}}
+    {DIV view.id:button class:button [
+        {DIV view.id:list-container class:list-container [
+            {DIV view.id:list class:"tfw-view-combo-list"}
+        ]}
+        {DIV class:icon [
+            {tfw.view.icon content:down size:24}
+        ]}
     ]}
   ]
 }

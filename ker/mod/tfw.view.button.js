@@ -28,6 +28,11 @@ function on( slot ) {
     return this;
 }
 
+/**
+ * @this ViewXJS
+ * @param {number} v - New width.
+ * @returns {undefined}
+ */
 function onWidthChanged( v ) {
     if ( this.wide ) {
         delete this.$.style.width;
@@ -89,12 +94,9 @@ function getClasses() {
             'primary': 'thm-fgP',
             'secondary': 'thm-fgS'
         };
+    if ( this.pressed ) classes.push( "pressed" );
     if ( this.flat ) {
-        if ( this.pressed ) {
-            classes.push( background[ this.type ] );
-        } else {
-            classes.push( foreground[ this.type ] );
-        }
+        classes.push( foreground[ this.type ] );
     } else {
         classes.push( background[ this.type ] );
         if ( this.pressed ) {

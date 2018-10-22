@@ -3,6 +3,7 @@ div.tfw-view-combo {
     flex-direction: column;
     justify-content: start;
     align-items: stretch;
+    cursor: pointer;
 }
 div.tfw-view-combo.wide {
     display: inline-flex;
@@ -27,6 +28,9 @@ div.tfw-view-combo > header {
 
 div.tfw-view-combo > .button  {
     position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     flex: 1 1;
     background: #fff;
     height: 32px;
@@ -36,28 +40,41 @@ div.tfw-view-combo > .button  {
     margin: 0;
     padding: 0;
     font: inherit;
+    white-space: nowrap;
 }
-div.tfw-view-combo > .button.hide {
+
+div.tfw-view-combo > .button > div {
+    display: inline-block;
+    height: 32px;
+    max-height: 32px;
+    min-height: 32px;
+    margin: 0;
+}
+
+div.tfw-view-combo > .button > div.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    height: 32px;
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+}
+
+div.tfw-view-combo > .button {
     overflow: hidden;
 }
-div.tfw-view-combo > .button.hide > div.list-container > div.tfw-view-combo-list {
+div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list {
     overflow: hidden;
 }
-div.tfw-view-combo > .button.show {
-    overflow: show;
-    z-index: 9999998;
-}
+
 body > div.tfw-view-combo-list {
     position: fixed;
-    z-index: 9999999;
     background: #fff;
     overflow: auto;
     max-height: calc(100vh - 64px);
 }
-div.tfw-view-combo > .button.show > div.screen {
-    position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: transparent; cursor: forbiden;
-}
-
 div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list {
     background: #fff;
     transition: transform .2s;
@@ -65,7 +82,7 @@ div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list {
     overflow: auto;
     max-height: calc(100vh - 64px);
 }
-body > div.tfw-view-combo-list > div,
+body > div.tfw-view-combo-screen > div > div,
 div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list > div {
     position: static;
     display: flex;
@@ -77,17 +94,31 @@ div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list > di
     min-height: 32px;
     padding: 0 8px;
     cursor: pointer;
-    box-shadow: 0 1px rgba(0,0,0,.1);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: calc(100vw - 64px);
+    padding-width: 32px;
 }
 
-div.tfw-view-combo > .button > .tfw-view-icon {
-    position: absolute;
+div.tfw-view-combo-screen {
+    position: fixed;
+    left: 0;
     top: 0;
-    right: 0;
-    z-index: 999998;
-    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: rgba(0,0,0,.3);
+    z-index: 99999999;
+}
+
+div.tfw-view-combo-screen > div {
+    position: absolute;
+    max-height: calc(100vh - 32px);
+    overflow: auto;
+}
+
+div.tfw-view-combo-screen > div > div {
+    box-shadow: 0 1px rgba(0,0,0,.1) inset;
 }
