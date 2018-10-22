@@ -72,15 +72,11 @@ div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list {
 body > div.tfw-view-combo-list {
     position: fixed;
     background: #fff;
-    overflow: auto;
-    max-height: calc(100vh - 64px);
 }
 div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list {
     background: #fff;
     transition: transform .2s;
     transform: translateY(0);
-    overflow: auto;
-    max-height: calc(100vh - 64px);
 }
 body > div.tfw-view-combo-screen > div > div,
 div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list > div {
