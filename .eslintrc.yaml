@@ -22,10 +22,12 @@
     multiline-comment-style: 0
     multiline-ternary: 0
     new-cap: 1    # Functions must not start with a capital letter.
+    newline-per-chained-call: 0
     no-console: [1, { allow: ["warn", "error"] }]
     no-extra-parens: [1, 'all', { nestedBinaryExpressions: false }]
     no-implicit-globals: 0 # Because we always work in modules.
     no-magic-numbers: [1, { "ignore": [0, 1] }]
+    no-mixed-operators: ["error", {"groups": [["&", "|", "^", "~", "<<", ">>", ">>>"], ["&&", "||"]]}]
     no-negated-condition: 0
     no-plusplus: 0  # I want to be able to use i++.
     no-sync: 0

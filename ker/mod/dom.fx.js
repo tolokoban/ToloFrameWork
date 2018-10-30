@@ -61,8 +61,14 @@ Fx.prototype.start = function ( _onEnd ) {
     next.call( this, this._session );
 };
 
+/**
+ * Next step of the animation.
+ * @this Fx
+ * @param {object} session - ``{ $id }
+ * @returns {undefined}
+ */
 function next( session ) {
-    if ( session != this._session ) return;
+    if ( session !== this._session ) return;
     if ( this._index >= this._tasks.length ) {
         this._index = 0;
         this._started = false;
@@ -71,16 +77,19 @@ function next( session ) {
         return;
     }
 
-    var that = this;
-    var tsk = this._tasks[ this._index++ ];
+    const
+        that = this,
+        tsk = this._tasks[ this._index++ ];
     if ( this._debug ) {
-        console.info( "[dom.fx] tsk[" + ( this._index - 1 ) + "]: ", tsk.label,
-            "(" + ( Date.now() - this._startTime ) + " ms)", tsk.args, session );
+        console.info(
+            `[dom.fx] tsk[${this._index - 1}]: `, tsk.label,
+            `(${Date.now() - this._startTime} ms)`, tsk.args, session
+        );
     }
     tsk( function () {
         delay( next.bind( that, session ) );
     }, true );
-};
+}
 
 Fx.prototype.end = function () {
     if ( !this._started ) return this;
