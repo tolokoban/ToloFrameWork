@@ -35,7 +35,7 @@
   class.wide: {Bind wide}
   class.responsive: {Bind responsive}
   class.small: {Bind small}
-
+  class.|disabled: {Bind enabled}
   event.keyup: onKeyUp
   event.down: {Set pressed true}
   event.up: {Set pressed false}

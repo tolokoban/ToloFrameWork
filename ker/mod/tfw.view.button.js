@@ -67,14 +67,14 @@ function fire( tag ) {
 function getClassesForText() {
     if ( !this.flat ) return [];
     switch ( this.type ) {
-    case 'primary':
-        return [ 'thm-fgP' ];
+        case 'primary':
+            return [ 'thm-fgP' ];
 
-    case 'secondary':
-        return [ 'thm-fgS' ];
+        case 'secondary':
+            return [ 'thm-fgS' ];
 
-    default:
-        return [];
+        default:
+            return [];
     }
 }
 
@@ -123,17 +123,22 @@ function onKeyUp( evt ) {
 }
 
 function init() {
-    var that = this;
+    const that = this;
 
     this._touchable = new Touchable( this.$ );
-    this._touchable.tap.add( function () { fire.call( that ); } );
+    this._touchable.tap.add( function() { fire.call( that ); } );
     this._touchable.enabled = this.enabled;
 }
 
+/**
+ * Add/remove the disabled attribute to the BUTTON element.
+ *
+ * @this ViewXJS
+ * @returns {undefined}
+ */
 function onEnabledChanged() {
-    if ( !this._touchable ) return;
-    var enabled = this.enabled && !this.wait;
-    this._touchable.enabled = enabled;
+    const enabled = this.enabled && !this.wait;
+    if ( this._touchable ) this._touchable.enabled = enabled;
     if ( enabled ) {
         $.removeAtt( this, "disabled" );
     } else {
