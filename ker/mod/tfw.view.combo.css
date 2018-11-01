@@ -26,6 +26,10 @@ div.tfw-view-combo > header {
     margin: 0;
 }
 
+div.tfw-view-combo > header.hide {
+    display: none;
+}
+
 div.tfw-view-combo > .button  {
     position: relative;
     display: flex;

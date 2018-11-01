@@ -13,7 +13,7 @@
   event.tap:{Set expanded true}
 
   [
-    {HEADER textcontent:{Bind label}}
+    {HEADER textcontent:{Bind label} class.hide:{Bind label converter:isEmpty}}
     {DIV view.id:button class:button [
         {DIV view.id:list-container class:list-container [
             {DIV view.id:list class:"tfw-view-combo-list"}
