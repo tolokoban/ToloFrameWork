@@ -16,6 +16,15 @@ exports.HTTP_ERROR = -6;
 exports.get = callWebService;
 
 /**
+ * Request any web server with POST method and returns text.
+ *
+ * @param {string} url - URL of the server to request. Can contain GET params.
+ * @param {object} args - Arguments to send with the POST methos.
+ * @type {Promise} Resolves in the response as string.
+ */
+exports.request = request;
+
+/**
  * @return {boolean}
  */
 exports.isAdmin = isAdmin;
@@ -42,7 +51,6 @@ exports.loadJSON = loadJSON;
  * @type {tfw.listeners}
  */
 exports.eventChange = new( require( "tfw.listeners" ) )();
-
 exports.changeEvent = exports.eventChange;
 
 /**
@@ -73,11 +81,11 @@ exports.config = configGetSet;
 
 
 Object.defineProperty( exports, 'userData', {
-    get: function () {
+    get: function() {
         if ( currentUser ) return currentUser.data || {};
         return {};
     },
-    set: function () {},
+    set: function() {},
     configurable: true,
     enumerable: true
 } );
@@ -103,9 +111,50 @@ if ( Array.isArray( saved ) ) {
     config.pwd = saved[ 1 ];
 }
 
+/**
+ * Request any web server with POST method and returns text.
+ *
+ * @param {string} url - URL of the server to request. Can contain GET params.
+ * @param {object} args - Arguments to send with the POST methos.
+ * @returns {Promise} Resolves in the response as string.
+ */
+function request( url, args ) {
+    return new Promise( function( resolve, reject ) {
+        const xhr = new XMLHttpRequest();
+        xhr.open( "POST", url, true ); // true is for async.
+        xhr.onload = () => {
+            const DONE = 4;
+            if ( xhr.readyState !== DONE ) return;
+
+            console.info( "xhr.status=", xhr.status );
+            console.info( "xhr.responseText=", xhr.responseText );
+            if ( xhr.status === 200 ) resolve( xhr.responseText );
+            /*
+            else reject( {
+                id: exports.HTTP_ERROR,
+                msg: "(" + xhr.status + ") " + xhr.statusText,
+                status: xhr.status
+            } );
+            */
+        };
+        xhr.onerror = function() {
+            reject( {
+                id: exports.HTTP_ERROR,
+                err: "HTTP_ERROR (" + xhr.status + ") " + xhr.statusText,
+                status: xhr.status
+            } );
+        };
+        const params = Object.keys( args )
+            .map( key => `${key}=${encodeURIComponent(args[key])}` )
+            .join( "&" );
+        xhr.setRequestHeader( "Content-type", "application/x-www-form-urlencoded" );
+        xhr.send( params );
+    } );
+}
+
 function svc( name, args, url ) {
     return new Promise(
-        function ( resolve, reject ) {
+        function( resolve, reject ) {
             if ( typeof url === 'undefined' ) url = config.url;
             var that = this;
             var xhr = new XMLHttpRequest( {
@@ -119,7 +168,7 @@ function svc( name, args, url ) {
                 xhr = new XDomainRequest();
                 xhr.open( "POST", url + "/svc.php" );
             }
-            xhr.onload = function () {
+            xhr.onload = function() {
                 if ( xhr.status != 200 ) {
                     return reject( {
                         id: exports.HTTP_ERROR,
@@ -155,7 +204,7 @@ function svc( name, args, url ) {
                     } );
                 }
             };
-            xhr.onerror = function () {
+            xhr.onerror = function() {
                 reject( {
                     id: exports.HTTP_ERROR,
                     err: "HTTP_ERROR (" + xhr.status + ") " + xhr.statusText,
@@ -179,11 +228,11 @@ function svc( name, args, url ) {
  * @param {string} path Local path relative to the current HTML page.
  */
 function loadJSON( path ) {
-    return new Promise( function ( resolve, reject ) {
+    return new Promise( function( resolve, reject ) {
         var xhr = new XMLHttpRequest( {
             mozSystem: true
         } );
-        xhr.onload = function () {
+        xhr.onload = function() {
             var text = xhr.responseText;
             try {
                 resolve( JSON.parse( text ) );
@@ -191,7 +240,7 @@ function loadJSON( path ) {
                 reject( Error( "Bad JSON format for \"" + path + "\"!\n" + ex + "\n" + text ) );
             }
         };
-        xhr.onerror = function () {
+        xhr.onerror = function() {
             reject( Error( "Unable to load file \"" + path + "\"!\n" + xhr.statusText ) );
         };
         xhr.open( "GET", path, true );
@@ -234,7 +283,7 @@ function login( usr, pwd ) {
     if ( typeof pwd === 'undefined' ) pwd = config.pwd || '';
 
     return new Promise(
-        function ( resolve, reject ) {
+        function( resolve, reject ) {
             if ( typeof usr === 'undefined' ) {
                 var autologin = Storage.local.get( "nigolotua" );
                 if ( !Array.isArray( autologin ) ) return reject( {
@@ -246,14 +295,14 @@ function login( usr, pwd ) {
             Storage.local.set( "nigolotua", null );
             svc( "tfw.login.Challenge", usr )
                 .then(
-                    function ( code ) {
+                    function( code ) {
                         // Hashage du mot de passe à l'aide du code.
                         var output = [
-              0, 0, 0, 0,
-              0, 0, 0, 0,
-              0, 0, 0, 0,
-              0, 0, 0, 0
-            ],
+                                0, 0, 0, 0,
+                                0, 0, 0, 0,
+                                0, 0, 0, 0,
+                                0, 0, 0, 0
+                            ],
                             i, j = 0,
                             pass = [],
                             k1, k2, k3;
@@ -277,11 +326,11 @@ function login( usr, pwd ) {
                     reject
                 )
                 .then(
-                    function ( user ) {
+                    function( user ) {
                         if ( typeof user === 'object' ) {
                             currentUser = {
                                 data: user,
-                                hasRole: function ( role ) {
+                                hasRole: function( role ) {
                                     for ( var i = 0; i < user.roles.length; i++ ) {
                                         var item = user.roles[ i ];
                                         if ( item == role ) return true;
@@ -311,14 +360,14 @@ function login( usr, pwd ) {
  */
 function callWebService( name, args, url ) {
     return new Promise(
-        function ( resolve, reject ) {
+        function( resolve, reject ) {
             svc( name, args, url ).then(
                 resolve,
-                function ( err ) {
-                    if ( typeof err === 'object' && err.id == exports.BAD_ROLE ) {
+                function( err ) {
+                    if ( typeof err === 'object' && err.id === exports.BAD_ROLE ) {
                         // Echec de connexion, on retente de se connecter avant d'abandonner.
                         login().then(
-                            function () {
+                            function() {
                                 svc( name, args, url ).then( resolve, reject );
                             },
                             reject
@@ -353,16 +402,16 @@ function configGetSet( key, val ) {
 
 // _Backward compatibility.
 if ( window.$$ ) {
-    window.$$.service = function ( name, args, caller, onSuccess, onError ) {
+    window.$$.service = function( name, args, caller, onSuccess, onError ) {
         var p = exports.get( name, args );
         p.then(
-            function ( value ) {
+            function( value ) {
                 if ( onSuccess ) {
                     return caller[ onSuccess ].call( caller, value );
                 }
                 return value;
             },
-            function ( reason ) {
+            function( reason ) {
                 if ( onError ) {
                     return caller[ onError ].call( caller, reason );
                 }
@@ -374,15 +423,15 @@ if ( window.$$ ) {
 
 
 var properties = {
-    userID: function () {
+    userID: function() {
         if ( !currentUser ) return 0;
         return currentUser.data.id;
     },
-    userLogin: function () {
+    userLogin: function() {
         if ( !currentUser ) return null;
         return currentUser.data.login;
     },
-    userName: function () {
+    userName: function() {
         if ( !currentUser ) return null;
         return currentUser.data.name;
     }
@@ -391,7 +440,7 @@ var properties = {
 for ( var key in properties ) {
     Object.defineProperty( exports, key, {
         get: properties[ key ],
-        set: function ( v ) {
+        set: function( v ) {
             throw Error( "Property " + key + " is read-only!" );
         },
         configurable: true,
