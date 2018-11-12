@@ -1,0 +1,17 @@
+{View DIV class:"tfw-view-slider thm-ele2 thm-bgPD"
+    view.attribs: {
+        value: {integer 0 behind:onValueChanged}
+        min: {integer 0}
+        max: {integer 100}
+        step: {integer 1}
+    }
+
+    event.tap: onTapBack
+    
+    [
+        {DIV
+            view.id: button
+            class: "thm-ele4 thm-bgPL"
+            textcontent: {Bind value}}
+    ]
+}
