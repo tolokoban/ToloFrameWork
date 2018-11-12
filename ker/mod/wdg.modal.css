@@ -59,7 +59,8 @@ div.wdg-modal .cell > div {
     position: relative;
     flex-grow: 1;
     z-index: 0;
-    overflow: auto;
+    overflow-x: inherit;
+    overflow-y: auto;
     margin: 0;
     padding: 0;
 }

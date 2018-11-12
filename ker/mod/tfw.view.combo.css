@@ -4,6 +4,7 @@ div.tfw-view-combo {
     justify-content: start;
     align-items: stretch;
     cursor: pointer;
+    border: 1px solid rgba(0,0,0,.5);
 }
 div.tfw-view-combo.wide {
     display: inline-flex;
