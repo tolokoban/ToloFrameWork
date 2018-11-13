@@ -7,7 +7,7 @@ div.tfw-view-slider {
     cursor: pointer;
 }
 
-div.tfw-view-slider>div {
+div.tfw-view-slider > div {
     top: 4px;
     left: 0%;
     position: absolute;
@@ -21,4 +21,5 @@ div.tfw-view-slider>div {
     cursor: pointer;
     font-size: 12px;
     overflow: hidden;
+    transition: none;
 }

@@ -4,14 +4,22 @@
         min: {integer 0}
         max: {integer 100}
         step: {integer 1}
+        // displayed-value is equal to factor * value + shift.
+        shift: {float 1}
+        factor: {float 1}
+        // Private.
+        displayed-value: {string 1}
     }
 
     event.tap: onTapBack
-    
+
     [
         {DIV
             view.id: button
+            event.dragstart: onDragStart
+            event.drag: onDrag
+            event.dragend: onDragEnd
             class: "thm-ele4 thm-bgPL"
-            textcontent: {Bind value}}
+            textcontent: {Bind displayed-value}}
     ]
 }

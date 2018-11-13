@@ -32,7 +32,7 @@
     no-plusplus: 0  # I want to be able to use i++.
     no-sync: 0
     no-ternary: 0
-    no-underscore-dangle: [1, { "allowAfterThis": true }]
+    no-underscore-dangle: 0 # [1, { "allowAfterThis": true }]
     no-use-before-define: [2, { functions: false, classes: true }]
     object-curly-spacing: 0
     object-shorthand: 1    # Can't do this becaue of IE11
