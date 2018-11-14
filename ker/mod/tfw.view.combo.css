@@ -1,4 +1,4 @@
-div.tfw-view-combo {
+.tfw-view-combo {
     display: inline-flex;
     flex-direction: column;
     justify-content: start;
@@ -6,12 +6,12 @@ div.tfw-view-combo {
     cursor: pointer;
     border: 1px solid rgba(0,0,0,.5);
 }
-div.tfw-view-combo.wide {
+.tfw-view-combo.wide {
     display: inline-flex;
     width: 100%;
 }
 
-div.tfw-view-combo > header {
+.tfw-view-combo > header {
     flex: 1 1;
     position: static;
     display: flex;
@@ -27,11 +27,11 @@ div.tfw-view-combo > header {
     margin: 0;
 }
 
-div.tfw-view-combo > header.hide {
+.tfw-view-combo > header.hide {
     display: none;
 }
 
-div.tfw-view-combo > .button  {
+.tfw-view-combo > .button  {
     position: relative;
     display: flex;
     flex-direction: row;
@@ -48,7 +48,7 @@ div.tfw-view-combo > .button  {
     white-space: nowrap;
 }
 
-div.tfw-view-combo > .button > div {
+.tfw-view-combo > .button > div {
     display: inline-block;
     height: 32px;
     max-height: 32px;
@@ -56,7 +56,7 @@ div.tfw-view-combo > .button > div {
     margin: 0;
 }
 
-div.tfw-view-combo > .button > div.icon {
+.tfw-view-combo > .button > div.icon {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -67,24 +67,24 @@ div.tfw-view-combo > .button > div.icon {
     max-width: 32px;
 }
 
-div.tfw-view-combo > .button {
+.tfw-view-combo > .button {
     overflow: hidden;
 }
-div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list {
+.tfw-view-combo > .button > div.list-container > .tfw-view-combo-list {
     overflow: hidden;
 }
 
-body > div.tfw-view-combo-list {
+body > .tfw-view-combo-list {
     position: fixed;
     background: #fff;
 }
-div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list {
+.tfw-view-combo > .button > div.list-container > .tfw-view-combo-list {
     background: #fff;
     transition: transform .2s;
     transform: translateY(0);
 }
-body > div.tfw-view-combo-screen > div > div,
-div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list > div {
+body > .tfw-view-combo-screen > div > div,
+.tfw-view-combo > .button > div.list-container > .tfw-view-combo-list > div {
     position: static;
     display: flex;
     flex-direction: column;
@@ -102,7 +102,7 @@ div.tfw-view-combo > .button > div.list-container > div.tfw-view-combo-list > di
     padding-width: 32px;
 }
 
-div.tfw-view-combo-screen {
+.tfw-view-combo-screen {
     position: fixed;
     left: 0;
     top: 0;
@@ -114,12 +114,12 @@ div.tfw-view-combo-screen {
     z-index: 99999999;
 }
 
-div.tfw-view-combo-screen > div {
+.tfw-view-combo-screen > div {
     position: absolute;
     max-height: calc(100vh - 32px);
     overflow: auto;
 }
 
-div.tfw-view-combo-screen > div > div {
+.tfw-view-combo-screen > div > div {
     box-shadow: 0 1px rgba(0,0,0,.1) inset;
 }

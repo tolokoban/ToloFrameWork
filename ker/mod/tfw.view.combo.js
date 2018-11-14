@@ -6,7 +6,8 @@ const CODE_BEHIND = {
     onKeysChange,
     onItemsChange,
     onValueChange,
-    onExpandedChange
+    onExpandedChange,
+    onKeyDown
 };
 
 const
@@ -39,41 +40,6 @@ function onItemsChange( items ) {
     } );
 
     if ( !this.index ) this.index = 0;
-}
-
-/**
- * @this ViewXJS
- * @param {DOMElement} item - DIV containing a clickable item.
- * @param {DOMElement} list - DIV container for items.
- * @param {integer} index - Index of the item.
- * @param {Touchable} button - Touchable behaviour for an item.
- * @returns {undefined}
- */
-function expandList( item, list, index, button ) {
-    const
-        listContainer = this.$elements.listContainer,
-        cssWidth = Dom( list ).clientWidth;
-    Dom.css( listContainer, { width: `${cssWidth}px` } );
-    Dom.detach( list );
-    Dom.add( document.body, list );
-
-    Dom.addClass( item, 'thm-bgSL' );
-    const rect = button.getBoundingClientRect();
-    let top = rect.top - ( ITEM_HEIGHT * index );
-    const topLimit = top - ( ITEM_HEIGHT * Math.floor( top / ITEM_HEIGHT ) );
-    if ( top < 0 ) top = topLimit;
-    while ( top > topLimit && top + this._listHeight > document.body.clientHeight - 8 ) {
-        top -= ITEM_HEIGHT;
-    }
-    top += ITEM_HEIGHT * index;
-
-    Dom.css( list, {
-        left: `${rect.left}px`,
-        top: `${top}px`,
-        height: "auto"
-    } );
-    const listWidth = list.getBoundingClientRect().width;
-    Dom.css( button, { width: this.wide ? 'auto' : `${listWidth}px` } );
 }
 
 /**
@@ -176,9 +142,11 @@ function onExpandedChange( expanded ) {
 
 /**
  * @this ViewXJS
+ * @param {boolean} saveCurrentValue - When the combo expands, we may want to save the current
+ * value in order to go back to this value if the user press ESCAPE key.
  * @returns {undefined}
  */
-function expand() {
+function expand( saveCurrentValue = true ) {
     if ( manageIfFewItems.call( this ) ) return;
 
     const
@@ -186,6 +154,9 @@ function expand() {
         expandedList = copyContentOf.call( this );
     moveList( this.$elements.list.$, expandedList );
     Dom.add( screen, expandedList );
+    if ( saveCurrentValue ) {
+        this._valueWhenExpanded = this.value;
+    }
 }
 
 /**
@@ -199,7 +170,6 @@ function moveList( collapsedList, expandedList ) {
     const
         rect = collapsedList.getBoundingClientRect(),
         left = rect.left;
-    console.info( "rect=", rect );
     let top = rect.top;
     while ( top <= 0 ) top += ITEM_HEIGHT;
     Dom.css( expandedList, {
@@ -241,7 +211,6 @@ function copyContentOf() {
  */
 function collapse() {
     removeScreen.call( this );
-
 }
 
 /**
@@ -275,10 +244,66 @@ function addScreen() {
 }
 
 /**
-if ( !expanded ) {
-    this._itemsDivs.forEach( function ( itemDiv ) {
-        Dom.removeClass( itemDiv, 'thm-bgSL' );
-    } );
+ * Space will expand the combo, Escape will collapse it and Enter will trigger an action.
+ *
+ * @this ViewXJS
+ * @param   {[type]} evt [description]
+ * @returns {[type]}     [description]
+ */
+function onKeyDown( evt ) {
+    switch ( evt.key ) {
+    case 'Space':
+        this.expanded = !this.expanded;
+        evt.preventDefault();
+        break;
+    case 'Enter':
+        this.action = this.value;
+        break;
+    case 'ArrowDown':
+        selectNext.call( this );
+        evt.preventDefault();
+        break;
+    case 'ArrowUp':
+        selectPrev.call( this );
+        evt.preventDefault();
+        break;
+    case 'Escape':
+        if ( this.expanded ) {
+            this.expanded = false;
+            // Set the value as it was when we expanded the combo.
+            this.value = this._valueWhenExpanded;
+            evt.preventDefault();
+        }
+        break;
+    default:
+        // Do nothing.
+    }
 }
+
+/**
+ * Select next item.
+ *
+ * @this ViewXJS
+ * @returns {undefined}
+ */
+function selectNext() {
+    this.index = ( this.index + 1 ) % this.items.length;
+    if ( this.expanded ) {
+        collapse.call( this );
+        expand.call( this, false );
+    }
 }
-*/
+
+/**
+ * Select previous item.
+ *
+ * @this ViewXJS
+ * @returns {undefined}
+ */
+function selectPrev() {
+    this.index = ( this.index + this.items.length - 1 ) % this.items.length;
+    if ( this.expanded ) {
+        collapse.call( this );
+        expand.call( this, false );
+    }
+}

@@ -7,10 +7,14 @@
     expanded: {boolean false behind:onExpandedChange}
     index: {integer 0 behind:onIndexChange}
     value: {string "" behind:onValueChange}
+    tabindex: {integer 0}
+    action: {action}
   }
 
-  class.wide:{Bind wide}
-  event.tap:{Set expanded true}
+  class.wide: {Bind wide}
+  event.tap: {Set expanded true}
+  event.keydown: onKeyDown
+  tabindex: {Bind tabindex}
 
   [
     {HEADER textcontent:{Bind label} class.hide:{Bind label converter:isEmpty} class:thm-bgPL}
