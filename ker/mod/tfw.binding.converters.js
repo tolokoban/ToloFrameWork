@@ -19,6 +19,7 @@ const CONVERTERS = {
     intl: intlConverter,
     isEmpty: isEmptyConverter,
     isNotEmpty: isNotEmptyConverter,
+    isNull: isNullConverter,
     isStrictlyPositive: isStrictlyPositiveConverter,
     isZero: isZeroConverter,
     keys: keysConverter,
@@ -263,7 +264,7 @@ function number2time( v ) {
     return new Date( v );
 }
 
-var DIGITS = "0123456789";
+const DIGITS = "0123456789";
 
 function string2time( v ) {
     var hours = 0;
@@ -314,6 +315,11 @@ function dateConverter( v ) {
 
 function isZeroConverter( v ) {
     return v === 0;
+}
+
+function isNullConverter( v ) {
+    if ( isNaN( v ) ) return true;
+    return !v ? true : false;
 }
 
 function isStrictlyPositiveConverter( v_ ) {
