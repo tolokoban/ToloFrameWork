@@ -12,8 +12,6 @@
  */
 module.exports = getGesture;
 
-//============================================================
-
 const
     HANDLERS = {
         tap: onTap,
@@ -26,24 +24,24 @@ const
         up: onUp,
         wheel: onWheel
     },
-    SYMBOL = Symbol( '__tfw.gestures__' ),
+    SYMBOL = Symbol('__tfw.gestures__'),
     // Webkit and Opera still use 'mousewheel' event type.
-    WHEEL_EVENT = ( function() {
+    WHEEL_EVENT = (function() {
         // Modern browsers support "wheel"
-        if ( "onwheel" in document.createElement( "div" ) ) return "wheel";
+        if ("onwheel" in document.createElement("div")) return "wheel";
         // Webkit and IE support at least "mousewheel"
-        if ( typeof document.onmousewheel !== 'undefined' ) return "mousewheel";
+        if (typeof document.onmousewheel !== 'undefined') return "mousewheel";
         // let's assume that remaining browsers are older Firefox
         return "DOMMouseScroll";
-    }() ),
-    SUPPORTED_EVENTS = Object.keys( HANDLERS );
+    }()),
+    SUPPORTED_EVENTS = Object.keys(HANDLERS);
 
-const Hammer = require( "external.hammer" );
+const Hammer = require("external.hammer");
 
 
 class Gesture {
-    constructor( element ) {
-        Object.defineProperty( this, '$', { writable: false, value: element, configurable: false } );
+    constructor(element) {
+        Object.defineProperty(this, '$', { writable: false, value: element, configurable: false });
         this._events = {};
         // Last time  a touch  start occurs.  This  is used to  prevent onmousedown  to be triggered  if a
         // touchstart has been processed.
@@ -59,23 +57,23 @@ class Gesture {
      * @param   {any} arg3 - args or undefined.
      * @returns {object} this.
      */
-    on( arg1, arg2, arg3 ) {
+    on(arg1, arg2, arg3) {
         const
             syntax1 = typeof arg1 === 'function',
             name = syntax1 ? "tap" : arg1,
             slot = syntax1 ? arg1 : arg2,
             args = syntax1 ? arg2 : arg3;
         try {
-            ensureValidGestureNameAndSlot( name, slot );
-            HANDLERS[ name ].call( this, doRegister.bind( this ), slot, args );
+            ensureValidGestureNameAndSlot(name, slot);
+            HANDLERS[name].call(this, doRegister.bind(this), slot, args);
             return this;
-        } catch ( ex ) {
-            console.error( "[Gesture.on( name, slot, args )]" );
-            console.error( "   name", name );
-            console.error( "   slot", slot );
-            console.error( "   args", args );
-            console.error( "   ERROR", ex );
-            throw Error( ex );
+        } catch (ex) {
+            console.error("[Gesture.on( name, slot, args )]");
+            console.error("   name", name);
+            console.error("   slot", slot);
+            console.error("   args", args);
+            console.error("   ERROR", ex);
+            throw Error(ex);
         }
     }
 }
@@ -86,10 +84,10 @@ class Gesture {
  * @param   {[type]} element_ [description]
  * @returns {[type]}         [description]
  */
-function getGesture( element_ ) {
-    const element = ensureDom( element_ );
-    if ( !element[ SYMBOL ] ) element[ SYMBOL ] = new Gesture( element );
-    return element[ SYMBOL ];
+function getGesture(element_) {
+    const element = ensureDom(element_);
+    if (!element[SYMBOL]) element[SYMBOL] = new Gesture(element);
+    return element[SYMBOL];
 }
 
 /**
@@ -97,71 +95,71 @@ function getGesture( element_ ) {
  * When an item  of that chain returns `true` that  means it will take the responsability  and we do
  * not ask the others.
  */
-function handlerWithChainOfResponsability( eventName, evt ) {
-    var chain = this._events[ eventName ].chain;
-    for ( var i = 0; i < chain.length; i++ ) {
-        var responsible = chain[ i ];
-        if ( responsible( evt ) === true ) return;
+function handlerWithChainOfResponsability(eventName, evt) {
+    const chain = this._events[eventName].chain;
+    for (let i = 0; i < chain.length; i++) {
+        const responsible = chain[i];
+        if (responsible(evt) === true) return;
     }
 }
 
 /**
  * Add a responsability item in the chain of a hammer event.
  */
-function doRegister( event, responsible ) {
-    var hammerEvent = getEventNameForPrefix( event, "hammer." );
-    if ( hammerEvent && !this._hammer ) {
-        this._hammer = new Hammer( this.$ );
+function doRegister(event, responsible) {
+    var hammerEvent = getEventNameForPrefix(event, "hammer.");
+    if (hammerEvent && !this._hammer) {
+        this._hammer = new Hammer(this.$);
         // To get domEvents.stopPropagation() available.
         this._hammer.domEvents = true;
     }
 
-    var eventDef = this._events[ event ];
-    if ( !eventDef ) {
-        var handler = handlerWithChainOfResponsability.bind( this, event );
+    var eventDef = this._events[event];
+    if (!eventDef) {
+        var handler = handlerWithChainOfResponsability.bind(this, event);
         eventDef = { chain: [], handler: handler };
-        if ( hammerEvent ) this._hammer.on( hammerEvent, handler );
-        else this.$.addEventListener( event, handler );
-        this._events[ event ] = eventDef;
+        if (hammerEvent) this._hammer.on(hammerEvent, handler);
+        else this.$.addEventListener(event, handler);
+        this._events[event] = eventDef;
     }
-    eventDef.chain.push( responsible );
+    eventDef.chain.push(responsible);
 }
 
 
-function ensureValidGestureNameAndSlot( name, slot ) {
-    if ( typeof name !== 'string' ) {
-        throw Error( "[Gestures.on] `name` must be a string: " + JSON( name ) + "!" );
+function ensureValidGestureNameAndSlot(name, slot) {
+    if (typeof name !== 'string') {
+        throw Error("[Gestures.on] `name` must be a string: " + JSON(name) + "!");
     }
-    if ( SUPPORTED_EVENTS.indexOf( name ) === -1 ) {
-        throw Error( "Unknown gesture's name `" + name + "`!\n" +
-            "Available names are: " + SUPPORTED_EVENTS.join( ", " ) + "." );
+    if (SUPPORTED_EVENTS.indexOf(name) === -1) {
+        throw Error("Unknown gesture's name `" + name + "`!\n" +
+            "Available names are: " + SUPPORTED_EVENTS.join(", ") + ".");
     }
-    if ( typeof slot !== 'function' ) {
-        throw Error( "Gesture `" + name + "` must have a function as slot!" );
+    if (typeof slot !== 'function') {
+        throw Error("Gesture `" + name + "` must have a function as slot!");
     }
 }
 
 
-function ensureDom( dom ) {
-    if ( dom instanceof Node ) return dom;
-    if ( dom === undefined || dom === null ) {
-        throw Error( "Not a valid DOM element!", dom );
+function ensureDom(dom) {
+    if (dom instanceof Node) return dom;
+    if (dom === undefined || dom === null) {
+        throw Error("Not a valid DOM element!", dom);
     }
-    if ( dom.$ instanceof Node ) return dom.$;
-    if ( dom.element instanceof Node ) return dom.element;
-    if ( typeof dom === 'string' ) {
-        var elem = document.getElementById( dom );
-        if ( !elem ) {
-            console.error( "There is no DOM element with this ID: `" + dom + "`" );
+    if (dom.$ instanceof Node) return dom.$;
+    if (dom.element instanceof Node) return dom.element;
+    if (typeof dom === 'string') {
+        var elem = document.getElementById(dom);
+        if (!elem) {
+            console.error("There is no DOM element with this ID: `" + dom + "`");
         }
         return elem;
     }
-    if ( typeof dom.element === 'function' ) return dom.element();
+    if (typeof dom.element === 'function') return dom.element();
     return dom;
 };
 
 
-function setHammerXY( elem, evt ) {
+function setHammerXY(elem, evt) {
     var x, y;
     // Hammer's attributes.
     x = evt.center.x;
@@ -171,7 +169,7 @@ function setHammerXY( elem, evt ) {
     evt.y = y - rect.top;
 }
 
-function setXY( elem, evt ) {
+function setXY(elem, evt) {
     var x, y;
     // Browser's attributes.
     x = evt.clientX;
@@ -183,7 +181,7 @@ function setXY( elem, evt ) {
     };
 }
 
-function setHammerVxVy( elem, evt ) {
+function setHammerVxVy(elem, evt) {
     evt.vx = evt.x - this._dragX;
     evt.vy = evt.y - this._dragY;
     evt.x0 = evt.x - evt.deltaX;
@@ -193,62 +191,61 @@ function setHammerVxVy( elem, evt ) {
 }
 
 
-function onTap( register, slot, args ) {
+function onTap(register, slot, args) {
     var that = this;
 
-    register( 'hammer.tap', function( evt ) {
-        if ( evt.tapCount !== 1 ) return false;
-        setHammerXY( that.$, evt );
-        slot( {
+    register('hammer.tap', function(evt) {
+        if (evt.tapCount !== 1) return false;
+        setHammerXY(that.$, evt);
+        slot({
             x: evt.x,
             y: evt.y,
             target: evt.target,
-            preventDefault: evt.preventDefault.bind( evt )
-        } );
+            preventDefault: evt.preventDefault.bind(evt)
+        });
         return true;
-    } );
+    });
 }
 
-function onDoubletap( register, slot, args ) {
+function onDoubletap(register, slot, args) {
     var that = this;
 
-    register( 'hammer.tap', function( evt ) {
-        if ( evt.tapCount !== 2 ) return false;
-        setHammerXY( that.$, evt );
-        slot( {
+    register('hammer.tap', function(evt) {
+        if (evt.tapCount !== 2) return false;
+        setHammerXY(that.$, evt);
+        slot({
             x: evt.x,
             y: evt.y,
             target: evt.target,
-            preventDefault: evt.preventDefault.bind( evt )
-        } );
+            preventDefault: evt.preventDefault.bind(evt)
+        });
         return true;
-    } );
+    });
 }
 
-function onWheel( register, slot, args ) {
+function onWheel(register, slot, args) {
     var that = this;
-    register( WHEEL_EVENT, function( evt ) {
-        console.info( "[tfw.gestures] evt=", evt );
-        var newEvt = setXY( that.$, evt );
+    register(WHEEL_EVENT, function(evt) {
+        var newEvt = setXY(that.$, evt);
         newEvt.delta = evt.deltaY;
-        if ( typeof newEvt.delta !== 'number' ) {
+        if (typeof newEvt.delta !== 'number') {
             // IE 11.
             newEvt.delta = -evt.wheelDelta;
         }
-        newEvt.preventDefault = evt.preventDefault.bind( evt );
-        newEvt.stopPropagation = evt.stopPropagation.bind( evt );
-        slot( newEvt );
-    } );
+        newEvt.preventDefault = evt.preventDefault.bind(evt);
+        newEvt.stopPropagation = evt.stopPropagation.bind(evt);
+        slot(newEvt);
+    });
 }
 
-function onMove( register, slot ) {
+function onMove(register, slot) {
     var that = this;
-    register( 'mousemove', function( evt ) {
-        var newEvt = setXY( that.$, evt );
-        newEvt.preventDefault = evt.preventDefault.bind( evt );
-        newEvt.stopPropagation = evt.stopPropagation.bind( evt );
-        slot( newEvt );
-    } );
+    register('mousemove', function(evt) {
+        var newEvt = setXY(that.$, evt);
+        newEvt.preventDefault = evt.preventDefault.bind(evt);
+        newEvt.stopPropagation = evt.stopPropagation.bind(evt);
+        slot(newEvt);
+    });
 }
 
 /**
@@ -260,20 +257,21 @@ function onMove( register, slot ) {
  * @param   {any} args - Any argument to send to the slot.
  * @returns {undefined}
  */
-function onDrag( register, slot, args ) {
+function onDrag(register, slot, args) {
     const that = this;
 
-    register( 'hammer.pan', function( evt ) {
-        if ( evt.isFinal ) return false;
-        setHammerXY( that.$, evt );
-        if ( typeof that._dragX === 'undefined' ) {
+    register('hammer.pan', function(evt) {
+        console.info("evt=", evt);
+        if (evt.isFinal) return false;
+        setHammerXY(that.$, evt);
+        if (typeof that._dragX === 'undefined') {
             that._dragX = evt.x;
             that._dragY = evt.y;
             that._dragStart = true;
         }
-        setHammerVxVy.call( that, that.$, evt );
+        setHammerVxVy.call(that, that.$, evt);
         const domEvt = evt.srcEvent;
-        slot( {
+        slot({
             x: evt.x,
             y: evt.y,
             x0: evt.x0,
@@ -283,142 +281,142 @@ function onDrag( register, slot, args ) {
             sx: evt.velocityX,
             sy: evt.velocityY,
             target: evt.target,
-            preventDefault: domEvt.preventDefault.bind( domEvt ),
-            stopPropagation: domEvt.stopImmediatePropagation.bind( domEvt )
-        }, args );
+            preventDefault: domEvt.preventDefault.bind(domEvt),
+            stopPropagation: domEvt.stopImmediatePropagation.bind(domEvt)
+        }, args);
         return true;
-    } );
+    });
 }
 
-function onDragEnd( register, slot, args ) {
+function onDragEnd(register, slot, args) {
     var that = this;
 
-    register( 'hammer.panend', function( evt ) {
-        setHammerXY( that.$, evt );
-        setHammerVxVy.call( that, that.$, evt );
+    register('hammer.panend', function(evt) {
+        setHammerXY(that.$, evt);
+        setHammerVxVy.call(that, that.$, evt);
         var domEvt = evt.srcEvent;
-        slot( {
+        slot({
             x: evt.x,
             y: evt.y,
             x0: evt.x0,
             y0: evt.y0,
             target: evt.target,
-            preventDefault: domEvt.preventDefault.bind( domEvt ),
-            stopPropagation: domEvt.stopImmediatePropagation.bind( domEvt )
-        } );
+            preventDefault: domEvt.preventDefault.bind(domEvt),
+            stopPropagation: domEvt.stopImmediatePropagation.bind(domEvt)
+        });
         delete that._dragX;
         delete that._dragY;
         return true;
-    } );
+    });
 }
 
 
-function onDragStart( register, slot, args ) {
+function onDragStart(register, slot, args) {
     var that = this;
 
-    register( 'hammer.panstart', function( evt ) {
-        console.log( "START" );
-        setHammerXY.call( that, that.$, evt );
+    register('hammer.panstart', function(evt) {
+        console.log("START");
+        setHammerXY.call(that, that.$, evt);
         var domEvt = evt.srcEvent;
-        slot( {
+        slot({
             x: evt.x,
             y: evt.y,
             target: evt.target,
-            preventDefault: domEvt.preventDefault.bind( domEvt ),
-            stopPropagation: domEvt.stopImmediatePropagation.bind( domEvt )
-        } );
+            preventDefault: domEvt.preventDefault.bind(domEvt),
+            stopPropagation: domEvt.stopImmediatePropagation.bind(domEvt)
+        });
         return true;
-    } );
+    });
 }
 
 
-function onDown( register, slot, args ) {
+function onDown(register, slot, args) {
     var that = this;
-    register( "touchstart", function( evt ) {
-        if ( !evt.changedTouches || evt.changedTouches.length < 1 ) return false;
-        var touch = evt.changedTouches[ 0 ];
+    register("touchstart", function(evt) {
+        if (!evt.changedTouches || evt.changedTouches.length < 1) return false;
+        var touch = evt.changedTouches[0];
         var rect = that.$.getBoundingClientRect();
         try {
-            slot( {
+            slot({
                 x: touch.clientX - rect.left,
                 y: touch.clientY - rect.top,
-                preventDefault: evt.preventDefault.bind( evt ),
-                stopPropagation: evt.stopPropagation.bind( evt )
-            } );
-        } catch ( ex ) {
-            console.error( ex );
+                preventDefault: evt.preventDefault.bind(evt),
+                stopPropagation: evt.stopPropagation.bind(evt)
+            });
+        } catch (ex) {
+            console.error(ex);
         }
         return true;
-    } );
-    register( "mousedown", function( evt ) {
+    });
+    register("mousedown", function(evt) {
         var now = Date.now();
-        if ( now - that._touchstart < 350 ) {
+        if (now - that._touchstart < 350) {
             evt.preventDefault();
             evt.stopPropagation();
             return false;
         }
         var rect = that.$.getBoundingClientRect();
         try {
-            slot( {
+            slot({
                 x: evt.clientX - rect.left,
                 y: evt.clientY - rect.top,
-                preventDefault: evt.preventDefault.bind( evt ),
-                stopPropagation: evt.stopPropagation.bind( evt )
-            } );
-        } catch ( ex ) {
-            console.error( ex );
+                preventDefault: evt.preventDefault.bind(evt),
+                stopPropagation: evt.stopPropagation.bind(evt)
+            });
+        } catch (ex) {
+            console.error(ex);
         }
         that._touchstart = 0;
         return true;
-    } );
+    });
 }
 
 
-function onUp( register, slot, args ) {
+function onUp(register, slot, args) {
     var that = this;
-    register( "touchend", function( evt ) {
-        if ( !evt.changedTouches || evt.changedTouches.length < 1 ) return false;
-        var touch = evt.changedTouches[ 0 ];
+    register("touchend", function(evt) {
+        if (!evt.changedTouches || evt.changedTouches.length < 1) return false;
+        var touch = evt.changedTouches[0];
         var rect = that.$.getBoundingClientRect();
         try {
-            slot( {
+            slot({
                 x: touch.clientX - rect.left,
                 y: touch.clientY - rect.top,
-                preventDefault: evt.preventDefault.bind( evt ),
-                stopPropagation: evt.stopPropagation.bind( evt )
-            } );
-        } catch ( ex ) {
-            console.error( ex );
+                preventDefault: evt.preventDefault.bind(evt),
+                stopPropagation: evt.stopPropagation.bind(evt)
+            });
+        } catch (ex) {
+            console.error(ex);
         }
         that._touchstart = Date.now();
         return true;
-    } );
-    register( "mouseup", function( evt ) {
-        if ( that._touchstart > 0 ) {
+    });
+    register("mouseup", function(evt) {
+        if (that._touchstart > 0) {
             evt.preventDefault();
             evt.stopPropagation();
             return false;
         }
         var rect = that.$.getBoundingClientRect();
         try {
-            slot( {
+            slot({
                 x: evt.clientX - rect.left,
                 y: evt.clientY - rect.top,
-                preventDefault: evt.preventDefault.bind( evt ),
-                stopPropagation: evt.stopPropagation.bind( evt )
-            } );
-        } catch ( ex ) {
-            console.error( ex );
+                preventDefault: evt.preventDefault.bind(evt),
+                stopPropagation: evt.stopPropagation.bind(evt)
+            });
+        } catch (ex) {
+            console.error(ex);
         }
         that._touchstart = 0;
         return true;
-    } );
+    });
 }
 
 
-function getEventNameForPrefix( text, prefix ) {
-    if ( text.substr( 0, prefix.length ) == prefix ) {
-        return text.substr( prefix.length );
+function getEventNameForPrefix(text, prefix) {
+    if (text.substr(0, prefix.length) == prefix) {
+        return text.substr(prefix.length);
     }
     return null;
 }
