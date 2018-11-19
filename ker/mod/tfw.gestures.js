@@ -261,7 +261,6 @@ function onDrag(register, slot, args) {
     const that = this;
 
     register('hammer.pan', function(evt) {
-        console.info("evt=", evt);
         if (evt.isFinal) return false;
         setHammerXY(that.$, evt);
         if (typeof that._dragX === 'undefined') {
