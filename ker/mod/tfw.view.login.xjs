@@ -22,7 +22,7 @@
       placeholder:{Intl login}
       label:{Intl login}}
     {tfw.view.textbox
-      focus: {Bind "usr/action" converter:notEmpty back:false}
+      focus: {Bind "usr/action" converter:isNotEmpty back:false}
       value: {Bind pwd}
       type: password
       wide: true
@@ -35,7 +35,7 @@
       icon: user
       flat:true wide:true
       action:{Bind on-new-account}}
-    {tfw.view.button    
+    {tfw.view.button
       text:{Intl on-lost-password}
       icon: refresh
       flat:true wide:true

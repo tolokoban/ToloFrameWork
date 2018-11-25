@@ -19,7 +19,7 @@
             event.dragstart: onDragStart
             event.drag: onDrag
             event.dragend: onDragEnd
-            class: "thm-ele4 thm-bgPL"
+            class: "thm-ele4 thm-bgPL thm-fg"
             textcontent: {Bind displayed-value}}
     ]
 }
