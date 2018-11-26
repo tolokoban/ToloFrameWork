@@ -166,14 +166,13 @@ function createUniforms(that, gl, shaderProgram) {
  * correspondent attribute in `includes`.
  */
 function parseIncludes(codes, includes) {
-    var result = {};
-    var id, code;
-    for (id in codes) {
-        code = codes[id];
+    const result = {};
+    for (const id of Object.keys(codes)) {
+        const code = codes[id];
         result[id] = code.split('\n').map(function(line) {
-            if (line.trim().substr(0, 8) != '#include') return line;
-            var pos = line.indexOf('#include') + 8;
-            var includeName = line.substr(pos).trim();
+            if (line.trim().substr(0, 8) !== '#include') return line;
+            const pos = line.indexOf('#include') + 8;
+            let includeName = line.substr(pos).trim();
             // We accept all this systaxes:
             // #include foo
             // #include 'foo'
@@ -182,7 +181,7 @@ function parseIncludes(codes, includes) {
             if ("'<\"".indexOf(includeName.charAt(0)) > -1) {
                 includeName = includeName.substr(1, includeName.length - 2);
             }
-            var snippet = includes[includeName];
+            const snippet = includes[includeName];
             if (typeof snippet !== 'string') {
                 console.error("Include <" + includeName + "> not found in ", includes);
                 throw Error("Include not found in shader: " + includeName);
@@ -230,6 +229,19 @@ function createUniformSetter(gl, item, nameGL, lookup) {
                 };
             }
             break;
+        case gl.FLOAT_VEC3:
+            if (item.size == 1) {
+                return function(v) {
+                    gl.uniform3fv(nameGL, v);
+                    this[nameJS] = v;
+                };
+            } else {
+                throw Error(
+                    "[webgl.program.createWriter] Don't know how to deal arrays of FLOAT_VEC3 in uniform `" +
+                    item.name + "'!'"
+                );
+            }
+            break;
         case gl.FLOAT_MAT3:
             if (item.size == 1) {
                 return function(v) {
@@ -246,6 +258,7 @@ function createUniformSetter(gl, item, nameGL, lookup) {
         case gl.FLOAT_MAT4:
             if (item.size == 1) {
                 return function(v) {
+                    if (!v) throw Error(`I can't assign an undefined value to "${item.name}"!`);
                     gl.uniformMatrix4fv(nameGL, false, v);
                     this[nameJS] = v;
                 };

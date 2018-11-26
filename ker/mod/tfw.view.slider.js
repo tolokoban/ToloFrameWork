@@ -4,7 +4,7 @@
 /* exported CODE_BEHIND */
 const CODE_BEHIND = { onValueChanged, onTapBack, onDragStart, onDrag, onDragEnd };
 
-const Dom = require( "dom" );
+const Dom = require("dom");
 
 
 /**
@@ -12,17 +12,21 @@ const Dom = require( "dom" );
  * @param {integer} v - New value.
  * @returns {undefined}
  */
-function onValueChanged( v ) {
-    if ( v < this.min ) {
+function onValueChanged(v) {
+    // If dragging is in progress, we don't want to mix a move and a translation.
+    if (this._dragging) return;
+
+    if (v < this.min) {
         this.value = this.min;
         return;
     }
-    if ( v > this.max ) {
+    if (v > this.max) {
         this.value = this.max;
         return;
     }
-    this.displayedValue = valueToDisplayedValue.call( this, v );
-    moveToValue.call( this, v );
+
+    this.displayedValue = valueToDisplayedValue.call(this, v);
+    moveToValue.call(this, v);
 }
 
 /**
@@ -30,8 +34,8 @@ function onValueChanged( v ) {
  * @param {object} evt - {}
  * @returns {undefined}
  */
-function onTapBack( evt ) {
-    this.value = xToValue.call( this, evt.x );
+function onTapBack(evt) {
+    this.value = xToValue.call(this, evt.x);
 }
 
 /**
@@ -41,13 +45,13 @@ function onTapBack( evt ) {
  * @param   {float} x - X position relative to the View.
  * @returns {integer} The nearest integer value.
  */
-function xToValue( x ) {
+function xToValue(x) {
     const
         rect = this.$.getBoundingClientRect(),
         percent = x / rect.width,
         range = this.max - this.min,
-        value = Math.floor( percent * range + 0.5 );
-    return this.min + this.step * Math.floor( value / this.step );
+        value = Math.floor(percent * range + 0.5);
+    return this.min + this.step * Math.floor(value / this.step);
 }
 
 /**
@@ -57,10 +61,10 @@ function xToValue( x ) {
  * @param   {integer} value - Current value.
  * @returns {float} X position.
  */
-function valueToX( value ) {
+function valueToX(value) {
     const
         rect = this.$.getBoundingClientRect(),
-        percent = ( value - this.min ) / ( this.max - this.min );
+        percent = (value - this.min) / (this.max - this.min);
     return rect.width * percent;
 }
 
@@ -71,6 +75,8 @@ function valueToX( value ) {
  * @returns {undefined}
  */
 function onDragStart() {
+    this._dragging = true;
+    this._value = this.value;
     this._rect = this.$.getBoundingClientRect();
 }
 
@@ -81,15 +87,20 @@ function onDragStart() {
  * @param   {object} evt - `{ x, ... }`
  * @returns {undefined}
  */
-function onDrag( evt ) {
+function onDrag(evt) {
     const
         rect = this._rect,
-        x = valueToX.call( this, this.value ),
+        x = valueToX.call(this, this._value),
         min = -x,
         max = rect.width - x,
-        tx = clamp( evt.x - evt.x0, min, max );
-    Dom.css( this.$elements.button, { transform: `translateX(${tx}px)` } );
-    this.displayedValue = valueToDisplayedValue.call( this, xToValue.call( this, x + tx ) );
+        tx = clamp(evt.x - evt.x0, min, max),
+        value = xToValue.call(this, x + tx);
+    Dom.css(this.$elements.button, { transform: `translateX(${tx}px)` });
+    this.displayedValue = valueToDisplayedValue.call(this, value);
+    if (this.smooth) {
+        this._dragging = true;
+        this.value = value;
+    }
 }
 
 /**
@@ -99,15 +110,17 @@ function onDrag( evt ) {
  * @param   {object} evt - `{ x, ... }`
  * @returns {undefined}
  */
-function onDragEnd( evt ) {
+function onDragEnd(evt) {
+    this._dragging = false;
+
     const
         rect = this._rect,
-        x = valueToX.call( this, this.value ),
+        x = valueToX.call(this, this._value),
         min = -x,
         max = rect.width - x,
-        tx = clamp( evt.x - evt.x0, min, max );
-    Dom.css( this.$elements.button, { transform: `translateX(0px)` } );
-    this.value = xToValue.call( this, x + tx );
+        tx = clamp(evt.x - evt.x0, min, max);
+    Dom.css(this.$elements.button, { transform: `translateX(0px)` });
+    this.value = xToValue.call(this, x + tx);
 }
 
 /**
@@ -117,8 +130,8 @@ function onDragEnd( evt ) {
  * @param   {integer} value [description]
  * @returns {float}       [description]
  */
-function valueToDisplayedValue( value ) {
-    return ( this.factor * value + this.shift ).toFixed( 0 );
+function valueToDisplayedValue(value) {
+    return (this.factor * value + this.shift).toFixed(0);
 }
 
 /**
@@ -128,9 +141,9 @@ function valueToDisplayedValue( value ) {
  * @param   {integer} value - Value.
  * @returns {undefined}
  */
-function moveToValue( value ) {
-    const left = 100 * ( value - this.min ) / ( this.max - this.min );
-    Dom.css( this.$elements.button, { left: `${left}%` } );
+function moveToValue(value) {
+    const left = 100 * (value - this.min) / (this.max - this.min);
+    Dom.css(this.$elements.button, { left: `${left}%` });
 }
 
 /**
@@ -141,8 +154,8 @@ function moveToValue( value ) {
  * @param   {float} max  - Upper bound of the range.
  * @returns {float} The clamped value.
  */
-function clamp( value, min, max ) {
-    if ( value < min ) return min;
-    if ( value > max ) return max;
+function clamp(value, min, max) {
+    if (value < min) return min;
+    if (value > max) return max;
     return value;
 }

@@ -6,6 +6,7 @@
         max: {float 100}
         step: {float 1}
         width: {unit 200px}
+        smooth: {boolean true}
     }
 
     style.width: {Bind width}
@@ -19,6 +20,7 @@
                 width:64px}
         ]}
         {tfw.view.slider
+            smooth: {Bind smooth}
             min: {Bind min}
             max: {Bind max}
             step: {Bind step}

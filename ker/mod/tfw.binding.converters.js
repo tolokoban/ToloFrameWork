@@ -13,6 +13,7 @@ const CONVERTERS = {
     booleans: booleansConverter,
     color: colorConverter,
     date: dateConverter,
+    deg2rad: deg2radConverter,
     enum: enumConverter,
     float: floatConverter,
     integer: integerConverter,
@@ -247,6 +248,13 @@ function floatConverter(valueForNaN) {
     } else {
         return parseFloat;
     }
+}
+
+function deg2radConverter(value) {
+    const toFloat = floatConverter(0);
+    const deg = toFloat(value);
+    // PI / 180 = 0.017453292519943295.
+    return deg * 0.017453292519943295;
 }
 
 function enumConverter(list) {

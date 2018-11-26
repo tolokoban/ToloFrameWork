@@ -4,6 +4,8 @@
         min: {integer 0}
         max: {integer 100}
         step: {integer 1}
+        // If smooth, the value change during dragging.
+        smooth: {boolean false}
         // displayed-value is equal to factor * value + shift.
         shift: {float 0}
         factor: {float 1}
