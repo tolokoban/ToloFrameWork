@@ -5,7 +5,7 @@
         max: {integer 100}
         step: {integer 1}
         // displayed-value is equal to factor * value + shift.
-        shift: {float 1}
+        shift: {float 0}
         factor: {float 1}
         // Private.
         displayed-value: {string 1}

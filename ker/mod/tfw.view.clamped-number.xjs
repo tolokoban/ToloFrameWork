@@ -1,0 +1,28 @@
+{View DIV class:tfw-view-clamped-number
+    view.attribs: {
+        text: {string ""}
+        value: {float 0}
+        min: {float 0}
+        max: {float 100}
+        step: {float 1}
+        width: {unit 200px}
+    }
+
+    style.width: {Bind width}
+
+    [
+        {DIV class:flex [
+            {DIV textcontent:{Bind text}}
+            {tfw.view.textbox
+                value:{Bind value}
+                type: number
+                width:64px}
+        ]}
+        {tfw.view.slider
+            min: {Bind min}
+            max: {Bind max}
+            step: {Bind step}
+            shift: 0
+            value: {Bind value}}
+    ]
+}
