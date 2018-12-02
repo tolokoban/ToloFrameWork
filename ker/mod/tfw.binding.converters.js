@@ -14,6 +14,7 @@ const CONVERTERS = {
     color: colorConverter,
     date: dateConverter,
     deg2rad: deg2radConverter,
+    divBy100: divBy100Converter,
     enum: enumConverter,
     float: floatConverter,
     integer: integerConverter,
@@ -255,6 +256,11 @@ function deg2radConverter(value) {
     const deg = toFloat(value);
     // PI / 180 = 0.017453292519943295.
     return deg * 0.017453292519943295;
+}
+
+function divBy100Converter(value) {
+    const toFloat = floatConverter(0);
+    return toFloat(value) * 0.01;
 }
 
 function enumConverter(list) {
