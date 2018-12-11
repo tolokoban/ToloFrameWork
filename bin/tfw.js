@@ -67,7 +67,7 @@ for ( var i = 0; i < txt.length; i++ ) {
     sep += "-";
 }
 sep = "+" + sep + "+";
-txt = "| ToloFrameWork " + cfg.version.bold + " |";
+txt = "| ToloFrameWork " + cfg.version.yellow + " |";
 console.log( sep );
 console.log( txt );
 console.log( sep );
@@ -100,9 +100,9 @@ String.prototype.err = function () {
         while ( buff.length < 120 ) {
             buff += ' ';
         }
-        txt += ( buff + " |" ).redBG.white.bold + "\n";
+        txt += ( buff + " |" ).redBG.white + "\n";
     } );
-    return sep.redBG.white.bold + "\n" + txt + sep.redBG.white.bold + "\n";
+    return sep.redBG.white + "\n" + txt + sep.redBG.white + "\n";
 };
 
 var firstProcess = true;
@@ -137,7 +137,6 @@ if ( parsedCommandLine.debug ) {
         options.dev = true;
         options.debug = true;
         options.transpilation = ( parsedCommandLine[ 'no-transpilation' ] ? false : true );
-        console.log( "options: ", options );
     } );
 }
 if ( parsedCommandLine.build ) {
@@ -199,13 +198,13 @@ if ( tasks.length == 0 ) {
             x.src = x.src || [ "" ];
             x.id = x.id || "Internal javascript error";
             console.error( "\n" );
-            console.error( "+-------------+".redBG.white.bold );
-            console.error( "| FATAL ERROR |".redBG.white.bold + " " +
-                ( typeof x.id === 'string' ? x.id.red.bold : '' ) );
+            console.error( "+-------------+".redBG.white );
+            console.error( "| FATAL ERROR |".redBG.white + " " +
+                ( typeof x.id === 'string' ? x.id.red : '' ) );
             console.error( ( x.fatal ).err() );
             x.src.forEach( function ( src, idx ) {
                 src = src || "";
-                console.error( src.red.bold );
+                console.error( src.red );
             } );
             console.error( "\n" );
             if ( x.stack ) {
@@ -247,7 +246,7 @@ if ( tasks.length == 0 ) {
                 }
                 return;
             }
-            console.log( "File change: " + path.bold.yellow );
+            console.log( "File change: " + path.yellow );
             // If a resource file changes, we have to touch the corresponding module's JS file.
             prj.cascadingTouch( path );
         }
