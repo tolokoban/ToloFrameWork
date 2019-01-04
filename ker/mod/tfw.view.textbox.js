@@ -1,13 +1,11 @@
 "use strict";
 
-var $ = require( "dom" );
+const $ = require( "dom" );
 
-var CODE_BEHIND = {
-    onKeyUp: onKeyUp,
-    onValueChanged: onValueChanged
-};
+/* exported CODE_BEHIND */
+const CODE_BEHIND = { onKeyUp, onValueChanged };
 
-var MAX_AUTOCOMPLETION_SUGGESTIONS = 99;
+const MAX_AUTOCOMPLETION_SUGGESTIONS = 99;
 
 
 function onKeyUp( evt ) {
