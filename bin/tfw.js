@@ -219,12 +219,16 @@ if ( tasks.length == 0 ) {
     var watchedDirectories = [];
 
     function watch( path ) {
-        if ( watchedDirectories.indexOf( path ) == -1 ) {
-            //console.log("Watching ".cyan + path);
-            watchedDirectories.push( path );
-            var watcher = FS.watch( path );
-            watcher.path = path;
-            watcher.on( 'change', processLater );
+        try {
+            if ( watchedDirectories.indexOf( path ) == -1 ) {
+                //console.log("Watching ".cyan + path);
+                watchedDirectories.push( path );
+                var watcher = FS.watch( path );
+                watcher.path = path;
+                watcher.on( 'change', processLater );
+            }
+        } catch ( ex ) {
+            console.error( `Unable to watch "${path}": \n${ex}\n`.redBG.white );
         }
     }
 
