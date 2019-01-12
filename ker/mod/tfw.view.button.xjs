@@ -41,7 +41,10 @@
   event.up: {Set pressed false}
 
   [
-    {DIV class:icon [ {tfw.view.icon view.id:icon content:{Bind icon} animate:{Bind wait}} ]}
+    {DIV
+        class:icon
+        class.hide: {Bind icon converter:isEmpty}
+        [ {tfw.view.icon view.id:icon content:{Bind icon} animate:{Bind wait}} ]}
     {DIV view.id:text
       class: "text thm-fg"
       class.*: {[flat,type] getClassesForText}

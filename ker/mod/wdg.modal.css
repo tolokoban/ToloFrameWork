@@ -41,7 +41,7 @@ div.wdg-modal .cell > header {
 }
 
 div.wdg-modal .cell > footer {
-    justify-content: space-between;
+    justify-content: flex-end;
     flex-wrap: wrap;
     align-items: center;
     min-height: 48px;

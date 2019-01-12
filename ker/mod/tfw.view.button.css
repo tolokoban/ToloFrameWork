@@ -41,7 +41,8 @@ button.tfw-view-button.wide {
   filter: saturate(100%) brightness(120%);
 }
 
-.tfw-view-button > div.text.hide {
+.tfw-view-button > div.text.hide,
+.tfw-view-button > div.icon.hide {
   display: none;
 }
 
