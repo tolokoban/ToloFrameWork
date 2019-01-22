@@ -1,6 +1,6 @@
 div.tfw-view-flex {
+    position: relative;
     display: flex;
     margin: 0;
     padding: 0;
-    align-items: center;
 }

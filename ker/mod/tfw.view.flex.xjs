@@ -5,11 +5,18 @@
       space-between space-around center start end flex-start flex-end left right stretch
       space-evently normal baseline
     ]
+    flex-direction: [row column row-reverse column-reverse]
     flex-wrap: [nowrap wrap wrap-reverse]
+    align-items: [
+      center normal flex-start flex-end start end self-start self-end
+      baseline "first baseline" "last baseline" stretch
+    ]
   }
 
   style.justify-content: {Bind justify-content}
+  style.flex-direction: {Bind flex-direction}
   style.flex-wrap: {Bind flex-wrap}
-  
+  style.align-items: {Bind align-items}
+
   view.children: {Bind content}
 }

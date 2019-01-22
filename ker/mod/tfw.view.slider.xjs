@@ -1,0 +1,27 @@
+{View DIV class:"tfw-view-slider thm-ele2 thm-bgPD"
+    view.attribs: {
+        value: {integer 0 behind:onValueChanged}
+        min: {integer 0}
+        max: {integer 100}
+        step: {integer 1}
+        // If smooth, the value change during dragging.
+        smooth: {boolean false}
+        // displayed-value is equal to factor * value + shift.
+        shift: {float 0}
+        factor: {float 1}
+        // Private.
+        displayed-value: {string 1}
+    }
+
+    event.tap: onTapBack
+
+    [
+        {DIV
+            view.id: button
+            event.dragstart: onDragStart
+            event.drag: onDrag
+            event.dragend: onDragEnd
+            class: "thm-ele4 thm-bgPL thm-fg"
+            textcontent: {Bind displayed-value}}
+    ]
+}

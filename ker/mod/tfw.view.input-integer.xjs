@@ -1,0 +1,28 @@
+{View DIV
+    view.attribs: {
+        label: {string ""}
+        wide: {boolean false}
+        focus: {boolean false}
+        enabled: {boolean true}
+        visible: {boolean true}
+        width: {unit auto}
+        action: {action}
+        valid: {boolean false}
+        value: {integer 0 behind: onValueChanged}
+        min: {integer 0}
+        max: {integer 999999999}
+    }
+
+    [
+        {tfw.view.textbox
+            label: {Bind label}
+            wide: {Bind wide}
+            focus: {Bind focus}
+            enabled: {Bind enabled}
+            visible: {Bind visible}
+            width: {Bind width}
+            action: {Bind action}
+            value: {Bind value}
+        }
+    ]
+}

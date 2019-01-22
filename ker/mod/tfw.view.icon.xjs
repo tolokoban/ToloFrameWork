@@ -1,8 +1,8 @@
 // tfw.view.icon
-{View SVG  
+{View SVG
   view.attribs: {
     visible: {boolean true}
-    content: {any ok behind: onContentChanged}
+    content: {any "" behind: onContentChanged}
     size: {unit 28}
     animate: {boolean false}
     flip-h: {boolean false}
@@ -15,7 +15,7 @@
     pen5: {string S  behind: onPen4Changed}
     pen6: {string SD behind: onPen6Changed}
     pen7: {string SL behind: onPen7Changed}
-  }  
+  }
 
   class: tfw-view-icon
   class.|hide: {Bind visible}

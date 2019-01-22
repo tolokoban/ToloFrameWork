@@ -1,115 +1,147 @@
 "use strict";
 
-var CODE_BEHIND = {
-  getClasses: getClasses,
-  onWidthChanged: onWidthChanged,
-  onSmallChanged: onSmallChanged,
-  onEnabledChanged: onEnabledChanged,
-  onKeyUp: onKeyUp,
-  on: on,
-  fire: fire,
-  init: init
+const CODE_BEHIND = {
+    getClasses,
+    getClassesForText,
+    onWidthChanged,
+    onSmallChanged,
+    onEnabledChanged,
+    onKeyUp,
+    on,
+    fire,
+    init
 };
 
-var $ = require("dom");
-var PM = require("tfw.binding.property-manager");
-var Touchable = require("tfw.touchable");
+const
+    $ = require( "dom" ),
+    PM = require( "tfw.binding.property-manager" ),
+    Touchable = require( "tfw.touchable" );
 
 /**
- * @member on
  * Set a event listener to the button.
+ * @this tfw.view.button
  * @param {function} slot - function to call when the button is tapped.
+ * @returns {this} Set the function to call at any tap.
  */
 function on( slot ) {
-  PM( this ).on( "action", slot );
-  return this;
-}
-
-function onWidthChanged( v ) {
-  if( this.wide ) {
-    delete this.$.style.width;
-  } else {
-    this.$.style.width = v;
-  }
+    PM( this ).on( "action", slot );
+    return this;
 }
 
 /**
- * @member fire
- * Fire the tap event.
- * @param {any=undefined} tag - If defined, set `this.tag` to it.
+ * @this ViewXJS
+ * @param {number} v - New width.
+ * @returns {undefined}
  */
-function fire( tag ) {
-  if( typeof tag !== 'undefined' ) this.tag = tag;
-  if( this.href.length > 0 ) {
-    if( this.target.length > 0 ) {
-      window.open( this.href, this.target );
+function onWidthChanged( v ) {
+    if ( this.wide ) {
+        delete this.$.style.width;
     } else {
-      window.location = this.href;
+        this.$.style.width = v;
     }
-  } else {
-    this.action = this.tag;
-  }
 }
 
-function getClasses() {
-  var classes = [];
-  if( this.flat ) {
-    if( this.pressed ) {
-      switch( this.type ) {
-      case 'default': classes.push("thm-bg3"); break;
-      case 'primary': classes.push("thm-bgP"); break;
-      case 'secondary': classes.push("thm-bgS"); break;
-      }
-    } else {      
-      switch( this.type ) {
-      case 'primary': classes.push("thm-fgP"); break;
-      case 'secondary': classes.push("thm-fgS"); break;
-      }
-    }
-  } else {
-    switch( this.type ) {
-    case 'default': classes.push("thm-bg3"); break;
-    case 'primary': classes.push("thm-bgP"); break;
-    case 'secondary': classes.push("thm-bgS"); break;
-    }
-    if( this.pressed ) {
-      classes.push("thm-ele4");
+/**
+ * Fire the tap event.
+ * @this tfw.view.button
+ * @param {any} tag - If defined, set `this.tag` to it.
+ * @returns {this} Set the function to call at any tap.
+ */
+function fire( tag ) {
+    if ( typeof tag !== 'undefined' ) this.tag = tag;
+    if ( this.href.length > 0 ) {
+        if ( this.target.length > 0 ) {
+            window.open( this.href, this.target );
+        } else {
+            window.location = this.href;
+        }
     } else {
-      classes.push("thm-ele2");
+        this.action = this.tag;
     }
-  }
-  return classes;
+}
+
+/**
+ * @this tfw.view.button
+ * @returns {array} Array of classes to set for the text.
+ */
+function getClassesForText() {
+    if ( !this.flat ) return [];
+    switch ( this.type ) {
+        case 'primary':
+            return [ 'thm-fgP' ];
+
+        case 'secondary':
+            return [ 'thm-fgS' ];
+
+        default:
+            return [];
+    }
+}
+
+/**
+ * @this tfw.view.button
+ * @returns {array} Array of classes to set for the button.
+ */
+function getClasses() {
+    const
+        classes = [],
+        background = {
+            'default': 'thm-bg3',
+            'primary': 'thm-bgP',
+            'secondary': 'thm-bgS'
+        },
+        foreground = {
+            'primary': 'thm-fgP',
+            'secondary': 'thm-fgS'
+        };
+    if ( this.pressed ) classes.push( "pressed" );
+    if ( this.flat ) {
+        classes.push( foreground[ this.type ] );
+    } else {
+        classes.push( background[ this.type ] );
+        if ( this.pressed ) {
+            classes.push( "thm-ele4" );
+        } else {
+            classes.push( "thm-ele2" );
+        }
+    }
+    return classes.filter( ( cls ) => typeof cls === 'string' );
 }
 
 
 function onSmallChanged( isSmall ) {
-  this.$elements.icon.size = isSmall ? 20 : 28;
+    this.$elements.icon.size = isSmall ? 20 : 28;
 }
 
 
 function onKeyUp( evt ) {
-  if( evt.keyCode != 32 && evt.keyCode != 13 ) return;
-  evt.preventDefault();
-  evt.stopPropagation();
-  fire.call( this );
-  this.pressed = false;  
+    if ( evt.keyCode != 32 && evt.keyCode != 13 ) return;
+    evt.preventDefault();
+    evt.stopPropagation();
+    fire.call( this );
+    this.pressed = false;
 }
 
 function init() {
-  var that = this;
+    const that = this;
 
-  this._touchable = new Touchable( this.$ );
-  this._touchable.tap.add(function() { fire.call( that ); });
-  this._touchable.enabled = this.enabled;
+    this._touchable = new Touchable( this.$ );
+    this._touchable.tap.add( function() { fire.call( that ); } );
+    this._touchable.enabled = this.enabled;
 }
 
-function onEnabledChanged() {  
-  if( !this._touchable ) return;
-  var enabled = this.enabled && !this.wait;
-  this._touchable.enabled = enabled;
-  if( enabled ) {
-    $.removeAtt( this, "disabled" );
-  } else {
-    $.att( this, { disabled: true } );
-  }
+/**
+ * Add/remove the disabled attribute to the BUTTON element.
+ *
+ * @this ViewXJS
+ * @returns {undefined}
+ */
+function onEnabledChanged() {
+    const enabled = this.enabled && !this.wait;
+    if ( this._touchable ) this._touchable.enabled = enabled;
+    if ( enabled ) {
+        $.removeAtt( this, "disabled" );
+    } else {
+        $.att( this, { disabled: true } );
+    }
 }

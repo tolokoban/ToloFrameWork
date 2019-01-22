@@ -62,7 +62,7 @@
 .tfw-view-expand > div.body {
     display: block;
     visibility: collapse;
-    padding: 8px 0 8px 32px;
+    padding: 0 0 0 16px;
     margin: 0;
     transition: none;
     transform: translateX(100px);

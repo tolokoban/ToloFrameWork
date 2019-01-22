@@ -1,0 +1,10 @@
+div.tfw-view-clamped-number > div.tfw-view-slider {
+    margin-top: -6px;
+}
+
+div.tfw-view-clamped-number > div.flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
