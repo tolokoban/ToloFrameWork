@@ -103,6 +103,8 @@ function register( event, responsible ) {
   var hammerEvent = getEventNameForPrefix( event, "hammer." );
   if( hammerEvent && !this._hammer ) {
     this._hammer = new Hammer( this.$ );
+    // To get domEvents.stopPropagation() available.
+    this._hammer.domEvents = true;
   }
 
   var eventDef = this._events[event];
@@ -218,7 +220,7 @@ function onWheel( register, slot, args ) {
     var newEvt = setXY( that.$, evt );
     newEvt.delta = evt.deltaY;
     newEvt.preventDefault = evt.preventDefault.bind( evt );
-    newEvt.stopPropagation = evt.stopPropagation.bind( evt );    
+    newEvt.stopPropagation = evt.stopPropagation.bind( evt );
     slot( newEvt );
   });
 }
@@ -237,6 +239,7 @@ function onDrag( register, slot, args ) {
   var that = this;
 
   register( 'hammer.pan', function( evt ) {
+    console.info("[tfw.gestures] hammer.pan=", evt);
     setHammerXY( that.$, evt );
     if( typeof that._dragX === 'undefined' ) {
       that._dragX = evt.x;
@@ -244,6 +247,7 @@ function onDrag( register, slot, args ) {
       that._dragStart = true;
     }
     setHammerVxVy.call( that, that.$, evt );
+    var domEvt = evt.srcEvent;
     slot({
       x: evt.x,
       y: evt.y,
@@ -251,7 +255,8 @@ function onDrag( register, slot, args ) {
       y0: evt.y0,
       vx: evt.vx,
       vy: evt.vy,
-      preventDefault: evt.preventDefault.bind( evt )
+      preventDefault: domEvt.preventDefault.bind( domEvt ),
+      stopPropagation: domEvt.stopPropagation.bind( domEvt )
     });
     return true;
   });
