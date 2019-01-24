@@ -5,8 +5,9 @@
  * @param {function} events - Shortcut for `{ tap: ... }`.
  * @param {function} events.tap { x, y }
  * @param {function} events.doubletap { x, y }
- * @param {function} events.drag {x, y, dx, dy }
- * @param {function} events.wheel {x, y, delta }
+ * @param {function} events.drag { x, y, dx, dy }
+ * @param {function} events.move { x, y }
+ * @param {function} events.wheel { x, y, delta }
  */
 module.exports = getGesture;
 
@@ -16,6 +17,7 @@ var HANDLERS = {
   tap: onTap,
   doubletap: onDoubletap,
   drag: onDrag,
+  move: onMove,
   down: onDown,
   up: onUp,
   wheel: onWheel
@@ -207,6 +209,16 @@ function onWheel( register, slot, args ) {
   register( WHEEL_EVENT, function( evt ) {
     var newEvt = setXY( that.$, evt );
     newEvt.delta = evt.deltaY;
+    newEvt.preventDefault = evt.preventDefault.bind( evt );
+    newEvt.stopPropagation = evt.stopPropagation.bind( evt );    
+    slot( newEvt );
+  });
+}
+
+function onMove( register, slot ) {
+  var that = this;
+  register( 'mousemove', function( evt ) {
+    var newEvt = setXY( that.$, evt );
     newEvt.preventDefault = evt.preventDefault.bind( evt );
     newEvt.stopPropagation = evt.stopPropagation.bind( evt );    
     slot( newEvt );
