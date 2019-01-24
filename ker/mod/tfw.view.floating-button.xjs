@@ -1,4 +1,4 @@
-{View DIV
+{View BUTTON
   view.attribs: {
     icon: {string add}
     action: {action}

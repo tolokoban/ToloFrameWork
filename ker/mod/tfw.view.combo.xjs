@@ -1,4 +1,4 @@
-{View DIV class:"tfw-view-combo thm-ele2 thm-bg2"
+{View DIV class:"tfw-view-combo thm-bg2"
   view.attribs: {
     wide: {boolean false}
     label: {string ""}
@@ -7,16 +7,24 @@
     expanded: {boolean false behind:onExpandedChange}
     index: {integer 0 behind:onIndexChange}
     value: {string "" behind:onValueChange}
+    tabindex: {integer 0}
+    action: {action}
   }
 
-  class.wide:{Bind wide}
-  
+  class.wide: {Bind wide}
+  event.tap: {Set expanded true}
+  event.keydown: onKeyDown
+  tabindex: {Bind tabindex}
+
   [
-    {HEADER textcontent:{Bind label}}    
-    {DIV view.id:button class.show|hide:{Bind expanded} class:"button" [
-      {DIV view.id:screen class:screen event.tap:{Set expanded false}}
-      {DIV view.id:list class:list class:"list thm-ele8"}
-      {tfw.view.icon content:down size:32}
+    {HEADER textcontent:{Bind label} class.hide:{Bind label converter:isEmpty} class:thm-bgPL}
+    {DIV view.id:button class:button [
+        {DIV view.id:list-container class:list-container [
+            {DIV view.id:list class:"tfw-view-combo-list"}
+        ]}
+        {DIV class:icon [
+            {tfw.view.icon content:down size:24}
+        ]}
     ]}
   ]
 }

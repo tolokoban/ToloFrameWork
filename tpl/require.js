@@ -1,4 +1,4 @@
-/**********************************************************************
+/*
  require( 'require' )
  -----------------------------------------------------------------------
  @example
@@ -6,51 +6,48 @@
  var Path = require("node://path");  // Only in NodeJS/NW.js environment.
  var Button = require("tfw.button");
 
- **********************************************************************/
+ */
+"use strict";
 
-window.require = function() {
-  var mocks = {};
-  var modules = {};
-  var definitions = {};
-  var nodejs_require = typeof window.require === 'function' ? window.require : null;
+// window.require =
+( function ( workspace ) {
+    const
+        NODE_PREFIX = "node://",
+        NODE_PREFIX_SIZE = NODE_PREFIX.length,
+        modules = {},
+        definitions = {},
+        nodejsRequire = typeof window.require === 'function' ? window.require : null;
+    const f = function ( id, body ) {
+        if ( id.substr( 0, NODE_PREFIX_SIZE ) === NODE_PREFIX ) {
+            // Calling for a NodeJS module.
+            if ( !nodejsRequire ) {
+                throw Error( "[require] NodeJS is not available to load module " + id.substr( NODE_PREFIX_SIZE ) );
+            }
+            return nodejsRequire( id.substr( NODE_PREFIX_SIZE ) );
+        }
 
-  var f = function(id, body) {
-    var mock = mocks[id];
-    if( mock ) return mock;
-    
-    if( id.substr( 0, 7 ) == 'node://' ) {
-      // Calling for a NodeJS module.
-      if( !nodejs_require ) {
-        throw Error( "[require] NodeJS is not available to load module `" + id + "`!" );
-      }
-      return nodejs_require( id.substr( 7 ) );
-    }
+        if ( typeof body === 'function' ) {
+            definitions[ id ] = body;
+            return body;
+        }
+        const moduleInit = definitions[ id ];
+        if ( typeof moduleInit === 'undefined' ) {
+            const err = new Error( "Required module is missing: " + id );
+            console.error( err.stack );
+            throw err;
+        }
+        var mod = modules[ id ];
+        if ( typeof mod === 'undefined' ) {
+            mod = { exports: {} };
+            const exports = mod.exports;
+            moduleInit.call( workspace, f, mod, exports );
+            modules[ id ] = mod.exports;
+            mod = mod.exports;
+        }
+        return mod;
+    };
 
-    if( typeof body === 'function' ) {
-      definitions[id] = body;
-      return;
-    }
-    var mod;
-    body = definitions[id];
-    if (typeof body === 'undefined') {
-      var err = new Error("Required module is missing: " + id);
-      console.error(err.stack);
-      throw err;
-    }
-    mod = modules[id];
-    if (typeof mod === 'undefined') {
-      mod = {exports: {}};
-      var exports = mod.exports;
-      body(f, mod, exports);
-      modules[id] = mod.exports;
-      mod = mod.exports;
-    }
-    return mod;
-  };
-
-  f.mock = function( moduleName, module ) {
-    mocks[moduleName] = module;
-  };
-  
-  return f;
-}();
+    workspace.APP = {};
+    workspace.require = f;
+    return f;
+}( this ) );

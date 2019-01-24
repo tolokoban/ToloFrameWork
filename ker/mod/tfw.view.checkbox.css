@@ -27,8 +27,8 @@ button.tfw-view-checkbox > div.txt {
   opacity: .6;
   white-space: nowrap;
   overflow-x: hidden;
-  text-overflow: ellipsis;  
-  flex-grow: 1;  
+  text-overflow: ellipsis;
+  flex-grow: 1;
   text-align: left;
   transition: opacity .2s;
 }
@@ -76,4 +76,8 @@ button.tfw-view-checkbox.ok > div.txt {
 
 button.tfw-view-checkbox.ok > div.pin > div.btn {
   transform: translateX(14px);
+}
+
+button.tfw-view-checkbox > header.hide {
+    display: none;
 }

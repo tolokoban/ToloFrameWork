@@ -1,70 +1,87 @@
-exports.config={"name":"\"toloframework\"","description":"\"Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.\"","author":"\"Tolokoban\"","version":"\"0.45.0\"","major":"0","minor":"45","revision":"0","date":"2018-09-12T06:21:52.000Z","consts":{}};
-var currentLang = null;
-exports.lang = function(lang) {
-    if (lang === undefined) {
-        if (window.localStorage) {
-            lang = window.localStorage.getItem("Language");
+exports.config={"name":"\"toloframework\"","description":"\"Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.\"","author":"\"Tolokoban\"","version":"\"0.48.0\"","major":"0","minor":"48","revision":"0","date":"2018-12-07T13:31:58.179Z","consts":{}};
+"use strict";
+
+const ZERO_CHAR_CODE = '0'.charCodeAt( 0 );
+
+exports.lang = function lang( _lang ) {
+    let language = _lang;
+    if ( typeof language === 'undefined' ) {
+        if ( window.localStorage ) {
+            language = window.localStorage.getItem( "Language" );
         }
-        if (!lang) {
-            lang = window.navigator.language;
-            if (!lang) {
-                lang = window.navigator.browserLanguage;
-                if (!lang) {
-                    lang = "fr";
+        if ( !language ) {
+            language = window.navigator.language;
+            if ( !language ) {
+                language = window.navigator.browserLanguage;
+                if ( !language ) {
+                    language = "fr";
                 }
             }
         }
-        lang = lang.substr(0, 2).toLowerCase();
+        language = language.substr( 0, 2 ).toLowerCase();
     }
-    currentLang = lang;
-    if (window.localStorage) {
-        window.localStorage.setItem("Language", lang);
+    if ( window.localStorage ) {
+        window.localStorage.setItem( "Language", language );
     }
-    return lang;
+    return language;
 };
-exports.intl = function(words, params) {
-    var dic = words[exports.lang()],
-        k = params[0],
-        txt, newTxt, i, c, lastIdx, pos;
-    var defLang;
-    for( defLang in words ) break;
-    if( !defLang ) return k;
-    if (!dic) {
-        dic = words[defLang];
-        if( !dic ) {
+
+exports.intl = function intl( words, params ) {
+    let dic = words[ exports.lang() ];
+
+    const
+        k = params[ 0 ],
+        defLang = Object.keys( words )[ 0 ];
+    if ( !defLang ) return k;
+
+    if ( !dic ) {
+        dic = words[ defLang ];
+        if ( !dic ) {
             return k;
         }
     }
-    txt = dic[k];
-    if( !txt ) {
-        dic = words[defLang];
-        txt = dic[k];
+    let txt = dic[ k ];
+    if ( !txt ) {
+        dic = words[ defLang ];
+        txt = dic[ k ];
     }
-    if (!txt) return k;
-    if (params.length > 1) {
-        newTxt = "";
-        lastIdx = 0;
-        for (i = 0 ; i < txt.length ; i++) {
-            c = txt.charAt(i);
-            if (c === '$') {
-                newTxt += txt.substring(lastIdx, i);
+    if ( !txt ) return k;
+    return processArguments( txt, params );
+};
+
+
+/**
+ * @param {string} txt - Text with place holders like `$1`, `$2`, etc.
+ * @param {array} params - Params for place holders replacement.
+ * @return {string} The text with place holders replaces by params.
+ */
+function processArguments( txt, params ) {
+    let output = txt;
+    if ( params.length > 1 ) {
+        let
+            newTxt = "",
+            lastIdx = 0;
+        for ( let i = 0; i < txt.length; i++ ) {
+            const c = txt.charAt( i );
+            if ( c === '$' ) {
+                newTxt += txt.substring( lastIdx, i );
                 i++;
-                pos = txt.charCodeAt(i) - 48;
-                if (pos < 0 || pos >= params.length) {
-                    newTxt += "$" + txt.charAt(i);
+                const pos = txt.charCodeAt( i ) - ZERO_CHAR_CODE;
+                if ( pos < 0 || pos >= params.length ) {
+                    newTxt += `$${txt.charAt(i)}`;
                 } else {
-                    newTxt += params[pos];
+                    newTxt += params[ pos ];
                 }
                 lastIdx = i + 1;
-            } else if (c === '\\') {
-                newTxt += txt.substring(lastIdx, i);
+            } else if ( c === '\\' ) {
+                newTxt += txt.substring( lastIdx, i );
                 i++;
-                newTxt += txt.charAt(i);
+                newTxt += txt.charAt( i );
                 lastIdx = i + 1;
             }
         }
-        newTxt += txt.substr(lastIdx);
-        txt = newTxt;
+        newTxt += txt.substr( lastIdx );
+        output = newTxt;
     }
-    return txt;
-};
+    return output;
+}

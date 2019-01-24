@@ -1,7 +1,7 @@
 // tfw.view.button
 {View BUTTON view.debug: false
   view.attribs: {
-    action: {action}    
+    action: {action}
     tag: {string ACTION} // The value that `action` will take on every tap.
     icon: {string ""}
     text: {string "Click me!"}
@@ -22,10 +22,10 @@
   }
 
   focus: {Bind focus}
-  
+
   view.init: init
   view.prototype: [on, fire]
-  
+
   class: "tfw-view-button"
   class.flat: {Bind flat}
   class.wait: {Bind wait}
@@ -35,15 +35,19 @@
   class.wide: {Bind wide}
   class.responsive: {Bind responsive}
   class.small: {Bind small}
-
+  class.|disabled: {Bind enabled}
   event.keyup: onKeyUp
   event.down: {Set pressed true}
   event.up: {Set pressed false}
-  
+
   [
-    {DIV class:icon [ {tfw.view.icon view.id:icon content:{Bind icon} animate:{Bind wait}} ]}
+    {DIV
+        class:icon
+        class.hide: {Bind icon converter:isEmpty}
+        [ {tfw.view.icon view.id:icon content:{Bind icon} animate:{Bind wait}} ]}
     {DIV view.id:text
       class: "text thm-fg"
+      class.*: {[flat,type] getClassesForText}
       class.hide: {Bind text converter:isEmpty}
       {Bind text}}
   ]

@@ -16,10 +16,9 @@
   }
 
   class: tfw-view-textbox
-  class.thm-ele2: {Bind enabled} 
-  class.wide: {Bind wide} 
-  class.thm-bgSL|thm-bg3: {Bind focus back:false} 
-  class.focus: {Bind focus} 
+  class.wide: {Bind wide}
+  class.thm-bgSL|thm-bg3: {Bind focus back:false}
+  class.focus: {Bind focus}
   class.no-label: {Bind label converter:isEmpty}
   class.|disabled: {Bind enabled}
   class.|hide: {Bind visible}
@@ -27,10 +26,10 @@
 
   [
     {DIV view.id: head
-         class: "head thm-fg"
+         class: "head thm-fg thm-bgPL"
          textcontent: {Bind label}}
     {DIV view.id: body
-         class: body    
+         class: body
          style.width: {Bind width}
       [
         {INPUT
@@ -40,11 +39,11 @@
           type: {Bind type}
           event.keyup: onKeyUp
           maxLength: {Bind max-length}
-          value: {Bind value -delay: 350}          
+          value: {Bind value -delay: 350}
           focus: {Bind focus}}
       ]}
     {DIV view.id: foot, class: foot}
     {DIV view.id: bottom, class: "bottom thm-bgSD"}
-    {FOOTER [{DIV view.id: completion, class: "completion thm-fg thm-bg2 thm-ele4"}]}    
+    {FOOTER [{DIV view.id: completion, class: "completion thm-fg thm-bg2 thm-ele4"}]}
   ]
 }

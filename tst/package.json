@@ -19,7 +19,7 @@
     "tfw": {
         "modules": [],
         "compile": {
-            "type": "firefoxos",
+            "type": "web",
             "files": "\\.html$"
         }
     }

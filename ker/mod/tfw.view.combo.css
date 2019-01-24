@@ -1,15 +1,17 @@
-div.tfw-view-combo {
+.tfw-view-combo {
     display: inline-flex;
     flex-direction: column;
     justify-content: start;
     align-items: stretch;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,.5);
 }
-div.tfw-view-combo.wide {
+.tfw-view-combo.wide {
     display: inline-flex;
     width: 100%;
 }
 
-div.tfw-view-combo > header {
+.tfw-view-combo > header {
     flex: 1 1;
     position: static;
     display: flex;
@@ -17,7 +19,6 @@ div.tfw-view-combo > header {
     justify-content: center;
     align-items: start;
     font-size: 80%;
-    opacity: .5;
     height: 16px;
     max-height: 16px;
     min-height: 16px;
@@ -25,8 +26,15 @@ div.tfw-view-combo > header {
     margin: 0;
 }
 
-div.tfw-view-combo > .button  {
+.tfw-view-combo > header.hide {
+    display: none;
+}
+
+.tfw-view-combo > .button  {
     position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     flex: 1 1;
     background: #fff;
     height: 32px;
@@ -36,33 +44,46 @@ div.tfw-view-combo > .button  {
     margin: 0;
     padding: 0;
     font: inherit;
-}
-div.tfw-view-combo > .button.hide {
-    overflow: hidden;
-}
-div.tfw-view-combo > .button.hide > div.list {
-    overflow: hidden;
-}
-div.tfw-view-combo > .button.show {
-    overflow: show;
-    z-index: 999998;
-}
-div.tfw-view-combo > .button.show > div.list {
-    position: fixed;
-    z-index: 999999;
-}
-div.tfw-view-combo > .button.show > div.screen {
-    position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: transparent; cursor: forbiden;
+    white-space: nowrap;
 }
 
-div.tfw-view-combo > .button > div.list {
+.tfw-view-combo > .button > div {
+    display: inline-block;
+    height: 32px;
+    max-height: 32px;
+    min-height: 32px;
+    margin: 0;
+}
+
+.tfw-view-combo > .button > div.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    height: 32px;
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+}
+
+.tfw-view-combo > .button {
+    overflow: hidden;
+}
+.tfw-view-combo > .button > div.list-container > .tfw-view-combo-list {
+    overflow: hidden;
+}
+
+body > .tfw-view-combo-list {
+    position: fixed;
+    background: #fff;
+}
+.tfw-view-combo > .button > div.list-container > .tfw-view-combo-list {
     background: #fff;
     transition: transform .2s;
     transform: translateY(0);
-    overflow: auto;
-    max-height: calc(100vh - 64px);
 }
-div.tfw-view-combo > .button > div.list > div {
+body > .tfw-view-combo-screen > div > div,
+.tfw-view-combo > .button > div.list-container > .tfw-view-combo-list > div {
     position: static;
     display: flex;
     flex-direction: column;
@@ -73,13 +94,31 @@ div.tfw-view-combo > .button > div.list > div {
     min-height: 32px;
     padding: 0 8px;
     cursor: pointer;
-    box-shadow: 0 1px rgba(0,0,0,.1);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: calc(100vw - 64px);
+    padding-width: 32px;
 }
 
-div.tfw-view-combo > .button > .tfw-view-icon {
-    position: absolute;
+.tfw-view-combo-screen {
+    position: fixed;
+    left: 0;
     top: 0;
-    right: 0;
-    z-index: 999998;
-    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: rgba(0,0,0,.3);
+    z-index: 99999999;
+}
+
+.tfw-view-combo-screen > div {
+    position: absolute;
+    max-height: calc(100vh - 32px);
+    overflow: auto;
+}
+
+.tfw-view-combo-screen > div > div {
+    box-shadow: 0 1px rgba(0,0,0,.1) inset;
 }

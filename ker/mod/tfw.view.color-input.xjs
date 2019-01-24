@@ -9,9 +9,9 @@
   }
 
   class: tfw-view-color-input
-  class.focus: {Bind focus} 
-  class.wide: {Bind wide} 
-  class.|hide: {Bind visible} 
+  class.focus: {Bind focus}
+  class.wide: {Bind wide}
+  class.|hide: {Bind visible}
   class.thm-bg3: {Bind focus back:false}
 
 

@@ -2,9 +2,15 @@ div.tfw-view-textbox {
   position: relative;
   display: inline-block;
   border: none;
-  border-bottom: 1px solid rgba(0,0,0,.5);
+  border: 1px solid rgba(0,0,0,.5);
   font: inherit;
-  padding: 0 4px 4px 4px;
+  padding: 0;
+}
+
+div.tfw-view-textbox.invalid {
+    border: 2px solid red;
+    border: 1px solid var(--thm-color-SD);
+    outline: 1px solid var(--thm-color-SD);
 }
 
 div.tfw-view-textbox.disabled {
@@ -35,8 +41,8 @@ div.tfw-view-textbox input {
   font: inherit;
   width: 100%;
   padding: 0 8px;
-  line-height: 24px;
-  height: 24px;
+  line-height: 32px;
+  height: 32px;
   border: none;
   -webkit-text-fill-color: inherit !important;
   -webkit-box-shadow: none !important;
@@ -46,7 +52,7 @@ div.tfw-view-textbox.invalid > div > input {
   color: #f00;
   background-color: #fee;
 }
-    
+
 div.tfw-view-textbox.focus input {
   color: #000;
   outline: none;
@@ -140,4 +146,3 @@ div.tfw-view-textbox.focus > footer > div.completion > span {
 div.tfw-view-textbox.focus > footer > div.completion > b {
   font-weight: normal;
 }
-

@@ -1,5 +1,9 @@
 .tfw-touchable {
-    position: relative;
+    position: fixed;
+    z-index: 999999;
+}
+
+.tfw-touchable-elem {
     cursor: pointer;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -15,7 +19,7 @@
     left: 0;
     top: 0;
 }
-    
+
 .tfw-touchable > div.tfw-touchable-container > div.tfw-touchable-shadow {
     content: '.';
     font-size: 0;

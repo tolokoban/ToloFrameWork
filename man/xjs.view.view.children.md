@@ -49,7 +49,7 @@ var CODE_BEHIND = {
 ```
 
 This is very similar to the previous syntax except that the linkable property must be a **List**.
-In this case, the elements children can be recreated event if the content of the array has changed.
+In this case, the elements children can be recreated even if the content of the array has changed.
 
 
 For instance, if you _push_ an item into a list, the display will change, whereas the action in a _{Bind...}_ syntax does not change the display because the array is not a new one, it has just changed.
@@ -61,7 +61,7 @@ The map function takes 2 arguments:
     * __more.index__: Index of the current element (starting at 0).
     * __more.list__: The whole list/array you are iterating on.
     * __more.context__: A object to use to keep things between two elements of he loop.
-    
+
 If the function returns `null`or `undefined`, nothing is added.
 It the function returns an array, each element of this array will be added.
 
@@ -110,4 +110,3 @@ You will get something like this:
     * Jean
     * Emma
     * Uma
-    

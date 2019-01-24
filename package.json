@@ -1,6 +1,6 @@
 {
   "name": "toloframework",
-  "version": "0.45.6",
+  "version": "0.50.7",
   "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
   "bin": {
     "tfw": "bin/tfw.js"
@@ -11,14 +11,14 @@
   "scripts": {
     "clean": "node bin/tfw.js clean",
     "watch": "node bin/tfw.js build debug test -dir spec-karma watch",
-    "debug": "node bin/tfw.js build debug test -dir spec-karma",
+    "debug": "node --inspect-brk bin/tfw.js build debug test -dir spec-karma",
     "release": "node bin/tfw.js build version clean",
     "test": "node node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
-    "test:dbg": "devtool node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
+    "test:dbg": "node --inspect-brk node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
     "jasmine": "node node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
-    "jasmine:dbg": "devtool node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
+    "jasmine:dbg": "node --inspect-brk node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
     "karma": "node node_modules/karma/bin/karma start karma.conf.js",
-    "karma:dbg": "devtool node_modules/karma/bin/karma start karma.conf.js"
+    "karma:dbg": "node --inspect-brk node_modules/karma/bin/karma start karma.conf.js"
   },
   "repository": {
     "type": "git",
@@ -41,8 +41,13 @@
     "url": "https://github.com/tolokoban/ToloFrameWork/issues"
   },
   "dependencies": {
-    "clean-css": "^4.1.11",
-    "colors": "^1.3.0",
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.1.6",
+    "babel-preset-minify": "^0.5.0",
+    "clean-css": "^4.2.1",
+    "colors": "^1.3.2",
     "jaguar": "^1.1.10",
     "jsdoc": "^3.5.5",
     "less": "^2.7.3",
@@ -69,7 +74,7 @@
   "devDependencies": {
     "jasmine": "^2.99.0",
     "jasmine-core": "^2.99.1",
-    "karma": "^2.0.2",
+    "karma": "^2.0.5",
     "karma-chrome-launcher": "^2.2.0",
     "karma-firefox-launcher": "^1.1.0",
     "karma-jasmine": "^1.1.2"

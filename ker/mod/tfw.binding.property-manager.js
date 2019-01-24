@@ -6,45 +6,55 @@
  * @param {object} container - Object which will hold properties.
  */
 module.exports = constructor;
+
 /**
  * @export .isLinkable
  * Look if an object  has a property manager assigned to  it and own a
  * property which name is `propertyName`.
  */
 module.exports.isLinkable = isLinkable;
+
 module.exports.getAllAttributesNames = getAllAttributesNames;
+
 /**
  * Return the linkable properties which holds this value, or `null`.
  */
 module.exports.getProperties = getProperties;
 
+/**
+ * Create a readonly attribute.
+ *
+ * @param {object} target - Object which will bear the readonly attribute.
+ * @param {object} attribs - Attributes with their values.
+ * @returns {undefined}
+ */
+module.exports.readonly = readonly;
 
+const Event = require( "tfw.event" );
 
-var Event = require("tfw.event");
-
-var ID = 0;
+let ID = 0;
 
 // A container  with linkable  properties has  an attribute  with this
 // name. This attribute own the list of linkable properties.
-var CONTAINER_SYMBOL = "__tfw.property-manager__";
+const CONTAINER_SYMBOL = "__tfw.property-manager__";
 // A linkable property owned by a container has an attribute with this
 // name. This attribute give the name  of the property and a reference
 // to the container.
-var PROPERTY_SYMBOL = '__tfw.binding.property-manager__';
+const PROPERTY_SYMBOL = '__tfw.binding.property-manager__';
 
 /**
  *
  */
 function PropertyManager( container ) {
-  Object.defineProperty( this, 'id', {
-    value: ID++,
-    writable: false,
-    configurable: false,
-    enumerable: true
-  });
-  this.name = this.id;
-  this._props = {};
-  this._container = container;
+    Object.defineProperty( this, 'id', {
+        value: ID++,
+        writable: false,
+        configurable: false,
+        enumerable: true
+    } );
+    this.name = this.id;
+    this._props = {};
+    this._container = container;
 }
 
 /**
@@ -54,18 +64,18 @@ function PropertyManager( container ) {
  * @param {string} propertyName.
  * @param {any} value.
  */
-PropertyManager.prototype.set = function( propertyName, value ) {
-  this.create( propertyName ).set( value );
+PropertyManager.prototype.set = function ( propertyName, value ) {
+    this.create( propertyName ).set( value );
 };
 
 /**
  * Look if `propertyName` is a linkable property of this object.
  */
-PropertyManager.prototype.isLinkable = function( propertyName ) {
-  var container = this._container;
-  if( !container ) return false;  
-  if( typeof container[CONTAINER_SYMBOL] === 'undefined' ) return false;
-  return typeof container[CONTAINER_SYMBOL]._props[propertyName] !== 'undefined';
+PropertyManager.prototype.isLinkable = function ( propertyName ) {
+    var container = this._container;
+    if ( !container ) return false;
+    if ( typeof container[ CONTAINER_SYMBOL ] === 'undefined' ) return false;
+    return typeof container[ CONTAINER_SYMBOL ]._props[ propertyName ] !== 'undefined';
 
 };
 
@@ -76,38 +86,38 @@ PropertyManager.prototype.isLinkable = function( propertyName ) {
  * @return {any} Inner value of the property.
  *
  */
-PropertyManager.prototype.get = function( propertyName ) {
-  return this.create( propertyName ).get();
+PropertyManager.prototype.get = function ( propertyName ) {
+    return this.create( propertyName ).get();
 };
 
-PropertyManager.prototype.propertyId = function( propertyName ) {
-  return this.create( propertyName ).id;
+PropertyManager.prototype.propertyId = function ( propertyName ) {
+    return this.create( propertyName ).id;
 };
 
-PropertyManager.prototype.fire = function( propertyName, wave ) {
-  var prop = this.create( propertyName );
-  prop.event.fire( prop.get(), propertyName, this._container, wave );
+PropertyManager.prototype.fire = function ( propertyName, wave ) {
+    var prop = this.create( propertyName );
+    prop.event.fire( prop.get(), propertyName, this._container, wave );
 };
 
-PropertyManager.prototype.change = function( propertyName, value, wave ) {
-  if( typeof wave === 'undefined' ) wave = [];
+PropertyManager.prototype.change = function ( propertyName, value, wave ) {
+    if ( typeof wave === 'undefined' ) wave = [];
 
-  var prop = this.create( propertyName );
+    var prop = this.create( propertyName );
 
-  var converter = prop.converter;
-  if( typeof converter === 'function' ) {
-    value = converter( value );
-  }
+    var converter = prop.converter;
+    if ( typeof converter === 'function' ) {
+        value = converter( value );
+    }
 
-  var currentValue = prop.get();
-  if( prop.alwaysFired || areDifferent( value, currentValue ) ) {
-    prop.set( value );
-    var that = this;
-    exec(prop, function() {
-      // Fire change event.
-      that.fire( propertyName, wave );
-    });
-  }
+    var currentValue = prop.get();
+    if ( prop.alwaysFired || areDifferent( value, currentValue ) ) {
+        prop.set( value );
+        var that = this;
+        exec( prop, function () {
+            // Fire change event.
+            that.fire( propertyName, wave );
+        } );
+    }
 };
 
 /**
@@ -118,25 +128,24 @@ PropertyManager.prototype.change = function( propertyName, value, wave ) {
  * if it is a function.
  * @return {function} Current converter.
  */
-PropertyManager.prototype.converter = function( propertyName, converter ) {
-  var prop = this.create( propertyName );
-  if( typeof converter === 'function' ) {
-    prop.converter = converter;
-  }
-  else if( typeof converter !== 'undefined' ) {
-    throw Error(
-      "[tfw.binding.property-manager::converter] "
-        + "`converter` must be of type function or undefined!"
-    );
-  }
-  return prop.converter;
+PropertyManager.prototype.converter = function ( propertyName, converter ) {
+    var prop = this.create( propertyName );
+    if ( typeof converter === 'function' ) {
+        prop.converter = converter;
+    } else if ( typeof converter !== 'undefined' ) {
+        throw Error(
+            "[tfw.binding.property-manager::converter] " +
+            "`converter` must be of type function or undefined!"
+        );
+    }
+    return prop.converter;
 };
 
-PropertyManager.prototype.delay = function( propertyName, delay ) {
-  var prop = this.create( propertyName );
-  delay = parseFloat( delay );
-  if( isNaN( delay ) ) return prop.delay;
-  prop.delay = delay;
+PropertyManager.prototype.delay = function ( propertyName, delay ) {
+    var prop = this.create( propertyName );
+    delay = parseFloat( delay );
+    if ( isNaN( delay ) ) return prop.delay;
+    prop.delay = delay;
 };
 
 /**
@@ -146,9 +155,9 @@ PropertyManager.prototype.delay = function( propertyName, delay ) {
  * @param {function(val,name,container)} action  - Function to execute
  * when a property changed.
  */
-PropertyManager.prototype.on = function( propertyName, action ) {
-  var prop = this.create( propertyName );
-  prop.event.add( action );
+PropertyManager.prototype.on = function ( propertyName, action ) {
+    var prop = this.create( propertyName );
+    prop.event.add( action );
 };
 
 /**
@@ -158,9 +167,9 @@ PropertyManager.prototype.on = function( propertyName, action ) {
  * @param {function(val,name,container)} action  - Function to execute
  * when a property changed.
  */
-PropertyManager.prototype.off = function( propertyName, action ) {
-  var prop = this.create( propertyName );
-  prop.event.remove( action );
+PropertyManager.prototype.off = function ( propertyName, action ) {
+    var prop = this.create( propertyName );
+    prop.event.remove( action );
 };
 
 
@@ -170,16 +179,23 @@ PropertyManager.prototype.off = function( propertyName, action ) {
  * @param {object} container - Object which will hold properties.
  */
 function constructor( container ) {
-  if( typeof container === 'undefined' )
-    fail("Argument `container` is mandatory!");
+    try {
+        if ( typeof container === 'undefined' ) {
+            fail( "Argument `container` is mandatory!" );
+        }
+        if ( typeof container !== 'object' ) return null;
 
-  var pm = container[CONTAINER_SYMBOL];
-  if( !pm ) {
-    pm = new PropertyManager( container );
-    container[CONTAINER_SYMBOL] = pm;
-  }
-  return pm;
-};
+        let pm = container[ CONTAINER_SYMBOL ];
+        if ( !pm ) {
+            pm = new PropertyManager( container );
+            container[ CONTAINER_SYMBOL ] = pm;
+        }
+        return pm;
+    } catch ( ex ) {
+        console.error( ex );
+        return null;
+    }
+}
 
 /**
  * @export .isLinkable
@@ -187,23 +203,23 @@ function constructor( container ) {
  * property which name is `propertyName`.
  */
 function isLinkable( container, propertyName ) {
-  if( container[CONTAINER_SYMBOL] === undefined ) return false;
-  if( typeof propertyName !== 'string' ) return true;
-  return container[CONTAINER_SYMBOL]._props[propertyName] !== undefined;
+    if ( typeof container[ CONTAINER_SYMBOL ] === "undefined" ) return false;
+    if ( typeof propertyName !== 'string' ) return true;
+    return typeof container[ CONTAINER_SYMBOL ]._props[ propertyName ] !== "undefined";
 };
 
 function getAllAttributesNames( container ) {
-  if( container[CONTAINER_SYMBOL] === undefined ) return [];
-  return Object.keys( container[CONTAINER_SYMBOL]._props );
+    if ( container[ CONTAINER_SYMBOL ] === undefined ) return [];
+    return Object.keys( container[ CONTAINER_SYMBOL ]._props );
 };
 
 /**
  * Return the linkable properties which holds this value, or `null`.
  */
 function getProperties( property ) {
-  var properties = property[PROPERTY_SYMBOL];
-  if( !Array.isArray( properties ) ) return null;
-  return properties;
+    var properties = property[ PROPERTY_SYMBOL ];
+    if ( !Array.isArray( properties ) ) return null;
+    return properties;
 };
 
 /**
@@ -216,100 +232,101 @@ function getProperties( property ) {
  * @param {function=undefined}  options.cast - Conversion to  apply to
  * the value before setting it.
  */
-PropertyManager.prototype.create = function( propertyName, options ) {
-  var that = this;
-  if( typeof propertyName !== 'string' ) fail("propertyName must be a string!");
-  var p = this._props[propertyName];
-  if (!p) {
-    if( typeof options === 'undefined' ) options = {};
-    p = createNewProperty.call( this, propertyName, options );
-  }
-  return p;
+PropertyManager.prototype.create = function ( propertyName, options ) {
+    var that = this;
+    if ( typeof propertyName !== 'string' ) fail( "propertyName must be a string!" );
+    var p = this._props[ propertyName ];
+    if ( !p ) {
+        if ( typeof options === 'undefined' ) options = {};
+        p = createNewProperty.call( this, propertyName, options );
+    }
+    return p;
 };
 
 /**
  * Copy all the attributes of `source` into `target`.
  */
 function applyAttributesToTarget( source, target ) {
-  var attName, attValue;
-  for( attName in source ) {
-    if( module.exports.isLinkable( target, attName ) ) {
-      attValue = source[attName];
-      target[attName] = attValue;
+    var attName, attValue;
+    for ( attName in source ) {
+        if ( module.exports.isLinkable( target, attName ) ) {
+            attValue = source[ attName ];
+            target[ attName ] = attValue;
+        }
     }
-  }
 }
 
 function createNewProperty( propertyName, options ) {
-  var that = this;
+    var that = this;
 
-  var prop = {
-    value: undefined,
-    event: new Event(),
-    filter: functionOrUndefined( options.filter ),
-    converter: functionOrUndefined( options.converter ),
-    delay: castPositiveInteger( options.delay ),
-    action: null,
-    alwaysFired: options.alwaysFired ? true : false,
-    manager: this,
-    name: propertyName,
-    timeout: 0
-  };
-  prop.get = createGetter( prop, options );
-  prop.set = createSetter( prop, options, that, propertyName );
+    var prop = {
+        value: undefined,
+        event: new Event(),
+        filter: functionOrUndefined( options.filter ),
+        converter: functionOrUndefined( options.converter ),
+        delay: castPositiveInteger( options.delay ),
+        action: null,
+        alwaysFired: options.alwaysFired ? true : false,
+        manager: this,
+        name: propertyName,
+        timeout: 0
+    };
+    prop.get = createGetter( prop, options );
+    prop.set = createSetter( prop, options, that, propertyName );
 
-  this._props[propertyName] = prop;
-  if( typeof options.init !== 'undefined' ) {
-    prop.set( options.init );
-  }
+    this._props[ propertyName ] = prop;
+    if ( typeof options.init !== 'undefined' ) {
+        prop.set( options.init );
+    }
 
-  Object.defineProperty(this._container, propertyName, {
-    get: prop.get.bind( prop ),
-    set: that.change.bind( that, propertyName ),
-    enumerable: true, configurable: false
-  });
+    Object.defineProperty( this._container, propertyName, {
+        get: prop.get.bind( prop ),
+        set: that.change.bind( that, propertyName ),
+        enumerable: true,
+        configurable: false
+    } );
 
-  return prop;
+    return prop;
 }
 
 function createGetter( prop, options ) {
-  if( typeof options.get === 'function' ) {
-    return function(v) {
-      var newValue = options.get( v );
-      addPropToValue( prop, newValue );
-      return newValue;
+    if ( typeof options.get === 'function' ) {
+        return function ( v ) {
+            var newValue = options.get( v );
+            addPropToValue( prop, newValue );
+            return newValue;
+        };
+    }
+    return function ( v ) {
+        return prop.value;
     };
-  }
-  return function(v) {
-    return prop.value;
-  };
 }
 
 function createSetter( prop, options, that, propertyName ) {
-  var setter;
-  if( typeof options.cast === 'function' ) {
-    if( typeof options.set === 'function' ) {
-      setter = function(v) {
-        removePropFromValue( prop, prop.get() );
-        var castedValue = options.cast( v, that );
-        addPropToValue( prop, prop.value );
-        options.set( castedValue );
-      };
+    var setter;
+    if ( typeof options.cast === 'function' ) {
+        if ( typeof options.set === 'function' ) {
+            setter = function ( v ) {
+                removePropFromValue( prop, prop.get() );
+                var castedValue = options.cast( v, that );
+                addPropToValue( prop, prop.value );
+                options.set( castedValue );
+            };
+        } else {
+            setter = function ( v ) {
+                removePropFromValue( prop, prop.get() );
+                prop.value = options.cast( v, that );
+                addPropToValue( prop, prop.value );
+            };
+        }
     } else {
-      setter = function(v) {
-        removePropFromValue( prop, prop.get() );
-        prop.value = options.cast( v, that );
-        addPropToValue( prop, prop.value );
-      };
+        setter = typeof options.set === 'function' ? options.set : function ( v ) {
+            removePropFromValue( prop, prop.get() );
+            prop.value = v;
+            addPropToValue( prop, prop.value );
+        };
     }
-  } else {
-    setter = typeof options.set === 'function' ? options.set : function(v) {
-      removePropFromValue( prop, prop.get() );
-      prop.value = v;
-      addPropToValue( prop, prop.value );
-    };
-  }
-  return setter;
+    return setter;
 }
 
 /**
@@ -317,26 +334,25 @@ function createSetter( prop, options, that, propertyName ) {
  * find the container and the property name from the value.
  */
 function addPropToValue( prop, value ) {
-  if( value === undefined || value === null ) return;
-  if( value.isContentChangeAware !== true ) return;
-  var properties = value[PROPERTY_SYMBOL];
-  if( !Array.isArray( properties ) ) {
-    properties = [prop];
-  }
-  else if( properties.indexOf( prop ) === -1 ) {
-    properties.push( prop );
-  }
-  value[PROPERTY_SYMBOL] = properties;
+    if ( value === undefined || value === null ) return;
+    if ( value.isContentChangeAware !== true ) return;
+    var properties = value[ PROPERTY_SYMBOL ];
+    if ( !Array.isArray( properties ) ) {
+        properties = [ prop ];
+    } else if ( properties.indexOf( prop ) === -1 ) {
+        properties.push( prop );
+    }
+    value[ PROPERTY_SYMBOL ] = properties;
 }
 
 function removePropFromValue( prop, value ) {
-  if( value === undefined || value === null ) return;
-  if( value.isContentChangeAware !== true ) return;
-  var properties = value[PROPERTY_SYMBOL];
-  if( !Array.isArray( properties ) ) return;
-  var pos = properties.indexOf( prop );
-  if( pos === -1 ) return;
-  properties.splice( pos, 1 );
+    if ( value === undefined || value === null ) return;
+    if ( value.isContentChangeAware !== true ) return;
+    var properties = value[ PROPERTY_SYMBOL ];
+    if ( !Array.isArray( properties ) ) return;
+    var pos = properties.indexOf( prop );
+    if ( pos === -1 ) return;
+    properties.splice( pos, 1 );
 }
 
 /**
@@ -345,10 +361,10 @@ function removePropFromValue( prop, value ) {
  * before. Moreover, the  value of this attribute is  always its name.
  * This is used for action properties in buttons, for instance.
  */
-PropertyManager.prototype.createAction = function( propertyName, options ) {
-  if( typeof options === 'undefined' ) options = {};
-  options.alwaysFired = true;
-  return this.create( propertyName, options );
+PropertyManager.prototype.createAction = function ( propertyName, options ) {
+    if ( typeof options === 'undefined' ) options = {};
+    options.alwaysFired = true;
+    return this.create( propertyName, options );
 };
 
 
@@ -360,32 +376,32 @@ PropertyManager.prototype.createAction = function( propertyName, options ) {
  * end of the `delay` and the `delay` is reset.
  */
 function exec( prop, action ) {
-  if( !prop.delay ) action();
-  else {
-    clearTimeout( prop.timeout );
-    prop.timeout = setTimeout( action, prop.delay );
-  }
+    if ( !prop.delay ) action();
+    else {
+        clearTimeout( prop.timeout );
+        prop.timeout = setTimeout( action, prop.delay );
+    }
 };
 
 
 function fail( msg, source ) {
-  if( typeof source === 'undefined' ) {
-    source = "";
-  } else {
-    source = "::" + source;
-  }
-  throw Error("[tfw.binding.property-manager" + source + "] " + msg);
+    if ( typeof source === 'undefined' ) {
+        source = "";
+    } else {
+        source = "::" + source;
+    }
+    throw Error( "[tfw.binding.property-manager" + source + "] " + msg );
 }
 
 function castPositiveInteger( v ) {
-  if( typeof v !== 'number' ) return 0;
-  if( isNaN( v ) ) return 0;
-  return Math.max( 0, Math.floor( v ) );
+    if ( typeof v !== 'number' ) return 0;
+    if ( isNaN( v ) ) return 0;
+    return Math.max( 0, Math.floor( v ) );
 }
 
 function functionOrUndefined( f ) {
-  if( typeof f === 'function' ) return f;
-  return undefined;
+    if ( typeof f === 'function' ) return f;
+    return undefined;
 }
 
 /**
@@ -395,5 +411,43 @@ function functionOrUndefined( f ) {
  * this cas, we don't want to fire a changed event.
  */
 function areDifferent( oldValue, newValue ) {
-  return oldValue !== newValue;
+    return oldValue !== newValue;
+}
+
+
+/**
+ * Create a readonly attribute.
+ *
+ * @param {object} target - Object which will bear the readonly attribute.
+ * @param {object} attribs - Attributes with their values.
+ * @returns {undefined}
+ */
+function readonly( target, attribs ) {
+    const attribNames = Object.keys( attribs );
+    attribNames.forEach( function ( attName ) {
+        const attValue = attribs[ attName ];
+        if ( typeof attValue === 'function' ) {
+            Object.defineProperty(
+                target,
+                attName, {
+                    set() {
+                        throw Error( `Attribute "${attName}" is read only!` );
+                    },
+                    get: attValue,
+                    configurable: false,
+                    enumerable: true
+                }
+            );
+        } else {
+            Object.defineProperty(
+                target,
+                attName, {
+                    value: attValue,
+                    writable: false,
+                    configurable: false,
+                    enumerable: true
+                }
+            );
+        }
+    } );
 }
