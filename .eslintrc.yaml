@@ -24,6 +24,7 @@
     new-cap: 1    # Functions must not start with a capital letter.
     newline-per-chained-call: 0
     no-console: [1, { allow: ["warn", "error"] }]
+    no-continue: 0
     no-extra-parens: [1, 'all', { nestedBinaryExpressions: false }]
     no-implicit-globals: 0 # Because we always work in modules.
     no-magic-numbers: [1, { "ignore": [0, 1] }]

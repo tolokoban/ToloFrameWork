@@ -1,48 +1,7 @@
 #! /usr/bin/env node
  // -*- js -*-
 
-const DEF = {
-    init: {
-        desc: "start a fresh new project."
-    },
-    clean: {
-        desc: "remove all temporary files."
-    },
-    build: {
-        desc: "compile project in the www/ folder."
-    },
-    debug: {
-        desc: "JS and CSS files won't be minified."
-    },
-    "no-transpilation": {
-        desc: "JS won't be transpiled."
-    },
-    php: {
-        desc: "add PHP services."
-    },
-    test: {
-        desc: "prepare Karma tests.",
-        opts: {
-            dir: {
-                desc: "Karma spec folder. Default is '-dir spec'.",
-                args: [ "spec" ]
-            }
-        }
-    },
-    doc: {
-        desc: "create documentation."
-    },
-    jsdoc: {
-        desc: "create JSDoc documentation."
-    },
-    watch: {
-        desc: "watch for files change."
-    },
-    version: {
-        desc: "increment version number."
-    }
-};
-
+"use strict";
 
 /**
  *
@@ -51,25 +10,25 @@ const DEF = {
 require( "colors" );
 const
     FS = require( "fs" ),
+    DEF = require( "../lib/usage" ),
     Path = require( "path" ),
-    Util = require( "../lib/util.js" ),
-    Init = require( "../lib/init.js" ),
+    Util = require( "../lib/util" ),
+    Init = require( "../lib/init" ),
     Project = require( "../lib/project" ),
     Package = require( "../lib/package" ),
     PathUtils = require( "../lib/pathutils" ),
     OptionsParse = require( "../lib/options-parser" );
 
 // Read the version in the package file.
-var cfg = Package;
-var txt = " ToloFrameWork " + cfg.version + " ";
-var sep = "";
-for ( var i = 0; i < txt.length; i++ ) {
+const cfg = Package;
+const txt = ` ToloFrameWork ${cfg.version} `;
+let sep = "";
+for ( let i = 0; i < txt.length; i++ ) {
     sep += "-";
 }
-sep = "+" + sep + "+";
-txt = "| ToloFrameWork " + cfg.version.yellow + " |";
+sep = `+${sep}+`;
 console.log( sep );
-console.log( txt );
+console.log( `| ToloFrameWork ${cfg.version.yellow} |` );
 console.log( sep );
 console.log();
 
@@ -221,11 +180,12 @@ if ( tasks.length == 0 ) {
     function watch( path ) {
         try {
             if ( watchedDirectories.indexOf( path ) == -1 ) {
+                if ( !Path.existsSync( path ) ) {
+                    console.error( `Can't watch missing file "${path}"!` );
+                }
                 //console.log("Watching ".cyan + path);
                 watchedDirectories.push( path );
-                var watcher = FS.watch( path );
-                watcher.path = path;
-                watcher.on( 'change', processLater );
+                FS.watch( path, processLater );
             }
         } catch ( ex ) {
             console.error( `Unable to watch "${path}": \n${ex}\n`.redBG.white );
@@ -239,9 +199,9 @@ if ( tasks.length == 0 ) {
         if ( filename ) {
             // Don't compile if only `manifest.webapp` changed.
             if ( filename == 'manifest.webapp' ) return;
-            if ( filename.charAt( 0 ) == '#' ) return;
-            if ( filename.substr( 0, 2 ) == '.#' ) return;
-            if ( filename.charAt( filename.length - 1 ) == '~' ) return;
+            if ( filename.startsWith( '#' ) ) return;
+            if ( filename.startsWith( '.#' ) ) return;
+            if ( filename.endsWith( '~' ) ) return;
             var path = Path.join( this.path, filename );
             if ( PathUtils.isDirectory( path ) ) {
                 if ( !FS.existsSync( path ) ) return;
@@ -261,25 +221,24 @@ if ( tasks.length == 0 ) {
     }
 
     // Watch files?
-    if ( parsedCommandLine.watch ) {
-        if ( !prj ) return;
+    if ( parsedCommandLine.watch && prj ) {
         console.log();
-        var fringe = [ Path.join( __dirname, "../ker" ), prj.srcPath(), prj.srcPath( "../package.json" ) ];
-        fringe.push.apply( fringe, prj.getExtraModulesPath() );
-        var path;
+        const fringe = [
+            Path.join( __dirname, "../ker" ),
+            prj.srcPath(),
+            prj.srcPath( "../package.json" )
+        ];
+        fringe.push( ...prj.getExtraModulesPath() );
         while ( fringe.length > 0 ) {
-            path = fringe.pop();
+            const path = fringe.pop();
             watch( path );
-            if ( PathUtils.isDirectory( path ) ) {
-                FS.readdirSync( path ).forEach(
-                    function ( filename ) {
-                        var subpath = Path.join( path, filename );
-                        if ( PathUtils.isDirectory( subpath ) ) {
-                            fringe.push( subpath );
-                        }
-                    }
-                );
-            }
+            if ( !PathUtils.isDirectory( path ) ) continue;
+            FS.readdirSync( path ).forEach( filename => {
+                const subpath = Path.join( path, filename );
+                if ( PathUtils.isDirectory( subpath ) ) {
+                    fringe.push( subpath );
+                }
+            } );
         }
         console.log();
     }
