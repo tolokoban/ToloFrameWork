@@ -180,12 +180,12 @@ if ( tasks.length == 0 ) {
     function watch( path ) {
         try {
             if ( watchedDirectories.indexOf( path ) == -1 ) {
-                if ( !Path.existsSync( path ) ) {
+                if ( !FS.existsSync( path ) ) {
                     console.error( `Can't watch missing file "${path}"!` );
                 }
                 //console.log("Watching ".cyan + path);
                 watchedDirectories.push( path );
-                FS.watch( path, processLater );
+                FS.watch( path, processLater.bind( null, path ) );
             }
         } catch ( ex ) {
             console.error( `Unable to watch "${path}": \n${ex}\n`.redBG.white );
@@ -195,14 +195,14 @@ if ( tasks.length == 0 ) {
     var prj = start();
     firstProcess = false;
 
-    function processLater( eventName, filename ) {
+    function processLater( root, eventName, filename ) {
         if ( filename ) {
             // Don't compile if only `manifest.webapp` changed.
             if ( filename == 'manifest.webapp' ) return;
             if ( filename.startsWith( '#' ) ) return;
             if ( filename.startsWith( '.#' ) ) return;
             if ( filename.endsWith( '~' ) ) return;
-            var path = Path.join( this.path, filename );
+            var path = Path.join( root, filename );
             if ( PathUtils.isDirectory( path ) ) {
                 if ( !FS.existsSync( path ) ) return;
                 if ( watchedDirectories.indexOf( filename ) == -1 ) {
