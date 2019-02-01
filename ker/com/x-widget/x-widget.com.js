@@ -74,7 +74,7 @@ exports.compile = function( root, libs ) {
   SKIP = true;
   var com = parseComponent( root, libs, '        ' );
 
-  console.log( "### " + com.name.green.bold );
+  console.log( "Widget: " + com.name.green );
   
   libs.require( "x-widget" );
   libs.require( com.name );
