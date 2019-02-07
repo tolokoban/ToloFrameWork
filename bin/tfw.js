@@ -210,8 +210,6 @@ if ( tasks.length == 0 ) {
                 }
                 return;
             }
-            // If a resource file changes, we have to touch the corresponding module's JS file.
-            prj.cascadingTouch( path );
         }
         if ( timer ) {
             clearTimeout( timer );

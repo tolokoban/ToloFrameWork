@@ -1,0 +1,211 @@
+digraph BUILD {
+    rankdir=LR;
+    concentrate=true;
+    splines=ortho;
+    subgraph cluster_top {
+        color = none;        
+        rankdir=LR;
+        //----------------------------------------
+        subgraph cluster_src {
+            color = none;
+            subgraph cluster_src_html {
+                label = "src/";
+                color = "#aabbff";
+                style = filled;
+                node [shape=box,fillcolor=white,style=filled];
+                src_page_html [label="<page>.html"];
+            }
+            subgraph cluster_src_mod {
+                label = "src/mod";
+                color = "#aabbff";
+                style = filled;
+                node [shape=box,fillcolor=white,style=filled];
+                src_mod_js [label="<module>.js"];
+                src_mod_dep [label="<module>.dep"];
+                src_mod_xjs [label="<module>.xjs"];
+                src_mod_ini [label="<module>.ini"];
+                src_mod_css [label="<module>.css"];
+            }
+        }
+        //----------------------------------------
+        node [shape=ellipse];
+        build_html [label="build-html"];
+        build_cb [label="build-cb"];
+        build_dep [label="build-dep"];
+        build_xjs [label="build-xjs"];
+        build_ini [label="build-ini"];
+        build_css [label="build-css"];
+        //----------------------------------------
+        subgraph cluster_tmp {
+            color = none;
+            subgraph cluster_tmp_html {
+                label = "tmp/html/"
+                color = "#cccccc";
+                style = filled;
+                node [shape=box,fillcolor=white,style=filled];
+                tmp_page_html_template [label="<page>.template"];
+                tmp_page_html_includes [label="<page>.includes"];
+                tmp_page_html_requires [label="<page>.requires"];
+            }
+            subgraph cluster_tmp_mod {
+                label = "tmp/mod/"
+                color = "#cccccc";
+                style = filled;
+                node [shape=box,fillcolor=white,style=filled];
+                tmp_mod_requires [label="<module>.requires"];
+                tmp_mod_cb [label="<module>.cb"];
+                tmp_mod_xjs [label="<module>.xjs"];
+                tmp_mod_ini [label="<module>.ini"];
+                tmp_mod_glo [label="<module>.glo"];
+                tmp_mod_css [label="<module>.css"];
+            }
+        }
+        //----------------------------------------
+        link_html_1 [label="link-html"];
+        link_js [label="link-js"];
+        //----------------------------------------
+        subgraph cluster_tmp2 {
+            color = none;
+            subgraph cluster_tmp2_mod {
+                label = "tmp/mod/"
+                color = "#cccccc";
+                style = filled;
+                node [shape=box,fillcolor=white,style=filled];
+                tmp_mod_js [label="<module>.js"];
+            }
+        }
+        //----------------------------------------
+        subgraph cluster_tmp3 {
+            color = none;
+            subgraph cluster_tmp3_mod {
+                label = "tmp/mod/"
+                color = "#cccccc";
+                style = filled;
+                node [shape=box,fillcolor=white,style=filled];
+                tmp_mod_zip [label="<module>.zip"];
+                tmp_mod_map [label="<module>.map"];
+            }
+        }
+        //----------------------------------------
+        zip_js [label="zip-js"];
+        //----------------------------------------
+        src_page_html -> build_html;
+        build_html -> tmp_page_html_template;
+        build_html -> tmp_page_html_includes;
+        build_html -> tmp_page_html_requires;
+        //----------------------------------------
+        src_mod_js -> build_cb;
+        build_cb -> tmp_mod_requires;
+        build_cb -> tmp_mod_cb;
+        src_mod_dep -> build_dep -> tmp_mod_glo;
+        src_mod_xjs -> build_xjs -> tmp_mod_xjs;
+        src_mod_ini -> build_ini -> tmp_mod_ini;
+        src_mod_css -> build_css -> tmp_mod_css;
+        //----------------------------------------
+        tmp_mod_cb -> link_js;
+        tmp_mod_glo -> link_js;
+        tmp_mod_xjs -> link_js;
+        tmp_mod_ini -> link_js;
+        link_js -> tmp_mod_js;
+        //----------------------------------------
+        tmp_mod_js -> zip_js;
+        zip_js -> tmp_mod_zip;
+        zip_js -> tmp_mod_map;
+        //----------------------------------------
+        tmp_mod_zip -> link_html_1 [color=red];
+        tmp_mod_map -> link_html_1 [color=red];
+        tmp_mod_css -> link_html_1 [color=red];
+        tmp_page_html_template -> link_html_1;
+        tmp_page_html_requires -> link_html_1;
+        dots_1 [label="...",shape=none];
+        link_html_1 -> dots_1;
+    }
+    //========================================
+    subgraph cluster_bottom {
+        color = none;        
+        rankdir=LR;
+        link_html_2 [label="link-html"];
+        dots_2 [label="...",shape=none];
+        dots_2 -> link_html_2;        
+        link_html_2 -> tmp_www_html;
+        link_html_2 -> tmp_www_js;
+        link_html_2 -> tmp_www_js_map;
+        link_html_2 -> tmp_www_css;
+        link_html_2 -> tmp_www_css_map;
+        link_html_2 -> tmp_html_files;
+        //----------------------------------------
+        subgraph cluster_tmp_www {
+            color = none;
+            subgraph cluster_tmp_www1 {
+                label = "tmp/www/"
+                color = "#cccccc";
+                style = filled;
+                node [shape=box,fillcolor=white,style=filled];
+                tmp_www_html [label="<page>.html",shape=box,fillcolor=white,style=filled];
+                tmp_www_js [label="js/@<module>.js",shape=box,fillcolor=white,style=filled];
+                tmp_www_js_map [label="js/@<module>.js.map",shape=box,fillcolor=white,style=filled];
+                tmp_www_css [label="css/@<module>.css",shape=box,fillcolor=white,style=filled];
+                tmp_www_css_map [label="css/@<module>.css.map",shape=box,fillcolor=white,style=filled];
+            }
+            subgraph cluster_tmp_html_files {
+                label = "tmp/html/"
+                color = "#cccccc";
+                style = filled;
+                node [shape=box,fillcolor=white,style=filled];
+                tmp_html_files [label="<page>.files",shape=box,fillcolor=white,style=filled];
+            }
+        }
+        //----------------------------------------
+        subgraph cluster_tmp_pp {
+            color = none;
+            subgraph cluster_tmp_www1_bottom {
+                label = "tmp/pp/"
+                color = "#cccccc";
+                style = filled;
+                node [shape=box,fillcolor=white,style=filled];
+                tmp_pp_files [label="<page>.files"];
+            }
+            subgraph cluster_tmp_html_files_bottom {
+                label = "tmp/pp/<page>/"
+                color = "#cccccc";
+                style = filled;
+                node [shape=box,fillcolor=white,style=filled];
+                tmp_pp [label="*",color=red];
+            }
+        }
+        //----------------------------------------
+        subgraph cluster_www {
+            label = "www/"
+            color = "#ffbbaa";
+            style = filled;
+            node [shape=box,fillcolor=white,style=filled];
+            www_html [label="<page>.html"];
+            www_js [label="js/@<module>.js"];
+            www_js_map [label="js/@<module>.js.map"];
+            www_css [label="css/@<module>.css"];
+            www_css_map [label="css/@<module>.css.map"];
+            www_pp [label="*"];
+        }
+        //----------------------------------------
+        postprocess_html [label="postprocess"];
+        //----------------------------------------
+        tmp_html_files -> postprocess_html;
+        postprocess_html -> tmp_pp_files;
+        postprocess_html -> tmp_pp [color=red];
+        //----------------------------------------
+        publish_html [label="publish"];
+        //----------------------------------------
+        tmp_www_html -> publish_html;
+        tmp_www_js -> publish_html;
+        tmp_www_js_map -> publish_html;
+        tmp_www_css -> publish_html;
+        tmp_www_css_map -> publish_html;
+        tmp_pp_files -> publish_html;
+        publish_html -> www_html;
+        publish_html -> www_js;
+        publish_html -> www_js_map;
+        publish_html -> www_css;
+        publish_html -> www_css_map;
+        publish_html -> www_pp [color=red];
+    }
+}
