@@ -1,25 +1,28 @@
 {
   "name": "toloframework",
 <<<<<<< HEAD
-  "version": "0.42.9",
+  "version": "0.50.6",
 =======
-  "version": "0.43.5",
->>>>>>> c03a7d5f25c824dd2c5a1547be9de6a9034bb01c
+  "version": "0.50.10",
+>>>>>>> 5a49f54ff4835cc41d10b85274e7fe45081f9210
   "description": "Javascript/HTML/CSS compiler for Firefox OS or nodewebkit apps using modules in the nodejs style.",
   "bin": {
     "tfw": "bin/tfw.js"
   },
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
     "clean": "node bin/tfw.js clean",
     "watch": "node bin/tfw.js build debug test -dir spec-karma watch",
-    "debug": "node bin/tfw.js build debug test -dir spec-karma",
+    "debug": "node --inspect-brk bin/tfw.js build debug test -dir spec-karma",
     "release": "node bin/tfw.js build version clean",
     "test": "node node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
-    "test:dbg": "devtool node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
+    "test:dbg": "node --inspect-brk node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
     "jasmine": "node node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
-    "jasmine:dbg": "devtool node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
+    "jasmine:dbg": "node --inspect-brk node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=spec-jasmine/jasmine.json",
     "karma": "node node_modules/karma/bin/karma start karma.conf.js",
-    "karma:dbg": "devtool node_modules/karma/bin/karma start karma.conf.js"
+    "karma:dbg": "node --inspect-brk node_modules/karma/bin/karma start karma.conf.js"
   },
   "repository": {
     "type": "git",
@@ -42,18 +45,22 @@
     "url": "https://github.com/tolokoban/ToloFrameWork/issues"
   },
   "dependencies": {
-    "clean-css": "^4.1.9",
-    "colors": "^1.1.2",
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.1.6",
+    "babel-preset-minify": "^0.5.0",
+    "clean-css": "^4.2.1",
+    "colors": "^1.3.2",
     "jaguar": "^1.1.10",
     "jsdoc": "^3.5.5",
     "less": "^2.7.3",
     "marked": "^0.3.9",
-    "readline-sync": "^1.4.7",
+    "readline-sync": "^1.4.9",
     "rework": "^1.0.1",
     "rework-vars": "^3.1.1",
-    "string": "^3.3.3",
     "tlk-lexer": "0.0.5",
-    "toloframework-permissive-json": "^1.0",
+    "toloframework-permissive-json": "^1.0.5",
     "uglify-js": "^2.8.29"
   },
   "homepage": "https://github.com/tolokoban/ToloFrameWork",
@@ -69,12 +76,12 @@
     "output": "gh-pages"
   },
   "devDependencies": {
-    "jasmine": "^2.8.0",
-    "jasmine-core": "^2.9.1",
-    "karma": "^2.0.0",
+    "jasmine": "^2.99.0",
+    "jasmine-core": "^2.99.1",
+    "karma": "^2.0.5",
     "karma-chrome-launcher": "^2.2.0",
     "karma-firefox-launcher": "^1.1.0",
-    "karma-jasmine": "^1.1.1"
+    "karma-jasmine": "^1.1.2"
   },
   "reservedModules": []
 }
