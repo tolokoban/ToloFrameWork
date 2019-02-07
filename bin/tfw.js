@@ -210,7 +210,6 @@ if ( tasks.length == 0 ) {
                 }
                 return;
             }
-            console.log( "File change: " + path.yellow );
             // If a resource file changes, we have to touch the corresponding module's JS file.
             prj.cascadingTouch( path );
         }
