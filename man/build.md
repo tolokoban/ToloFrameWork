@@ -1,6 +1,7 @@
 # Build
 
-![build.png](Dependencies diagram)
+![Dependencies diagram](build.png)
+
 
 
 
