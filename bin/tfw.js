@@ -209,7 +209,7 @@ if ( tasks.length == 0 ) {
                     watch( path );
                 }
                 return;
-            }
+            }            
         }
         if ( timer ) {
             clearTimeout( timer );
