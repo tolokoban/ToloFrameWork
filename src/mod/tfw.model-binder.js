@@ -60,6 +60,7 @@ function bind(key, wdg) {
         var obj = that._value;
         if (obj) {
             obj[key] = v;
+            that.fire();
         }
     });
 };
@@ -79,7 +80,6 @@ Model.prototype.updateWidgets = function() {
         console.log(key + ".value =", obj[key]);
         wdg = opts[key];
         wdg.value = obj[key];
-        that.fire();
     }
     return this;
 };
