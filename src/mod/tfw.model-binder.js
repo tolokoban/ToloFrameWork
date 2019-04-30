@@ -1,0 +1,88 @@
+/**
+ * @module tfw.model
+ *
+ * @description
+ * Le model permet de faire un  lien entre les attributs d'un objet et
+ * les widgets qui le représentent.
+ *
+ * @example
+ * var Model = require('tfw.model');
+ * var model = new Model({
+ *   name: txtName,
+ *   expired: blnExpired
+ * });
+ *
+ * model.value = item;
+ * model.updateWidgets();
+ */
+const DB = require("tfw.data-binding");
+const Timer = require("tfw.timer");
+
+function Model(opts) {
+    if( typeof opts === 'undefined' ) opts = {};
+    this._links = opts;
+    this._value = null;
+
+    var key, wdg;
+    for( key in opts ) {
+        wdg = opts[key];
+        bind.call( this, key, wdg );
+    }
+
+    const that = this;
+    this.fire = Timer.debounce(function() {
+        if( typeof that.onChange !== 'function') return;
+        try {
+            that.onChange();
+        }
+        catch(ex) {
+            console.error("Error tfw.data-binder.onChange():", ex);
+        }
+    }, 300);
+}
+
+/**
+ * Définir l'objet qui sera lié aux widgets.
+ */
+Object.defineProperty( Model.prototype, 'value', {
+    get: function() { return this._value; },
+    set: function(v) { this._value = v; },
+    configurable: true,
+    enumerable: true
+});
+
+
+function bind(key, wdg) {
+    var that = this;
+
+    console.info("Binding value of", key);
+    DB.bind( wdg, 'value', function(v) {
+        var obj = that._value;
+        if (obj) {
+            obj[key] = v;
+        }
+    });
+};
+
+
+/**
+ * Update widgets values from `value`.
+ */
+Model.prototype.updateWidgets = function() {
+    console.log("updateWidgets");
+    var obj = this._value;
+    if (!obj) return this;
+    var opts = this._links;
+    var key, wdg;
+    console.info("opts=", opts);
+    for( key in opts ) {
+        console.log(key + ".value =", obj[key]);
+        wdg = opts[key];
+        wdg.value = obj[key];
+        that.fire();
+    }
+    return this;
+};
+
+
+module.exports = Model;
