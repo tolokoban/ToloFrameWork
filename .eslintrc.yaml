@@ -51,6 +51,7 @@
     space-before-function-paren: 0
     space-in-parens: 0
     strict: [2, 'global']
+    valid-jsdoc: 0
   globals:
     console: false
     exports: false
